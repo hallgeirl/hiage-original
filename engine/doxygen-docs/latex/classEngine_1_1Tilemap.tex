@@ -1,0 +1,131 @@
+\section{Engine::Tilemap Class Reference}
+\label{classEngine_1_1Tilemap}\index{Engine::Tilemap@{Engine::Tilemap}}
+{\tt \#include $<$gfx\_\-tilemap.h$>$}
+
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+{\bf Tilemap} ()
+\item 
+{\bf Tilemap} (int width, int height, int layers, int tilesize)
+\item 
+{\bf $\sim$Tilemap} ()
+\item 
+void {\bf createMap} (int width, int height, int layers, int tilesize)
+\item 
+void {\bf setTileset} ({\bf Tileset} $\ast$tileset)
+\item 
+void {\bf destroy} ()
+\item 
+void {\bf render} (float camx, float camy, float zoom, float aspect, float depth, int layer)
+\item 
+void {\bf importMap} (unsigned int $\ast$$\ast$$\ast$data)
+\item 
+{\bf Rect} {\bf getTilesInRect} (float left, float top, float right, float bottom)
+\item 
+unsigned int {\bf getTile} ({\bf uint} x, {\bf uint} y, {\bf uint} z)
+\item 
+void {\bf setTile} ({\bf uint} x, {\bf uint} y, {\bf uint} ulayer, {\bf uint} tile)
+\item 
+{\bf Tileset} $\ast$ {\bf getTileset} ()
+\item 
+int {\bf getTileSize} ()
+\item 
+int {\bf getWidth} ()
+\item 
+int {\bf getHeight} ()
+\item 
+int {\bf getLayers} ()
+\end{CompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Engine::Tilemap@{Engine::Tilemap}!Tilemap@{Tilemap}}
+\index{Tilemap@{Tilemap}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}Tilemap::Tilemap ()}\label{classEngine_1_1Tilemap_5adfb872738c2e159824a49267b8df73}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!Tilemap@{Tilemap}}
+\index{Tilemap@{Tilemap}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}Tilemap::Tilemap (int {\em width}, int {\em height}, int {\em layers}, int {\em tilesize})}\label{classEngine_1_1Tilemap_b2fb9adb1d8d6a9849d0dd1cac7168e6}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!~Tilemap@{$\sim$Tilemap}}
+\index{~Tilemap@{$\sim$Tilemap}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}Tilemap::$\sim$Tilemap ()}\label{classEngine_1_1Tilemap_55034b53884593f379f8475b38e46129}
+
+
+
+
+\subsection{Member Function Documentation}
+\index{Engine::Tilemap@{Engine::Tilemap}!createMap@{createMap}}
+\index{createMap@{createMap}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Tilemap::createMap (int {\em width}, int {\em height}, int {\em layers}, int {\em tilesize})}\label{classEngine_1_1Tilemap_1eec69f2ba33813297bb359138201cb5}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!setTileset@{setTileset}}
+\index{setTileset@{setTileset}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Tilemap::setTileset ({\bf Tileset} $\ast$ {\em tileset})}\label{classEngine_1_1Tilemap_329867c1c4394ff5bcbd6a763c7a8f50}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!destroy@{destroy}}
+\index{destroy@{destroy}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Tilemap::destroy ()}\label{classEngine_1_1Tilemap_d7ed2f4dad00b9710fe05bc4d31e107e}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!render@{render}}
+\index{render@{render}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Tilemap::render (float {\em camx}, float {\em camy}, float {\em zoom}, float {\em aspect}, float {\em depth}, int {\em layer})}\label{classEngine_1_1Tilemap_35a3606b42b7ae4d29438bcf31c0d226}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!importMap@{importMap}}
+\index{importMap@{importMap}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Tilemap::importMap (unsigned int $\ast$$\ast$$\ast$ {\em data})}\label{classEngine_1_1Tilemap_34e4d7b9f647053656ff0a22b764fb54}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!getTilesInRect@{getTilesInRect}}
+\index{getTilesInRect@{getTilesInRect}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Rect} Tilemap::getTilesInRect (float {\em left}, float {\em top}, float {\em right}, float {\em bottom})}\label{classEngine_1_1Tilemap_fb1dc644d8eced669eaca59ac19b4427}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!getTile@{getTile}}
+\index{getTile@{getTile}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}unsigned int Tilemap::getTile ({\bf uint} {\em x}, {\bf uint} {\em y}, {\bf uint} {\em z})}\label{classEngine_1_1Tilemap_f991ac41a23060f60255993154aab10b}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!setTile@{setTile}}
+\index{setTile@{setTile}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Tilemap::setTile ({\bf uint} {\em x}, {\bf uint} {\em y}, {\bf uint} {\em ulayer}, {\bf uint} {\em tile})}\label{classEngine_1_1Tilemap_d625d016d4bdd948c1c853a8a3297c23}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!getTileset@{getTileset}}
+\index{getTileset@{getTileset}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Tileset}$\ast$ Engine::Tilemap::getTileset ()\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Tilemap_9c2e966dc7f6aeb93bbd9e9a01d0056d}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!getTileSize@{getTileSize}}
+\index{getTileSize@{getTileSize}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}int Engine::Tilemap::getTileSize ()\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Tilemap_32e984fc2b1d03fadc66352a0a8a5d09}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!getWidth@{getWidth}}
+\index{getWidth@{getWidth}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}int Tilemap::getWidth ()}\label{classEngine_1_1Tilemap_dec1197589ebb7106f2ffafc057d1fb8}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!getHeight@{getHeight}}
+\index{getHeight@{getHeight}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}int Tilemap::getHeight ()}\label{classEngine_1_1Tilemap_e10dbceeae8661ff877e8e8b9fec8bfc}
+
+
+\index{Engine::Tilemap@{Engine::Tilemap}!getLayers@{getLayers}}
+\index{getLayers@{getLayers}!Engine::Tilemap@{Engine::Tilemap}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}int Tilemap::getLayers ()}\label{classEngine_1_1Tilemap_fa460f5b0a94e30add9f4136e49edbe1}
+
+
+
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+{\bf gfx\_\-tilemap.h}\item 
+{\bf gfx\_\-tilemap.cpp}\end{CompactItemize}

@@ -1,0 +1,201 @@
+\section{Engine::Vector3 Class Reference}
+\label{classEngine_1_1Vector3}\index{Engine::Vector3@{Engine::Vector3}}
+{\tt \#include $<$com\_\-vector3d.h$>$}
+
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+{\bf Vector3} ()
+\item 
+{\bf Vector3} (double x, double y, double z)
+\item 
+double {\bf length} ()
+\item 
+{\bf Vector3} {\bf normalize} ()
+\item 
+{\bf Vector3} {\bf scale} (double dFac)
+\item 
+{\bf Vector3} {\bf add} ({\bf Vector3} vec)
+\item 
+{\bf Vector3} {\bf subtract} ({\bf Vector3} vec)
+\item 
+double {\bf dot} ({\bf Vector3} vec)
+\item 
+double {\bf getX} () const 
+\item 
+double {\bf getY} () const 
+\item 
+double {\bf getZ} () const 
+\item 
+void {\bf set} (double x, double y, double z)
+\item 
+void {\bf setX} (double x)
+\item 
+void {\bf setY} (double y)
+\item 
+void {\bf setZ} (double z)
+\item 
+{\bf Vector3} {\bf operator+} (const {\bf Vector3} \&vec)
+\item 
+{\bf Vector3} {\bf operator-} (const {\bf Vector3} \&vec)
+\item 
+{\bf Vector3} {\bf operator $\ast$} (double fac)
+\item 
+{\bf Vector3} {\bf operator/} (double fac)
+\item 
+{\bf Vector3} {\bf operator+=} (const {\bf Vector3} \&vec)
+\item 
+{\bf Vector3} {\bf operator-=} (const {\bf Vector3} \&vec)
+\item 
+{\bf Vector3} {\bf operator $\ast$=} (const double fac)
+\item 
+{\bf Vector3} {\bf operator/=} (const double fac)
+\item 
+{\bf Vector3} {\bf operator=} (const {\bf Vector3} \&vec)
+\item 
+bool {\bf operator==} (const {\bf Vector3} \&vec)
+\item 
+bool {\bf isInRect} (double Left, double Top, double Right, double Bottom)
+\end{CompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Engine::Vector3@{Engine::Vector3}!Vector3@{Vector3}}
+\index{Vector3@{Vector3}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}Vector3::Vector3 ()}\label{classEngine_1_1Vector3_0f49191f7e001e7f7ae1cb49522118b4}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!Vector3@{Vector3}}
+\index{Vector3@{Vector3}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}Vector3::Vector3 (double {\em x}, double {\em y}, double {\em z})}\label{classEngine_1_1Vector3_3b370f98c38f1221df9238a9b5f3200c}
+
+
+
+
+\subsection{Member Function Documentation}
+\index{Engine::Vector3@{Engine::Vector3}!length@{length}}
+\index{length@{length}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}double Vector3::length ()}\label{classEngine_1_1Vector3_dad1cf3207a4146545dbbb64fd01733d}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!normalize@{normalize}}
+\index{normalize@{normalize}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Vector3::normalize ()}\label{classEngine_1_1Vector3_e8096af624673eb7ca99bbb89e2404fc}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!scale@{scale}}
+\index{scale@{scale}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Vector3::scale (double {\em dFac})}\label{classEngine_1_1Vector3_41f490b36a67128948eb32733822162b}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!add@{add}}
+\index{add@{add}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Vector3::add ({\bf Vector3} {\em vec})}\label{classEngine_1_1Vector3_700da03954c405f39020a92c9ac0cf91}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!subtract@{subtract}}
+\index{subtract@{subtract}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Vector3::subtract ({\bf Vector3} {\em vec})}\label{classEngine_1_1Vector3_fafe1d8ff6178684e2d6e40ca58b8ae1}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!dot@{dot}}
+\index{dot@{dot}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}double Vector3::dot ({\bf Vector3} {\em vec})}\label{classEngine_1_1Vector3_b8fd637f6ee6e76465d3543897f1ed6b}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!getX@{getX}}
+\index{getX@{getX}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}double Engine::Vector3::getX () const\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector3_0593f7314c19f0a19f81bebdaca217be}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!getY@{getY}}
+\index{getY@{getY}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}double Engine::Vector3::getY () const\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector3_2f902918b7ad8b61a5c2151da08e9c33}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!getZ@{getZ}}
+\index{getZ@{getZ}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}double Engine::Vector3::getZ () const\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector3_1b6ccb0e4bd7e535019fb34443d8aa87}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!set@{set}}
+\index{set@{set}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Engine::Vector3::set (double {\em x}, double {\em y}, double {\em z})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector3_f2b05c7303f42069e27e5ddcf57865a1}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!setX@{setX}}
+\index{setX@{setX}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Engine::Vector3::setX (double {\em x})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector3_bc03d27540065493d76bf9cc80ac41c2}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!setY@{setY}}
+\index{setY@{setY}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Engine::Vector3::setY (double {\em y})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector3_1f974692f03fd5b650739dffaaf46733}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!setZ@{setZ}}
+\index{setZ@{setZ}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Engine::Vector3::setZ (double {\em z})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector3_3a8c7f3f91c31aec42e8dff93252f07a}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!operator+@{operator+}}
+\index{operator+@{operator+}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Vector3::operator+ (const {\bf Vector3} \& {\em vec})}\label{classEngine_1_1Vector3_e8a28dd5a00fa5a2bf5427b0f7a59e58}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!operator-@{operator-}}
+\index{operator-@{operator-}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Vector3::operator- (const {\bf Vector3} \& {\em vec})}\label{classEngine_1_1Vector3_71264029df074d12dbcd57a95a136fd6}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!operator *@{operator $\ast$}}
+\index{operator *@{operator $\ast$}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Vector3::operator $\ast$ (double {\em fac})}\label{classEngine_1_1Vector3_14d8acd6e419caebf4a95bb670464bc1}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!operator/@{operator/}}
+\index{operator/@{operator/}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Vector3::operator/ (double {\em fac})}\label{classEngine_1_1Vector3_7a5ede5f16daf13066b75de2b6c8456c}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!operator+=@{operator+=}}
+\index{operator+=@{operator+=}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Vector3::operator+= (const {\bf Vector3} \& {\em vec})}\label{classEngine_1_1Vector3_146d917ae77163aee29472e4d4f890b7}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!operator-=@{operator-=}}
+\index{operator-=@{operator-=}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Vector3::operator-= (const {\bf Vector3} \& {\em vec})}\label{classEngine_1_1Vector3_a9eae10eca2501a16de464421cd74a06}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!operator *=@{operator $\ast$=}}
+\index{operator *=@{operator $\ast$=}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Vector3::operator $\ast$= (const double {\em fac})}\label{classEngine_1_1Vector3_9fda8086d4be06cb141e9168880b2661}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!operator/=@{operator/=}}
+\index{operator/=@{operator/=}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Vector3::operator/= (const double {\em fac})}\label{classEngine_1_1Vector3_4c4e6908bf014b492af4b527b1336748}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!operator=@{operator=}}
+\index{operator=@{operator=}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Vector3::operator= (const {\bf Vector3} \& {\em vec})}\label{classEngine_1_1Vector3_86adbe399a5c4d15294ef9eb1731e978}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!operator==@{operator==}}
+\index{operator==@{operator==}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}bool Vector3::operator== (const {\bf Vector3} \& {\em vec})}\label{classEngine_1_1Vector3_d3b60ce19f9c98b5ada5ef5540aa4272}
+
+
+\index{Engine::Vector3@{Engine::Vector3}!isInRect@{isInRect}}
+\index{isInRect@{isInRect}!Engine::Vector3@{Engine::Vector3}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}bool Vector3::isInRect (double {\em Left}, double {\em Top}, double {\em Right}, double {\em Bottom})}\label{classEngine_1_1Vector3_4f4b8d61869384c1f2d787b8fd7faa20}
+
+
+
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+{\bf com\_\-vector3d.h}\item 
+{\bf com\_\-vector3d.cpp}\end{CompactItemize}

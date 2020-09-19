@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sprite name="GreenKoopa" framewidth="26" frameheight="32">
+  <texture name="GreenKoopa" />
+	
+  <animation name="stand">
+    <frame x="0" y="0" delay="1" nextframe="0" colbox="2 1 23 30" />
+  </animation>
+
+  <animation name="walk">
+    <frame x="26" y="0" delay="0.5" nextframe="1" colbox="2 1 23 20" />
+    <frame x="52" y="0" delay="0.5" nextframe="2" colbox="2 1 23 20" />
+    <frame x="78" y="0" delay="0.5" nextframe="3" colbox="2 1 23 20" />
+    <frame x="104" y="0" delay="0.5" nextframe="4" colbox="2 1 23 20" />
+    <frame x="52" y="0" delay="0.5" nextframe="0" colbox="2 1 23 20" />
+  </animation>
+
+  <animation name="fall">
+    <frame x="130" y="0" delay="1" nextframe="0" colbox="2 1 23 26" />
+  </animation>
+
+  <animation name="spawn">
+    <frame x="156" y="0" delay="0.2" nextframe="1" colbox="4 1 20 15" />
+    <frame x="182" y="0" delay="0.2" nextframe="2" colbox="3 1 23 15" />
+    <frame x="209" y="0" delay="0.2" nextframe="3" colbox="3 1 23 15" />
+    <frame x="130" y="0" delay="0.2" nextframe="4" colbox="2 1 23 26" />
+    <frame x="234" y="0" delay="0.2" nextframe="0" colbox="3 1 23 30" />
+  </animation>
+
+</sprite>

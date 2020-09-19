@@ -1,0 +1,177 @@
+\section{Engine::Display Class Reference}
+\label{classEngine_1_1Display}\index{Engine::Display@{Engine::Display}}
+{\tt \#include $<$gfx\_\-display.h$>$}
+
+\subsection*{Public Types}
+\begin{CompactItemize}
+\item 
+enum {\bf DisplayState} \{ {\bf DS\_\-STRETCH\_\-SCENE} =  1, 
+{\bf DS\_\-SHOW\_\-FPS} =  2
+ \}
+\end{CompactItemize}
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+{\bf Display} ()
+\item 
+void {\bf initialize} (int width, int height, bool fullscreen)
+\item 
+void {\bf resize} (int width, int height)
+\item 
+void {\bf beginRender} ()
+\item 
+void {\bf render} ()
+\item 
+void {\bf setState} ({\bf DisplayState} state, bool value)
+\item 
+void {\bf setZoom} (double value)
+\item 
+double {\bf getZoom} ()
+\item 
+void {\bf setCamPosition} (float x, float y)
+\item 
+float {\bf getCamX} ()
+\item 
+float {\bf getCamY} ()
+\item 
+float {\bf getAspectRatio} ()
+\item 
+int {\bf getWidth} ()
+\item 
+int {\bf getHeight} ()
+\item 
+float {\bf getViewWidth} ()
+\item 
+float {\bf getViewHeight} ()
+\item 
+{\bf Vector3} {\bf windowToViewport} ({\bf Vector3} Coord)
+\item 
+{\bf Vector3} {\bf windowToEnvironment} ({\bf Vector3} Coord)
+\item 
+{\bf Vector3} {\bf environmentToWindow} ({\bf Vector3} Coord)
+\end{CompactItemize}
+
+
+\subsection{Member Enumeration Documentation}
+\index{Engine::Display@{Engine::Display}!DisplayState@{DisplayState}}
+\index{DisplayState@{DisplayState}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Engine::Display::DisplayState}}\label{classEngine_1_1Display_1b1db7f4c554f8424bb25cbb6f7d4a72}
+
+
+\begin{Desc}
+\item[Enumerator: ]\par
+\begin{description}
+\index{DS_STRETCH_SCENE@{DS\_\-STRETCH\_\-SCENE}!Engine::Display@{Engine::Display}}\index{Engine::Display@{Engine::Display}!DS_STRETCH_SCENE@{DS\_\-STRETCH\_\-SCENE}}\item[{\em 
+DS\_\-STRETCH\_\-SCENE\label{classEngine_1_1Display_1b1db7f4c554f8424bb25cbb6f7d4a7202add244431b6fd96d346e3dba1a53a4}
+}]\index{DS_SHOW_FPS@{DS\_\-SHOW\_\-FPS}!Engine::Display@{Engine::Display}}\index{Engine::Display@{Engine::Display}!DS_SHOW_FPS@{DS\_\-SHOW\_\-FPS}}\item[{\em 
+DS\_\-SHOW\_\-FPS\label{classEngine_1_1Display_1b1db7f4c554f8424bb25cbb6f7d4a726b5de8c8bac412c4e1f5f580b7761c46}
+}]\end{description}
+\end{Desc}
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Engine::Display@{Engine::Display}!Display@{Display}}
+\index{Display@{Display}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}Display::Display ()}\label{classEngine_1_1Display_e972fffea6f7ca1d627ef48c3d841bb3}
+
+
+
+
+\subsection{Member Function Documentation}
+\index{Engine::Display@{Engine::Display}!initialize@{initialize}}
+\index{initialize@{initialize}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Display::initialize (int {\em width}, int {\em height}, bool {\em fullscreen})}\label{classEngine_1_1Display_96327276b4548977b31f09d0e7d92cac}
+
+
+\index{Engine::Display@{Engine::Display}!resize@{resize}}
+\index{resize@{resize}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Display::resize (int {\em width}, int {\em height})}\label{classEngine_1_1Display_4d92687cd9e9f4dba7190fcadcf4693e}
+
+
+\index{Engine::Display@{Engine::Display}!beginRender@{beginRender}}
+\index{beginRender@{beginRender}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Display::beginRender ()}\label{classEngine_1_1Display_7b8fc1027e5371bfe71e75d685e54f3a}
+
+
+\index{Engine::Display@{Engine::Display}!render@{render}}
+\index{render@{render}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Display::render ()}\label{classEngine_1_1Display_9b83e81da2877f0ceff73881d4ceb3dc}
+
+
+\index{Engine::Display@{Engine::Display}!setState@{setState}}
+\index{setState@{setState}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Display::setState (enum {\bf Display::DisplayState} {\em state}, bool {\em value})}\label{classEngine_1_1Display_0744df71a4a2ee71795d292bca470872}
+
+
+\index{Engine::Display@{Engine::Display}!setZoom@{setZoom}}
+\index{setZoom@{setZoom}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Display::setZoom (double {\em value})}\label{classEngine_1_1Display_fb25bfa5601c6b68083aa9f9a5b5d1b7}
+
+
+\index{Engine::Display@{Engine::Display}!getZoom@{getZoom}}
+\index{getZoom@{getZoom}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}double Engine::Display::getZoom ()\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Display_787be91c8d7747c07c325962cc018957}
+
+
+\index{Engine::Display@{Engine::Display}!setCamPosition@{setCamPosition}}
+\index{setCamPosition@{setCamPosition}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void Display::setCamPosition (float {\em x}, float {\em y})}\label{classEngine_1_1Display_15834c8d0fe536782245c1ba0430a592}
+
+
+\index{Engine::Display@{Engine::Display}!getCamX@{getCamX}}
+\index{getCamX@{getCamX}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}float Engine::Display::getCamX ()\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Display_c78f7550eabfe12ba5ed5a90bf614bdd}
+
+
+\index{Engine::Display@{Engine::Display}!getCamY@{getCamY}}
+\index{getCamY@{getCamY}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}float Engine::Display::getCamY ()\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Display_ae2aeeb5278797229d97be19e0780f2b}
+
+
+\index{Engine::Display@{Engine::Display}!getAspectRatio@{getAspectRatio}}
+\index{getAspectRatio@{getAspectRatio}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}float Engine::Display::getAspectRatio ()\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Display_565a7c2d30539413fefd66f97f90de90}
+
+
+\index{Engine::Display@{Engine::Display}!getWidth@{getWidth}}
+\index{getWidth@{getWidth}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}int Engine::Display::getWidth ()\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Display_3db84c40444e52b63d200a82e112c796}
+
+
+\index{Engine::Display@{Engine::Display}!getHeight@{getHeight}}
+\index{getHeight@{getHeight}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}int Engine::Display::getHeight ()\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Display_6f72906d13d213037fe385015bfd39f1}
+
+
+\index{Engine::Display@{Engine::Display}!getViewWidth@{getViewWidth}}
+\index{getViewWidth@{getViewWidth}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}float Display::getViewWidth ()}\label{classEngine_1_1Display_ad3f284daf2a6ab01a346060d35a608f}
+
+
+\index{Engine::Display@{Engine::Display}!getViewHeight@{getViewHeight}}
+\index{getViewHeight@{getViewHeight}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}float Display::getViewHeight ()}\label{classEngine_1_1Display_f8473ca80b579e0b128222e668de1155}
+
+
+\index{Engine::Display@{Engine::Display}!windowToViewport@{windowToViewport}}
+\index{windowToViewport@{windowToViewport}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Display::windowToViewport ({\bf Vector3} {\em Coord})}\label{classEngine_1_1Display_2a300e8ccfeebd8e770b8002f394514d}
+
+
+\index{Engine::Display@{Engine::Display}!windowToEnvironment@{windowToEnvironment}}
+\index{windowToEnvironment@{windowToEnvironment}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Display::windowToEnvironment ({\bf Vector3} {\em Coord})}\label{classEngine_1_1Display_f3c72ae4868a704fc576488b4e7d34a5}
+
+
+\index{Engine::Display@{Engine::Display}!environmentToWindow@{environmentToWindow}}
+\index{environmentToWindow@{environmentToWindow}!Engine::Display@{Engine::Display}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector3} Display::environmentToWindow ({\bf Vector3} {\em Coord})}\label{classEngine_1_1Display_10994c7db2d8d27c58c70681beefd062}
+
+
+
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+{\bf gfx\_\-display.h}\item 
+{\bf gfx\_\-display.cpp}\end{CompactItemize}

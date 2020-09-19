@@ -1,0 +1,47 @@
+# depslib dependency file v1.0
+1206782285 source:/media/hda1/Misc/Programmering/codeblocks-workspace/gameproject/mario/main.cpp
+	<string>
+	<iostream>
+	<engine/util_timer.h>
+	"mariogame.h"
+
+1206004502 /media/hda1/Misc/Programmering/codeblocks-workspace/gameproject/mario/mariogame.h
+	<engine/com_game.h>
+
+1206551283 source:/media/hda1/Misc/Programmering/codeblocks-workspace/gameproject/mario/mariogame.cpp
+	"mariogame.h"
+	"mariostate.h"
+
+1206004502 /media/hda1/Misc/Programmering/codeblocks-workspace/gameproject/mario/mariostate.h
+	<engine/com_game.h>
+	<engine/game_entity.h>
+	<engine/game_map.h>
+
+1206004502 source:/media/hda1/Misc/Programmering/codeblocks-workspace/gameproject/mario/mariostate.cpp
+	<engine/com_objectfactory.h>
+	<engine/script_lua.h>
+	"mariostate.h"
+
+1206784142 source:/home/hallgeir/Programming/C++/gameproject/mario/main.cpp
+	<string>
+	<iostream>
+	<engine/util_timer.h>
+	"mariogame.h"
+
+1206004502 /home/hallgeir/Programming/C++/gameproject/mario/mariogame.h
+	<engine/com_game.h>
+
+1206551283 source:/home/hallgeir/Programming/C++/gameproject/mario/mariogame.cpp
+	"mariogame.h"
+	"mariostate.h"
+
+1206004502 /home/hallgeir/Programming/C++/gameproject/mario/mariostate.h
+	<engine/com_game.h>
+	<engine/game_entity.h>
+	<engine/game_map.h>
+
+1206004502 source:/home/hallgeir/Programming/C++/gameproject/mario/mariostate.cpp
+	<engine/com_objectfactory.h>
+	<engine/script_lua.h>
+	"mariostate.h"
+

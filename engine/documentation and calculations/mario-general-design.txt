@@ -1,0 +1,109 @@
+States:
+- Intro
+- Menu
+- Map
+
+
+Psudo-code:
+
+include menu.h
+include map.h
+
+
+class game {
+  //menu options
+  enum {
+    menu_newgame = 0
+    menu_exitgame = 0
+  }
+
+  //states
+  enum {
+    loading = 0
+    mainmenu = 1
+    map = 2
+  }
+
+  private display Display
+
+  private menu Mainmenu
+  private int State
+
+  private map *Map
+  private map *Oldmap
+
+  public bool Init()
+  public void Shutdown()
+}
+
+game::game()
+{
+  Map = 0
+  Oldmap = 0
+}
+
+void game::loop()
+{
+  switch (State) {
+    loading:
+      //load all objects, sprites and textures
+      int numfiles = get_num_files_in_dir()
+      for (int i = 0 to numfiles) {
+        load_file(file[i])
+      }
+
+      State = mainmenu
+
+      break
+
+    mainmenu:
+      if (!Mainmenu.isloaded()) { 
+	Mainmenu.create(border=true, position=(x,y), bgcolor=rgb(r,g,b))
+	Mainmenu.additem(title="New game", id=menu_newgame)
+	Mainmenu.additem(title="Exit game", id=menu_exitgame)
+      }
+
+      switch (Mainmenu.getinput()) {
+	case menu_newgame:
+	  
+	  State = map
+	  if (Map) {
+	    delete Map
+	  }
+
+	  Map = new map
+	  Map->load(name="LEVEL_1", startpoint=1)
+
+	  break
+
+	case menu_exitgame:
+	  Shutdown()
+	  break
+
+	default:
+	  Menu.render()
+	  break
+      }
+
+      break
+
+    map:
+      Map.run()
+      Map.render()
+      break
+  }
+
+  Display.render()
+}
+
+class map
+{
+  private array<object*> Objects
+}
+
+Map::run()
+{
+  for (int i = 0 to Objects.count()) {
+    Objects[i]->run()
+  }
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Release" />
+	<File name="main.cpp" open="1" top="1" tabpos="1">
+		<Cursor position="39" topLine="0" />
+	</File>
+	<File name="mariogame.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="675" topLine="15" />
+	</File>
+	<File name="mariogame.h" open="0" top="0" tabpos="0">
+		<Cursor position="97" topLine="0" />
+	</File>
+	<File name="mariostate.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="576" topLine="21" />
+	</File>
+	<File name="mariostate.h" open="0" top="0" tabpos="0">
+		<Cursor position="198" topLine="0" />
+	</File>
+</CodeBlocks_layout_file>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<texture name="Goomba">
+  <bitmap path="data/gfx/sprites/goomba.tga" />
+</texture>

@@ -1,0 +1,337 @@
+\section{Vector2 Class Template Reference}
+\label{classEngine_1_1Vector2}\index{Engine::Vector2@{Engine::Vector2}}
+{\tt \#include $<$util\_\-vector2.h$>$}
+
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+{\bf Vector2} ()
+\item 
+{\bf Vector2} (T x, T y)
+\item 
+double {\bf length} ()
+\item 
+{\bf Vector2} {\bf normalize} ()
+\item 
+{\bf Vector2} {\bf scale} (double f)
+\item 
+{\bf Vector2} {\bf add} ({\bf Vector2} v)
+\item 
+{\bf Vector2} {\bf subtract} ({\bf Vector2} v)
+\item 
+T {\bf dot} ({\bf Vector2} v) const 
+\item 
+T {\bf getX} () const 
+\item 
+T {\bf getY} () const 
+\item 
+void {\bf set} (T x, T y)
+\item 
+void \textbf{set} (const {\bf Vector2}$<$ T $>$ \&v)\label{classEngine_1_1Vector2_85c25fb388f7e0abe34e82a226c61744}
+
+\item 
+void {\bf setX} (T x)
+\item 
+void {\bf setY} (T y)
+\item 
+{\bf Vector2} {\bf operator+} (const {\bf Vector2} \&v) const 
+\item 
+{\bf Vector2} {\bf operator-} (const {\bf Vector2} \&v) const 
+\item 
+{\bf Vector2} {\bf operator $\ast$} (double f) const 
+\item 
+{\bf Vector2} {\bf operator/} (double f) const 
+\item 
+{\bf Vector2} {\bf operator+=} (const {\bf Vector2} \&v)
+\item 
+{\bf Vector2} {\bf operator-=} (const {\bf Vector2} \&v)
+\item 
+{\bf Vector2} {\bf operator $\ast$=} (const double f)
+\item 
+{\bf Vector2} {\bf operator/=} (const double f)
+\item 
+{\bf Vector2} {\bf operator=} (const {\bf Vector2} \&vec)
+\item 
+bool {\bf operator==} (const {\bf Vector2} \&vec)
+\item 
+bool {\bf isInRect} (double left, double top, double right, double bottom)
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$ class Engine::Vector2$<$ T $>$}
+
+Template class for a vector class with two dimensions. 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Engine::Vector2@{Engine::Vector2}!Vector2@{Vector2}}
+\index{Vector2@{Vector2}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} ()\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_3a5df4502ce081e8b80838fe2c15628d}
+
+
+Initializes the vector to (0, 0). \index{Engine::Vector2@{Engine::Vector2}!Vector2@{Vector2}}
+\index{Vector2@{Vector2}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} (T {\em x}, T {\em y})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_a3b21a7a1f62fd8d59fb76da2397ac79}
+
+
+Initializes the vector to (x, y). \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em x}]x-component of vector. \item[{\em y}]y-component of vector. \end{description}
+\end{Desc}
+
+
+\subsection{Member Function Documentation}
+\index{Engine::Vector2@{Engine::Vector2}!length@{length}}
+\index{length@{length}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}double length ()\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_35b40d9678428ee6772554f8a60bd55d}
+
+
+Returns the length of the vector (sqrt(x$^\wedge$2 + y$^\wedge$2)). \begin{Desc}
+\item[Returns:]The length of the vector. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!normalize@{normalize}}
+\index{normalize@{normalize}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} normalize ()\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_1c1dc5c85feb670f157d0c9c728ab042}
+
+
+Sets the length of the vector to 1 - meaning it becomes a unit vector. \begin{Desc}
+\item[Note:]Use this carefully when using vectors of integer type because rounding errors are as good as guaranteed. \end{Desc}
+\begin{Desc}
+\item[Returns:]A copy of the normalized vector. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!scale@{scale}}
+\index{scale@{scale}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} scale (double {\em f})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_ab2eed7309500689c78cfc2cec634374}
+
+
+Scale the vector by a factor of f. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em f}]The factor to scale the vector by. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]A copy of the scaled vector. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!add@{add}}
+\index{add@{add}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} add ({\bf Vector2}$<$ T $>$ {\em v})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_87fa7013fa5077693207e68b9bf0c5c0}
+
+
+Perform vector addition, and store the result in this. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em v}]Vector to add to this. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]A copy of the results. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!subtract@{subtract}}
+\index{subtract@{subtract}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} subtract ({\bf Vector2}$<$ T $>$ {\em v})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_de7d5badb6f92042b54863daaa1dfa6f}
+
+
+Perform vector subtraction, and store the result in this. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em v}]Vector to subtract from this. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]A copy of the results. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!dot@{dot}}
+\index{dot@{dot}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}T dot ({\bf Vector2}$<$ T $>$ {\em v}) const\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_d86c89a017d018e90441e07df93a3f7b}
+
+
+Get the dot product of this vector and v. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em v}]The second vector. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]A copy of the results. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!getX@{getX}}
+\index{getX@{getX}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}T getX () const\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_32f958cb13d5ddf9830638e3dd8e185a}
+
+
+Return the x-component of this vector. \begin{Desc}
+\item[Returns:]The x-component of this. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!getY@{getY}}
+\index{getY@{getY}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}T getY () const\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_4827b3c824389de233893405273de62e}
+
+
+Return the y-component of this vector. \begin{Desc}
+\item[Returns:]The y-component of this. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!set@{set}}
+\index{set@{set}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void set (T {\em x}, T {\em y})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_b850a64601a4644d9e8fb330c0334e14}
+
+
+Set this vector to the specified value. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em x}]The new x-component. \item[{\em y}]The new y-component. \end{description}
+\end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!setX@{setX}}
+\index{setX@{setX}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void setX (T {\em x})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_9f0ad849d5c9da2a93d0d3078f5402a3}
+
+
+Set the x-component of this vector individually. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em x}]The new x-component. \end{description}
+\end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!setY@{setY}}
+\index{setY@{setY}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void setY (T {\em y})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_473db657fd4507f12cd2638c9b9b7263}
+
+
+Set the y-component of this vector individually. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em y}]The new y-component. \end{description}
+\end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!operator+@{operator+}}
+\index{operator+@{operator+}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} operator+ (const {\bf Vector2}$<$ T $>$ \& {\em v}) const\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_cceb2fffa22e88e87d986af3837348a0}
+
+
+Performs vector addition on two vectors and returns the results. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em v}]The second vector. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Note:]This does not change this vector. \end{Desc}
+\begin{Desc}
+\item[Returns:]The resulting vector. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!operator-@{operator-}}
+\index{operator-@{operator-}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} operator- (const {\bf Vector2}$<$ T $>$ \& {\em v}) const\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_5afcffa29af0ce2ee42edde81d556b71}
+
+
+Performs vector subtraction on two vectors and returns the results. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em v}]The second vector. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Note:]This does not change this vector. \end{Desc}
+\begin{Desc}
+\item[Returns:]The resulting vector. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!operator *@{operator $\ast$}}
+\index{operator *@{operator $\ast$}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} operator $\ast$ (double {\em f}) const\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_26344b91f7755e8c369d905cdac6b010}
+
+
+Returns a scaled vector, scaled by f. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em f}]The scale factor. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Note:]This does not change this vector. \end{Desc}
+\begin{Desc}
+\item[Returns:]The resulting vector. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!operator/@{operator/}}
+\index{operator/@{operator/}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} operator/ (double {\em f}) const\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_19ef3f45fab6157bd4fd6751633e4a84}
+
+
+Returns a scaled vector, scaled by 1/f. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em f}]The scale factor. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Note:]This does not change this vector. \end{Desc}
+\begin{Desc}
+\item[Returns:]The resulting vector. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!operator+=@{operator+=}}
+\index{operator+=@{operator+=}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} operator+= (const {\bf Vector2}$<$ T $>$ \& {\em v})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_2c9752c6e77ec69027e74e6f32b843ed}
+
+
+Adds v to this vector. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em v}]The second vector. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]The resulting vector. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!operator-=@{operator-=}}
+\index{operator-=@{operator-=}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} operator-= (const {\bf Vector2}$<$ T $>$ \& {\em v})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_d24f8ab0726510292b4cd1781935556d}
+
+
+Subtracts v from this vector. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em v}]The second vector. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]The resulting vector. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!operator *=@{operator $\ast$=}}
+\index{operator *=@{operator $\ast$=}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} operator $\ast$= (const double {\em f})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_c313bdaa07cb31be3f02dcccaa107267}
+
+
+Scales this vector by f. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em f}]The scale factor. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]The resulting vector. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!operator/=@{operator/=}}
+\index{operator/=@{operator/=}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} operator/= (const double {\em f})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_aecd3cfb550d3bacecff55bb63dbae2d}
+
+
+Scales this vector by 1/f. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em f}]The scale factor. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]The resulting vector. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!operator=@{operator=}}
+\index{operator=@{operator=}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Vector2} operator= (const {\bf Vector2}$<$ T $>$ \& {\em vec})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_a50ad7e445496e46d08fafae87b253fb}
+
+
+Sets this vector's components equal to v. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em v}]The second vector. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]The resulting vector. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!operator==@{operator==}}
+\index{operator==@{operator==}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}bool operator== (const {\bf Vector2}$<$ T $>$ \& {\em vec})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_ae45316d20b7e3b0e8ba4bc312b71966}
+
+
+Checks if this vector is equal to the second vector. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em v}]The second vector. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]The resulting vector. \end{Desc}
+\index{Engine::Vector2@{Engine::Vector2}!isInRect@{isInRect}}
+\index{isInRect@{isInRect}!Engine::Vector2@{Engine::Vector2}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}bool isInRect (double {\em left}, double {\em top}, double {\em right}, double {\em bottom})\hspace{0.3cm}{\tt  [inline]}}\label{classEngine_1_1Vector2_2f90042f988f200130eb6ba7eb0c35ac}
+
+
+A shortcut function to check wether this vector is inside a rectangle - if we consider it a position vector (origin in (0,0), end-point at (x,y)). \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em left}]Left side of the rectangle. \item[{\em top}]Top side of the rectangle. \item[{\em right}]Right side of the rectangle. \item[{\em bottom}]Bottom side of the rectangle. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]True if the position vector is considered inside the specified rectangle. False otherwise. \end{Desc}
+
+
+The documentation for this class was generated from the following file:\begin{CompactItemize}
+\item 
+{\bf util\_\-vector2.h}\end{CompactItemize}

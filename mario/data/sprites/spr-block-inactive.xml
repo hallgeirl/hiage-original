@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sprite name="BlockInactive" framewidth="16" frameheight="16">
+  <texture name="BlockInactive" />
+
+  <animation name="active">
+    <frame x="0" y="0" delay="1" nextframe="0" colbox="0 0 16 16" />
+  </animation>
+</sprite>

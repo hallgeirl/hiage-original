@@ -1,0 +1,40 @@
+\section{GameState Class Reference}
+\label{classEngine_1_1GameState}\index{Engine::GameState@{Engine::GameState}}
+{\tt \#include $<$com\_\-gamestate.h$>$}
+
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+virtual void \textbf{init} ({\bf Game} $\ast$game)=0\label{classEngine_1_1GameState_a036a0c79b1db54def5461a0f60528bb}
+
+\item 
+virtual void \textbf{destroy} ()=0\label{classEngine_1_1GameState_f79997318d96497d77015571261ec88b}
+
+\item 
+virtual void \textbf{pause} ()=0\label{classEngine_1_1GameState_146b9e6f9c2d9d5b18e7221a38dbf103}
+
+\item 
+virtual void \textbf{resume} ()=0\label{classEngine_1_1GameState_6596cf9cc8befb8bce505a0cc4228180}
+
+\item 
+virtual void \textbf{handleEvents} ({\bf Game} $\ast$game, double frametime)=0\label{classEngine_1_1GameState_4ac63419f0fdb380705be8f0b0d161b0}
+
+\item 
+virtual void \textbf{update} ({\bf Game} $\ast$game, double frametime)=0\label{classEngine_1_1GameState_e58cbdefe113e3ee18aa12b7c00a507b}
+
+\item 
+virtual void \textbf{render} ({\bf Game} $\ast$game, double frametime)=0\label{classEngine_1_1GameState_8f408c95c78294e315d92de833e81d09}
+
+\item 
+void \textbf{changeState} ({\bf Game} $\ast$game, {\bf GameState} $\ast$state)\label{classEngine_1_1GameState_f863ae3110f6a19d9df14819aae3fffd}
+
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+Class for handling game states. This is an abstract class, so you need to derive it. The idea is that you can have a number of game states in a game. Each state can have its own code for handling input, updating whatever objects you got, rendering and so forth. For instance, you can derive a state called MapState which handles everything that happens on the map (like rendering the map, updating all objects on the map, handling the input and so forth), and you can have let's say a MainMenuState which renders the main menu etc. 
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+{\bf com\_\-gamestate.h}\item 
+{\bf com\_\-gamestate.cpp}\end{CompactItemize}

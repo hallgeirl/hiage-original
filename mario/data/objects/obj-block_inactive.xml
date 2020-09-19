@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object name="BlockInactive" type="Block">
+  <sprite name="BlockInactive" />
+
+  <scripts>
+    <script type="init" function="initBlock" />
+    <script type="update" function="updateBlock" />
+    <script type="objcollision" function="blockCollide" />
+  </scripts>
+</object>

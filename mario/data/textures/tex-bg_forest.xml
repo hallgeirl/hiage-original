@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<texture name="ForestBackground">
+  <bitmap path="data/gfx/bg_forest.tga" />
+</texture>

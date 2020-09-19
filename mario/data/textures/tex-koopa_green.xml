@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<texture name="GreenKoopa">
+  <bitmap path="data/gfx/sprites/koopa_green.tga" />
+</texture>

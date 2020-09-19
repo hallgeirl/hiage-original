@@ -1,0 +1,671 @@
+#LyX 1.4.4 created this file. For more info see http://www.lyx.org/
+\lyxformat 245
+\begin_document
+\begin_header
+\textclass book
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Z-Engine User's Guide
+\end_layout
+
+\begin_layout Author
+Hallgeir Lien
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand \tableofcontents{}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
+Introduction
+\end_layout
+
+\begin_layout Section
+What this Z-Engine?
+\end_layout
+
+\begin_layout Standard
+The Z-Engine is basically a game engine, made to power 2D-games.
+ It's designed to hide all the low-level coding, so you can focus on making
+ the actual game without worrying about for instance drawing the graphics,
+ which will be handled by the engine.
+ 
+\end_layout
+
+\begin_layout Standard
+Actually there is two approaches to use this engine, which will be looked
+ at later on.
+ One approach hides the engine code completely, and only needs you to tell
+ the engine to let's say, load a texture, create a sprite, and render it.
+ All that is done via 
+\begin_inset Quotes eld
+\end_inset
+
+Commands
+\begin_inset Quotes erd
+\end_inset
+
+, which will be covered later in this guide.
+ We could call this approach the DLL approach, since you will be making
+ a .dll which is then loaded in an supplied .exe file.
+\end_layout
+
+\begin_layout Standard
+The second approach requires you to set up your own window(s) for drawing,
+ and manually create a Display-object, tell it to initialize OpenGL, and
+ so forth.
+ In other words, it's a bit more low-level, but also more flexible.
+ This approach is probably appropriate to use if you are making a map editor.
+ Why is explained later.
+ Let's call this approach the EXE approach since it requires you to manually
+ make the executable file.
+\end_layout
+
+\begin_layout Section
+What do I need?
+\end_layout
+
+\begin_layout Standard
+There's not much you actually need to use the engine.
+ If you are using the first approach where the engine automatically sets
+ up a window and initializes, the only thing you need is a C++ compiler
+ and the .dll-files, plus the supplied .exe file.
+ You will then be making a DLL file, which is loaded into the engine when
+ the .exe file is executed.
+ 
+\end_layout
+
+\begin_layout Standard
+If you on the other hand uses the second approach and want to set it all
+ up manually, then you will also need the Z-engine header files, plus the
+ static library files (*.lib), in addition to the .dll files and a C++ compiler.
+\end_layout
+
+\begin_layout Section
+How does the engine work?
+\end_layout
+
+\begin_layout Standard
+The engine is built up of subsystems.
+ Each got their own 
+\begin_inset Quotes eld
+\end_inset
+
+role
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Let's look at all of them.
+\end_layout
+
+\begin_layout Subsection
+The subsystems
+\end_layout
+
+\begin_layout Subsubsection
+The Graphics subsystem
+\end_layout
+
+\begin_layout Standard
+This one is pretty self explanatory.
+ It handles everything related to graphics.
+ Here is basically what it can do:
+\end_layout
+
+\begin_layout Itemize
+Initialize OpenGL, and attach it to a window.
+ The engine can be set to run in fullscreen or in a window.
+\end_layout
+
+\begin_layout Itemize
+Resize the OpenGL-scene so it matches the window-size.
+\end_layout
+
+\begin_layout Itemize
+Limit the frames per second (FPS).
+\end_layout
+
+\begin_layout Itemize
+Handle the game camera (what part of the game map to display).
+\end_layout
+
+\begin_layout Itemize
+Manage sprites.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Create sprites and choose a texture for the sprite.
+\end_layout
+
+\begin_layout Itemize
+Add animations to those sprites, with any number of frames and time between
+ frames.
+\end_layout
+
+\begin_layout Itemize
+Position the sprites in the game world.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Load textures from a .tga file, or from a pre-loaded image, and if neccesary,
+ get their dimensions and bit per pixel value.
+\end_layout
+
+\begin_layout Itemize
+Manage and draw tilemaps and tilesets.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Create a tilemap with any dimensions, and a custom dimension of the tiles.
+\end_layout
+
+\begin_layout Itemize
+Load a tileset (collection of textures) to use with the tilemap.
+\end_layout
+
+\begin_layout Itemize
+Add animations for the tiles!!
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Fonts 
+\color red
+[ COMING SOON ]
+\end_layout
+
+\begin_layout Subsubsection
+The Input subsystem
+\end_layout
+
+\begin_layout Standard
+This subsystem handles all input (keyboard, mouse, gamepad...).
+ Unfortunately this part of the engine is still under development.
+ Currently only the keyboard part is working.
+\end_layout
+
+\begin_layout Subsubsection
+Shared libraries
+\end_layout
+
+\begin_layout Standard
+This is a small, but very useful part.
+ It contains a dynamic array class, and an error class which can log everything
+ to a file.
+ More documentation on this coming soon.
+\end_layout
+
+\begin_layout Subsection
+The engine core executable
+\end_layout
+
+\begin_layout Standard
+This part of the engine is what puts it all together.
+ You are not required to use this executable for your games, but I recommend
+ it since it handles every initialization and everything, so you can focus
+ on your game instead of the engine.
+\end_layout
+
+\begin_layout Standard
+\noindent
+This is how it works:
+\end_layout
+
+\begin_layout Enumerate
+When the .exe file is executed, it initializes everything (including creating
+ a window) and sends an ES_INIT message to the game .dll file.
+ More on those messages later.
+\end_layout
+
+\begin_layout Enumerate
+When everything is initialized, it starts its main loop.
+ Every loop it prepares the window for rendering, then sends a ES_RUN message
+ to the game .dll file.
+\end_layout
+
+\begin_layout Enumerate
+When the game exits, it shuts down everything it initalized, and sends a
+ ES_SHUTDOWN message to the game .dll file.
+\end_layout
+
+\begin_layout Standard
+So what are those messages? EVERY time the engine sends the game .dll a message,
+ it does so by running a function inside the .dll file called vmMain.
+ The vmMain function is declared as
+\end_layout
+
+\begin_layout Standard
+
+\color blue
+void
+\color inherit
+ vmMain(
+\color blue
+int
+\color inherit
+ nState, 
+\color blue
+double
+\color inherit
+ dTimeFactor);
+\end_layout
+
+\begin_layout Standard
+\noindent
+where nState is the actual message the engine sent (ES_INIT, ES_RUN or ES_SHUTDO
+WN), and dTimeFactor is the time the frame used to render, so you can make
+ the game framerate independant.
+ Whenever the engine sends a message, you can then send COMMANDS to the
+ engine, telling it what to do: Load sprites? Load textures? Render a sprite?
+ Shut down? Everything you need.
+ More on those commands later.
+\newline
+
+\end_layout
+
+\begin_layout Standard
+This is it on how the engine works, so let's get over to how to use it.
+\end_layout
+
+\begin_layout Chapter
+Using the engine
+\end_layout
+
+\begin_layout Section
+Setting up the engine
+\end_layout
+
+\begin_layout Subsection
+Using the .DLL approach
+\end_layout
+
+\begin_layout Standard
+Setting up the engine to use the supplied .exe with the game code stored
+ in a .dll file is the easiest way, and the way I would recommend.
+ I will only cover how to set up this in MS Visual Studio, since well..
+ it's the only one I know.
+ :P
+\end_layout
+
+\begin_layout Standard
+Make a new Win32 project.
+\end_layout
+
+\begin_layout Standard
+Select Application type: DLL.
+\end_layout
+
+\begin_layout Standard
+Check the Empty Project box.
+\end_layout
+
+\begin_layout Standard
+Add a new file to the project, of the type 
+\begin_inset Quotes eld
+\end_inset
+
+Module-Definition File (.def)
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In that file add the following code, below the 
+\begin_inset Quotes eld
+\end_inset
+
+LIBRARY 
+\begin_inset Quotes eld
+\end_inset
+
+yourproject
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+ part:
+\end_layout
+
+\begin_layout Standard
+
+\shape italic
+EXPORTS 
+\end_layout
+
+\begin_layout Standard
+
+\shape italic
+vmEntry 
+\end_layout
+
+\begin_layout Standard
+
+\shape italic
+vmMain
+\end_layout
+
+\begin_layout Standard
+vmEntry and the vmMain functions are the only functions actually exported
+ to the core .exe file.
+ We will look at those soon.
+\end_layout
+
+\begin_layout Standard
+Next, create a new source file, which will contain those two main functions.
+ Name it 
+\begin_inset Quotes eld
+\end_inset
+
+main.cpp
+\begin_inset Quotes erd
+\end_inset
+
+ for the sake of simpleness.
+ Here we will look at the two exported functions.
+\end_layout
+
+\begin_layout Standard
+First off in main.cpp (or whatever you named it), you need to include one
+ file: 
+\begin_inset Quotes eld
+\end_inset
+
+gameengine.h
+\begin_inset Quotes erd
+\end_inset
+
+.
+ It contains all definitions of the commands and states, plus a typedef
+ of a function pointer, which will point to the SendCommand function in
+ the .exe file, so the .dll file can communicate with the .exe file.
+ 
+\end_layout
+
+\begin_layout Standard
+In your main.cpp (or whatever), we will now create the functions needed for
+ the engine to even start.
+ First, we will create the vmEntry function.
+ ALL that function will do, is to set the function pointer to point to the
+ SendCommand-function in the .exe file.
+ It's done like this:
+\end_layout
+
+\begin_layout Standard
+
+\color blue
+void
+\color inherit
+ vmEntry(SEND_COMMAND fnCall)
+\end_layout
+
+\begin_layout Standard
+{
+\end_layout
+
+\begin_layout Standard
+SendCommand = fnCall;
+\end_layout
+
+\begin_layout Standard
+}
+\end_layout
+
+\begin_layout Standard
+When the .dll file is loaded in the .exe file, it will call this particular
+ function in the .dll, and pass the address of the SendCommand function residing
+ in the exe file, to this function.
+ Then in the .dll, what you simply do is passing this address along to the
+ SendCommand function pointer.
+\end_layout
+
+\begin_layout Standard
+Next up is the vmMain function, which is required for the main loop.
+ It's defined like this:
+\end_layout
+
+\begin_layout Standard
+
+\color blue
+void
+\color inherit
+ vmMain(
+\color blue
+int
+\color inherit
+ nState, double dTimeFactor)
+\end_layout
+
+\begin_layout Standard
+{
+\end_layout
+
+\begin_layout Standard
+//your code here
+\end_layout
+
+\begin_layout Standard
+}
+\end_layout
+
+\begin_layout Standard
+To load this file into the engine, it must be named 
+\begin_inset Quotes eld
+\end_inset
+
+game.dll
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Then put it in a sub-folder in the folder of the .exe file.
+ To load that particular game.dll-file, you simply pass the argument 
+\begin_inset Quotes eld
+\end_inset
+
+-game <name_of_the_sub-folder>
+\begin_inset Quotes erd
+\end_inset
+
+ to the .exe file.
+ Let's say you made a subfolder called 
+\begin_inset Quotes eld
+\end_inset
+
+testgame
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Then you load your game .dll file like this:
+\end_layout
+
+\begin_layout Standard
+core.exe -game testgame
+\end_layout
+
+\begin_layout Standard
+The exe file will then look in the testgame subfolder for a game.dll file
+ and load it.
+\end_layout
+
+\begin_layout Standard
+That's it! All is set up and ready to be used.
+\end_layout
+
+\begin_layout Subsection
+Using the .EXE approach
+\end_layout
+
+\begin_layout Standard
+So you decided you don't want to use the above method of setting up the
+ engine.
+ Fine, so here is how you do it if you want to create your OWN windows and
+ have full control over everything.
+ I will assume you know a tiny bit of Win32 API programming, and know how
+ to set up a window.
+\end_layout
+
+\begin_layout Standard
+First off, make sure you have loaded all the neccesary .lib files (sys_graphics.li
+b if you want graphics, sys_input.lib if you want input, and shared.lib).
+ I will now assume your window is set up.
+ First you need to create an instance of the C_GFX_Display object.
+ Make sure you make it in a scope so you can reach it from your message
+ handler, and your message loop.
+ Making it a global variable might be a good idea, or perhaps make an Engine
+ class and put it there? Your choice, as long as it can be reached from
+ the message loop & handler:
+\end_layout
+
+\begin_layout Standard
+C_GFX_Display Display;
+\end_layout
+
+\begin_layout Standard
+First part is initialization.
+ It's done like this:
+\end_layout
+
+\begin_layout Standard
+Display.Initialize(hWnd); //where hWnd is the handle to your window.
+\end_layout
+
+\begin_layout Standard
+Next you can choose wether or not the scene will be stretched out if you
+ resize your window.
+ In most situation this should not be the case and you should pass the following
+ function call:
+\end_layout
+
+\begin_layout Standard
+Display.SetState(C_GFX_Display::DS_STRETCH_SCENE, false); //or set it to
+ true, to stretch the scene
+\end_layout
+
+\begin_layout Standard
+Additionally, you are required to put the following function call in your
+ handler for the WM_SIZE function, so it is called whenever the window is
+ resized:
+\end_layout
+
+\begin_layout Standard
+Display.Resize(LOWORD(lParam), HIWORD(lParam));
+\end_layout
+
+\begin_layout Standard
+And last, you need to put this in as your message loop:
+\end_layout
+
+\begin_layout Standard
+
+\color blue
+while
+\color inherit
+ (m_bRunning)
+\end_layout
+
+\begin_layout Standard
+{
+\end_layout
+
+\begin_layout Standard
+
+\color blue
+if
+\color inherit
+ (PeekMessage(&Msg,m_hWnd,0,0,PM_REMOVE))
+\end_layout
+
+\begin_layout Standard
+{
+\end_layout
+
+\begin_layout Standard
+TranslateMessage(&Msg);
+\end_layout
+
+\begin_layout Standard
+DispatchMessage(&Msg);
+\end_layout
+
+\begin_layout Standard
+}
+\end_layout
+
+\begin_layout Standard
+
+\color blue
+else
+\end_layout
+
+\begin_layout Standard
+{
+\end_layout
+
+\begin_layout Standard
+Display.BeginRender();
+\end_layout
+
+\begin_layout Standard
+//put all your game's code here
+\end_layout
+
+\begin_layout Standard
+Display.Render();
+\end_layout
+
+\begin_layout Standard
+}
+\end_layout
+
+\begin_layout Standard
+Well, that's it.
+ It's initialized.
+ Be aware that it's much more work than it looks since you need to manually
+ create a message handler and loop, manually create a window and everything.
+\end_layout
+
+\begin_layout Chapter
+Using the engine
+\end_layout
+
+\end_body
+\end_document

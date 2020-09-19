@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="mapeditor-gtk" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/mapeditor-gtk" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../mario" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="`pkg-config --cflags gtk+-2.0 gtkmm-2.4 glibmm-2.4  libglademm-2.4`" />
+					<Add directory="/usr/include/glibmm-2.4" />
+					<Add directory="/usr/include/gtkmm-2.4" />
+					<Add directory="/usr/include/gdkmm-2.4" />
+					<Add directory="/usr/include/glib-2.0" />
+				</Compiler>
+				<Linker>
+					<Add library="libglibmm-2.4" />
+					<Add library="libgtkmm-2.4" />
+					<Add library="../engine/bin/Debug/hinage.so" />
+					<Add library="libglademm-2.4" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/mapeditor-gtk" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="/media/hda1/Misc/Programmering/codeblocks-workspace/gameproject/mario" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="`pkg-config --cflags gtk+-2.0 gtkmm-2.4 glibmm-2.4  libglademm-2.4`" />
+					<Add option="-DRELEASE" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="libglibmm-2.4" />
+					<Add library="libgtkmm-2.4" />
+					<Add library="libglademm-2.4" />
+					<Add library="../engine/bin/Release/hinage.so" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="main.cpp" />
+		<Unit filename="mainwindow.cpp" />
+		<Unit filename="mainwindow.h" />
+		<Unit filename="mapeditgame.cpp" />
+		<Unit filename="mapeditgame.h" />
+		<Unit filename="newmapdialog.h" />
+		<Unit filename="newmapwindow.cpp" />
+		<Unit filename="resizedialog.cpp" />
+		<Unit filename="resizedialog.h" />
+		<Unit filename="tilepalette.cpp" />
+		<Unit filename="tilepalette.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

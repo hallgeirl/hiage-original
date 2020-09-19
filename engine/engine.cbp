@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Hinage Engine" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/hinage" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/Debug" />
+				<Option object_output="obj/Debug/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-pg" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg" />
+					<Add library="libGL" />
+					<Add library="libboost_filesystem" />
+					<Add library="libSDL" />
+					<Add library="libSDL_mixer" />
+					<Add library="liblua50" />
+					<Add library="liblualib50" />
+					<Add library="libluabind" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/hinage" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/Release" />
+				<Option object_output="obj/Release/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="libGL" />
+					<Add library="libboost_filesystem" />
+					<Add library="libSDL" />
+					<Add library="libSDL_mixer" />
+					<Add library="liblua50" />
+					<Add library="liblualib50" />
+					<Add library="libluabind" />
+				</Linker>
+			</Target>
+			<Target title="Release-Windows">
+				<Option output="engine" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Linker>
+					<Add option="-s" />
+					<Add library="G:/libs/boost_filesystem-mgw34-1_34_1.a" />
+					<Add library="libSDL.dll.a" />
+					<Add library="C:/MinGW/lib/libopengl32.a" />
+					<Add library="liblua.a" />
+					<Add library="G:/libs/libmain-lib.a" />
+					<Add library="liblualib.a" />
+					<Add directory="G:/libs" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="com_exceptions.cpp" />
+		<Unit filename="com_exceptions.h" />
+		<Unit filename="com_game.cpp" />
+		<Unit filename="com_game.h" />
+		<Unit filename="com_objectfactory.cpp" />
+		<Unit filename="com_objectfactory.h" />
+		<Unit filename="com_resmanager.cpp" />
+		<Unit filename="com_resmanager.h" />
+		<Unit filename="com_typedefs.h" />
+		<Unit filename="game_entity.cpp" />
+		<Unit filename="game_entity.h" />
+		<Unit filename="game_map.cpp" />
+		<Unit filename="game_map.h" />
+		<Unit filename="gfx_display.cpp" />
+		<Unit filename="gfx_display.h" />
+		<Unit filename="gfx_particles.cpp" />
+		<Unit filename="gfx_particles.h" />
+		<Unit filename="gfx_renderer.cpp" />
+		<Unit filename="gfx_renderer.h" />
+		<Unit filename="gfx_sprite.cpp" />
+		<Unit filename="gfx_sprite.h" />
+		<Unit filename="gfx_texture.cpp" />
+		<Unit filename="gfx_texture.h" />
+		<Unit filename="gfx_tilemap.cpp" />
+		<Unit filename="gfx_tilemap.h" />
+		<Unit filename="gfx_tileset.cpp" />
+		<Unit filename="gfx_tileset.h" />
+		<Unit filename="in_inputmanager.cpp" />
+		<Unit filename="in_inputmanager.h" />
+		<Unit filename="script_lua.cpp" />
+		<Unit filename="script_lua.h" />
+		<Unit filename="snd_audio.cpp" />
+		<Unit filename="snd_audio.h" />
+		<Unit filename="tinyxml/tinystr.cpp" />
+		<Unit filename="tinyxml/tinystr.h" />
+		<Unit filename="tinyxml/tinyxml.cpp" />
+		<Unit filename="tinyxml/tinyxml.h" />
+		<Unit filename="tinyxml/tinyxmlerror.cpp" />
+		<Unit filename="tinyxml/tinyxmlparser.cpp" />
+		<Unit filename="ui_menu.cpp" />
+		<Unit filename="ui_menu.h" />
+		<Unit filename="ui_windows.cpp" />
+		<Unit filename="ui_windows.h" />
+		<Unit filename="util_fonts.cpp" />
+		<Unit filename="util_fonts.h" />
+		<Unit filename="util_timer.cpp" />
+		<Unit filename="util_timer.h" />
+		<Unit filename="util_vector2.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sprite name="MarioSmall" framewidth="16" frameheight="24">
+  <texture name="MarioSmall" />
+	
+  <animation name="stand">
+    <frame x="0" y="0" delay="1" nextframe="0" colbox="1 1 15 20" />
+  </animation>
+
+  <animation name="walk">
+    <frame x="0" y="0" delay="0.5" nextframe="1" colbox="1 1 15 20" />
+    <frame x="16" y="0" delay="0.5" nextframe="0" colbox="1 1 15 20" />
+  </animation>
+
+  <animation name="run">
+    <frame x="112" y="0" delay="0.7" nextframe="1" colbox="1 1 15 20" />
+    <frame x="128" y="0" delay="0.7" nextframe="0" colbox="1 1 15 20" />
+  </animation>
+
+  <animation name="jump">
+    <frame x="32" y="0" delay="1" nextframe="0" colbox="1 1 15 22" />
+  </animation>
+
+  <animation name="longjump">
+    <frame x="160" y="0" delay="1" nextframe="0" colbox="1 1 15 20" />
+  </animation>
+
+  <animation name="fall">
+    <frame x="48" y="0" delay="1" nextframe="0" colbox="1 1 15 20" />
+  </animation>
+
+  <animation name="die">
+    <frame x="192" y="0" delay="1" nextframe="1" />
+    <frame x="208" y="0" delay="1" nextframe="0" />
+  </animation>
+
+</sprite>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<texture name="BlueDomesBackground">
+  <bitmap path="data/gfx/bg_domes_blue.tga" />
+</texture>

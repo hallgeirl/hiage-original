@@ -1,0 +1,90 @@
+\section{Renderer Class Reference}
+\label{classEngine_1_1Renderer}\index{Engine::Renderer@{Engine::Renderer}}
+{\tt \#include $<$gfx\_\-renderer.h$>$}
+
+\subsection*{Public Types}
+\begin{CompactItemize}
+\item 
+enum {\bf \_\-ObjectZ} \{ \par
+\textbf{CLOSEST} =  0, 
+\textbf{FRONT} =  1, 
+\textbf{NEAR\_\-FRONT} =  2, 
+\textbf{MIDDLE\_\-FRONT} =  3, 
+\par
+\textbf{MIDDLE} =  4, 
+\textbf{MIDDLE\_\-BACK} =  5, 
+\textbf{NEAR\_\-BACK} =  6, 
+\textbf{BACK} =  7, 
+\par
+\textbf{FURTHEST} =  8
+ \}
+\end{CompactItemize}
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+void {\bf beginRender} ({\bf ObjectZ} zposition, Texture $\ast$texture)
+\item 
+void {\bf addVertex} (double x, double y, double texX, double texY)
+\item 
+void \textbf{endRender} ()\label{classEngine_1_1Renderer_ee7f73b7269cbbf181d92553f2b8f8f0}
+
+\end{CompactItemize}
+\subsection*{Public Attributes}
+\begin{CompactItemize}
+\item 
+enum {\bf Engine::Renderer::\_\-ObjectZ} {\bf ObjectZ}
+\end{CompactItemize}
+\subsection*{Classes}
+\begin{CompactItemize}
+\item 
+struct \textbf{\_\-RenderObject}
+\item 
+struct \textbf{\_\-Vertex}
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+Abstraction for rendering. Handles rendering of everything. 
+
+\subsection{Member Enumeration Documentation}
+\index{Engine::Renderer@{Engine::Renderer}!_ObjectZ@{\_\-ObjectZ}}
+\index{_ObjectZ@{\_\-ObjectZ}!Engine::Renderer@{Engine::Renderer}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}enum {\bf \_\-ObjectZ}}\label{classEngine_1_1Renderer_aca92d07cc37302f2255feb3aa116295}
+
+
+Struct that describes an renderable objects Z-position relative to the others. This is to control what objects that should be rendered in front of what. 
+
+\subsection{Member Function Documentation}
+\index{Engine::Renderer@{Engine::Renderer}!beginRender@{beginRender}}
+\index{beginRender@{beginRender}!Engine::Renderer@{Engine::Renderer}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void beginRender ({\bf ObjectZ} {\em zposition}, Texture $\ast$ {\em texture})}\label{classEngine_1_1Renderer_a5cf1b94f3a6b99f1c2e9e6abfc5eec6}
+
+
+Start rendering. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em zposition}]The z-position to render the object in. Must be one of the constants defined in the enum ObjectZ. \item[{\em texture}]Pointer to a texture to use for rendering. Pass a null-pointer for no texture. \end{description}
+\end{Desc}
+\index{Engine::Renderer@{Engine::Renderer}!addVertex@{addVertex}}
+\index{addVertex@{addVertex}!Engine::Renderer@{Engine::Renderer}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void addVertex (double {\em x}, double {\em y}, double {\em texX}, double {\em texY})}\label{classEngine_1_1Renderer_41f3f43242421530c19bc757a2c8a75e}
+
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em x}]x-position of the vertex to be drawn. \item[{\em y}]y-position of the vertex to be drawn. \item[{\em texX}]The texture's x-coordinate for this vertex. \item[{\em $\backslash$note}]Vertices must be added in multiples of 4. Failure to do this will result in an exception being thrown. \end{description}
+\end{Desc}
+
+
+\subsection{Member Data Documentation}
+\index{Engine::Renderer@{Engine::Renderer}!ObjectZ@{ObjectZ}}
+\index{ObjectZ@{ObjectZ}!Engine::Renderer@{Engine::Renderer}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Engine::Renderer::\_\-ObjectZ}  {\bf ObjectZ}}\label{classEngine_1_1Renderer_7c6b26b0da0ff88381daa002200cfa86}
+
+
+Struct that describes an renderable objects Z-position relative to the others. This is to control what objects that should be rendered in front of what. 
+
+The documentation for this class was generated from the following file:\begin{CompactItemize}
+\item 
+gfx\_\-renderer.h\end{CompactItemize}

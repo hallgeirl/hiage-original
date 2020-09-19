@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sprite name="MarioBig" framewidth="20" frameheight="31">
+  <texture name="MarioBig" />
+	
+  <animation name="stand">
+    <frame x="0" y="0" delay="1" nextframe="0" colbox="3 1 16 25" />
+  </animation>
+
+  <animation name="walk">
+    <frame x="0" y="0" delay="0.5" nextframe="1"  colbox="3 1 16 25" />
+    <frame x="40" y="0" delay="0.5" nextframe="3" colbox="3 1 16 25" />
+    <frame x="0" y="0" delay="0.5" nextframe="1" colbox="3 1 16 25" />
+    <frame x="20" y="0" delay="0.5" nextframe="0" colbox="3 1 16 25" />
+  </animation>
+
+  <animation name="run">
+    <frame x="180" y="0" delay="0.7" nextframe="1" colbox="3 1 16 25" />
+    <frame x="200" y="0" delay="0.7" nextframe="2" colbox="3 1 16 25" />
+    <frame x="220" y="0" delay="0.7" nextframe="0" colbox="3 1 16 25" />
+  </animation>
+
+  <animation name="jump">
+    <frame x="60" y="0" delay="1" nextframe="0" colbox="3 1 16 25" />
+  </animation>
+
+  <animation name="longjump">
+    <frame x="240" y="0" delay="1" nextframe="0" colbox="3 1 16 25" />
+  </animation>
+
+  <animation name="fall">
+    <frame x="80" y="0" delay="1" nextframe="0" colbox="3 1 16 25" />
+  </animation>
+
+  <animation name="die">
+    <frame x="360" y="0" delay="1" nextframe="1" colbox="2 1 16 20" />
+    <frame x="0" y="0" delay="1" nextframe="2" colbox="3 1 16 28" />
+    <frame x="360" y="0" delay="1" nextframe="3" colbox="2 1 16 20" />
+    <frame x="0" y="0" delay="1" nextframe="4" colbox="3 1 16 28" />
+    <frame x="360" y="0" delay="1" nextframe="5" colbox="2 1 16 20" />
+    <frame x="0" y="0" delay="1" nextframe="6" colbox="3 1 16 28" />
+    <frame x="360" y="0" delay="1" nextframe="6" colbox="2 1 16 20" />
+  </animation>
+</sprite>

@@ -1,0 +1,64 @@
+\section{com\_\-typedefs.h File Reference}
+\label{com__typedefs_8h}\index{com_typedefs.h@{com\_\-typedefs.h}}
+{\tt \#include $<$iostream$>$}\par
+{\tt \#include $<$map$>$}\par
+\subsection*{Namespaces}
+\begin{CompactItemize}
+\item 
+namespace {\bf Engine}
+\end{CompactItemize}
+\subsection*{Classes}
+\begin{CompactItemize}
+\item 
+struct {\bf Engine::\_\-Rect}
+\end{CompactItemize}
+\subsection*{Defines}
+\begin{CompactItemize}
+\item 
+\#define {\bf \_\-\_\-IMPORTEXPORT}
+\item 
+\#define {\bf GL\_\-CLAMP\_\-TO\_\-EDGE}~0x812F
+\end{CompactItemize}
+\subsection*{Typedefs}
+\begin{CompactItemize}
+\item 
+typedef struct {\bf Engine::\_\-Rect} {\bf Engine::Rect}
+\item 
+typedef unsigned int {\bf Engine::uint}
+\item 
+typedef unsigned char {\bf Engine::ubyte}
+\item 
+typedef signed char {\bf Engine::byte}
+\item 
+typedef std::map$<$ std::string, std::string $>$ {\bf Engine::ObjectList}
+\end{CompactItemize}
+\subsection*{Enumerations}
+\begin{CompactItemize}
+\item 
+enum {\bf Engine::ResourceTypeEnum} \{ \par
+{\bf Engine::SPRITE} =  1, 
+{\bf Engine::OBJECT} =  2, 
+{\bf Engine::TEXTURE} =  3, 
+{\bf Engine::TILESET} =  4, 
+\par
+{\bf Engine::FONT} =  5
+ \}
+\end{CompactItemize}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+std::ostream \& {\bf Engine::operator$<$$<$} (std::ostream \&stream, const Rect \&r)
+\end{CompactItemize}
+
+
+\subsection{Define Documentation}
+\index{com_typedefs.h@{com\_\-typedefs.h}!__IMPORTEXPORT@{\_\-\_\-IMPORTEXPORT}}
+\index{__IMPORTEXPORT@{\_\-\_\-IMPORTEXPORT}!com_typedefs.h@{com\_\-typedefs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define \_\-\_\-IMPORTEXPORT}\label{com__typedefs_8h_07a1eb4568b752b291014924a13ba72b}
+
+
+\index{com_typedefs.h@{com\_\-typedefs.h}!GL_CLAMP_TO_EDGE@{GL\_\-CLAMP\_\-TO\_\-EDGE}}
+\index{GL_CLAMP_TO_EDGE@{GL\_\-CLAMP\_\-TO\_\-EDGE}!com_typedefs.h@{com\_\-typedefs.h}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define GL\_\-CLAMP\_\-TO\_\-EDGE~0x812F}\label{com__typedefs_8h_e90f81f48642444b4ba7fa5cacf40569}
+
+

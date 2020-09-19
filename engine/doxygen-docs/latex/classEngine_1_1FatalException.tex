@@ -1,0 +1,36 @@
+\section{FatalException Class Reference}
+\label{classEngine_1_1FatalException}\index{Engine::FatalException@{Engine::FatalException}}
+{\tt \#include $<$com\_\-exceptions.h$>$}
+
+Inheritance diagram for FatalException::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classEngine_1_1FatalException}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+{\bf FatalException} (std::string msg, bool print=true, std::ostream \&stream=std::cerr)
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Exception}{p.}{classEngine_1_1Exception} class for exceptions the program probably shouldn't attempt to recover from. Examples are failure to initialize the specified video mode, initialization errors, memory allocation errors and so on. 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Engine::FatalException@{Engine::FatalException}!FatalException@{FatalException}}
+\index{FatalException@{FatalException}!Engine::FatalException@{Engine::FatalException}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf FatalException} (std::string {\em msg}, bool {\em print} = {\tt true}, std::ostream \& {\em stream} = {\tt std::cerr})}\label{classEngine_1_1FatalException_b68741b6b9e8a9b683d9bbeae06d853f}
+
+
+Constructor for \doxyref{FatalException}{p.}{classEngine_1_1FatalException} class. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em msg}]The message to print/store. \item[{\em print}]Set to true if you want to print the message to stream. Default is true. \item[{\em stream}]The stream to print msg to. Default is std::cerr. \end{description}
+\end{Desc}
+
+
+The documentation for this class was generated from the following file:\begin{CompactItemize}
+\item 
+{\bf com\_\-exceptions.h}\end{CompactItemize}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<texture name="GreenMountainsBackground">
+  <bitmap path="data/gfx/bg_mountains_green.tga" />
+</texture>

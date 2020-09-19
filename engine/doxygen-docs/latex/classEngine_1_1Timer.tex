@@ -1,0 +1,87 @@
+\section{Timer Class Reference}
+\label{classEngine_1_1Timer}\index{Engine::Timer@{Engine::Timer}}
+{\tt \#include $<$util\_\-timer.h$>$}
+
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+{\bf Timer} ()
+\item 
+void {\bf update} ()
+\item 
+void {\bf start} ()
+\item 
+void {\bf reset} ()
+\item 
+void {\bf stop} ()
+\item 
+void {\bf setTime} (double newtime)
+\item 
+double {\bf getTime} ()
+\item 
+bool {\bf hasReached} (double target)
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+Class for handling timing of events, and other stuff that needs timing. It is initialized starting at 0 seconds. 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Engine::Timer@{Engine::Timer}!Timer@{Timer}}
+\index{Timer@{Timer}!Engine::Timer@{Engine::Timer}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Timer} ()}\label{classEngine_1_1Timer_6a8bc5014802d569f6d01c4f36121a81}
+
+
+Constructor. It initializes the timer, setting the clock to zero. The \doxyref{Timer}{p.}{classEngine_1_1Timer} is initially stopped. 
+
+\subsection{Member Function Documentation}
+\index{Engine::Timer@{Engine::Timer}!update@{update}}
+\index{update@{update}!Engine::Timer@{Engine::Timer}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void update ()}\label{classEngine_1_1Timer_c5c54df7ed3b930268c8d7752c101725}
+
+
+Updates the timer. Basically it adds the time passed since the last update, to the clock. It should be called regularily (for instance every time the game loop loops) to keep it updated. \index{Engine::Timer@{Engine::Timer}!start@{start}}
+\index{start@{start}!Engine::Timer@{Engine::Timer}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void start ()}\label{classEngine_1_1Timer_60de64d75454385b23995437f1d72669}
+
+
+Starts the timer. It does not reset it, nor does it change the value of the current time if called when the clock is not 0. \index{Engine::Timer@{Engine::Timer}!reset@{reset}}
+\index{reset@{reset}!Engine::Timer@{Engine::Timer}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void reset ()}\label{classEngine_1_1Timer_d20897c5c8bd47f5d4005989bead0e55}
+
+
+Resets the timer to zero. It does not, however, stop the clock. \index{Engine::Timer@{Engine::Timer}!stop@{stop}}
+\index{stop@{stop}!Engine::Timer@{Engine::Timer}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void stop ()}\label{classEngine_1_1Timer_8c528baf37154d347366083f0f816846}
+
+
+Stop the timer. \index{Engine::Timer@{Engine::Timer}!setTime@{setTime}}
+\index{setTime@{setTime}!Engine::Timer@{Engine::Timer}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void setTime (double {\em newtime})}\label{classEngine_1_1Timer_55abe2059b856b5235078d86355daddf}
+
+
+Sets the timer to a specified value, in seconds. \index{Engine::Timer@{Engine::Timer}!getTime@{getTime}}
+\index{getTime@{getTime}!Engine::Timer@{Engine::Timer}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}double getTime ()}\label{classEngine_1_1Timer_4437edd7fd2832790c13ba3179bcc64d}
+
+
+Get the current time. \index{Engine::Timer@{Engine::Timer}!hasReached@{hasReached}}
+\index{hasReached@{hasReached}!Engine::Timer@{Engine::Timer}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}bool hasReached (double {\em target})}\label{classEngine_1_1Timer_4da17de9da5063b6088a5375db0c44fa}
+
+
+Checks if the timer has reached a specified point. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em target}]The target time, in seconds. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Note:]The timer clock does not need to be exactly the target time for this function to interpret it as reached. \end{Desc}
+\begin{Desc}
+\item[Returns:]true if the specified target time has been reached, and false otherwise. \end{Desc}
+
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+{\bf util\_\-timer.h}\item 
+util\_\-timer.cpp\end{CompactItemize}

@@ -1,0 +1,47 @@
+\section{Exception Class Reference}
+\label{classEngine_1_1Exception}\index{Engine::Exception@{Engine::Exception}}
+{\tt \#include $<$com\_\-exceptions.h$>$}
+
+Inheritance diagram for Exception::\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2cm]{classEngine_1_1Exception}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+{\bf Exception} (std::string msg, bool print=true, std::ostream \&stream=std::cerr)
+\item 
+void {\bf print} ()
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+Base exception class. For generic exceptions. 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Engine::Exception@{Engine::Exception}!Exception@{Exception}}
+\index{Exception@{Exception}!Engine::Exception@{Engine::Exception}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf Exception} (std::string {\em msg}, bool {\em print} = {\tt true}, std::ostream \& {\em stream} = {\tt std::cerr})}\label{classEngine_1_1Exception_90e2ef08ce316817c9e36224b054d026}
+
+
+Constructor for \doxyref{Exception}{p.}{classEngine_1_1Exception} class. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em msg}]The message to print/store. \item[{\em print}]Set to true if you want to print the message to stream. Default is true. \item[{\em stream}]The stream to print msg to. Default is std::cerr. \end{description}
+\end{Desc}
+
+
+\subsection{Member Function Documentation}
+\index{Engine::Exception@{Engine::Exception}!print@{print}}
+\index{print@{print}!Engine::Exception@{Engine::Exception}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void print ()}\label{classEngine_1_1Exception_388f572c62279f839ee138a9afbdeeb5}
+
+
+Prints the stored message to the stream passed in the constructor, or to another stream if specified. 
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+{\bf com\_\-exceptions.h}\item 
+{\bf com\_\-exceptions.cpp}\end{CompactItemize}

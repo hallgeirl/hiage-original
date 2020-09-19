@@ -1,0 +1,10 @@
+Libraries:
+boost
+boost-filesystem
+
+sdl
+sdl-mixer
+
+gl
+
+tinyxml (included)

@@ -1,0 +1,199 @@
+\section{Game Class Reference}
+\label{classEngine_1_1Game}\index{Engine::Game@{Engine::Game}}
+{\tt \#include $<$com\_\-game.h$>$}
+
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+void {\bf initialize} (int width, int height, bool fullscreen)
+\item 
+void {\bf run} (double frameTime)
+\item 
+bool \textbf{isRunning} ()\label{classEngine_1_1Game_40e5881f9c001c5cc38554084751adbc}
+
+\item 
+void \textbf{stop} ()\label{classEngine_1_1Game_8c528baf37154d347366083f0f816846}
+
+\item 
+void {\bf shutdown} ()
+\item 
+void {\bf setGameState} ({\bf GameState} $\ast$state)
+\item 
+void {\bf pushState} ({\bf GameState} $\ast$state)
+\item 
+void {\bf popState} ()
+\item 
+Display \& {\bf getDisplayHandle} ()\label{classEngine_1_1Game_5f4a8115a669a3a6ed2fd9061acc2fb1}
+
+\begin{CompactList}\small\item\em Returns a reference to the display object. \item\end{CompactList}\item 
+InputManager \& {\bf getInputManagerHandle} ()\label{classEngine_1_1Game_4d8e0542e158bc2b414cd139ac216437}
+
+\begin{CompactList}\small\item\em Returns a reference to the inputManager object. \item\end{CompactList}\item 
+AudioManager \& {\bf getAudioManagerHandle} ()\label{classEngine_1_1Game_5dc56af0592bdde154965cf9adfd8d96}
+
+\begin{CompactList}\small\item\em Returns a reference to the audioManager object. \item\end{CompactList}\item 
+TextureManager \& {\bf getTextureManagerHandle} ()\label{classEngine_1_1Game_77493b13bb1123fcb52497b07f6ec0c6}
+
+\begin{CompactList}\small\item\em Returns a reference to the textureManager object. \item\end{CompactList}\item 
+SpriteManager \& {\bf getSpriteManagerHandle} ()\label{classEngine_1_1Game_3f80edb8d9cd6bc07e48c73beb7b4be6}
+
+\begin{CompactList}\small\item\em Returns a reference to the spriteManager object. \item\end{CompactList}\item 
+TilesetManager \& {\bf getTilesetManagerHandle} ()\label{classEngine_1_1Game_cadacd2788a7f136aa4a9006df1304f7}
+
+\begin{CompactList}\small\item\em Returns a reference to the tilesetManager object. \item\end{CompactList}\item 
+FontManager \& {\bf getFontManagerHandle} ()\label{classEngine_1_1Game_cd31e3a15a231962d1fd07de089fbbf7}
+
+\begin{CompactList}\small\item\em Returns a reference to the fontManager object. \item\end{CompactList}\item 
+ObjectList \& {\bf getObjectList} ()\label{classEngine_1_1Game_63d9f116dd82e815dc26411bb88cf80b}
+
+\begin{CompactList}\small\item\em Returns a reference to the object list. \item\end{CompactList}\item 
+std::string {\bf getObjectFile} (std::string name)
+\item 
+std::string {\bf getObjectSprite} (std::string name)
+\end{CompactItemize}
+\subsection*{Protected Member Functions}
+\begin{CompactItemize}
+\item 
+virtual void {\bf onInit} ()=0
+\item 
+void {\bf loadResources} (std::string dir, ResourceTypeEnum resType)
+\end{CompactItemize}
+\subsection*{Protected Attributes}
+\begin{CompactItemize}
+\item 
+Display {\bf display}\label{classEngine_1_1Game_a5083e8fab8ddaf62944949e251663bb}
+
+\begin{CompactList}\small\item\em Main screen object. \item\end{CompactList}\item 
+InputManager {\bf input}\label{classEngine_1_1Game_97b32e95987ca315616ccf4db09cf6a8}
+
+\begin{CompactList}\small\item\em Used to handle input. \item\end{CompactList}\item 
+AudioManager {\bf audio}\label{classEngine_1_1Game_72793f42ff446ad589575626b98c68e6}
+
+\begin{CompactList}\small\item\em All sounds and music are stored and handled here. \item\end{CompactList}\item 
+TextureManager {\bf textureManager}\label{classEngine_1_1Game_d02d149d8280564adf0654ce85a8aa05}
+
+\begin{CompactList}\small\item\em Stores the loaded textures. \item\end{CompactList}\item 
+SpriteManager {\bf spriteManager}\label{classEngine_1_1Game_b97f564e282f7b067eea321ae94f994a}
+
+\begin{CompactList}\small\item\em Stores the loaded sprites. \item\end{CompactList}\item 
+TilesetManager {\bf tilesetManager}\label{classEngine_1_1Game_b8a60895fdc2575253a550778304e606}
+
+\begin{CompactList}\small\item\em Stores the loaded tilesets. \item\end{CompactList}\item 
+FontManager {\bf fontManager}\label{classEngine_1_1Game_0092e89b4116e9780a38bd8c5274bc78}
+
+\begin{CompactList}\small\item\em Stores all loaded fonts. \item\end{CompactList}\item 
+ObjectList {\bf objectList}\label{classEngine_1_1Game_27766773037e3cb3f5d7d94c6d42b544}
+
+\begin{CompactList}\small\item\em Contains the path to all XML files that is loaded, with the object name associated with each path. \item\end{CompactList}\item 
+bool \textbf{running}\label{classEngine_1_1Game_36f7b6be7108281af77939ceaec42fd6}
+
+\item 
+std::vector$<$ {\bf GameState} $\ast$ $>$ {\bf states}\label{classEngine_1_1Game_9eba3a3564fcfab167799bfc9f7480b5}
+
+\begin{CompactList}\small\item\em The game states. The game state can be changed with setGameState, pushState and popState. \item\end{CompactList}\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+\doxyref{Game}{p.}{classEngine_1_1Game} base class. Any game using this engine makes an instance of an inherited \doxyref{Game}{p.}{classEngine_1_1Game} class. This class handles the initialization of all subsystems like video, audio and so on, and it stores all the loaded resources in the resource managers. The member function \doxyref{onInit()}{p.}{classEngine_1_1Game_f6097e589feccb0a9922c005a6ab4524} needs to be inherited and implemented by the users of the engine. 
+
+\subsection{Member Function Documentation}
+\index{Engine::Game@{Engine::Game}!onInit@{onInit}}
+\index{onInit@{onInit}!Engine::Game@{Engine::Game}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}virtual void onInit ()\hspace{0.3cm}{\tt  [protected, pure virtual]}}\label{classEngine_1_1Game_f6097e589feccb0a9922c005a6ab4524}
+
+
+onInit is called after the game object has been initialized. This particular function MUST be inherited and implemented by the user of this engine. \index{Engine::Game@{Engine::Game}!loadResources@{loadResources}}
+\index{loadResources@{loadResources}!Engine::Game@{Engine::Game}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void loadResources (std::string {\em dir}, ResourceTypeEnum {\em resType})\hspace{0.3cm}{\tt  [protected]}}\label{classEngine_1_1Game_d312b0df39fb82fef6b0c220f62714f5}
+
+
+Loads all the XML resources in the specified directory of the specified resource type. It works recursively. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em dir}]The directory to load the resources from. \item[{\em resType}]The type of resource to load. This can be any of the constants defined in the ResourceTypeEnum enumeration, defined in com\_\-typedefs.h. \end{description}
+\end{Desc}
+\index{Engine::Game@{Engine::Game}!initialize@{initialize}}
+\index{initialize@{initialize}!Engine::Game@{Engine::Game}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void initialize (int {\em width}, int {\em height}, bool {\em fullscreen})}\label{classEngine_1_1Game_547bb0436b9e1505b89a5a6b45da3201}
+
+
+Initialize the display (screen), audio, input. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em width}]Screen width. \item[{\em height}]Screen height. \item[{\em fullscreen}]Set to true if you want to run in fullscreen.\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Exceptions:]
+\begin{description}
+\item[{\em \doxyref{FatalException}{p.}{classEngine_1_1FatalException}}]If initialization of any of the subsystems fails, the program probably can't continue and a \doxyref{FatalException}{p.}{classEngine_1_1FatalException} is thrown. \end{description}
+\end{Desc}
+\index{Engine::Game@{Engine::Game}!run@{run}}
+\index{run@{run}!Engine::Game@{Engine::Game}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void run (double {\em frameTime})}\label{classEngine_1_1Game_c24598c85a83b353b16e5ca937a53a42}
+
+
+Runs the game. This should be called every time the main game loop loops. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em frameTime}]The amount of time used to render the last frame, in seconds. \end{description}
+\end{Desc}
+\index{Engine::Game@{Engine::Game}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!Engine::Game@{Engine::Game}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void shutdown ()}\label{classEngine_1_1Game_7861ee1569802186a619778efc85af13}
+
+
+Shuts the game down. De-initializes everything and frees any used resources. Be sure to not call \doxyref{run()}{p.}{classEngine_1_1Game_c24598c85a83b353b16e5ca937a53a42} after this. \index{Engine::Game@{Engine::Game}!setGameState@{setGameState}}
+\index{setGameState@{setGameState}!Engine::Game@{Engine::Game}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void setGameState ({\bf GameState} $\ast$ {\em state})}\label{classEngine_1_1Game_a4f1874b17a0d2f289695b0a9595d73a}
+
+
+Removes any existing game state and sets a new one. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em state}]A pointer to an derived \doxyref{GameState}{p.}{classEngine_1_1GameState} object you want to set. \end{description}
+\end{Desc}
+\index{Engine::Game@{Engine::Game}!pushState@{pushState}}
+\index{pushState@{pushState}!Engine::Game@{Engine::Game}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void pushState ({\bf GameState} $\ast$ {\em state})}\label{classEngine_1_1Game_9cc99fadf935feb915268316ffcab65d}
+
+
+Pushes a new game state onto the stack of states. This pauses the last running state. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em state}]A pointer to an derived \doxyref{GameState}{p.}{classEngine_1_1GameState} object you want to push onto the stack. \end{description}
+\end{Desc}
+\index{Engine::Game@{Engine::Game}!popState@{popState}}
+\index{popState@{popState}!Engine::Game@{Engine::Game}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void popState ()}\label{classEngine_1_1Game_3cc9e73bdf543c2f79f1286ea9d55a0e}
+
+
+Pops the topmost (currently running) game state. This resumes the next-topmost state, and deletes the previously topmost state. \index{Engine::Game@{Engine::Game}!getObjectFile@{getObjectFile}}
+\index{getObjectFile@{getObjectFile}!Engine::Game@{Engine::Game}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}std::string getObjectFile (std::string {\em name})}\label{classEngine_1_1Game_3a6ff7dcc67f57725e2bbf07cc144167}
+
+
+Returns the XML file name containing the object's properties associated with the specified name. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em name}]Name of the object. The name of an object is specified in it's XML file. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]The path of the XML file containing the object data. \end{Desc}
+\index{Engine::Game@{Engine::Game}!getObjectSprite@{getObjectSprite}}
+\index{getObjectSprite@{getObjectSprite}!Engine::Game@{Engine::Game}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}std::string getObjectSprite (std::string {\em name})}\label{classEngine_1_1Game_c7479c7d4dec13e9b8bdf000afdfd47b}
+
+
+Returns the name of the sprite associated with the object with the specified name. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em name}]Name of the object. The name of an object is specified in it's XML file. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]The name of the sprite associated with the object. \end{Desc}
+
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+{\bf com\_\-game.h}\item 
+{\bf com\_\-game.cpp}\end{CompactItemize}

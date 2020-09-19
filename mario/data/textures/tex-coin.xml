@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<texture name="Coin">
+  <bitmap path="data/gfx/sprites/coin.tga" />
+</texture>

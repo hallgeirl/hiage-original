@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sprite name="GreenFlyingKoopa" framewidth="40" frameheight="45">
+  <texture name="GreenFlyingKoopa" />
+	
+  <animation name="stand">
+    <frame x="80" y="0" delay="1" nextframe="0" colbox="12 0 34 35" />
+  </animation>
+
+  <animation name="walk">
+    <frame x="0" y="0" delay="0.4" nextframe="1" colbox="12 5 34 36" />
+    <frame x="41" y="0" delay="0.4" nextframe="2" colbox="12 5 34 36" />
+    <frame x="82" y="0" delay="0.4" nextframe="3" colbox="12 5 34 36" />
+    <frame x="122" y="0" delay="0.4" nextframe="4" colbox="12 5 34 36" />
+    <frame x="162" y="0" delay="0.4" nextframe="0" colbox="12 5 34 36" />
+  </animation>
+</sprite>

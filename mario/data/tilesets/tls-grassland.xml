@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tileset name="grassland">
+
+<!-- 
+Tileset setup:
+  0-100: Background tiles
+    0: Empty tile
+    1-100: background tiles (dirt etc.)
+
+  101-200: Normal ground/wall tiles
+  201-300: "Special" ground/wall tiles (like the one-way flat edge tiles)
+  301-400: Decoration tiles (for instance, bushes and such)
+  401-500: Pipes and such
+
+-->
+
+<!-- "background" tiles (non-blocking) -->
+  <tile texture="data/gfx/tiles/empty.tga" block="0" nexttile="-1" delay="0" id="0" />
+  <tile texture="data/gfx/tiles/dirt.tga" block="0" nexttile="-1" id="1" />
+
+<!-- Dirt edge tiles -->
+  <tile texture="data/gfx/tiles/dirt-leftedge.tga" block="0" nexttile="-1" id="10" />
+  <tile texture="data/gfx/tiles/dirt-rightedge.tga" block="0" nexttile="-1" id="11" />
+
+<!-- grass tiles -->
+<!-- flat grass tiles -->
+  <tile texture="data/gfx/tiles/grass-flat-bottom.tga" block="2" nexttile="-1" id="101" />
+  <tile texture="data/gfx/tiles/grass-flat-top.tga" block="1" nexttile="-1" id="102" />
+  <tile texture="data/gfx/tiles/grass-flat-right.tga" block="1" nexttile="-1" id="103" />
+  <tile texture="data/gfx/tiles/grass-flat-left.tga" block="1" nexttile="-1" id="104" />
+
+<!-- outer corner tiles -->
+  <tile texture="data/gfx/tiles/grass-outercorner-topleft.tga" block="1" nexttile="-1" id="110" />
+  <tile texture="data/gfx/tiles/grass-outercorner-topright.tga" block="1" nexttile="-1" id="111" />
+  <tile texture="data/gfx/tiles/grass-outercorner-bottomleft.tga" block="1" nexttile="-1" id="112" />
+  <tile texture="data/gfx/tiles/grass-outercorner-bottomright.tga" block="1" nexttile="-1" id="113" />
+
+<!-- inner corner tiles -->
+  <tile texture="data/gfx/tiles/grass-innercorner-topleft.tga" block="1" nexttile="-1" id="114" />
+  <tile texture="data/gfx/tiles/grass-innercorner-topright.tga" block="1" nexttile="-1" id="115" />
+  <tile texture="data/gfx/tiles/grass-innercorner-bottomleft.tga" block="1" nexttile="-1" id="116" />
+  <tile texture="data/gfx/tiles/grass-innercorner-bottomright.tga" block="1" nexttile="-1" id="117" />
+
+
+<!-- non-standard ground tiles -->
+  <tile texture="data/gfx/tiles/grass-flat-leftcorner.tga" block="2" nexttile="-1" id="201" />
+  <tile texture="data/gfx/tiles/grass-flat-rightcorner.tga" block="2" nexttile="-1" id="202" />
+  
+<!-- Rocks -->
+  <tile texture="data/gfx/tiles/rock-gray.tga" block="1" nexttile="-1" id="220" />
+
+<!-- Decoration -->
+<!-- some background grass -->
+  <tile texture="data/gfx/tiles/grass-weed.tga" block="0" nexttile="-1" id="301" />
+
+<!-- bush tiles -->
+<!-- small bush -->
+  <tile texture="data/gfx/tiles/bush-small-left.tga" block="0" nexttile="-1"  id="310" />
+  <tile texture="data/gfx/tiles/bush-small-middle.tga" block="0" nexttile="-1" id="311" />
+  <tile texture="data/gfx/tiles/bush-small-right.tga" block="0" nexttile="-1" id="312" />
+
+<!-- large/huge bush -->
+  <tile texture="data/gfx/tiles/bush-large-left1.tga" block="0" nexttile="-1" id="320" />
+  <tile texture="data/gfx/tiles/bush-large-left2.tga" block="0" nexttile="-1" id="321" />
+  <tile texture="data/gfx/tiles/bush-large-left3.tga" block="0" nexttile="-1" id="322" />
+  <tile texture="data/gfx/tiles/bush-large-middle1.tga" block="0" nexttile="-1" id="323" />
+  <tile texture="data/gfx/tiles/bush-large-middle2.tga" block="0" nexttile="-1" id="324" />
+  <tile texture="data/gfx/tiles/bush-large-middle3.tga" block="0" nexttile="-1" id="325" />
+  <tile texture="data/gfx/tiles/bush-large-middle4.tga" block="0" nexttile="-1" id="326" />
+  <tile texture="data/gfx/tiles/bush-large-middle5.tga" block="0" nexttile="-1" id="327" />
+  <tile texture="data/gfx/tiles/bush-large-middle6.tga" block="0" nexttile="-1" id="328" />
+  <tile texture="data/gfx/tiles/bush-large-middle7.tga" block="0" nexttile="-1" id="329" />
+  <tile texture="data/gfx/tiles/bush-large-middle8.tga" block="0" nexttile="-1" id="330" />
+  <tile texture="data/gfx/tiles/bush-large-top1.tga" block="0" nexttile="-1" id="331" />
+  <tile texture="data/gfx/tiles/bush-large-top2.tga" block="0" nexttile="-1" id="332" />
+  <tile texture="data/gfx/tiles/bush-large-top3.tga" block="0" nexttile="-1" id="333" />
+  <tile texture="data/gfx/tiles/bush-large-top4.tga" block="0" nexttile="-1" id="334" />
+  <tile texture="data/gfx/tiles/bush-large-top5.tga" block="0" nexttile="-1" id="335" />
+  <tile texture="data/gfx/tiles/bush-large-right1.tga" block="0" nexttile="-1" id="336" />
+  <tile texture="data/gfx/tiles/bush-large-right2.tga" block="0" nexttile="-1" id="337" />
+  <tile texture="data/gfx/tiles/bush-large-right3.tga" block="0" nexttile="-1" id="338" />
+
+<!-- Gray pipes -->
+  <tile texture="data/gfx/tiles/pipe-vertical-gray-top-left.tga" block="1" nexttile="-1" id="401" />
+  <tile texture="data/gfx/tiles/pipe-vertical-gray-top-right.tga" block="1" nexttile="-1" id="402" />
+  <tile texture="data/gfx/tiles/pipe-vertical-gray-body-left.tga" block="1" nexttile="-1" id="403" />
+  <tile texture="data/gfx/tiles/pipe-vertical-gray-body-right.tga" block="1" nexttile="-1" id="404" />
+
+<!-- Green pipes -->
+  <tile texture="data/gfx/tiles/pipe-vertical-green-top-left.tga" block="1" nexttile="-1" id="415" />
+  <tile texture="data/gfx/tiles/pipe-vertical-green-top-right.tga" block="1" nexttile="-1" id="416" />
+  <tile texture="data/gfx/tiles/pipe-vertical-green-body-left.tga" block="1" nexttile="-1" id="417" />
+  <tile texture="data/gfx/tiles/pipe-vertical-green-body-right.tga" block="1" nexttile="-1" id="418" />
+
+<!-- Yellow pipes -->
+  <tile texture="data/gfx/tiles/pipe-vertical-yellow-top-left.tga" block="1" nexttile="-1" id="430" />
+  <tile texture="data/gfx/tiles/pipe-vertical-yellow-top-right.tga" block="1" nexttile="-1" id="431" />
+  <tile texture="data/gfx/tiles/pipe-vertical-yellow-body-left.tga" block="1" nexttile="-1" id="432" />
+  <tile texture="data/gfx/tiles/pipe-vertical-yellow-body-right.tga" block="1" nexttile="-1" id="433" />
+  
+<!-- Purple pipes -->
+  <tile texture="data/gfx/tiles/pipe-vertical-purple-top-left.tga" block="1" nexttile="-1" id="445" />
+  <tile texture="data/gfx/tiles/pipe-vertical-purple-top-right.tga" block="1" nexttile="-1" id="446" />
+  <tile texture="data/gfx/tiles/pipe-vertical-purple-body-left.tga" block="1" nexttile="-1" id="447" />
+  <tile texture="data/gfx/tiles/pipe-vertical-purple-body-right.tga" block="1" nexttile="-1" id="448" />
+</tileset>

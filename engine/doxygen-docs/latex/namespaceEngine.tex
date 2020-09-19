@@ -1,0 +1,136 @@
+\section{Engine Namespace Reference}
+\label{namespaceEngine}\index{Engine@{Engine}}
+
+
+\subsection*{Classes}
+\begin{CompactItemize}
+\item 
+class {\bf Exception}
+\item 
+class {\bf IOException}
+\item 
+class {\bf FatalException}
+\item 
+class {\bf Game}
+\item 
+class {\bf GameState}
+\item 
+class \textbf{ResourceManager}
+\item 
+class \textbf{TextureManager}
+\item 
+class \textbf{SpriteManager}
+\item 
+class \textbf{TilesetManager}
+\item 
+class \textbf{FontManager}
+\item 
+struct \textbf{\_\-Rect}
+\item 
+class \textbf{Display}
+\item 
+class \textbf{Font}
+\item 
+struct \textbf{ParticleCreateData}
+\item 
+class \textbf{Particle}
+\item 
+class \textbf{ParticleSystem}
+\item 
+class {\bf Renderer}
+\item 
+class \textbf{SpriteAnimation}
+\item 
+class \textbf{Sprite}
+\item 
+class \textbf{Texture}
+\item 
+class \textbf{Tilemap}
+\item 
+class \textbf{Tileset}
+\item 
+class \textbf{InputManager}
+\item 
+class \textbf{UIItem}
+\item 
+class \textbf{UIMenu}
+\item 
+class \textbf{UIWindow}
+\item 
+class {\bf Timer}
+\item 
+class {\bf Vector2}
+\end{CompactItemize}
+\subsection*{Typedefs}
+\begin{CompactItemize}
+\item 
+typedef struct Engine::\_\-Rect \textbf{Rect}\label{namespaceEngine_8b1b0ca80c78a2fa7a1f6ee44fd8d1b0}
+
+\item 
+typedef unsigned int \textbf{uint}\label{namespaceEngine_91ad9478d81a7aaf2593e8d9c3d06a14}
+
+\item 
+typedef unsigned char \textbf{ubyte}\label{namespaceEngine_5dd4f281954ce1405c92d62a427f839a}
+
+\item 
+typedef signed char \textbf{byte}\label{namespaceEngine_331be856ee819bee7ec068d1236a3007}
+
+\item 
+typedef std::map$<$ std::string, std::string $>$ \textbf{ObjectList}\label{namespaceEngine_d015889b2f2c0fc8ecda611086d1c21f}
+
+\end{CompactItemize}
+\subsection*{Enumerations}
+\begin{CompactItemize}
+\item 
+enum \textbf{ResourceTypeEnum} \{ \par
+\textbf{SPRITE} =  1, 
+\textbf{OBJECT} =  2, 
+\textbf{TEXTURE} =  3, 
+\textbf{TILESET} =  4, 
+\par
+\textbf{FONT} =  5
+ \}
+\end{CompactItemize}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+std::string {\bf operator+} (std::string str, int n)
+\item 
+std::string {\bf operator+} (std::string str, double n)
+\item 
+std::ostream \& \textbf{operator$<$$<$} (std::ostream \&stream, const Rect \&r)\label{namespaceEngine_bf48288926613bd8be415ebd56d021d5}
+
+\item 
+std::ostream \& \textbf{operator$<$$<$} (std::ostream \&stream, const {\bf Vector2}$<$ double $>$ \&v)\label{namespaceEngine_9838854e262b5193014b9c1870e5265d}
+
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+The namespace for the engine. Contains every engine class, typedef, function, enum and everything you need. 
+
+\subsection{Function Documentation}
+\index{Engine@{Engine}!operator+@{operator+}}
+\index{operator+@{operator+}!Engine@{Engine}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}std::string Engine::operator+ (std::string {\em str}, double {\em n})\hspace{0.3cm}{\tt  [inline]}}\label{namespaceEngine_35dbb8a9208f2756b4f54e0fd8740b79}
+
+
+Overloaded operator+, to ease exception throwing mainly. Appends a floating point number to a string. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em str}]The string to append the number to. \item[{\em n}]The double precision floating point number to append to the string. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]The resulting string. \end{Desc}
+\index{Engine@{Engine}!operator+@{operator+}}
+\index{operator+@{operator+}!Engine@{Engine}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}std::string Engine::operator+ (std::string {\em str}, int {\em n})\hspace{0.3cm}{\tt  [inline]}}\label{namespaceEngine_cda49c3bdf1eb73e8877469b5c01cfbb}
+
+
+Overloaded operator+, to ease exception throwing mainly. Appends an integer to a string. \begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em str}]The string to append the integer to. \item[{\em n}]The integer to append to the string. \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]The resulting string. \end{Desc}

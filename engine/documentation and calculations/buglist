@@ -1,0 +1,2 @@
+- Crashes when passing a non-existant directory to Game::loadResources.
+- Crashes when calling TilesetManager::requestResourcePtr() on a non-existant tileset
