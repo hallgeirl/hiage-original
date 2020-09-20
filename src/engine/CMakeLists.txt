@@ -3,9 +3,9 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-project(engine VERSION 1.0.0 DESCRIPTION "Hiage game engine")
+#project(hiage VERSION 1.0.0 DESCRIPTION "Hiage game engine")
 
-add_library(hiage SHARED
+add_library(hiage STATIC
 	com_exceptions.cpp
 	com_game.cpp
 	com_gamestate.cpp
@@ -35,9 +35,9 @@ add_library(hiage SHARED
 
 target_include_directories(hiage PUBLIC ../external-libraries/include C:/local/boost_1_74_0)
 
-target_link_directories(hiage PUBLIC ../external-libraries/win-x64/SDL ../external-libraries/win-x64/lua ../external-libraries/win-x64/SDL_Mixer)
+target_link_directories(hiage PUBLIC ../external-libraries/win-x64/SDL ../external-libraries/win-x64/SDL_Mixer)
 
-target_link_libraries(hiage PUBLIC SDL2.lib OpenGL32.dll SDL2_Mixer.lib lua51.lib)
+target_link_libraries(hiage PUBLIC SDL2.lib OpenGL32.dll SDL2_Mixer.lib lua_static luabind)
 target_compile_features(hiage PUBLIC cxx_std_20)
 
 # Add source to this project's executable.

@@ -20,7 +20,6 @@ extern "C"
 	#include <lua50/lauxlib.h>
 }
 
-#define LUA_INCLUDE_HPP_INCLUDED
 #include "util_vector2.h"
 
 namespace Hinage

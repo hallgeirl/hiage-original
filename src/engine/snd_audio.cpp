@@ -73,7 +73,7 @@ void AudioManager::loadOgg(std::string name, std::string file)
 
 	music[name] = mus;
 
-	clog << "OK: WAV file was loaded successfully.\n" << flush;
+	clog << "OK: OGG file was loaded successfully.\n" << flush;
 }
 
 void AudioManager::playWav(std::string name)

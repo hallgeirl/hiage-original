@@ -11,6 +11,8 @@
 #include "game_map.h"
 #include "com_objectfactory.h"
 
+#include <luabind/luabind.hpp>
+
 using namespace Hinage;
 using namespace std;
 
@@ -436,7 +438,7 @@ void Map::destroy()
 
     //reset scripting
     gameInstance.scriptVM.executeLine("map=nil");
-    //luabind::globals(gameInstance.scriptVM.getVm())["map"] = this;
+    luabind::globals(gameInstance.scriptVM.getVm())["map"] = this;
 	gameInstance.scriptVM.executeLine("map[\"objects\"]={}");
 	background = 0;
 }
@@ -743,7 +745,7 @@ void Map::update(double frameTime)
             for (size_t j = 0; j < objects[i]->collidedTiles.size(); j++)
             {
 
-                //gameInstance.scriptVM.executeLine(string("map.objects[") + (int)(i+1) + "].tilecollisions[" + (int)(i+1) + "]=" + objects[i]->collidedTiles[j]);
+                //gameInstance.scriptVM.executeLine(string("map.objects[") + (int)(i + 1) + "].tilecollisions[" + (int)(i + 1) + "]=" + 1);//string(objects[i]->collidedTiles[j]));
                 for (size_t k = 0; k < objects[i]->collisionScripts.size(); k++)
                 {
                     gameInstance.scriptVM.executeLine(objects[i]->collisionScripts[k] +
@@ -921,7 +923,6 @@ MapState::~MapState()
 //Initialize scripts for map state
 void MapState::initScript()
 {
-#pragma warning todo
-	//luabind::globals(gameInstance.scriptVM.getVm())["map"] = &gamemap;
+	luabind::globals(gameInstance.scriptVM.getVm())["map"] = &gamemap;
 	gameInstance.scriptVM.executeLine("map[\"objects\"]={}");
 }

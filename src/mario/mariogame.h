@@ -1,5 +1,6 @@
 #include <engine/com_game.h>
 
+
 class MarioGame : public Hinage::Game
 {
 public:
@@ -8,3 +9,4 @@ public:
 protected:
 	virtual void onInit();
 };
+

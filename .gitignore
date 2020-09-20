@@ -1,4 +1,6 @@
 src/engine/.objs
 src/engine/obj
+src/mario/obj
+src/mario/bin
 src/.vs
 src/out

@@ -7,7 +7,6 @@
 */
 
 #include <iostream>
-//#include <boost/filesystem.hpp>
 
 #include "com_game.h"
 #include "com_exceptions.h"
@@ -15,6 +14,8 @@
 #include "com_objectfactory.h"
 
 #include <filesystem>
+
+#include <luabind/luabind.hpp>
 
 using namespace Hinage;
 using namespace std::filesystem;
@@ -152,13 +153,11 @@ void Game::initialize(int width, int height, bool fullscreen)
 	clog << "OK: Game engine initialized properly.\n" << flush;
 
 
-
-#pragma warning TODO
-	/*luabind::globals(scriptVM.getVm())["game"] = this;
+	luabind::globals(scriptVM.getVm())["game"] = this;
 	luabind::globals(scriptVM.getVm())["screen"] = &display;
 	luabind::globals(scriptVM.getVm())["gametimer"] = &gameTimer;
 	luabind::globals(scriptVM.getVm())["input"] = &input;
-	luabind::globals(scriptVM.getVm())["audio"] = &audio;*/
+	luabind::globals(scriptVM.getVm())["audio"] = &audio;
 
 	running = true;
 	onInit();
@@ -251,7 +250,7 @@ void Game::run(double frametime, bool doEvents)
 
 	glEnable(GL_TEXTURE_2D);
 
-	//scriptVM.executeLine(string("frametime=") + frametime);
+	scriptVM.executeLine(string("frametime=") + frametime);
 }
 
 double Game::getTimeFactor()

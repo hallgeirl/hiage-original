@@ -16,7 +16,10 @@
 #include "com_game.h"
 #include "util_timer.h"
 #include <lua50/lualib.h>
+#include <lua50/lua.h>
+#include <lua50/lauxlib.h>
 
+//#define LUA_INCLUDE_HPP_INCLUDED
 #include <luabind/luabind.hpp>
 #include <luabind/function.hpp>
 #include <luabind/class.hpp>
@@ -36,24 +39,25 @@ LuaVM::LuaVM(LuaVM &obj)
 
 LuaVM::~LuaVM()
 {
-	//lua_close(vm);
+	lua_close(vm);
 }
 
 void LuaVM::initialize()
 {
 	clog << "Initializing LUA VM..." << endl;
 	vm = lua_open();
-	/*luaL_baselibopen(vm);
-	luaL_iolibopen(vm);
-	luaL_strlibopen(vm);
-	luaL_mathlibopen(vm);
-	luaL_tablibopen(vm);
-	*/
-	//luabind::open(vm);
+
+	lua_baselibopen(vm);
+	lua_iolibopen(vm);
+	lua_strlibopen(vm);
+	lua_mathlibopen(vm);
+	lua_tablibopen(vm);
+	
+	luabind::open(vm);
 
 	//register engine classes with LUA
 	//game class
-	/*
+	
 	luabind::module(vm)
 	[
 		luabind::class_<Game>("Game")
@@ -179,7 +183,7 @@ void LuaVM::initialize()
     [
         luabind::class_<Font>("Font")
             //.def("print", &Font::renderText)
-    ];*/
+    ];
 }
 
 void LuaVM::loadScript(std::string name, std::string path)
@@ -222,19 +226,19 @@ void LuaVM::runScript(std::string name)
 		throw Exception(string("ERROR: Could not find script ") + name);
 	}
 
-	//luaL_dostring(vm, itr->second.c_str());
+	lua_dostring(vm, itr->second.c_str());
 }
 
 void LuaVM::runFile(std::string path)
 {
-    //luaL_dofile(vm, path.c_str());
+    lua_dofile(vm, path.c_str());
 }
 
 
 
 void LuaVM::executeLine(std::string line)
 {
-	//luaL_dostring(vm, line.c_str());
+	lua_dostring(vm, line.c_str());
 }
 
 lua_State * LuaVM::getVm()

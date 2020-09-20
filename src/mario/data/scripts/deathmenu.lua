@@ -22,7 +22,7 @@ function updateMap()
     map.currentitem = 1
   end
   
-  if input:keydown(13) or input:keydown(32) then
+  if input:keydown(13) or input:keydown(44) then
     if map.currentitem == 1 then
       map:load(game.currentlevel)
     elseif map.currentitem == 2 then

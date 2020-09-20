@@ -52,7 +52,7 @@ void MarioGame::onInit()
 	}
 	catch (Exception &e)
 	{
-		cout << "Error loading resources. Aborting!" << endl;
+		cout << "Error loading resources. Aborting! " << e.what() << endl;
 		stop();
 		return;
 	}

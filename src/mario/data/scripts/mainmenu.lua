@@ -1,3 +1,8 @@
+
+key_space = 44
+key_left = 80
+key_right = 79
+
 function initMap()
   map.mario = map.objects[1]
   map.mario.input = false
@@ -47,16 +52,16 @@ function updateMap()
     game:stop()
   end
 
-  if input:keydown(32) and not map.currentsel.selected and map.mario.inposition and math.abs(map.mario:velx()) < 20 then
+  if input:keydown(key_space) and not map.currentsel.selected and map.mario.inposition and math.abs(map.mario:velx()) < 20 then
     jump(map.mario, 400)
     map.currentsel.selected = true
     audio:play("NormalJump")
   end
 
-  if input:keydown(275) then
+  if input:keydown(key_right) then
     map.currentsel.x = 450
     map.currentsel.id = 2
-  elseif input:keydown(276) then
+  elseif input:keydown(key_left) then
     map.currentsel.x = 190
     map.currentsel.id = 1
   end

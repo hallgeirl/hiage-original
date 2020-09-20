@@ -46,7 +46,7 @@ namespace luabind { namespace detail {
     {
     }
     
-    scope::scope(std::auto_ptr<detail::registration> reg)
+    scope::scope(std::unique_ptr<detail::registration> reg)
         : m_chain(reg.release())
     {
     }
@@ -129,6 +129,7 @@ namespace luabind {
             lua_pushstring(m_state, m_name);
             lua_gettable(m_state, LUA_GLOBALSINDEX);
 
+
             if (!lua_istable(m_state, -1))
             {
                 lua_pop(m_state, 1);
@@ -136,6 +137,7 @@ namespace luabind {
                 lua_newtable(m_state);
                 lua_pushstring(m_state, m_name);
                 lua_pushvalue(m_state, -2);
+                
                 lua_settable(m_state, LUA_GLOBALSINDEX);
             }
         }
@@ -184,7 +186,7 @@ namespace luabind {
     };
 
     namespace_::namespace_(char const* name)
-        : scope(std::auto_ptr<detail::registration>(
+        : scope(std::unique_ptr<detail::registration>(
               m_registration = new registration_(name)))
     {
     }

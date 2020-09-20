@@ -7,7 +7,7 @@
 using namespace Hinage;
 using namespace std;
 
-int main(int, char**)
+int main(int argc, char* argv[])
 {
 	MarioGame game;
 	Timer timer;
@@ -24,8 +24,8 @@ int main(int, char**)
 	{
         timer.reset();
 
-        game.run(frameTime);
-        //timer.update();
+        game.run(frameTime, true);
+        timer.update();
 
         //cout << timer.getTime() << endl;
         frameTime = timer.getTime();
@@ -41,6 +41,6 @@ int main(int, char**)
             frameTime = 0.020;
         }
  	}
-
+    
 	return 0;
 }

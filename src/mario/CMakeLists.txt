@@ -5,17 +5,40 @@ cmake_minimum_required (VERSION 3.8)
 
 # Add source to this project's executable.
 
-project(mario VERSION 1.0.0 DESCRIPTION "Mario")
+#project(mario VERSION 1.0.0 DESCRIPTION "Mario")
 
-add_executable (mario "main.cpp" "mariogame.cpp")
+add_executable (mario 
+	"main.cpp" 
+	"mariogame.cpp"
+	"mariostate.cpp"
+
+)
 
 target_include_directories(mario PUBLIC ../ ../external-libraries/include)
 
-target_link_directories(mario PUBLIC ../engine/-libraries/win-x64/SDL ../external-libraries/win-x64/lua ../external-libraries/win-x64/SDL_Mixer)
+target_link_directories(mario PUBLIC ../external-libraries/win-x64/SDL ../external-libraries/win-x64/SDL_Mixer)
 
-target_link_libraries(mario PUBLIC ../out/build/x64-Debug/engine/hiage)
+target_link_libraries(mario PUBLIC hiage SDL2main)
 target_compile_features(mario PUBLIC cxx_std_20)
 
 
+add_custom_command(TARGET mario POST_BUILD        # Adds a post-build event to MyTest
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake - E copy_if_different..."
+        "${PROJECT_SOURCE_DIR}/external-libraries/win-x64/SDL/SDL2.dll"      # <--this is in-file
+        $<TARGET_FILE_DIR:mario>)                 # <--this is out-file path
 
-# TODO: Add tests and install targets if needed.
+add_custom_command(TARGET mario POST_BUILD        # Adds a post-build event to MyTest
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake - E copy_if_different..."
+        "${PROJECT_SOURCE_DIR}/external-libraries/win-x64/SDL_Mixer/SDL2_Mixer.dll"      # <--this is in-file
+        $<TARGET_FILE_DIR:mario>)                 # <--this is out-file path
+
+add_custom_command(TARGET mario POST_BUILD        # Adds a post-build event to MyTest
+    COMMAND ${CMAKE_COMMAND} -E copy_directory  # which executes "cmake - E copy_if_different..."
+        "${PROJECT_SOURCE_DIR}/mario/data"      # <--this is in-file
+        $<TARGET_FILE_DIR:mario>/data)                 # <--this is out-file path
+
+add_custom_command(TARGET mario POST_BUILD        # Adds a post-build event to MyTest
+    COMMAND ${CMAKE_COMMAND} -E copy_directory  # which executes "cmake - E copy_if_different..."
+        "${PROJECT_SOURCE_DIR}/external-libraries/win-x64/SDL_Mixer"      # <--this is in-file
+        $<TARGET_FILE_DIR:mario>)                 # <--this is out-file path
+
