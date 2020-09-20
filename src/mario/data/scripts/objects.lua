@@ -1,7 +1,11 @@
 -- Main Object script file - Defines the actions of all the in-game objects (enemies, player, blocks etc.)
 
 key_space = 44
+key_right = 79
+key_left = 80
+key_shift = 225
 
+key_a = 4
 
 
 -- Generic functions
@@ -358,34 +362,33 @@ function updatePlayer ( o )
 
   if o.input == true and not o.dying then
     -- right button
-    if input:keydown(79) then
+    if input:keydown(key_right) then
       o:accel(1000,1,0)
-      print "right"
     end
 
     -- left button
-    if input:keydown(80) then
+    if input:keydown(key_left) then
       o:accel(1000,-1,0)
     end
 
     updateTimedTexts()
     -- space button
-    if input:keydown(187) and not (o.inair) and not o.jumped then
+    if input:keydown(key_space) and not (o.inair) and not o.jumped then
       jump(o,300)
       o.inair = true
       audio:play("NormalJump")
       o.jumped = true
-    elseif not input:keydown(44) then
+    elseif not input:keydown(key_space) then
       o.jumped = false
     end
 
-    if input:keydown(4) then
+    if input:keydown(key_a) then
       for i=1,100 do
         print(i .. " - " .. map.objects[i]:x())
       end
     end
 
-    if input:keydown(225) then
+    if input:keydown(key_shift) then
       o.maxspeed = 220
     else
       o.maxspeed = 110
@@ -412,7 +415,7 @@ function normalHit(hitter, object)
   local jumpmag
   local scoreinc
   
-  if input:keydown(187) then
+  if input:keydown(key_space) then
     jumpmag = 350
   else
     jumpmag = 200
@@ -445,7 +448,7 @@ function playerCollide( player, object, pos1, pos2 )
   -- Determine how high the player should jump when hitting an enemy - jump button down = high, otherwise = low
   local jumpmag
 
-  if input:keydown(187) then
+  if input:keydown(key_space) then
     jumpmag = 350
   else
     jumpmag = 200
