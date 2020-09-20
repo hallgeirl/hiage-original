@@ -1,11 +1,4 @@
-﻿# CMakeList.txt : CMake project for hiage-original, include source and define
-# project specific logic here.
-#
-cmake_minimum_required (VERSION 3.8)
-
-# Add source to this project's executable.
-
-#project(mario VERSION 1.0.0 DESCRIPTION "Mario")
+﻿cmake_minimum_required (VERSION 3.8)
 
 add_executable (mario 
 	"main.cpp" 

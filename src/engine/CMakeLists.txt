@@ -3,8 +3,6 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-#project(hiage VERSION 1.0.0 DESCRIPTION "Hiage game engine")
-
 add_library(hiage STATIC
 	com_exceptions.cpp
 	com_game.cpp
