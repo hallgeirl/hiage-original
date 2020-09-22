@@ -1,0 +1,3 @@
+[submodule "src/third_party/src/luabind"]
+	path = src/third_party/src/luabind
+	url = https://github.com/hallgeirl/luabind
