@@ -31,16 +31,9 @@ add_library(hiage STATIC
 	tinyxml/tinyxmlparser.cpp
 )
 
-target_include_directories(hiage PUBLIC ../external-libraries/include C:/local/boost_1_74_0)
+target_include_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/include C:/local/boost_1_74_0)
 
-target_link_directories(hiage PUBLIC ../external-libraries/win-x64/SDL ../external-libraries/win-x64/SDL_Mixer)
+target_link_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/lib/win-x64/SDL ${PROJECT_SOURCE_DIR}/third_party/lib/win-x64/SDL_Mixer)
 
 target_link_libraries(hiage PUBLIC SDL2.lib OpenGL32.dll SDL2_Mixer.lib lua_static luabind)
 target_compile_features(hiage PUBLIC cxx_std_20)
-
-# Add source to this project's executable.
-
-
-# add_executable (hiage-original "hiage-original.cpp" "hiage-original.h")
-
-# TODO: Add tests and install targets if needed.
