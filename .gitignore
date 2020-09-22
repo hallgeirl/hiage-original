@@ -4,3 +4,5 @@ src/mario/obj
 src/mario/bin
 src/.vs
 src/out
+/src/hiage/.objs
+/src/hiage/obj

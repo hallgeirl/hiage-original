@@ -1,7 +1,7 @@
 
 #include <string>
 #include <iostream>
-#include "../engine/util_timer.h"
+#include <hiage/util/timer.h>
 #include "mariogame.h"
 
 using namespace Hinage;

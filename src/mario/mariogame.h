@@ -1,4 +1,4 @@
-#include <engine/com_game.h>
+#include <hiage/core/game.h>
 
 
 class MarioGame : public Hinage::Game

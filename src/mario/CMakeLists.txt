@@ -7,11 +7,9 @@ add_executable (mario
 
 )
 
-target_include_directories(mario PUBLIC ../ ../external-libraries/include)
+target_include_directories(mario PUBLIC ../hiage)
 
-target_link_directories(mario PUBLIC ../external-libraries/win-x64/SDL ../external-libraries/win-x64/SDL_Mixer)
-
-target_link_libraries(mario PUBLIC hiage SDL2main)
+target_link_libraries(mario PUBLIC hiage)
 target_compile_features(mario PUBLIC cxx_std_20)
 
 

@@ -4,8 +4,8 @@
 
 */
 
-#include <engine/com_objectfactory.h>
-#include <engine/script_lua.h>
+#include <hiage/core/objectfactory.h>
+#include <hiage/core/script_lua.h>
 #include "mariostate.h"
 
 using namespace Hinage;
