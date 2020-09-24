@@ -1,10 +1,5 @@
-#ifdef WIN32
-#include <windows.h>
-#endif
-
 #include <iostream>
-#include <GL/gl.h>
-#include <SDL/SDL.h>
+#include "../sdl-includes.h"
 #include "../util/exceptions.h"
 
 #include "display.h"
@@ -13,7 +8,7 @@
 using namespace hiage;
 using namespace std;
 
-Display::Display() : zoom(200.0), camX(0.0f), camY(0.0f)
+Display::Display() : zoom(200.0), camX(0.0f), camY(0.0f), aspect(1), height(768), width(1024), window(nullptr)
 {
 	//set states
 	displayState = 0;
@@ -99,7 +94,7 @@ void Display::resize(int width, int height)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	if (displayState & DS_STRETCH_SCENE)
+	if (displayState & DisplayState::DS_STRETCH_SCENE)
 	{
 		glOrtho(-zoom,zoom,-zoom,zoom,-1.0, 1000.0);
 	}
@@ -158,7 +153,7 @@ void Display::render()
 	SDL_GL_SwapWindow(this->window);
 }
 
-void Display::setState(enum Display::DisplayState state, bool value)
+void Display::setState(DisplayState state, bool value)
 {
 	//enable state
 	if (value)

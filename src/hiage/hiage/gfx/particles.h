@@ -30,7 +30,7 @@ namespace hiage
 		Particle(ParticleCreateData &particleData);
 
 		void update(double timefactor);
-		void render(Renderer &renderer, Renderer::ObjectZ z, Texture * texture);
+		void render(Renderer &renderer, ObjectZ z, Texture * texture);
 		bool isAlive();
 	};
 
@@ -56,6 +56,6 @@ namespace hiage
 		void addParticle(ParticleCreateData &particleData);
 
 		void update(double timefactor);
-		void render(Renderer &renderer, Renderer::ObjectZ z);
+		void render(Renderer &renderer, ObjectZ z);
 	};
 }

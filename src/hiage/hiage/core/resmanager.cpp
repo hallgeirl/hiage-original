@@ -1,5 +1,7 @@
 #include "resmanager.h"
+#pragma warning(push, 0)
 #include <tinyxml.h>
+#pragma warning(pop)
 
 #include <sstream>
 #include <iostream>

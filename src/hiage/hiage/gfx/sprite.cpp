@@ -61,7 +61,7 @@ void SpriteAnimation::runAnimation(double timefactor)
 	}
 }
 
-Sprite::Sprite() : animationSpeed(1), currentAnimation(0)
+Sprite::Sprite() : animationSpeed(1), currentAnimation(0), x(0), y(0), frameWidth(0), frameHeight(0), texture(nullptr)
 {
 }
 
@@ -84,7 +84,7 @@ void Sprite::create(Texture * texture, int frameWidth, int frameHeight)
 	setPosition(0,0);
 }
 
-void Sprite::render(Renderer &renderer, Renderer::ObjectZ z, float rotation, bool hFlip, bool vFlip, float maxSize)
+void Sprite::render(Renderer &renderer, ObjectZ z, float rotation, bool hFlip, bool vFlip, float maxSize)
 {
 	//current sprite's position and dimensions
 	float x = this->x;
@@ -139,20 +139,20 @@ void Sprite::render(Renderer &renderer, Renderer::ObjectZ z, float rotation, boo
 		if (!vFlip)
 		{
 			texTop = 1.0 / texheight * frame->y;
-			texBottom = 1.0 / texheight * (frame->y + frameHeight);
+			texBottom = 1.0 / texheight * ((double)frame->y + frameHeight);
 
 		}
 		else
 		{
-			texTop = 1.0 / texheight * (frame->y + frameHeight);
+			texTop = 1.0 / texheight * ((double)frame->y + frameHeight);
 			texBottom = 1.0 / texheight * frame->y;
 		}
 
 		//render the sprite
 		renderer.beginRender(z, texture);
-		renderer.addVertex(x, y + spriteHeight, texLeft, texTop);
-		renderer.addVertex(x + spriteWidth, y + spriteHeight, texRight, texTop);
-		renderer.addVertex(x + spriteWidth, y, texRight, texBottom);
+		renderer.addVertex(x, (double)y + spriteHeight, texLeft, texTop);
+		renderer.addVertex((double)x + spriteWidth, (double)y + spriteHeight, texRight, texTop);
+		renderer.addVertex((double)x + spriteWidth, y, texRight, texBottom);
 		renderer.addVertex(x, y, texLeft, texBottom);
 		renderer.endRender();
 	}
@@ -160,10 +160,10 @@ void Sprite::render(Renderer &renderer, Renderer::ObjectZ z, float rotation, boo
 	{
 		//render all frames if no animation is selected.
 		renderer.beginRender(z, texture);
-		renderer.addVertex(x - (spriteWidth / 2), y + (spriteHeight / 2), 0, 0);
-		renderer.addVertex(x + (spriteWidth / 2), y + (spriteHeight / 2), 0, 1);
-		renderer.addVertex(x + (spriteWidth / 2), y - (spriteHeight / 2), 1, 0);
-		renderer.addVertex(x - (spriteWidth / 2), y - (spriteHeight / 2), 1, 1);
+		renderer.addVertex((double)x - (spriteWidth / 2), (double)y + (spriteHeight / 2), 0, 0);
+		renderer.addVertex((double)x + (spriteWidth / 2), (double)y + (spriteHeight / 2), 0, 1);
+		renderer.addVertex((double)x + (spriteWidth / 2), (double)y - (spriteHeight / 2), 1, 0);
+		renderer.addVertex((double)x - (spriteWidth / 2), (double)y - (spriteHeight / 2), 1, 1);
 		renderer.endRender();
 	}
 }

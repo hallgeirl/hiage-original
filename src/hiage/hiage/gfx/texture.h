@@ -18,7 +18,7 @@ namespace hiage
 	{
 		friend class CTilemap;
 	public:
-		Texture() : textureID(-1), loaded(false) {}
+		Texture() : textureID(-1), loaded(false), height(0), width(0), bits(0), filename(nullptr) {}
 		~Texture();
 
 		//create a texture out of pre-loaded image data, width and height, to add support for other filetypes

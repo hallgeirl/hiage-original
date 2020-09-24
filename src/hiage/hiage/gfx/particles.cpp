@@ -29,7 +29,7 @@ bool Particle::isAlive()
 	return (lifetime != 0);
 }
 
-void Particle::render(Renderer &renderer, Renderer::ObjectZ z, Texture * texture)
+void Particle::render(Renderer &renderer, ObjectZ z, Texture * texture)
 {
 /*	glPushMatrix();
 
@@ -82,7 +82,7 @@ void ParticleSystem::update(double timefactor)
 	}
 }
 
-void ParticleSystem::render(Renderer &renderer, Renderer::ObjectZ z)
+void ParticleSystem::render(Renderer &renderer, ObjectZ z)
 {
 	ParticleArray::iterator itr = particles.begin();
 

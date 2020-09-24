@@ -1,3 +1,5 @@
+project ("lua")
+
 set(LUA_LIB_SRCS_50 
     src/lapi.c
     src/lcode.c
@@ -29,14 +31,8 @@ set(LUA_LIB_SRCS_50
     #src/lua/lua.c
 )
 
-#TODO: Redo this with find_package
-#find_library(LIBM m)
-#if(NOT LIBM)
-#    message(FATAL_ERROR "libm not found and requred by lua")
-#endif()
 add_library(lua_static STATIC ${LUA_LIB_SRCS_50})
 set_target_properties(lua_static PROPERTIES OUTPUT_NAME "lua")
-#target_link_libraries(lua_static INTERFACE ${LIBM})
 target_include_directories(lua_static PUBLIC "include")
 set(LUA_DEFINITIONS)
 if(UNIX)
@@ -49,9 +45,12 @@ endif()
 target_compile_definitions(lua_static 
     PUBLIC ${LUA_DEFINITIONS}
 )
+
 target_compile_options(lua_static
-    PRIVATE "-Wall"
+    PRIVATE "-w"
 )
+
+string(REGEX REPLACE "/W[3|4]" "/w" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 
 if(LUA_BUILD_BINARY)
     include(CheckIncludeFile)

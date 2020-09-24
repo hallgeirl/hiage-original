@@ -18,7 +18,7 @@ Tilemap::~Tilemap()
 	destroy();
 }
 
-Tilemap::Tilemap() : created(false)
+Tilemap::Tilemap() : created(false), tilesize(32)
 {
 	tilemap = 0;
 	tileset = 0;
@@ -205,7 +205,7 @@ void Tilemap::destroy()
 	delete [] tilemap;
 }
 
-void Tilemap::render(Renderer &renderer, float camx, float camy, float zoom, float aspect, Renderer::ObjectZ depth, int layer)
+void Tilemap::render(Renderer &renderer, float camx, float camy, float zoom, float aspect, ObjectZ depth, int layer)
 {
 	uint x,y;
 
@@ -270,10 +270,10 @@ void Tilemap::render(Renderer &renderer, float camx, float camy, float zoom, flo
 		    if (tilemap[x][y][layer] == 0)
                 continue;
             renderer.beginRender(depth, tileset->getTile(tilemap[x][y][layer]).texture);
-			renderer.addVertex(x * tilesize, y * tilesize + tilesize, 0, 0);
-			renderer.addVertex(x * tilesize + tilesize, y * tilesize + tilesize, 1, 0);
-			renderer.addVertex(x * tilesize + tilesize, y * tilesize, 1, 1);
-			renderer.addVertex(x * tilesize, y * tilesize, 0, 1);
+			renderer.addVertex((double)x * tilesize, (double)y * tilesize + tilesize, 0, 0);
+			renderer.addVertex((double)x * tilesize + tilesize, (double)y * tilesize + tilesize, 1, 0);
+			renderer.addVertex((double)x * tilesize + tilesize, (double)y * tilesize, 1, 1);
+			renderer.addVertex((double)x * tilesize, (double)y * tilesize, 0, 1);
             renderer.endRender();
 		}
 	}

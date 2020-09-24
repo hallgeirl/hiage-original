@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : CMake project for hiage-original, include source and define
 # project specific logic here.
 #
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.15)
 
 add_library(hiage STATIC
 	"hiage/core/audio.cpp"
@@ -26,7 +26,7 @@ add_library(hiage STATIC
 	"hiage/ui/windows.cpp"
 	"hiage/util/exceptions.cpp"
 	"hiage/util/timer.cpp"
-)
+ "hiage/sdl-includes.h" "hiage/lua-includes.h")
 
 target_include_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/include ${PROJECT_SOURCE_DIR}/third_party/src/tinyxml)
 

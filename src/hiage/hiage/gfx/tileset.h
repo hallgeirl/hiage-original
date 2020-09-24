@@ -27,9 +27,8 @@ namespace hiage
             bool initialized;
 
         public:
-            iterator()
+            iterator() : initialized(false), data(0)
             {
-                initialized = false;
                 data = 0;
             }
 

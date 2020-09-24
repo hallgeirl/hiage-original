@@ -12,14 +12,17 @@ typedef struct SDL_Window SDL_Window;
 
 namespace hiage
 {
+	enum DisplayState
+	{
+		DS_STRETCH_SCENE = 1,
+		DS_SHOW_FPS = 2
+
+	};
+
 	class __IMPORTEXPORT Display
 	{
 	public:
-		enum DisplayState
-		{
-			DS_STRETCH_SCENE = 1,
-			DS_SHOW_FPS = 2
-		};
+		
 
 	private:
 

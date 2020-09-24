@@ -15,14 +15,8 @@
 #include "entity.h"
 #include "game.h"
 #include "../util/timer.h"
-#include <lua50/lualib.h>
-#include <lua50/lua.h>
-#include <lua50/lauxlib.h>
 
-//#define LUA_INCLUDE_HPP_INCLUDED
-#include <luabind/luabind.hpp>
-#include <luabind/function.hpp>
-#include <luabind/class.hpp>
+#include "../lua-includes.h"
 
 using namespace std;
 using namespace hiage;

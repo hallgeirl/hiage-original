@@ -9,12 +9,14 @@ Copyright (C) Hallgeir Lien - 2008
 */
 
 #include "../util/exceptions.h"
+#pragma warning(push, 0)
 #include <tinyxml.h>
+#pragma warning(pop)
 #include "entity.h"
 
 using namespace hiage;
 
-PhysicalEntity::PhysicalEntity()
+PhysicalEntity::PhysicalEntity() : collidedWithMap(false), collided(false)
 {
 	sprite = 0;
 	destroyFlag = false;
@@ -114,7 +116,7 @@ void PhysicalEntity::setDestructionFlag(bool val)
 	destroyFlag = val;
 }
 
-void PhysicalEntity::render(Renderer &renderer, Renderer::ObjectZ z)
+void PhysicalEntity::render(Renderer &renderer, ObjectZ z)
 {
 	if (sprite)
 	{
@@ -348,10 +350,10 @@ bool PhysicalEntity::willCollideWithMap(Tilemap &tilemap, double frameTime)
 					if (tilemap.getTileset()->getTile(tilemap.getTile(x, y, 0)).block > 0)
 					{
 					    Rect tile;
-					    tile.left = x*tileSize;
-					    tile.right = x*tileSize + tileSize;
-					    tile.top = y*tileSize + tileSize;
-					    tile.bottom = y*tileSize;
+					    tile.left = (double)x*tileSize;
+					    tile.right = (double)x*tileSize + tileSize;
+					    tile.top = (double)y*tileSize + tileSize;
+					    tile.bottom = (double)y*tileSize;
 					    if (colRect.left < tile.right && colRect.right > tile.left && colRect.top > tile.bottom && colRect.bottom < tile.top)
                         {
                             collided = true;

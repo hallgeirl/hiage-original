@@ -18,11 +18,11 @@ void MarioGame::onInit()
 	//load all resources
 	try
 	{
-		loadResources("data/textures", TEXTURE);
-		loadResources("data/sprites", SPRITE);
-		loadResources("data/tilesets", TILESET);
-		loadResources("data/objects", OBJECT);
-		loadResources("data/fonts", FONT);
+		loadResources("data/textures", ResourceTypeEnum::TEXTURE);
+		loadResources("data/sprites", ResourceTypeEnum::SPRITE);
+		loadResources("data/tilesets", ResourceTypeEnum::TILESET);
+		loadResources("data/objects", ResourceTypeEnum::OBJECT);
+		loadResources("data/fonts", ResourceTypeEnum::FONT);
 
 		audio.loadWav("NormalHit1", "data/audio/hit_normal1.wav");
 		audio.loadWav("NormalHit2", "data/audio/hit_normal2.wav");

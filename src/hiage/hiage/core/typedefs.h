@@ -28,7 +28,7 @@
 */
 namespace hiage
 {
-	typedef struct Rect
+	struct Rect
 	{
 		double left, right, top, bottom;
 		Rect(double l, double r, double t, double b)
@@ -71,14 +71,14 @@ namespace hiage
 
 	typedef std::map<std::string, std::string> ObjectList;
 
-	typedef enum
+	enum class ResourceTypeEnum
 	{
-		SPRITE  = 1,
-		OBJECT  = 2,
+		SPRITE = 1,
+		OBJECT = 2,
 		TEXTURE = 3,
 		TILESET = 4,
-        FONT    = 5,
-        TILE    = 6
+		FONT = 5,
+		TILE = 6
 
-	} ResourceTypeEnum;
+	};
 }

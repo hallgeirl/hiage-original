@@ -10,12 +10,15 @@
 
 #include "game.h"
 #include "../util/exceptions.h"
-#include <tinyxml.h>
 #include "objectfactory.h"
-
+#include "../sdl-includes.h"
 #include <filesystem>
 
-#include <luabind/luabind.hpp>
+#pragma warning(push, 0)
+#include <tinyxml.h>
+#pragma warning(pop)
+#include "../lua-includes.h"
+
 
 using namespace hiage;
 using namespace std::filesystem;
@@ -61,32 +64,32 @@ void Game::loadResources(std::string dir, ResourceTypeEnum resType)
 			{
 				switch (resType)
 				{
-                    case SPRITE:
+                    case ResourceTypeEnum::SPRITE:
                     {
                         spriteManager.load(itr.path().string().c_str());
                         break;
                     }
 
                         //case Object:
-                    case TEXTURE:
+                    case ResourceTypeEnum::TEXTURE:
                     {
                         textureManager.load(itr.path().string().c_str());
                         break;
                     }
 
-                    case TILESET:
+                    case ResourceTypeEnum::TILESET:
                     {
                         tilesetManager.load(itr.path().string().c_str());
                         break;
                     }
 
-                    case FONT:
+                    case ResourceTypeEnum::FONT:
                     {
                         fontManager.load(itr.path().string().c_str());
                         break;
                     }
 
-                    case OBJECT:
+                    case ResourceTypeEnum::OBJECT:
                     {
                         //load the xml file
 
@@ -113,7 +116,7 @@ void Game::loadResources(std::string dir, ResourceTypeEnum resType)
                         break;
                     }
 
-                    case TILE:
+                    case ResourceTypeEnum::TILE:
                     {
                         break;
                     }
@@ -136,7 +139,7 @@ void Game::initialize(int width, int height, bool fullscreen)
 	display.initialize(width, height, fullscreen);
 
 	display.setZoom(200.0);
-	display.setState(Display::DS_STRETCH_SCENE, false);
+	display.setState(DisplayState::DS_STRETCH_SCENE, false);
 	display.setCamPosition(0.0f,0.0f);
 
 	if (!audio.initialize(44100, 16))
@@ -313,7 +316,7 @@ void Game::drawTexture(std::string texname, double x, double y)
     Renderer & renderer = display.getRenderer();
     Texture * tex = textureManager.requestResourcePtr(texname.c_str())->resource;
 
-    renderer.beginRender(Renderer::CLOSEST, tex);
+    renderer.beginRender(ObjectZ::CLOSEST, tex);
 
     renderer.addVertex(x, y, 0, 1);
     renderer.addVertex(x + tex->getWidth(), y, 1, 1);

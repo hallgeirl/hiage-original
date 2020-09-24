@@ -13,14 +13,10 @@
 #include <map>
 #include <vector>
 #include <string>
-extern "C"
-{
-	#include <lua50/lua.h>
-	#include <lua50/lualib.h>
-	#include <lua50/lauxlib.h>
-}
 
 #include "../util/vector2.h"
+
+struct lua_State;
 
 namespace hiage
 {

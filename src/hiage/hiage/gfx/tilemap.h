@@ -34,7 +34,7 @@ namespace hiage
 		void setTileset(Tileset * tileset);
 		void destroy();
 
-		void render(Renderer &renderer, float camx, float camy, float zoom, float aspect, Renderer::ObjectZ depth, int layer);
+		void render(Renderer &renderer, float camx, float camy, float zoom, float aspect, ObjectZ depth, int layer);
 		void importMap(unsigned int *** data);
 
 		Rect 			getTilesInRect(float left, float top, float right, float bottom) const;

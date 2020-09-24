@@ -11,7 +11,7 @@
 #include "map.h"
 #include "objectfactory.h"
 
-#include <luabind/luabind.hpp>
+#include "../lua-includes.h"
 
 using namespace hiage;
 using namespace std;
@@ -75,11 +75,14 @@ std::vector<PhysicalEntity*> Map::sortObjects(const std::vector<PhysicalEntity*>
 
 void Map::createFromFile(std::string path, bool runScripts)
 {
+
+#pragma warning (push)
+#pragma warning (disable:26451) // arithmetic overflow warning on indexing
 	//map loading goes here
 	clog << "Loading map from file " << path << endl << flush;
 
 	int width, height, layers, tilesize;
-	int temp, version;
+	long temp, version;
 	char *buffer;
 
     //delete the old map
@@ -260,6 +263,7 @@ void Map::createFromFile(std::string path, bool runScripts)
             gameInstance.scriptVM.executeLine(initScripts[i] + "()");
         }
     }
+#pragma warning(pop)
 }
 
 void Map::queueCreateMap(string path)
@@ -562,12 +566,12 @@ void Map::render()
         {
             if ((objects[i]->getY() + objects[i]->getSprite()->getHeight() >= viewBottom) && (objects[i]->getY() <= viewTop))
             {
-                objects[i]->render(renderer, Renderer::MIDDLE);
+                objects[i]->render(renderer, ObjectZ::MIDDLE);
             }
         }
 	}
 
-    Renderer::ObjectZ depth = Renderer::MIDDLE_BACK;
+    ObjectZ depth = ObjectZ::MIDDLE_BACK;
 
     //and the tilemap
 	for (int i = 0; i < tilemap.getLayers(); i++)
@@ -575,35 +579,35 @@ void Map::render()
 	    switch (i)
 	    {
 	        case 0:
-                depth = Renderer::MIDDLE_BACK;
+                depth = ObjectZ::MIDDLE_BACK;
                 break;
 
             case 1:
-                depth = Renderer::NEAR_BACK;
+                depth = ObjectZ::NEAR_BACK;
                 break;
 
             case 2:
-                depth = Renderer::MIDDLE_FRONT;
+                depth = ObjectZ::MIDDLE_FRONT;
                 break;
 
             case 3:
-                depth = Renderer::BACK;
+                depth = ObjectZ::BACK;
                 break;
 
             case 4:
-                depth = Renderer::NEAR_FRONT;
+                depth = ObjectZ::NEAR_FRONT;
                 break;
 
             case 5:
-                depth = Renderer::FURTHEST;
+                depth = ObjectZ::FURTHEST;
                 break;
 
             case 6:
-                depth = Renderer::FRONT;
+                depth = ObjectZ::FRONT;
                 break;
 
             case 7:
-                depth = Renderer::CLOSEST;
+                depth = ObjectZ::CLOSEST;
                 break;
 
 	    }
@@ -624,13 +628,13 @@ void Map::render()
         startx -= 1.0f;
         endx += 1.0f;
 
-        renderer.beginRender(Renderer::BACK, background);
+        renderer.beginRender(ObjectZ::BACK, background);
         for (int x = (int)startx; x <= (int)endx; x++)
         {
-            renderer.addVertex(x * background->getWidth() + offset, y + background->getHeight(), 0, 0);
-            renderer.addVertex(x * background->getWidth() + background->getWidth() + offset, y + background->getHeight(), 1, 0);
-            renderer.addVertex(x * background->getWidth() + background->getWidth() + offset, y, 1, 1);
-            renderer.addVertex(x * background->getWidth() + offset, y, 0, 1);
+            renderer.addVertex((double)x * background->getWidth() + offset, (double)y + background->getHeight(), 0, 0);
+            renderer.addVertex((double)x * background->getWidth() + background->getWidth() + offset, (double)y + background->getHeight(), 1, 0);
+            renderer.addVertex((double)x * background->getWidth() + background->getWidth() + offset, y, 1, 1);
+            renderer.addVertex((double)x * background->getWidth() + offset, y, 0, 1);
 
         }
 

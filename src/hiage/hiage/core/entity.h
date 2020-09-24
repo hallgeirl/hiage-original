@@ -49,7 +49,7 @@ namespace hiage
 	public:
 		virtual ~RenderableEntity() {}
 
-		virtual void render(Renderer &renderer, Renderer::ObjectZ z) = 0;
+		virtual void render(Renderer &renderer, ObjectZ z) = 0;
 	};
 
 	//physical object, with position and everything. base for all in-game objects.
@@ -103,7 +103,7 @@ namespace hiage
 		virtual bool 		    getDestructionFlag() const;
 
 		//RenderableEntity
-		virtual void 		    render(Renderer &renderer, Renderer::ObjectZ z);
+		virtual void 		    render(Renderer &renderer, ObjectZ z);
 
 		void 				    setSprite(Sprite * sprite);
 		const Sprite * 		    getSprite() const;

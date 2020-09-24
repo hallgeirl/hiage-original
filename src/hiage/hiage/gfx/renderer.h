@@ -13,6 +13,30 @@
 
 namespace hiage
 {
+	enum class ObjectZ
+	{
+		//closest to the screen you get. best used for text, GUI and other stuff that should be all the way up front.
+		CLOSEST = 0,
+		//not as close as CLOSEST, but quite close nonetheless.
+		//probably best used for stuff that needs to be behind text, but nothing else (for instance GUI frames)
+		FRONT = 1,
+		//probably best used for stuff that should be in front of objects, but behind text and GUI-elements like borders, for instance GUI backgrounds.
+		NEAR_FRONT = 2,
+		//in front of the MIDDLE objects - probably best used for objects that should be in front of objects, but behind the GUI. For instance foreground bushes on a 2d-sidescroller.
+		MIDDLE_FRONT = 3,
+		//in front of the background, but behind GUI and foreground.
+		MIDDLE = 4,
+		//behind "most" of the objects, but still in front of the actual background. Example: background clouds.
+		MIDDLE_BACK = 5,
+		//behind everything except the actual background. Example: Objects hiding out in clouds.
+		NEAR_BACK = 6,
+		//background layer.
+		BACK = 7,
+		//behind everything.
+		FURTHEST = 8
+
+	};
+
 	/*!
 		Abstraction for rendering. Handles rendering of everything.
 	*/
@@ -23,29 +47,6 @@ namespace hiage
 			Enum that describes an renderable objects Z-position relative to the others.
 			This is to control what objects that should be rendered in front of what.
 		*/
-		enum ObjectZ
-		{
-			//closest to the screen you get. best used for text, GUI and other stuff that should be all the way up front.
-			CLOSEST 		= 0,
-			//not as close as CLOSEST, but quite close nonetheless.
-			//probably best used for stuff that needs to be behind text, but nothing else (for instance GUI frames)
-			FRONT 			= 1,
-			//probably best used for stuff that should be in front of objects, but behind text and GUI-elements like borders, for instance GUI backgrounds.
-			NEAR_FRONT 		= 2,
-			//in front of the MIDDLE objects - probably best used for objects that should be in front of objects, but behind the GUI. For instance foreground bushes on a 2d-sidescroller.
-			MIDDLE_FRONT 	= 3,
-			//in front of the background, but behind GUI and foreground.
-			MIDDLE			= 4,
-			//behind "most" of the objects, but still in front of the actual background. Example: background clouds.
-			MIDDLE_BACK 	= 5,
-			//behind everything except the actual background. Example: Objects hiding out in clouds.
-			NEAR_BACK		= 6,
-			//background layer.
-			BACK = 7,
-			//behind everything.
-			FURTHEST = 8
-
-		};
 
 		static const int LAYERCOUNT = 9;
 
@@ -78,7 +79,7 @@ namespace hiage
 			RenderObject()
 			{
 				texture = 0;
-				zposition = CLOSEST;
+				zposition = ObjectZ::CLOSEST;
 			}
 
 			RenderObject(ObjectZ objz, Texture *tex)

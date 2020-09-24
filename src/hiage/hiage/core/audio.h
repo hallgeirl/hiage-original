@@ -2,12 +2,13 @@
 
 #include "typedefs.h"
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_mixer.h>
-
 #include <map>
 #include <string>
 
+//struct Mix_Chunk;
+//struct Mix_Music;
+typedef struct Mix_Chunk Mix_Chunk;
+typedef struct _Mix_Music Mix_Music;
 
 class __IMPORTEXPORT AudioManager
 {

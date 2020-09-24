@@ -1,4 +1,4 @@
-#include <SDL/SDL.h>
+#include "../sdl-includes.h"
 #include "inputmanager.h"
 
 using namespace hiage;

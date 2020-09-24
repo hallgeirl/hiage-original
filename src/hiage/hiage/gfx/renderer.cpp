@@ -16,7 +16,7 @@
 using namespace std;
 using namespace hiage;
 
-Renderer::Renderer()
+Renderer::Renderer() : currentZ(ObjectZ::CLOSEST)
 {
 	recordingVertices = false;
 	currentRenderObject = -1;
@@ -57,8 +57,8 @@ void Renderer::beginRender(ObjectZ zposition, Texture *texture)
 	recordingVertices = true;
 	currentZ = zposition;
 
-	renderObjects[currentZ].push_back(RenderObject(zposition, texture));
-	currentRenderObject = renderObjects[currentZ].size() - 1;
+	renderObjects[static_cast<int>(currentZ)].push_back(RenderObject(zposition, texture));
+	currentRenderObject = renderObjects[static_cast<int>(currentZ)].size() - 1;
 }
 
 //add a vertex
@@ -69,7 +69,7 @@ void Renderer::addVertex(double x, double y, double texX, double texY)
 		throw Exception("ERROR: Can't add vertex to renderer: Not recording. Call Renderer::beginRender() before rendering.");
 	}
 
-	renderObjects[currentZ][currentRenderObject].vertices.push_back(Vertex(x, y, texX, texY));
+	renderObjects[static_cast<int>(currentZ)][currentRenderObject].vertices.push_back(Vertex(x, y, texX, texY));
 }
 
 //end the rendering process
@@ -80,7 +80,7 @@ void Renderer::endRender()
 		throw Exception("ERROR: Can't end rendering: Not recording. Call Renderer::beginRender() before attempting to stop rendering.");
 	}
 
-	if (renderObjects[currentZ][currentRenderObject].vertices.size() % 4 != 0)
+	if (renderObjects[static_cast<int>(currentZ)][currentRenderObject].vertices.size() % 4 != 0)
 	{
 		throw Exception("ERROR: Can't finish rendering: Amount of vertices not a multiple of 4.");
 	}

@@ -19,7 +19,7 @@ namespace hiage
 		friend class Sprite;	//give the sprite class full access to the animation
 
 		//frame structure - simple enough
-		typedef struct Frame
+		struct Frame
 		{
 			int x,y;
 			double delay;
@@ -83,7 +83,7 @@ namespace hiage
 		void create(Texture * texture, int frameWidth, int frameHeight);
 
 		void setPosition(float x, float y) { this->x = x; this->y = y; }
-		void render(Renderer &renderer, Renderer::ObjectZ z, float rotation = 0, bool hFlip = false, bool vFlip = false, float maxSize = 0);
+		void render(Renderer &renderer, ObjectZ z, float rotation = 0, bool hFlip = false, bool vFlip = false, float maxSize = 0);
 
 		uint addAnimation(const char * name);
 		void addFrame(uint animID, int x, int y, double delay, uint nextFrame, Rect colBox);

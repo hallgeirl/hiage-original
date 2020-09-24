@@ -6,7 +6,7 @@
 using namespace std;
 using namespace hiage;
 
-Font::Font()
+Font::Font() : texture(nullptr), tableRows(0), tableCols(0), characterWidth(0), characterHeight(0)
 {
     loaded = false;
 
@@ -146,15 +146,15 @@ void Font::renderText(Renderer &renderer, string text, Vector2<double> position,
 
         float yoffset = charheight * y;
 
-        renderer.beginRender(Renderer::CLOSEST, texture);
+        renderer.beginRender(ObjectZ::CLOSEST, texture);
 
         if (x >= 0 || y >= 0)
          {
 
-         	renderer.addVertex(xpos, ypos, xoffset, yoffset + charheight);
-         	renderer.addVertex(xpos + characterWidth * scale, ypos, xoffset + charwidth, yoffset + charheight);
-         	renderer.addVertex(xpos + characterWidth * scale, ypos + characterHeight * scale, xoffset + charwidth, yoffset);
-         	renderer.addVertex(xpos, ypos + characterHeight * scale, xoffset, yoffset);
+         	renderer.addVertex(xpos, ypos, xoffset, (double)yoffset + charheight);
+         	renderer.addVertex((double)xpos + (double)characterWidth * scale, ypos, (double)xoffset + charwidth, (double)yoffset + charheight);
+         	renderer.addVertex((double)xpos + (double)characterWidth * scale, (double)ypos + (double)characterHeight * scale, (double)xoffset + charwidth, yoffset);
+         	renderer.addVertex(xpos, (double)ypos + (double)characterHeight * scale, xoffset, yoffset);
         }
 
         renderer.endRender();

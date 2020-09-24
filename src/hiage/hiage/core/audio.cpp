@@ -1,7 +1,9 @@
 #include "audio.h"
 #include "../util/exceptions.h"
 
+#include "../sdl-includes.h"
 #include <iostream>
+
 
 using namespace std;
 using namespace hiage;

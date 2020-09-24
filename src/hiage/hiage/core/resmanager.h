@@ -19,8 +19,9 @@ namespace hiage
 	template <class T> class ResourceManager
 	{
 	public:
-		typedef struct
+		class Resource
 		{
+		public:
 			//name of the resource
 			std::string name;
 
@@ -30,7 +31,7 @@ namespace hiage
 			//in case some information needs to be handled outside the resource manager
 			int intData1, intData2, intData3;
 			std::string strData1, strData2, strData3;
-		} Resource;
+		};
 
 	private:
 		std::vector<Resource *>	resources;
