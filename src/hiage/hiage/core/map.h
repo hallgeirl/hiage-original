@@ -14,7 +14,7 @@
 #include "entity.h"
 #include "../gfx/tilemap.h"
 
-namespace Hinage
+namespace hiage
 {
 	class Map
 	{

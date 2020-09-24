@@ -4,18 +4,13 @@
 
 #pragma once
 
-#ifdef WIN32
-#include <windows.h>
-#endif
-
 #include "renderer.h"
 #include "../core/typedefs.h"
 #include "../util/vector2.h"
 
-#include <GL/gl.h>
-#include <SDL/SDL.h>
+typedef struct SDL_Window SDL_Window;
 
-namespace Hinage
+namespace hiage
 {
 	class __IMPORTEXPORT Display
 	{

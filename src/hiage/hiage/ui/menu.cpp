@@ -7,7 +7,7 @@
 
 #include "menu.h"
 
-using namespace Hinage;
+using namespace hiage;
 
 UIItem::UIItem() : initialized(false)
 {

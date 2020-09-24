@@ -5,7 +5,7 @@
 #include <GL/gl.h>
 #include "windows.h"
 
-using namespace Hinage;
+using namespace hiage;
 
 UIWindow::UIWindow()
 {

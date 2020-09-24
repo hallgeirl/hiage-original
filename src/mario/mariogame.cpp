@@ -6,7 +6,7 @@
 #include "mariogame.h"
 #include "mariostate.h"
 
-using namespace Hinage;
+using namespace hiage;
 
 MarioGame::~MarioGame()
 {

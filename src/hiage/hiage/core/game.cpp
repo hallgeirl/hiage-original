@@ -17,7 +17,7 @@
 
 #include <luabind/luabind.hpp>
 
-using namespace Hinage;
+using namespace hiage;
 using namespace std::filesystem;
 
 Game::Game() : gameTimer(true)

@@ -9,6 +9,6 @@
 #include <iostream>
 #include "game.h"
 
-using namespace Hinage;
+using namespace hiage;
 
 

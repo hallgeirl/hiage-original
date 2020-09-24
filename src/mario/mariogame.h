@@ -1,7 +1,7 @@
 #include <hiage/core/game.h>
 
 
-class MarioGame : public Hinage::Game
+class MarioGame : public hiage::Game
 {
 public:
 	virtual ~MarioGame();

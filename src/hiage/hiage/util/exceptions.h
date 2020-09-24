@@ -14,7 +14,7 @@
 #include <sstream>
 
 //classes for handling exceptions
-namespace Hinage
+namespace hiage
 {
 	/*!
 		Base exception class. For generic exceptions.

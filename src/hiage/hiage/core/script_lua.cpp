@@ -25,7 +25,7 @@
 #include <luabind/class.hpp>
 
 using namespace std;
-using namespace Hinage;
+using namespace hiage;
 
 LuaVM::LuaVM()
 {

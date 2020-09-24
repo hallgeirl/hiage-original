@@ -7,7 +7,7 @@
 #include <list>
 
 
-namespace Hinage
+namespace hiage
 {
 	typedef struct
 	{

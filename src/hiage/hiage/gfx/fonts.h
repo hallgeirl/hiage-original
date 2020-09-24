@@ -7,7 +7,7 @@
 
 //#include "com_typedefs.h"
 
-namespace Hinage
+namespace hiage
 {
     class __IMPORTEXPORT Font
     {

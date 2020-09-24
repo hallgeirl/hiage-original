@@ -8,11 +8,11 @@
 #include <hiage/core/script_lua.h>
 #include "mariostate.h"
 
-using namespace Hinage;
+using namespace hiage;
 using namespace std;
 
 
-MarioState::MarioState(Hinage::Game &game) : MapState(game)
+MarioState::MarioState(hiage::Game &game) : MapState(game)
 {
 
 }

@@ -4,7 +4,7 @@
 #include "../util/exceptions.h"
 
 using namespace std;
-using namespace Hinage;
+using namespace hiage;
 
 Font::Font()
 {

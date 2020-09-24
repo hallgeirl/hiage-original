@@ -11,7 +11,7 @@
 #include "texture.h"
 #include <vector>
 
-namespace Hinage
+namespace hiage
 {
 	/*!
 		Abstraction for rendering. Handles rendering of everything.

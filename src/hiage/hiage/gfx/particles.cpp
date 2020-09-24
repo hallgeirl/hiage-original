@@ -1,7 +1,7 @@
 
 #include "particles.h"
 
-using namespace Hinage;
+using namespace hiage;
 
 Particle::Particle(ParticleCreateData &particleData)
 {

@@ -18,7 +18,7 @@ Description: Header for the most basic entity classes/interfaces:
 #include "../util/vector2.h"
 #include "../gfx/tilemap.h"
 
-namespace Hinage
+namespace hiage
 {
 	//base entity interface
 	class EntityBase

@@ -15,7 +15,7 @@
 #include <string>
 #include <map>
 
-namespace Hinage
+namespace hiage
 {
 	/*!
 		Factory for game entities. This is used to create the in-game objects.

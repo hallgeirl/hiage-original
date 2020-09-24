@@ -22,7 +22,7 @@
 #include "script_lua.h"
 #include "../util/timer.h"
 
-namespace Hinage
+namespace hiage
 {
 	class GameState;
 

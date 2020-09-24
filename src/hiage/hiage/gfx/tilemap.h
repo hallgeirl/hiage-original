@@ -7,7 +7,7 @@
 #include "../core/typedefs.h"
 #include "../util/vector2.h"
 
-namespace Hinage
+namespace hiage
 {
 	//class for the tilemap
 	class __IMPORTEXPORT Tilemap

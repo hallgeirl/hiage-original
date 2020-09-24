@@ -22,7 +22,7 @@ extern "C"
 
 #include "../util/vector2.h"
 
-namespace Hinage
+namespace hiage
 {
 	/*!
 		LuaVM is a wrapper class for the scripting environment. It loads and executes scripts, simply put.

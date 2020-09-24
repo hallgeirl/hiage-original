@@ -13,7 +13,7 @@
 
 #include <luabind/luabind.hpp>
 
-using namespace Hinage;
+using namespace hiage;
 using namespace std;
 
 Map::Map(Game &game) : gameInstance(game)

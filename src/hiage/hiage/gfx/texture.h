@@ -12,7 +12,7 @@
 
 #include "../core/typedefs.h"
 
-namespace Hinage
+namespace hiage
 {
 	class __IMPORTEXPORT Texture
 	{

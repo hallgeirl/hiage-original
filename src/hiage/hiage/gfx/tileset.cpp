@@ -1,7 +1,7 @@
 #include <iostream>
 #include "tileset.h"
 
-using namespace Hinage;
+using namespace hiage;
 using namespace std;
 
 //constructor/destructor

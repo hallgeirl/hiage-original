@@ -3,7 +3,7 @@
 #include "../core/typedefs.h"
 #include "../util/vector2.h"
 
-namespace Hinage
+namespace hiage
 {
 	class __IMPORTEXPORT UIWindow
 	{

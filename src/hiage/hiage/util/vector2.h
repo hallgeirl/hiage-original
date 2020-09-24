@@ -12,7 +12,7 @@
 #include <iostream>
 #include "../core/typedefs.h"
 
-namespace Hinage
+namespace hiage
 {
 	/*!
 		Template class for a vector class with two dimensions.

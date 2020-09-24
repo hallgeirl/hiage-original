@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace Hinage
+namespace hiage
 {
 	//class to handle animations (keeping track of all frames, when to go to next frame etc.)
 	class __IMPORTEXPORT SpriteAnimation

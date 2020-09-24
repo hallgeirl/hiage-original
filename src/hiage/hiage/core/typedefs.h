@@ -26,7 +26,7 @@
 	\namespace Hinage
 	The namespace for the engine. Contains every engine class, typedef, function, enum and everything you need.
 */
-namespace Hinage
+namespace hiage
 {
 	typedef struct Rect
 	{

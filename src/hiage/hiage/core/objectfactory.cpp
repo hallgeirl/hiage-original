@@ -8,7 +8,7 @@
 
 #include "objectfactory.h"
 
-using namespace Hinage;
+using namespace hiage;
 
 EntityFactory::EntityFactory()
 {

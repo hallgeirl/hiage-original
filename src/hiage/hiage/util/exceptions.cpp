@@ -8,7 +8,7 @@
 
 #include "exceptions.h"
 
-using namespace Hinage;
+using namespace hiage;
 using namespace std;
 
 

@@ -3,10 +3,10 @@
 #include <hiage/core/map.h>
 
 
-class MarioState : public Hinage::MapState
+class MarioState : public hiage::MapState
 {
 public:
-	MarioState(Hinage::Game &game);
+	MarioState(hiage::Game &game);
 	virtual ~MarioState();
 	virtual void init();
 	virtual void destroy();

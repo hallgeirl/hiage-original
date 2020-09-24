@@ -3,7 +3,7 @@
 #include "../core/typedefs.h"
 #include "../util/vector2.h"
 
-namespace Hinage
+namespace hiage
 {
 	//class that handles input (mouse/keyboard/joystick etc.)
 	class __IMPORTEXPORT InputManager

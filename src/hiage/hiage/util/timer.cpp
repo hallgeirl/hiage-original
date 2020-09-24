@@ -3,7 +3,7 @@
 //#include <sys/time.h>
 #include <chrono>
 
-using namespace Hinage;
+using namespace hiage;
 
 Timer::Timer(bool start)
 {

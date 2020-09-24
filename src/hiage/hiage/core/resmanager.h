@@ -13,7 +13,7 @@
 
 #include <vector>
 
-namespace Hinage
+namespace hiage
 {
 	//template class to manage loaded resources (textures, sounds etc.)
 	template <class T> class ResourceManager

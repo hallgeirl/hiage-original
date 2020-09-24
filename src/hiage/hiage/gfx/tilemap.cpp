@@ -10,7 +10,7 @@
 #include "../util/exceptions.h"
 
 
-using namespace Hinage;
+using namespace hiage;
 using namespace std;
 
 Tilemap::~Tilemap()

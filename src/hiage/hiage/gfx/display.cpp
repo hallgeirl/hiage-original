@@ -10,7 +10,7 @@
 #include "display.h"
 
 
-using namespace Hinage;
+using namespace hiage;
 using namespace std;
 
 Display::Display() : zoom(200.0), camX(0.0f), camY(0.0f)

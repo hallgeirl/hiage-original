@@ -14,7 +14,7 @@
 #include "renderer.h"
 
 using namespace std;
-using namespace Hinage;
+using namespace hiage;
 
 Renderer::Renderer()
 {

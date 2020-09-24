@@ -12,7 +12,7 @@ Copyright (C) Hallgeir Lien - 2008
 #include <tinyxml.h>
 #include "entity.h"
 
-using namespace Hinage;
+using namespace hiage;
 
 PhysicalEntity::PhysicalEntity()
 {

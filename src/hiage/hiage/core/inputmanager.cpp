@@ -1,7 +1,7 @@
 #include <SDL/SDL.h>
 #include "inputmanager.h"
 
-using namespace Hinage;
+using namespace hiage;
 
 InputManager::InputManager() : initialized(false)
 {

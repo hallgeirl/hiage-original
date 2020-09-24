@@ -4,7 +4,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace Hinage;
+using namespace hiage;
 
 bool AudioManager::initialize(int frequency, int bits)
 {

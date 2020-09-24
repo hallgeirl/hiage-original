@@ -4,7 +4,7 @@
 #include <hiage/util/timer.h>
 #include "mariogame.h"
 
-using namespace Hinage;
+using namespace hiage;
 using namespace std;
 
 int main(int argc, char* argv[])

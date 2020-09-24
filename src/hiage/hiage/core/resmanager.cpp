@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iostream>
 
-using namespace Hinage;
+using namespace hiage;
 using namespace std;
 
 TextureManager::Resource * TextureManager::loadResource(const char * path)

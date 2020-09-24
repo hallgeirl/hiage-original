@@ -10,7 +10,7 @@
 
 #include <chrono>
 
-namespace Hinage
+namespace hiage
 {
 	/*!
 		Class for handling timing of events, and other stuff that needs timing.
