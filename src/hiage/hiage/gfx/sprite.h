@@ -1,14 +1,13 @@
 #pragma once
 
 
-#include <string>
-#include <vector>
 
 #include "../core/typedefs.h"
 #include "texture.h"
 #include "renderer.h"
 
-using namespace std;
+#include <string>
+#include <vector>
 
 namespace hiage
 {
@@ -33,14 +32,14 @@ namespace hiage
 
 		//C_COM_DynArray<Frame*> m_Frames;
 		std::vector<Frame*> frames;
-		string animationName;
+		std::string animationName;
 
 	public:
 		SpriteAnimation();
 		~SpriteAnimation();
 
 		void setName(const std::string animName) {animationName = animName;}
-		string getName(){return animationName;}
+		std::string getName(){return animationName;}
 		void addFrame(int x, int y, double delay, uint nextFrame, Rect colBox);
 		void runAnimation(double timeFactor);
 		void reset() { frameTimer = 0; currentFrame = 0; }
@@ -87,7 +86,7 @@ namespace hiage
 
 		uint addAnimation(const char * name);
 		void addFrame(uint animID, int x, int y, double delay, uint nextFrame, Rect colBox);
-		const string getAnimationName(uint animID);
+		const std::string getAnimationName(uint animID);
 		void updateAnimation(double timefactor);
 		void playAnimation(int anim, double speed = 1) { currentAnimation = anim; animationSpeed = speed; }
 		bool playAnimation(const char * anim, bool resetIfRunning = true, double speed = 1);

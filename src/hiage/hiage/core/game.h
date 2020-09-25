@@ -21,6 +21,7 @@
 #include "audio.h"
 #include "script_lua.h"
 #include "../util/timer.h"
+#include "components.hpp"
 
 namespace hiage
 {
@@ -49,6 +50,7 @@ namespace hiage
 		FontManager     fontManager;	//!< Stores all loaded fonts.
 		ObjectList		objectList;		//!< Contains the path to all XML files that is loaded, with the object name associated with each path.
 		Timer           gameTimer;       //!< The elapsed time since the game class was initialized.
+		ComponentFactory componentFactory;
 
 		bool running;
 
@@ -141,6 +143,8 @@ namespace hiage
 		FontManager &       getFontManager();
 		//! Returns a reference to the object list.
 		ObjectList &        getObjectList();
+
+		const ComponentFactory& getComponentFactory() const;
 
 		/*!
 			Returns the XML file name containing the object's properties associated with the specified name.

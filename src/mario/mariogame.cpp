@@ -7,6 +7,7 @@
 #include "mariostate.h"
 
 using namespace hiage;
+using namespace std;
 
 MarioGame::~MarioGame()
 {

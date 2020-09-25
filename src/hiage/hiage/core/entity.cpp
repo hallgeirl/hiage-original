@@ -13,14 +13,27 @@ Copyright (C) Hallgeir Lien - 2008
 #include <tinyxml.h>
 #pragma warning(pop)
 #include "entity.h"
+#include "game.h"
 
 using namespace hiage;
+using namespace std;
+
+int Entity::entityCounter = 1;
+
+Entity::Entity()
+{
+    entityId = Entity::entityCounter++;
+}
+
+Entity::~Entity()
+{
+}
+
 
 PhysicalEntity::PhysicalEntity() : collidedWithMap(false), collided(false)
 {
 	sprite = 0;
 	destroyFlag = false;
-	position.set(0,0);
 	frameTime = 0.005;
 	canCollide = true;
 	hFlip = false;
@@ -31,7 +44,7 @@ PhysicalEntity::~PhysicalEntity()
 {
 }
 
-void PhysicalEntity::createFromFile(std::string path, Sprite * sprite)
+void PhysicalEntity::createFromFile(std::string path, Sprite * sprite, const Game& game)
 {
 	clog << "Loading entity from file..." << endl;
 
@@ -43,10 +56,6 @@ void PhysicalEntity::createFromFile(std::string path, Sprite * sprite)
 	}
 
 	TiXmlElement *	objectElement   = 0;
-	//TiXmlElement *	spriteElement   = 0;
-	TiXmlElement *  scriptsElement  = 0;
-
-
 	objectElement = xmlDoc.FirstChildElement("object");
 
 	//check if it's a texture file
@@ -62,8 +71,23 @@ void PhysicalEntity::createFromFile(std::string path, Sprite * sprite)
 	//store the sprite name in StrData1
 	//spriteElement = objectElement->FirstChildElement("sprite");
 
+    TiXmlElement* componentsElement = objectElement->FirstChildElement("components");
+    if (componentsElement)
+    {
+        TiXmlElement* componentElement = componentsElement->FirstChildElement("component");
+        string componentType;
+
+        auto componentFactory = game.getComponentFactory();
+        while (componentElement)
+        {
+            componentType = componentElement->Attribute("type");
+            this->components.push_back(componentFactory.createComponent(componentType));
+
+            componentElement = componentElement->NextSiblingElement("component");
+        }
+    }
     //store the script functions to use
-    scriptsElement = objectElement->FirstChildElement("scripts");
+    TiXmlElement* scriptsElement = objectElement->FirstChildElement("scripts");
     if (scriptsElement)
     {
         TiXmlElement *  scriptElement = scriptsElement->FirstChildElement("script");
@@ -120,7 +144,7 @@ void PhysicalEntity::render(Renderer &renderer, ObjectZ z)
 {
 	if (sprite)
 	{
-		sprite->setPosition(position.getX(), position.getY());
+		sprite->setPosition(getPosition().getX(), getPosition().getY());
 		sprite->render(renderer, z, 0, hFlip, vFlip);
 	}
 }
@@ -130,39 +154,44 @@ void PhysicalEntity::render(Renderer &renderer, ObjectZ z)
 */
 void PhysicalEntity::setPosition(double x, double y)
 {
-	position.set(x,y);
+    PhysicalComponent& c = getComponentOfType<PhysicalComponent>();
+	c.setPosition(x,y);
 }
 
 void PhysicalEntity::setPosition(Vector2<double> newPosition)
 {
-    position = newPosition;
+    PhysicalComponent& c = getComponentOfType<PhysicalComponent>();
+    c.setPosition(newPosition.getX(), newPosition.getY());
 }
 
 void PhysicalEntity::setX(double x)
 {
-    position.setX(x);
+    PhysicalComponent& c = getComponentOfType<PhysicalComponent>();
+    c.setPosition(x, c.getPosition().getY());
 }
 
 void PhysicalEntity::setY(double y)
 {
-    position.setY(y);
+    PhysicalComponent& c = getComponentOfType<PhysicalComponent>();
+    c.setPosition(c.getPosition().getX(), y);
 }
 
 Vector2<double> PhysicalEntity::getPosition() const
 {
-	return position;
+    const PhysicalComponent& c = getComponentOfTypeReadOnly<PhysicalComponent>();
+ 
+    return c.getPosition();
 }
 
 double PhysicalEntity::getX()
 {
-    return position.getX();
+    return getPosition().getX();
 }
 
 double PhysicalEntity::getY()
 {
-    return position.getY();
+    return getPosition().getY();
 }
-
 
 /*
     Speed manipulation
@@ -258,8 +287,8 @@ bool PhysicalEntity::willCollide(PhysicalEntity &target, double frameTime, Vecto
     //store the current position and speed for both objects
     double dspeed1 = getSpeed() * frameTime;
     double dspeed2 = target.getSpeed() * frameTime;
-    Vector2<double> currentPosition1 = position;
-    Vector2<double> currentPosition2 = target.position;
+    Vector2<double> currentPosition1 = getPosition();
+    Vector2<double> currentPosition2 = target.getPosition();
 
     //get the speed of the fastest object (the one that will move furthest during the next frame)
     int dspeed;
@@ -324,7 +353,7 @@ bool PhysicalEntity::willCollideWithMap(Tilemap &tilemap, double frameTime)
 	int dspeed = (int)ceil(getSpeed() * frameTime);
 
 	Vector2<double> dvelocity = velocity * frameTime / dspeed;
-    Vector2<double> currentPosition = position;
+    Vector2<double> currentPosition = getPosition();
     Rect colRect;
     bool collided = false;
 
@@ -385,7 +414,9 @@ void PhysicalEntity::setCollision(bool value)
 void PhysicalEntity::update(double frameTime)
 {
     this->frameTime = frameTime;
-    position += velocity * frameTime;
+    auto oldPos = getPosition();
+    setPosition(oldPos + velocity * frameTime);
+
     sprite->updateAnimation(frameTime);
 
     collided = false;

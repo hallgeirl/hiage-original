@@ -21,6 +21,7 @@
 
 
 using namespace hiage;
+using namespace std;
 using namespace std::filesystem;
 
 Game::Game() : gameTimer(true)
@@ -39,10 +40,6 @@ Game::~Game()
 
 	states.clear();
 }
-
-
-
-//using namespace boost::filesystem;
 
 //traverse a specified directory and load the resources in it
 void Game::loadResources(std::string dir, ResourceTypeEnum resType)
@@ -393,6 +390,11 @@ FontManager & Game::getFontManager()
 ObjectList & Game::getObjectList()
 {
     return objectList;
+}
+
+const ComponentFactory& hiage::Game::getComponentFactory() const
+{
+	return componentFactory;
 }
 
 std::string Game::getObjectFile(std::string name)

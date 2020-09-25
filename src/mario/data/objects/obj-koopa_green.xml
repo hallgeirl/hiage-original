@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object name="GreenKoopa" type="Koopa">
   <sprite name="GreenKoopa" />
-
+  <components>
+    <component type="physical" />
+    <component type="movable" />
+  </components>
   <scripts>
     <script type="init" function="initKoopa" />
     <script type="update" function="applyPhysics" />

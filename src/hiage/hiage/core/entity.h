@@ -12,22 +12,75 @@ Description: Header for the most basic entity classes/interfaces:
 
 #pragma once
 
-#include <iostream>
 #include "../gfx/sprite.h"
 #include "typedefs.h"
 #include "../util/vector2.h"
 #include "../gfx/tilemap.h"
 
+#include "components.hpp"
+#include <iostream>
+#include <memory>
+#include <string>
+
 namespace hiage
 {
+	class Game;
 	//base entity interface
-	class EntityBase
+	class Entity
 	{
-	public:
-		virtual ~EntityBase() {}
-		virtual void setDestructionFlag(bool val) = 0;
+	private:
+		int entityId;
+		static int entityCounter;
+	protected:
+		std::vector<std::unique_ptr<Component>> components;
 
-		virtual bool getDestructionFlag() const = 0;
+		/* TODO - Remove this once everything is ported to ECS. For now, this function is useful to "wrap" the components in functions in MovableEntity etc.*/
+		template <typename T> 
+		T& getComponentOfType()
+		{
+			for (int i = 0; i < components.size(); i++)
+			{
+				Component& c = *components[i];
+				try
+				{
+					T& cc = dynamic_cast<T&>(c);
+
+					return cc;
+				}
+				catch (bad_cast)
+				{
+				}
+			}
+
+			throw runtime_error("getComponentOfType must not be called on objects without the requested component type.");
+		}
+
+		template <typename T>
+		const T& getComponentOfTypeReadOnly() const
+		{
+			for (int i = 0; i < components.size(); i++)
+			{
+				Component& c = *components[i];
+				try
+				{
+					const T& cc = dynamic_cast<const T&>(c);
+
+					return cc;
+				}
+				catch (bad_cast)
+				{
+				}
+			}
+
+			throw runtime_error("getComponentOfType must not be called on objects without the requested component type.");
+		}
+
+	public:
+		Entity();
+		virtual ~Entity();
+		
+		virtual void setDestructionFlag(bool val) {}
+		virtual bool getDestructionFlag() const { return false; }
 	};
 
 	//interface for movable objects
@@ -53,13 +106,12 @@ namespace hiage
 	};
 
 	//physical object, with position and everything. base for all in-game objects.
-	class PhysicalEntity : public EntityBase, RenderableEntity, MovableEntity
+	class PhysicalEntity : public Entity, RenderableEntity, MovableEntity
 	{
 	private:
 		bool destroyFlag;
 
 	protected:
-		Vector2<double>	position;   //current position
 		Vector2<double> velocity;      //current speed
 		Sprite *		sprite;
 
@@ -96,7 +148,7 @@ namespace hiage
                                 PhysicalEntity();
 		virtual 			    ~PhysicalEntity();
 
-		void 				    createFromFile(std::string path, Sprite * sprite);
+		void 				    createFromFile(std::string path, Sprite * sprite, const Game& game);
 
 		//EntityBase
 		virtual void 		    setDestructionFlag(bool val);

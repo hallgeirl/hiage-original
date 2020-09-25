@@ -9,6 +9,7 @@
 #include "objectfactory.h"
 
 using namespace hiage;
+using namespace std;
 
 EntityFactory::EntityFactory()
 {
@@ -52,7 +53,7 @@ PhysicalEntity * EntityFactory::createObject(std::string objectName, Game * game
 	sprite->resource->create(texture->resource, sprite->intData1, sprite->intData2);
 
 	PhysicalEntity * entity = new PhysicalEntity;
-	entity->createFromFile(objectFile, sprite->resource);
+	entity->createFromFile(objectFile, sprite->resource, *game);
 
 	return entity;
 }

@@ -26,7 +26,8 @@ add_library(hiage STATIC
 	"hiage/ui/windows.cpp"
 	"hiage/util/exceptions.cpp"
 	"hiage/util/timer.cpp"
- "hiage/sdl-includes.h" "hiage/lua-includes.h")
+	"hiage/core/components.cpp" 
+	"hiage/core/systems.cpp")
 
 target_include_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/include ${PROJECT_SOURCE_DIR}/third_party/src/tinyxml)
 

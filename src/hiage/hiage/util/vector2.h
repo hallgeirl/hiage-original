@@ -21,7 +21,6 @@ namespace hiage
 	{
 	private:
 		T x, y;
-
 	public:
 		/*!
 			Initializes the vector to (0, 0).
@@ -45,7 +44,7 @@ namespace hiage
 			Returns the length of the vector (sqrt(x^2 + y^2)).
 			\return The length of the vector.
 		*/
-		double length()
+		const double length()
 		{
 			return sqrt((x * x) + (y * y));
 		}
@@ -55,7 +54,7 @@ namespace hiage
 			\note Use this carefully when using vectors of integer type because rounding errors are as good as guaranteed.
 			\return A copy of the normalized vector.
 		*/
-		Vector2 normalize()
+		Vector2<T> normalize()
 		{
 			double vlength = length();
 
@@ -80,7 +79,7 @@ namespace hiage
 			\param f The factor to scale the vector by.
 			\return A copy of the scaled vector.
 		*/
-		Vector2 scale(double f)
+		Vector2<T> scale(double f)
 		{
 			x *= f;
 			y *= f;
