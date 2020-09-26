@@ -392,11 +392,6 @@ ObjectList & Game::getObjectList()
     return objectList;
 }
 
-const ComponentFactory& hiage::Game::getComponentFactory() const
-{
-	return componentFactory;
-}
-
 std::string Game::getObjectFile(std::string name)
 {
     return objectList[name];
@@ -419,4 +414,9 @@ void GameState::changeState(Game * game, GameState * state)
 {
 	std::clog << "Game state: Changed state.\n" << std::flush;
 	game->setGameState(state);
+}
+
+const ComponentManager& hiage::GameState::getComponentManager() const
+{
+	return componentFactory;
 }

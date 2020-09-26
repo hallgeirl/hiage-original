@@ -25,6 +25,8 @@ Description: Header for the most basic entity classes/interfaces:
 namespace hiage
 {
 	class Game;
+	class GameState;
+	
 	//base entity interface
 	class Entity
 	{
@@ -32,9 +34,9 @@ namespace hiage
 		int entityId;
 		static int entityCounter;
 	protected:
-		std::vector<std::unique_ptr<Component>> components;
+		std::vector<std::shared_ptr<Component>> components;
 
-		/* TODO - Remove this once everything is ported to ECS. For now, this function is useful to "wrap" the components in functions in MovableEntity etc.*/
+		/* TODO - Remove getComponentOfType* once everything is ported to ECS. For now, this function is useful to "wrap" the components in functions in MovableEntity etc.*/
 		template <typename T> 
 		T& getComponentOfType()
 		{
@@ -112,7 +114,6 @@ namespace hiage
 		bool destroyFlag;
 
 	protected:
-		Vector2<double> velocity;      //current speed
 		Sprite *		sprite;
 
 
@@ -148,7 +149,7 @@ namespace hiage
                                 PhysicalEntity();
 		virtual 			    ~PhysicalEntity();
 
-		void 				    createFromFile(std::string path, Sprite * sprite, const Game& game);
+		void 				    createFromFile(std::string path, Sprite * sprite, const GameState& gameState);
 
 		//EntityBase
 		virtual void 		    setDestructionFlag(bool val);

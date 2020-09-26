@@ -32,7 +32,7 @@ namespace hiage
 		Vector2<double> velocity;      //current speed
 	public:
 		void setVelocity(double xVel, double yVel);
-		const Vector2<double>& getVelocity();
+		const Vector2<double>& getVelocity() const;
 		void accellerate(double magnitude, const Vector2<double>& directionNormalized);
 	};
 
@@ -46,9 +46,14 @@ namespace hiage
 	ComponentFactory
 	*/
 
-	class ComponentFactory
+	class ComponentManager
 	{
+	private: 
+		std::map<std::string, std::vector<std::shared_ptr<Component>>> componentCache;
+		std::unique_ptr<Component> createComponentCore(const std::string& type) const;
 	public:
-		std::unique_ptr<Component> createComponent(const std::string& name) const;
+		// todo: after rewriting everything to ECS - see if we can drop to using unique_ptr.
+		std::shared_ptr<Component> createComponent(const std::string& type);
+		std::vector<std::shared_ptr<Component>> getComponentsOfType(const std::string& type);
 	};
 }

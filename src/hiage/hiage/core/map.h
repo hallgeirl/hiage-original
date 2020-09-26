@@ -10,12 +10,13 @@
 #include <string>
 #include <vector>
 
-#include "game.h"
 #include "entity.h"
 #include "../gfx/tilemap.h"
+#include "game.h"
 
 namespace hiage
 {
+	class Game;
 	class Map
 	{
 	private:
@@ -25,6 +26,7 @@ namespace hiage
 
 		ObjectList                      objects;        //all created objects
 		Game &                          gameInstance;	//reference to the game instance
+		const GameState&				gameState;
 		Tilemap                         tilemap;
 		Texture *                       background;
 
@@ -51,7 +53,7 @@ namespace hiage
 		std::vector<std::string>        shutdownScripts;
 
 	public:
-		Map(Game &game);
+		Map(Game &game, const GameState& gameState);
 		~Map();
 
 		/*!

@@ -7,7 +7,7 @@ add_library(hiage STATIC
 	"hiage/core/audio.cpp"
 	"hiage/core/entity.cpp"
 	"hiage/core/game.cpp"
-	"hiage/core/gamestate.cpp"
+	
 	"hiage/core/inputmanager.cpp"
 	"hiage/core/map.cpp"
 	"hiage/core/objectfactory.cpp"

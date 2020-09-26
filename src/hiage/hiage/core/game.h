@@ -22,6 +22,7 @@
 #include "script_lua.h"
 #include "../util/timer.h"
 #include "components.hpp"
+#include "systems.hpp"
 
 namespace hiage
 {
@@ -50,8 +51,6 @@ namespace hiage
 		FontManager     fontManager;	//!< Stores all loaded fonts.
 		ObjectList		objectList;		//!< Contains the path to all XML files that is loaded, with the object name associated with each path.
 		Timer           gameTimer;       //!< The elapsed time since the game class was initialized.
-		ComponentFactory componentFactory;
-
 		bool running;
 
 		std::vector<GameState *> states;	//!< The game states. The game state can be changed with setGameState, pushState and popState.
@@ -144,8 +143,6 @@ namespace hiage
 		//! Returns a reference to the object list.
 		ObjectList &        getObjectList();
 
-		const ComponentFactory& getComponentFactory() const;
-
 		/*!
 			Returns the XML file name containing the object's properties associated with the specified name.
 			\param name Name of the object. The name of an object is specified in it's XML file.
@@ -171,11 +168,15 @@ namespace hiage
 	*/
 	class __IMPORTEXPORT GameState
 	{
+	private:
+		ComponentManager componentFactory;
+		std::unique_ptr<System> systems;
+
 	protected:
-		Game &gameInstance;
+		Game& gameInstance;
 
 	public:
-		GameState(Game &game);
+		GameState(Game& game);
 		virtual ~GameState();
 		virtual void init() = 0;
 		virtual void initScript() {}
@@ -189,5 +190,7 @@ namespace hiage
 		virtual void render(double frametime) = 0;
 
 		void changeState(Game * game, GameState * state);
+
+		const ComponentManager& getComponentManager() const;
 	};
 }

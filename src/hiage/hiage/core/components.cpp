@@ -20,7 +20,7 @@ void MovableComponent::setVelocity(double xVel, double yVel)
 	velocity.set(xVel, yVel);
 }
 
-const Vector2<double>& MovableComponent::getVelocity()
+const Vector2<double>& MovableComponent::getVelocity() const
 {
 	return velocity;
 }
@@ -42,7 +42,8 @@ struct D : B
 };
 
 
-unique_ptr<Component> ComponentFactory::createComponent(const std::string& name) const
+
+std::unique_ptr<Component> hiage::ComponentManager::createComponentCore(const std::string& name) const
 {
 	if (name == "physical")
 	{
@@ -58,5 +59,23 @@ unique_ptr<Component> ComponentFactory::createComponent(const std::string& name)
 	}
 
 	throw runtime_error("Component type not found: " + name);
+}
+
+shared_ptr<Component> ComponentManager::createComponent(const std::string& type)
+{
+	if (componentCache.find(type) == componentCache.end())
+		componentCache[type] = vector<shared_ptr<Component>>();
+
+	componentCache[type].push_back(createComponentCore(type));
+	
+	return componentCache[type][componentCache[type].size()-1];
+}
+
+std::vector<shared_ptr<Component>> hiage::ComponentManager::getComponentsOfType(const std::string& type)
+{
+	if (componentCache.find(type) == componentCache.end())
+		return vector<shared_ptr<Component>>();
+
+	return componentCache[type];
 }
 	

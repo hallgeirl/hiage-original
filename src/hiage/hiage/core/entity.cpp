@@ -44,7 +44,7 @@ PhysicalEntity::~PhysicalEntity()
 {
 }
 
-void PhysicalEntity::createFromFile(std::string path, Sprite * sprite, const Game& game)
+void PhysicalEntity::createFromFile(std::string path, Sprite * sprite, const GameState& gameState)
 {
 	clog << "Loading entity from file..." << endl;
 
@@ -77,7 +77,7 @@ void PhysicalEntity::createFromFile(std::string path, Sprite * sprite, const Gam
         TiXmlElement* componentElement = componentsElement->FirstChildElement("component");
         string componentType;
 
-        auto componentFactory = game.getComponentFactory();
+        auto componentFactory = gameState.getComponentManager();
         while (componentElement)
         {
             componentType = componentElement->Attribute("type");
@@ -202,8 +202,8 @@ void PhysicalEntity::accellerate(double magnitude, Vector2<double> direction)
 {
     //normalize the direction vector
     direction.normalize();
-
-    velocity += direction * magnitude * frameTime;
+    auto oldVel = getVelocity();
+    setVelocity(oldVel + direction * magnitude * frameTime);
 }
 
 void PhysicalEntity::accellerate(double magnitude, double xdir, double ydir)
@@ -212,7 +212,8 @@ void PhysicalEntity::accellerate(double magnitude, double xdir, double ydir)
     Vector2<double> direction(xdir, ydir);
     direction.normalize();
 
-    velocity += direction * magnitude * frameTime;
+    auto oldVel = getVelocity();
+    setVelocity(oldVel + direction * magnitude * frameTime);
 }
 
 
@@ -223,42 +224,52 @@ void PhysicalEntity::setMaxSpeed(double magnitude)
 
 Vector2<double> PhysicalEntity::getVelocity() const
 {
-	return velocity;
+    const MovableComponent& c = getComponentOfTypeReadOnly<MovableComponent>();
+
+    return c.getVelocity();
 }
 
 void PhysicalEntity::setVelocity(const Vector2<double> newVel)
 {
-    velocity = newVel;
+    MovableComponent& c = getComponentOfType<MovableComponent>();
+
+    c.setVelocity(newVel.getX(), newVel.getY());
 }
 
 void PhysicalEntity::setVelocity(double x, double y)
 {
-    velocity.set(x,y);
+    MovableComponent& c = getComponentOfType<MovableComponent>();
+
+    c.setVelocity(x, y);
 }
 
 double PhysicalEntity::getXVelocity()
 {
-    return velocity.getX();
+    return getVelocity().getX();
 }
 
 double PhysicalEntity::getYVelocity()
 {
-    return velocity.getY();
+    return getVelocity().getY();
 }
 
 void PhysicalEntity::setXVelocity(double x)
 {
-    velocity.setX(x);
+    MovableComponent& c = getComponentOfType<MovableComponent>();
+    auto vel = c.getVelocity();
+    c.setVelocity(x, vel.getY());
 }
 
 void PhysicalEntity::setYVelocity(double y)
 {
-    velocity.setY(y);
+    MovableComponent& c = getComponentOfType<MovableComponent>();
+    auto vel = c.getVelocity();
+    c.setVelocity(vel.getX(), y);
 }
 
 double PhysicalEntity::getSpeed()
 {
-    return velocity.length();
+    return getVelocity().length();
 }
 
 //-----------------
@@ -352,7 +363,7 @@ bool PhysicalEntity::willCollideWithMap(Tilemap &tilemap, double frameTime)
 
 	int dspeed = (int)ceil(getSpeed() * frameTime);
 
-	Vector2<double> dvelocity = velocity * frameTime / dspeed;
+	Vector2<double> dvelocity = getVelocity() * frameTime / dspeed;
     Vector2<double> currentPosition = getPosition();
     Rect colRect;
     bool collided = false;
@@ -415,7 +426,13 @@ void PhysicalEntity::update(double frameTime)
 {
     this->frameTime = frameTime;
     auto oldPos = getPosition();
-    setPosition(oldPos + velocity * frameTime);
+    try
+    {
+        setPosition(oldPos + getVelocity() * frameTime);
+    }
+    catch (runtime_error)
+    {
+    }
 
     sprite->updateAnimation(frameTime);
 

@@ -16,7 +16,7 @@
 using namespace hiage;
 using namespace std;
 
-Map::Map(Game &game) : gameInstance(game)
+Map::Map(Game &game, const GameState& gameState) : gameInstance(game), gameState(gameState)
 {
     background = 0;
     objectDeletedFlag = false;
@@ -453,7 +453,7 @@ PhysicalEntity &Map::createObject(std::string name, double x, double y, bool run
 {
     //create the actual object
 	EntityFactory factory;
-	objects.push_back(factory.createObject(name, &gameInstance));
+	objects.push_back(factory.createObject(name, &gameInstance, gameState));
 	int o = objects.size() - 1;
 
 	//set it's position
@@ -914,7 +914,7 @@ void Map::setFlag(std::string flag, bool value)
     MapState class
 */
 
-MapState::MapState(Game &game) : GameState(game), gamemap(game)
+MapState::MapState(Game &game) : GameState(game), gamemap(game, *this)
 {
 }
 

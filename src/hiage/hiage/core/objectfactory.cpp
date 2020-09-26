@@ -25,7 +25,7 @@ EntityFactory::~EntityFactory()
 {
 }
 
-PhysicalEntity * EntityFactory::createObject(std::string objectName, Game * game)
+PhysicalEntity * EntityFactory::createObject(std::string objectName, Game * game, const GameState& gameState)
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
 
@@ -53,7 +53,7 @@ PhysicalEntity * EntityFactory::createObject(std::string objectName, Game * game
 	sprite->resource->create(texture->resource, sprite->intData1, sprite->intData2);
 
 	PhysicalEntity * entity = new PhysicalEntity;
-	entity->createFromFile(objectFile, sprite->resource, *game);
+	entity->createFromFile(objectFile, sprite->resource, gameState);
 
 	return entity;
 }

@@ -41,7 +41,7 @@ namespace hiage
 		/*!
 
 		*/
-		PhysicalEntity * createObject(std::string objectName, Game * game);
+		PhysicalEntity * createObject(std::string objectName, Game * game, const GameState& gameState);
 
 		/*template <typename ObjectClass>
 		void registerObject(std::string objectName)
