@@ -25,7 +25,6 @@ int main(int argc, char* argv[])
         timer.reset();
 
         game.run(frameTime, true);
-        timer.update();
 
         //cout << timer.getTime() << endl;
         frameTime = timer.getTime();

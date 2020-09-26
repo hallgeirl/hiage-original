@@ -9,8 +9,8 @@
 #include <iostream>
 
 #include "game.h"
+#include "entitymanager.hpp"
 #include "../util/exceptions.h"
-#include "objectfactory.h"
 #include "../sdl-includes.h"
 #include <filesystem>
 
@@ -401,13 +401,27 @@ std::string Game::getObjectFile(std::string name)
     Gamestate class
 */
 
-GameState::GameState(Game &game) : gameInstance(game)
+GameState::GameState(Game &game) : gameInstance(game), systemsFactory(componentManager)
 {
 
 }
 
 GameState::~GameState()
 {
+}
+
+const SystemsFactory& hiage::GameState::getSystemsFactory() const
+{
+	return systemsFactory;
+}
+
+
+void GameState::update(double frametime)
+{
+	for (auto const& sys : systems)
+	{
+		sys->update(frametime);
+	}
 }
 
 void GameState::changeState(Game * game, GameState * state)
@@ -418,5 +432,5 @@ void GameState::changeState(Game * game, GameState * state)
 
 const ComponentManager& hiage::GameState::getComponentManager() const
 {
-	return componentFactory;
+	return componentManager;
 }

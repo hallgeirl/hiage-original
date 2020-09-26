@@ -255,16 +255,32 @@ double PhysicalEntity::getYVelocity()
 
 void PhysicalEntity::setXVelocity(double x)
 {
-    MovableComponent& c = getComponentOfType<MovableComponent>();
-    auto vel = c.getVelocity();
-    c.setVelocity(x, vel.getY());
+    //TODO - cleanup later
+    try
+    {
+        MovableComponent& c = getComponentOfType<MovableComponent>();
+        auto vel = c.getVelocity();
+        c.setVelocity(x, vel.getY());
+    }
+    catch (runtime_error)
+    {
+
+    }
 }
 
 void PhysicalEntity::setYVelocity(double y)
 {
-    MovableComponent& c = getComponentOfType<MovableComponent>();
-    auto vel = c.getVelocity();
-    c.setVelocity(vel.getX(), y);
+    //TODO - cleanup later
+    try
+    {
+        MovableComponent& c = getComponentOfType<MovableComponent>();
+        auto vel = c.getVelocity();
+        c.setVelocity(vel.getX(), y);
+    }
+    catch (runtime_error)
+    {
+
+    }
 }
 
 double PhysicalEntity::getSpeed()
@@ -294,6 +310,17 @@ bool PhysicalEntity::willCollide(PhysicalEntity &target, double frameTime, Vecto
 	{
 		return false;
 	}
+
+    // TODO - clean this up later
+    try
+    {
+        getSpeed();
+        target.getSpeed();
+    }
+    catch (runtime_error)
+    {
+    }
+
 
     //store the current position and speed for both objects
     double dspeed1 = getSpeed() * frameTime;
@@ -360,6 +387,16 @@ bool PhysicalEntity::willCollideWithMap(Tilemap &tilemap, double frameTime)
 	{
 		return false;
 	}
+
+    //TODO: Clean this up eventually when everything is moved to ECS
+    try
+    {
+        getSpeed();
+    }
+    catch (runtime_error)
+    {
+        return false;
+    }
 
 	int dspeed = (int)ceil(getSpeed() * frameTime);
 

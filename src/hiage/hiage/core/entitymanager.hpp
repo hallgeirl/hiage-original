@@ -1,12 +1,11 @@
 /*!
-	\file com_objectfactory.h
+	\file entitymanager.hpp
 	\author Hallgeir Lien
 
 	This file contains the declaration and implementation of the object factory classes that will help create objects.
 */
 #pragma once
 
-#include "objectfactory.h"
 #include "game.h"
 #include "entity.h"
 #include "../util/exceptions.h"
@@ -22,7 +21,7 @@ namespace hiage
 	*/
 	//class Game;
 
-	class EntityFactory
+	class EntityManager
 	{
 	protected:
 		typedef PhysicalEntity *(*CreateObjectFunc)(std::string objectName, Game * game);
@@ -30,13 +29,19 @@ namespace hiage
 		std::map<std::string, CreateObjectFunc> objects;
 
 	public:
-		EntityFactory();
+		EntityManager();
 
 
-		EntityFactory(EntityFactory &obj);
+		EntityManager(EntityManager &obj);
 
-		~EntityFactory();
+		~EntityManager();
 
+		/*template <typename T>
+		T queryComponentGroup()
+		{
+			// TODO - Use archetypes here later
+
+		}*/
 
 		/*!
 

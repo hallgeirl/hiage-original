@@ -169,11 +169,12 @@ namespace hiage
 	class __IMPORTEXPORT GameState
 	{
 	private:
-		ComponentManager componentFactory;
-		std::unique_ptr<System> systems;
+		ComponentManager componentManager;
+		SystemsFactory  systemsFactory;
 
 	protected:
 		Game& gameInstance;
+		std::vector<std::unique_ptr<System>> systems;
 
 	public:
 		GameState(Game& game);
@@ -186,11 +187,12 @@ namespace hiage
 		virtual void resume() {}
 
 		virtual void handleEvents(double frametime) = 0;
-		virtual void update(double frametime) = 0;
+		virtual void update(double frametime);
 		virtual void render(double frametime) = 0;
 
 		void changeState(Game * game, GameState * state);
 
 		const ComponentManager& getComponentManager() const;
+		const SystemsFactory& getSystemsFactory() const;
 	};
 }

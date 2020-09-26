@@ -10,7 +10,7 @@ add_library(hiage STATIC
 	
 	"hiage/core/inputmanager.cpp"
 	"hiage/core/map.cpp"
-	"hiage/core/objectfactory.cpp"
+	"hiage/core/entitymanager.cpp"
 	"hiage/core/resmanager.cpp"
 	"hiage/core/script_lua.cpp"
 	"hiage/gfx/display.cpp"

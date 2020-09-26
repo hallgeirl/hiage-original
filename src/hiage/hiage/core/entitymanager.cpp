@@ -6,26 +6,26 @@
 	Description:
 */
 
-#include "objectfactory.h"
+#include "entitymanager.hpp"
 
 using namespace hiage;
 using namespace std;
 
-EntityFactory::EntityFactory()
+EntityManager::EntityManager()
 {
 
 }
 
-EntityFactory::EntityFactory(EntityFactory &obj)
+EntityManager::EntityManager(EntityManager &obj)
 {
 	*this = obj;
 }
 
-EntityFactory::~EntityFactory()
+EntityManager::~EntityManager()
 {
 }
 
-PhysicalEntity * EntityFactory::createObject(std::string objectName, Game * game, const GameState& gameState)
+PhysicalEntity * EntityManager::createObject(std::string objectName, Game * game, const GameState& gameState)
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
 

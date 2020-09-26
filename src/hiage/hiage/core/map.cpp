@@ -9,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include "map.h"
-#include "objectfactory.h"
+#include "entitymanager.hpp"
 
 #include "../lua-includes.h"
 
@@ -452,7 +452,7 @@ void Map::destroy()
 PhysicalEntity &Map::createObject(std::string name, double x, double y, bool runScripts)
 {
     //create the actual object
-	EntityFactory factory;
+	EntityManager factory;
 	objects.push_back(factory.createObject(name, &gameInstance, gameState));
 	int o = objects.size() - 1;
 
@@ -916,6 +916,8 @@ void Map::setFlag(std::string flag, bool value)
 
 MapState::MapState(Game &game) : GameState(game), gamemap(game, *this)
 {
+    auto sysFactory = getSystemsFactory();
+    systems.push_back(sysFactory.createSystem("movement"));
 }
 
 MapState::~MapState()

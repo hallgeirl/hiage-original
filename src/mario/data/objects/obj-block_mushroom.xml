@@ -3,6 +3,7 @@
   <sprite name="BlockQuestion" />
   <components>
     <component type="physical" />
+    <component type="movable" />
   </components>
   <scripts>
     <script type="objcollision" function="blockCollide" />

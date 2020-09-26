@@ -35,8 +35,8 @@ namespace hiage
 		static int entityCounter;
 	protected:
 		std::vector<std::shared_ptr<Component>> components;
-
 		/* TODO - Remove getComponentOfType* once everything is ported to ECS. For now, this function is useful to "wrap" the components in functions in MovableEntity etc.*/
+
 		template <typename T> 
 		T& getComponentOfType()
 		{
@@ -46,7 +46,6 @@ namespace hiage
 				try
 				{
 					T& cc = dynamic_cast<T&>(c);
-
 					return cc;
 				}
 				catch (bad_cast)
@@ -57,6 +56,7 @@ namespace hiage
 			throw runtime_error("getComponentOfType must not be called on objects without the requested component type.");
 		}
 
+
 		template <typename T>
 		const T& getComponentOfTypeReadOnly() const
 		{
@@ -66,7 +66,6 @@ namespace hiage
 				try
 				{
 					const T& cc = dynamic_cast<const T&>(c);
-
 					return cc;
 				}
 				catch (bad_cast)
@@ -74,7 +73,7 @@ namespace hiage
 				}
 			}
 
-			throw runtime_error("getComponentOfType must not be called on objects without the requested component type.");
+			throw runtime_error("getComponentOfTypeReadOnly must not be called on objects without the requested component type.");
 		}
 
 	public:

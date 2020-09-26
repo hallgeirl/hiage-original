@@ -1,29 +1,43 @@
 #pragma once
 
+#include <string>
+#include <memory>
+
 namespace hiage
 {
-	class Game;
+	class ComponentManager;
 
 	class System
 	{
 	protected:
-		const Game& game;
+		ComponentManager& componentManager;
 
 	public:
-		System(const Game& game);
+		System(ComponentManager& componentManager);
 		virtual ~System();
-		virtual void invoke(double frameTime) = 0;
+		virtual void update(double frameTime) = 0;
 	};
 
-	class MovementSystem
+	class MovementSystem : public System
 	{
 	public:
-		virtual void invoke(double frametime);
+		MovementSystem(ComponentManager& componentManager);
+		virtual void update(double frametime) override;
 	};
 
 	class ObjectRenderingSystem : public System
 	{
 	public:
-		virtual void invoke(double frameTime) override;
+		ObjectRenderingSystem(ComponentManager& componentManager);
+		virtual void update(double frameTime) override;
+	};
+
+	class SystemsFactory
+	{
+	private:
+		ComponentManager& componentManager;
+	public:
+		SystemsFactory(ComponentManager& componentFactory);
+		virtual std::unique_ptr<System> createSystem(std::string name);
 	};
 }

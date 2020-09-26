@@ -5,6 +5,25 @@
 using namespace hiage;
 using namespace std;
 
+
+hiage::Component::Component(int typeId) : typeId(typeId)
+{
+}
+
+hiage::Component::~Component()
+{
+}
+
+int hiage::Component::getTypeId()
+{
+	return 0;
+}
+
+hiage::PhysicalComponent::PhysicalComponent() : Component(PhysicalComponent::TYPEID)
+{
+
+}
+
 void PhysicalComponent::setPosition(double x, double y)
 {
 	position.set(x, y);
@@ -13,6 +32,10 @@ void PhysicalComponent::setPosition(double x, double y)
 const Vector2<double>& PhysicalComponent::getPosition() const
 {
 	return position;
+}
+
+hiage::MovableComponent::MovableComponent() : Component(MovableComponent::TYPEID)
+{
 }
 
 void MovableComponent::setVelocity(double xVel, double yVel)
@@ -78,4 +101,8 @@ std::vector<shared_ptr<Component>> hiage::ComponentManager::getComponentsOfType(
 
 	return componentCache[type];
 }
-	
+
+hiage::RenderableComponent::RenderableComponent() : Component(RenderableComponent::TYPEID)
+{
+
+}

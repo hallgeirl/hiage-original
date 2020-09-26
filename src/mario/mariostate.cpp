@@ -4,7 +4,7 @@
 
 */
 
-#include <hiage/core/objectfactory.h>
+#include <hiage/core/entitymanager.hpp>
 #include <hiage/core/script_lua.h>
 #include "mariostate.h"
 
@@ -28,8 +28,9 @@ void MarioState::render(double frametime)
 	gamemap.render();
 }
 
-void MarioState::update(double frametime)
+void MarioState::update(double frametime) 
 {
+	GameState::update(frametime);
     gamemap.update(frametime);
 }
 

@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <engine/com_objectfactory.h>
+#include <engine/entitymanager.hpp>
 #include "mapeditgame.h"
 
 using namespace std;
