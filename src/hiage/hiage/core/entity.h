@@ -35,6 +35,7 @@ namespace hiage
 		static int entityCounter;
 	protected:
 		std::vector<std::shared_ptr<Component>> components;
+
 		/* TODO - Remove getComponentOfType* once everything is ported to ECS. For now, this function is useful to "wrap" the components in functions in MovableEntity etc.*/
 
 		template <typename T> 
@@ -78,8 +79,10 @@ namespace hiage
 
 	public:
 		Entity();
+		//Entity(const Entity&) = delete;
 		virtual ~Entity();
-		
+		// Todo - reorganize so this won't be needed (probably should be owned by entitymanager)
+		virtual std::vector<std::shared_ptr<Component>>& getComponents() { return components; }
 		virtual void setDestructionFlag(bool val) {}
 		virtual bool getDestructionFlag() const { return false; }
 	};

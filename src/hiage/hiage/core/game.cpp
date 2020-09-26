@@ -401,7 +401,7 @@ std::string Game::getObjectFile(std::string name)
     Gamestate class
 */
 
-GameState::GameState(Game &game) : gameInstance(game), systemsFactory(componentManager)
+GameState::GameState(Game &game) : gameInstance(game), systemsFactory(componentManager, entityManager, game)
 {
 
 }
@@ -433,4 +433,9 @@ void GameState::changeState(Game * game, GameState * state)
 const ComponentManager& hiage::GameState::getComponentManager() const
 {
 	return componentManager;
+}
+
+EntityManager& hiage::GameState::getEntityManager()
+{
+	return entityManager;
 }

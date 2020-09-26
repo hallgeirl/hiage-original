@@ -29,6 +29,11 @@ void PhysicalComponent::setPosition(double x, double y)
 	position.set(x, y);
 }
 
+void hiage::PhysicalComponent::setPosition(const Vector2<double> pos)
+{
+	position.set(pos);
+}
+
 const Vector2<double>& PhysicalComponent::getPosition() const
 {
 	return position;
@@ -41,6 +46,11 @@ hiage::MovableComponent::MovableComponent() : Component(MovableComponent::TYPEID
 void MovableComponent::setVelocity(double xVel, double yVel)
 {
 	velocity.set(xVel, yVel);
+}
+
+void hiage::MovableComponent::setVelocity(const Vector2<double> vel)
+{
+	velocity.set(vel);
 }
 
 const Vector2<double>& MovableComponent::getVelocity() const
@@ -66,7 +76,7 @@ struct D : B
 
 
 
-std::unique_ptr<Component> hiage::ComponentManager::createComponentCore(const std::string& name) const
+std::unique_ptr<Component> hiage::ComponentManager::createComponentCore(const std::string& name, const std::map<std::string, std::string>& attributes) const
 {
 	if (name == "physical")
 	{
@@ -84,7 +94,7 @@ std::unique_ptr<Component> hiage::ComponentManager::createComponentCore(const st
 	throw runtime_error("Component type not found: " + name);
 }
 
-shared_ptr<Component> ComponentManager::createComponent(const std::string& type)
+shared_ptr<Component> ComponentManager::createComponent(const std::string& type, const std::map<std::string, std::string>& attributes)
 {
 	if (componentCache.find(type) == componentCache.end())
 		componentCache[type] = vector<shared_ptr<Component>>();
@@ -105,4 +115,9 @@ std::vector<shared_ptr<Component>> hiage::ComponentManager::getComponentsOfType(
 hiage::RenderableComponent::RenderableComponent() : Component(RenderableComponent::TYPEID)
 {
 
+}
+
+Sprite& hiage::RenderableComponent::getSprite()
+{
+	return sprite;
 }

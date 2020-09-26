@@ -22,11 +22,8 @@ namespace hiage
 	private:
         static const int MAPVERSION;
 
-		typedef std::vector<PhysicalEntity *>   ObjectList;
-
-		ObjectList                      objects;        //all created objects
 		Game &                          gameInstance;	//reference to the game instance
-		const GameState&				gameState;
+		GameState&						gameState;
 		Tilemap                         tilemap;
 		Texture *                       background;
 
@@ -53,7 +50,7 @@ namespace hiage
 		std::vector<std::string>        shutdownScripts;
 
 	public:
-		Map(Game &game, const GameState& gameState);
+		Map(Game &game, GameState& gameState);
 		~Map();
 
 		/*!
@@ -65,7 +62,9 @@ namespace hiage
 		PhysicalEntity &getObjectAt(double x, double y);
 		size_t          getObjectCount();
 		void            deleteObject(int index);
-		void            deleteObjectAt(double x, double y);
+
+		// TODO - reimplement later
+		//void            deleteObjectAt(double x, double y);
 
 		//map creation/loading/saving
 		void            createFromFile(std::string path);

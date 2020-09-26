@@ -7,6 +7,9 @@
 */
 
 #include "entitymanager.hpp"
+#include "game.h"
+#include "gamestate.hpp"
+#include "entity.h"
 
 using namespace hiage;
 using namespace std;
@@ -16,16 +19,11 @@ EntityManager::EntityManager()
 
 }
 
-EntityManager::EntityManager(EntityManager &obj)
-{
-	*this = obj;
-}
-
 EntityManager::~EntityManager()
 {
 }
 
-PhysicalEntity * EntityManager::createObject(std::string objectName, Game * game, const GameState& gameState)
+Entity& EntityManager::createObject(std::string objectName, Game * game, const GameState& gameState)
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
 
@@ -55,7 +53,15 @@ PhysicalEntity * EntityManager::createObject(std::string objectName, Game * game
 	PhysicalEntity * entity = new PhysicalEntity;
 	entity->createFromFile(objectFile, sprite->resource, gameState);
 
-	return entity;
+	//Entity* ent = (Entity*)entity;
+	entities.push_back(make_unique<PhysicalEntity>(*entity));
+
+	return *entities[entities.size() - 1];
+}
+
+int EntityManager::getObjectCount()
+{
+	return entities.size();
 }
 
 /*

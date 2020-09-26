@@ -16,7 +16,7 @@
 using namespace hiage;
 using namespace std;
 
-Map::Map(Game &game, const GameState& gameState) : gameInstance(game), gameState(gameState)
+Map::Map(Game &game, GameState& gameState) : gameInstance(game), gameState(gameState)
 {
     background = 0;
     objectDeletedFlag = false;
@@ -288,6 +288,10 @@ void Map::createEmpty(int width, int height, int layers, int tileSize, bool only
     tilemap.createMap(width, height, layers, tileSize);
 }
 
+/*
+
+TODO - reimplement later
+
 void Map::saveToFile(string path)
 {
 	clog << "Saving map to file " << path.c_str() << endl << flush;
@@ -401,19 +405,20 @@ void Map::saveToFile(string path)
 
 	//object data (object name + position, and number of objects)
 	temp = objects.size();
+
 	file.write((char*)&temp, 4);
 	for (unsigned int i = 0; i < objects.size(); i++)
 	{
 		//object name
-		string objectName = objects[i]->getName();
+		string objectName = obj.getName();
 		clog << "Saving entity " << objectName << endl;
 		temp = objectName.size();
 		file.write((char*)&temp, 4);
 		file.write(objectName.c_str(), objectName.length());
 
 		//position
-		double objx = (int)objects[i]->getX();
-		double objy = (int)objects[i]->getY();
+		double objx = (int)obj.getX();
+		double objy = (int)obj.getY();
 
 		file.write((char*)&objx, 8);
 		file.write((char*)&objy, 8);
@@ -423,17 +428,14 @@ void Map::saveToFile(string path)
 	file.close();
 
 	clog << "Map saving complete.\n" << flush;
-}
+}*/
+
+
 
 //destroy the map content
 void Map::destroy()
 {
     tilemap.destroy();
-    while (objects.size() > 0)
-    {
-        delete objects[0];
-        objects.erase(objects.begin());
-    }
 
     includeScripts.clear();
     initScripts.clear();
@@ -452,28 +454,30 @@ void Map::destroy()
 PhysicalEntity &Map::createObject(std::string name, double x, double y, bool runScripts)
 {
     //create the actual object
-	EntityManager factory;
-	objects.push_back(factory.createObject(name, &gameInstance, gameState));
-	int o = objects.size() - 1;
+    auto& em = gameState.getEntityManager();
+    em.createObject(name, &gameInstance, gameState);
 
-	//set it's position
-	objects[o]->setPosition(x, y);
+	int o = em.getObjectCount() - 1;
+	
+    //set it's position
+    auto& obj = em.getObjectByIndex<PhysicalEntity>(o);
+	obj.setPosition(x, y);
 
     //make a reference to the object in the script (allowing us to modify non-hardcoded attributes and member functions INSIDE the script)
-	gameInstance.scriptVM.executeLine(string("map.objects[") + (o+1) + "]=map:getobject(" + (int)(objects.size()-1) + ")");
-	gameInstance.scriptVM.executeLine(string("map.objects[") + (o+1) + "].id=" + o);
+	//gameInstance.scriptVM.executeLine(string("map.objects[") + (o+1) + "]=map:getobject(" + (int)(o) + ")");
+	//gameInstance.scriptVM.executeLine(string("map.objects[") + (o+1) + "].id=" + o);
 
     //execute init scripts (in reverse order to execute them in the order they were created)
     if (runScripts)
     {
-        for (int i = objects[o]->initScripts.size() - 1; i >= 0; i--)
+        for (int i = obj.initScripts.size() - 1; i >= 0; i--)
         {
-            gameInstance.scriptVM.executeLine(objects[o]->initScripts[i] + "(map.objects[" + (int)(objects.size()) + "])");
+            //gameInstance.scriptVM.executeLine(obj.initScripts[i] + "(map.objects[" + (int)(o+1) + "])");
         }
     }
 
     //return a reference to the object (for use in the scripts for instance)
-	return (*objects[o]);
+	return (obj);
 }
 
 PhysicalEntity &Map::createObject(std::string name, double x, double y)
@@ -485,54 +489,63 @@ PhysicalEntity &Map::createObject(std::string name, double x, double y)
 
 PhysicalEntity& Map::getObject(int index)
 {
-	return *(objects[index]);
+    auto& em = gameState.getEntityManager();
+    auto& obj = em.getObjectByIndex<PhysicalEntity>(index);
+    return obj;
 }
+
 
 PhysicalEntity& Map::getObjectAt(double x, double y)
 {
+    auto& em = gameState.getEntityManager();
+    
     //find the object at position (x,y)
-	for (size_t i = 0; i < objects.size(); i++)
+	for (size_t i = 0; i < em.getObjectCount(); i++)
 	{
-		Rect colBox;// = objects[i]->getSprite().getCollisionBox();
-		colBox.left = objects[i]->getX();
-		colBox.bottom = objects[i]->getY();
-		colBox.right = objects[i]->getX() + objects[i]->getSprite()->getWidth();
-		colBox.top = objects[i]->getY() + objects[i]->getSprite()->getHeight();
+        auto& obj = em.getObjectByIndex<PhysicalEntity>(i);
+		Rect colBox;// = obj.getSprite().getCollisionBox();
+		colBox.left = obj.getX();
+		colBox.bottom = obj.getY();
+		colBox.right = obj.getX() + obj.getSprite()->getWidth();
+		colBox.top = obj.getY() + obj.getSprite()->getHeight();
 		if (x > colBox.left && x < colBox.right && y < colBox.top && y > colBox.bottom)
 		{
 			//objects.erase(objects.begin() + i);
 			//i--;
-			return (*objects[i]);
+			return obj;
 		}
 	}
 
 	throw Exception(string("Warning: No object at position (") + x + "," + y + ")");
 }
 
+
+
 size_t Map::getObjectCount()
 {
-    return objects.size();
+    return gameState.getEntityManager().getObjectCount();
 }
 
 //delete the object at the specified index
 void Map::deleteObject(int index)
 {
-/*    delete objects[index];
-
-    objects.erase(objects.begin() + index);*/
-    objects[index]->setDestructionFlag(true);
+    auto& em = gameState.getEntityManager();
+    auto& obj = em.getObjectByIndex<Entity>(index);
+    obj.setDestructionFlag(true);
 }
-
+/*
+* 
+* TODO - reimplement later
 void Map::deleteObjectAt(double x, double y)
 {
     //find the object at position (x,y)
 	for (unsigned int i = 0; i < objects.size(); i++)
 	{
-		Rect colBox;// = objects[i]->getSprite().getCollisionBox();
-		colBox.left = objects[i]->getX();
-		colBox.bottom = objects[i]->getY();
-		colBox.right = objects[i]->getX() + objects[i]->getSprite()->getWidth();
-		colBox.top = objects[i]->getY() + objects[i]->getSprite()->getHeight();
+		Rect colBox;// = obj.getSprite().getCollisionBox();
+		colBox.left = obj.getX();
+		colBox.bottom = obj.getY();
+		colBox.right = obj.getX() + obj.getSprite()->getWidth();
+		colBox.top = obj.getY() + obj.getSprite()->getHeight();
 		if (x > colBox.left && x < colBox.right && y < colBox.top && y > colBox.bottom)
 		{
 			objects.erase(objects.begin() + i);
@@ -540,7 +553,7 @@ void Map::deleteObjectAt(double x, double y)
 		}
 	}
 }
-
+*/
 
 
 //Render the map
@@ -559,14 +572,16 @@ void Map::render()
     double viewBottom = camY - zoom;
 
     //render the objects
-    for (size_t i = 0; i < objects.size(); i++)
+    auto& em = gameState.getEntityManager();
+    for (size_t i = 0; i < em.getObjectCount(); i++)
 	{
+        auto& obj = em.getObjectByIndex<PhysicalEntity>(i);
 	    //check if the object is inside the viewport
-	    if ((objects[i]->getX() + objects[i]->getSprite()->getWidth() >= viewLeft) && (objects[i]->getX() <= viewRight))
+	    if ((obj.getX() + obj.getSprite()->getWidth() >= viewLeft) && (obj.getX() <= viewRight))
         {
-            if ((objects[i]->getY() + objects[i]->getSprite()->getHeight() >= viewBottom) && (objects[i]->getY() <= viewTop))
+            if ((obj.getY() + obj.getSprite()->getHeight() >= viewBottom) && (obj.getY() <= viewTop))
             {
-                objects[i]->render(renderer, ObjectZ::MIDDLE);
+                obj.render(renderer, ObjectZ::MIDDLE);
             }
         }
 	}
@@ -659,47 +674,51 @@ void Map::update(double frameTime)
     double viewTop = camY + zoom + margin;
     double viewBottom = camY - zoom - margin;
 
+    auto& em = gameState.getEntityManager();
 
-    for (size_t i = 0; i  < objects.size(); i++)
+    for (size_t i = 0; i  < em.getObjectCount(); i++)
     {
+        auto& obj = em.getObjectByIndex<PhysicalEntity>(i);
         //ignore objects that are set to be destroyed
-        if (objects[i]->getDestructionFlag())
+        if (obj.getDestructionFlag())
         {
             continue;
         }
 
 	    //check if the object is inside the viewport and if the updateOffscreen flag is set
-	    if (!((objects[i]->getX() + objects[i]->getSprite()->getWidth() >= viewLeft) && (objects[i]->getX() <= viewRight))
-            || !((objects[i]->getY() + objects[i]->getSprite()->getHeight() >= viewBottom) && (objects[i]->getY() <= viewTop))
+	    if (!((obj.getX() + obj.getSprite()->getWidth() >= viewLeft) && (obj.getX() <= viewRight))
+            || !((obj.getY() + obj.getSprite()->getHeight() >= viewBottom) && (obj.getY() <= viewTop))
             && !updateOffscreen)
         {
             continue;
         }
 
+
         //execute update scripts (in reverse order to execute them in the order they were created)
-        for (int j = objects[i]->updateScripts.size() - 1; j >= 0 && (objects.size() - 1) >= i; j--)
+        for (int j = obj.updateScripts.size() - 1; j >= 0 && (em.getObjectCount() - 1) >= i; j--)
         {
-            gameInstance.scriptVM.executeLine(objects[i]->updateScripts[j] + "(map.objects[" + (int)(i+1) + "])");
+            gameInstance.scriptVM.executeLine(obj.updateScripts[j] + "(map.objects[" + (int)(i+1) + "])");
         }
 
-        if ((int)i > (int)(objects.size()-1))
+        if ((int)i > (int)(em.getObjectCount()-1))
         {
             return;
         }
 
         //update the objects
-        objects[i]->update(frameTime);
+        obj.update(frameTime);
 
         //check for collisions
-        for (size_t j = i+1; j < objects.size(); j++)
+        for (size_t j = i+1; j < em.getObjectCount(); j++)
         {
+            auto& obj = em.getObjectByIndex<PhysicalEntity>(j);
             //ignore objects that are set to be destroyed
-            if (objects[j]->getDestructionFlag())
+            if (obj.getDestructionFlag())
             {
                 continue;
             }
             //check the distance between them
-            double distance = (objects[i]->getPosition() - objects[j]->getPosition()).length();
+            double distance = (obj.getPosition() - obj.getPosition()).length();
             if (distance > 50)
             {
                 continue;
@@ -708,57 +727,57 @@ void Map::update(double frameTime)
             //TODO: Put in a better distance check.
 
             //check if the object is inside the viewport and if the updateOffscreen flag is set
-            if (!((objects[j]->getX() + objects[j]->getSprite()->getWidth() >= viewLeft) && (objects[j]->getX() <= viewRight))
-                || !((objects[j]->getY() + objects[j]->getSprite()->getHeight() >= viewBottom) && (objects[j]->getY() <= viewTop))
+            if (!((obj.getX() + obj.getSprite()->getWidth() >= viewLeft) && (obj.getX() <= viewRight))
+                || !((obj.getY() + obj.getSprite()->getHeight() >= viewBottom) && (obj.getY() <= viewTop))
                 && !updateOffscreen)
             {
                 continue;
             }
 
             //Perform the collision check
-            if (objects[i]->willCollide(*objects[j], frameTime, colpos1, colpos2))
+            if (obj.willCollide(obj, frameTime, colpos1, colpos2))
             {
-                objects[i]->collided = true;
-                objects[j]->collided = true;
+                obj.collided = true;
+                obj.collided = true;
 
                 //execute collision scripts
-                for (size_t k = 0; k < objects[i]->objectCollisionScripts.size(); k++)
+                for (size_t k = 0; k < obj.objectCollisionScripts.size(); k++)
                 {
-                    gameInstance.scriptVM.executeLine(objects[i]->objectCollisionScripts[k] + "(map.objects[" + (int)(i+1) + "], map.objects[" + (int)(j+1) + "], " +
+                    gameInstance.scriptVM.executeLine(obj.objectCollisionScripts[k] + "(map.objects[" + (int)(i+1) + "], map.objects[" + (int)(j+1) + "], " +
                         "Vector(" + colpos1.getX() + "," + colpos1.getY() + "), Vector(" + colpos2.getX() + "," + colpos2.getY() + ")"
                         + ")");
                 }
-                for (size_t k = 0; k < objects[j]->objectCollisionScripts.size(); k++)
+                for (size_t k = 0; k < obj.objectCollisionScripts.size(); k++)
                 {
-                    gameInstance.scriptVM.executeLine(objects[j]->objectCollisionScripts[k] + "(map.objects[" + (int)(j+1) + "], map.objects[" + (int)(i+1) + "], " +
+                    gameInstance.scriptVM.executeLine(obj.objectCollisionScripts[k] + "(map.objects[" + (int)(j+1) + "], map.objects[" + (int)(i+1) + "], " +
                         "Vector(" + colpos2.getX() + "," + colpos2.getY() + "), Vector(" + colpos1.getX() + "," + colpos1.getY() + ")"
                         + ")");
                 }
             }
         }
 
-        if ((int)i > (int)(objects.size()-1))
+        if ((int)i > (int)(em.getObjectCount()-1))
         {
             return;
         }
 
         //check for collisions with the map
         gameInstance.scriptVM.executeLine(string("map.objects[") + (int)(i+1) + "][\"tilecollisions\"]={}");
-        if (objects[i]->willCollideWithMap(tilemap, frameTime))
+        if (obj.willCollideWithMap(tilemap, frameTime))
         {
-            for (size_t j = 0; j < objects[i]->collidedTiles.size(); j++)
+            for (size_t j = 0; j < obj.collidedTiles.size(); j++)
             {
 
-                //gameInstance.scriptVM.executeLine(string("map.objects[") + (int)(i + 1) + "].tilecollisions[" + (int)(i + 1) + "]=" + 1);//string(objects[i]->collidedTiles[j]));
-                for (size_t k = 0; k < objects[i]->collisionScripts.size(); k++)
+                //gameInstance.scriptVM.executeLine(string("map.objects[") + (int)(i + 1) + "].tilecollisions[" + (int)(i + 1) + "]=" + 1);//string(obj.collidedTiles[j]));
+                for (size_t k = 0; k < obj.collisionScripts.size(); k++)
                 {
-                    gameInstance.scriptVM.executeLine(objects[i]->collisionScripts[k] +
+                    gameInstance.scriptVM.executeLine(obj.collisionScripts[k] +
                         "(map.objects[" + (int)(i+1) + "]," +
-                        objects[i]->collidedTiles[j].tilepos.getX() + "," +
-                        objects[i]->collidedTiles[j].tilepos.getY() + "," +
-                        tilemap.getTileset()->getTile(tilemap.getTile(objects[i]->collidedTiles[j].tilepos.getX(), objects[i]->collidedTiles[j].tilepos.getY(),0)).block + "," +
-                        objects[i]->collidedTiles[j].colpos.getX() + "," +
-                        objects[i]->collidedTiles[j].colpos.getY()
+                        obj.collidedTiles[j].tilepos.getX() + "," +
+                        obj.collidedTiles[j].tilepos.getY() + "," +
+                        tilemap.getTileset()->getTile(tilemap.getTile(obj.collidedTiles[j].tilepos.getX(), obj.collidedTiles[j].tilepos.getY(),0)).block + "," +
+                        obj.collidedTiles[j].colpos.getX() + "," +
+                        obj.collidedTiles[j].colpos.getY()
                         + ")");
                 }
 
@@ -767,20 +786,20 @@ void Map::update(double frameTime)
     }
 
     //clean up objects that are marked for destruction
-    for (size_t i = 0; i  < objects.size(); i++)
+    for (size_t i = 0; i  < em.getObjectCount(); i++)
     {
-        if (objects[i]->getDestructionFlag())
+        auto& obj = em.getObjectByIndex<PhysicalEntity>(i);
+        if (obj.getDestructionFlag())
         {
-            delete objects[i];
-            objects.erase(objects.begin() + i);
+            em.removeObjectByIndex(i);
 
             //rearrange script objects
-            for (size_t j = i; j < objects.size(); j++)
+            for (size_t j = i; j < em.getObjectCount(); j++)
             {
                 gameInstance.scriptVM.executeLine(string("map.objects[") + (int)(j+1) + "]=map.objects[" + (int)(j+2) + "]");
                 gameInstance.scriptVM.executeLine(string("map.objects[") + (int)(j+1) + "].id=" + (int)j);
             }
-            gameInstance.scriptVM.executeLine(string("map.objects[") + (int)(objects.size()+1) + "]=nil");
+            gameInstance.scriptVM.executeLine(string("map.objects[") + (int)(em.getObjectCount() + 1) + "]=nil");
             i--;
         }
     }
@@ -918,6 +937,7 @@ MapState::MapState(Game &game) : GameState(game), gamemap(game, *this)
 {
     auto sysFactory = getSystemsFactory();
     systems.push_back(sysFactory.createSystem("movement"));
+    systems.push_back(sysFactory.createSystem("objectrendering"));
 }
 
 MapState::~MapState()

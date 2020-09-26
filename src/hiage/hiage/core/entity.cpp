@@ -81,8 +81,19 @@ void PhysicalEntity::createFromFile(std::string path, Sprite * sprite, const Gam
         while (componentElement)
         {
             componentType = componentElement->Attribute("type");
-            this->components.push_back(componentFactory.createComponent(componentType));
+            map<string, string> componentAttributes;
 
+            auto childElement = componentElement->FirstChildElement();
+            while (childElement)
+            {
+                std::string key = childElement->Value();
+                std::string value = childElement->GetText();
+                componentAttributes[key] = value;
+
+                childElement = childElement->NextSiblingElement();
+            }
+            
+            this->components.push_back(componentFactory.createComponent(componentType, componentAttributes));
             componentElement = componentElement->NextSiblingElement("component");
         }
     }
@@ -462,14 +473,6 @@ void PhysicalEntity::setCollision(bool value)
 void PhysicalEntity::update(double frameTime)
 {
     this->frameTime = frameTime;
-    auto oldPos = getPosition();
-    try
-    {
-        setPosition(oldPos + getVelocity() * frameTime);
-    }
-    catch (runtime_error)
-    {
-    }
 
     sprite->updateAnimation(frameTime);
 

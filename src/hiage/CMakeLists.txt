@@ -27,7 +27,7 @@ add_library(hiage STATIC
 	"hiage/util/exceptions.cpp"
 	"hiage/util/timer.cpp"
 	"hiage/core/components.cpp" 
-	"hiage/core/systems.cpp")
+	"hiage/core/systems.cpp" "hiage/core/gamestate.hpp")
 
 target_include_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/include ${PROJECT_SOURCE_DIR}/third_party/src/tinyxml)
 

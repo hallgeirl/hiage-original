@@ -29,8 +29,9 @@ namespace hiage
 	public:
 		PhysicalComponent();
 
-		const int TYPEID = 1;
+		static const int TYPEID = 1;
 		void setPosition(double x, double y);
+		void setPosition(const Vector2<double> pos);
 		const Vector2<double>& getPosition() const;
 	};
 
@@ -41,8 +42,9 @@ namespace hiage
 	public:
 		MovableComponent();
 
-		const int TYPEID = 2;
+		static const int TYPEID = 2;
 		void setVelocity(double xVel, double yVel);
+		void setVelocity(const Vector2<double> vel);
 		const Vector2<double>& getVelocity() const;
 		void accellerate(double magnitude, const Vector2<double>& directionNormalized);
 	};
@@ -54,7 +56,9 @@ namespace hiage
 	public:
 		RenderableComponent();
 
-		const int TYPEID = 3;
+		Sprite& getSprite();
+
+		static const int TYPEID = 3;
 	};
 
 	/*
@@ -65,10 +69,10 @@ namespace hiage
 	{
 	private: 
 		std::map<std::string, std::vector<std::shared_ptr<Component>>> componentCache;
-		std::unique_ptr<Component> createComponentCore(const std::string& type) const;
+		std::unique_ptr<Component> createComponentCore(const std::string& type, const std::map<std::string, std::string>& attributes) const;
 	public:
 		// todo: after rewriting everything to ECS - see if we can drop to using unique_ptr.
-		std::shared_ptr<Component> createComponent(const std::string& type);
+		std::shared_ptr<Component> createComponent(const std::string& type, const std::map<std::string, std::string>& attributes);
 		std::vector<std::shared_ptr<Component>> getComponentsOfType(const std::string& type);
 
 		template <typename T>
