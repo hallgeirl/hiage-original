@@ -71,6 +71,22 @@ void ObjectRenderingSystem::update(double frameTime)
 	}
 }
 
+hiage::GravitySystem::GravitySystem(Game& game, GameState& gameState) : System(game, gameState)
+{
+}
+
+void hiage::GravitySystem::update(double frameTime)
+{
+	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicsComponent, MovableComponent>(PhysicsComponent::TYPEID, MovableComponent::TYPEID);
+
+	for (auto& t : componentTuples)
+	{
+		auto& physical = std::get<0>(t);
+		auto& movement = std::get<1>(t);
+		movement->accellerate(magnitude * frameTime, Vector2<double>(0, -1));
+	}
+}
+
 
 SystemsFactory::SystemsFactory(Game& game, GameState& gameState) : game(game), gameState(gameState)
 {
@@ -83,7 +99,10 @@ unique_ptr<System> hiage::SystemsFactory::createSystem(std::string name)
 
 	if (name == "objectrendering")
 		return make_unique<ObjectRenderingSystem>(game, gameState);
-	
+
+	if (name == "gravity")
+		return make_unique<GravitySystem>(game, gameState);
+
 	throw runtime_error("Unknown system name: " + name);
 }
 

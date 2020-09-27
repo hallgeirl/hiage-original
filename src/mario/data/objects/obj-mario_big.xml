@@ -6,6 +6,7 @@
     <component type="renderable">
       <sprite>MarioBig</sprite>
     </component>
+    <component type="physics" />
   </components>
   <scripts>
     <script type="init" function="initPlayer" />

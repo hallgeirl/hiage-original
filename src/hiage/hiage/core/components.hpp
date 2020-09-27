@@ -23,6 +23,18 @@ namespace hiage
 		int getTypeId();
 	};
 
+#define NOARG
+#define DEFINE_COMPONENT(NAME, PRIVATE, PUBLIC, _TYPEID) \
+class NAME : public Component \
+{\
+private: \
+	PRIVATE \
+public: \
+	NAME() : Component(NAME::TYPEID) {} \
+	static const int TYPEID = _TYPEID; \
+	PUBLIC \
+}
+
 	class PhysicalComponent : public Component
 	{
 	private:
@@ -64,6 +76,16 @@ namespace hiage
 		static const int TYPEID = 3;
 	};
 
+	//DEFINE_COMPONENT(GravityComponent, NOARG, NOARG, 4);
+
+	class PhysicsComponent : public Component
+	{
+	private:
+	public:
+		PhysicsComponent();
+		
+		static const int TYPEID = 4;
+	};
 	/*
 	ComponentManager
 	*/

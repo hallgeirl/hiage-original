@@ -82,6 +82,11 @@ Sprite& hiage::RenderableComponent::getSprite()
 	return sprite;
 }
 
+hiage::PhysicsComponent::PhysicsComponent() : Component(PhysicsComponent::TYPEID)
+{
+}
+
+
 /*
 	ComponentManager
 */
@@ -108,6 +113,10 @@ std::unique_ptr<Component> hiage::ComponentManager::createComponentCore(const st
 	else if (name == "renderable")
 	{
 		return createRenderable(attributes);
+	}
+	else if (name == "physics")
+	{
+		return make_unique<PhysicsComponent>();
 	}
 
 	throw runtime_error("Component type not found: " + name);
@@ -156,3 +165,4 @@ std::vector<shared_ptr<Component>> hiage::ComponentManager::getComponentsOfType(
 
 	return componentCache[type];
 }
+

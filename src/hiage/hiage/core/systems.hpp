@@ -39,7 +39,12 @@ namespace hiage
 
 	class GravitySystem : public System
 	{
+	private:
+		double magnitude = 30;
 
+	public:
+		GravitySystem(Game& game, GameState& gameState);
+		virtual void update(double frameTime) override;
 	};
 
 

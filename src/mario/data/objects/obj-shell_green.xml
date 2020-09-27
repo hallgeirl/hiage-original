@@ -6,6 +6,7 @@
     <component type="renderable">
       <sprite>GreenShell</sprite>
     </component>
+    <component type="physics" />
   </components>
   <scripts>    
     <script type="init" function="initShell" />
