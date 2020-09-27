@@ -926,6 +926,7 @@ MapState::MapState(Game &game) : GameState(game), gamemap(game, *this)
     systems.push_back(sysFactory.createSystem("movement"));
     systems.push_back(sysFactory.createSystem("objectrendering"));
     systems.push_back(sysFactory.createSystem("gravity"));
+    systems.push_back(sysFactory.createSystem("humancontroller"));
 }
 
 MapState::~MapState()

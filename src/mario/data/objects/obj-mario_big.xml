@@ -7,6 +7,7 @@
       <sprite>MarioBig</sprite>
     </component>
     <component type="physics" />
+    <component type="humancontroller" />
   </components>
   <scripts>
     <script type="init" function="initPlayer" />

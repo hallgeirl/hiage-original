@@ -76,6 +76,7 @@ public: \
 		static const int TYPEID = 3;
 	};
 
+
 	//DEFINE_COMPONENT(GravityComponent, NOARG, NOARG, 4);
 
 	class PhysicsComponent : public Component
@@ -86,6 +87,16 @@ public: \
 		
 		static const int TYPEID = 4;
 	};
+
+	class HumanControllerComponent : public Component
+	{
+	private:
+	public:
+		HumanControllerComponent();
+
+		static const int TYPEID = 5;
+	};
+
 	/*
 	ComponentManager
 	*/

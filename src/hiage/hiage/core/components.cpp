@@ -118,6 +118,10 @@ std::unique_ptr<Component> hiage::ComponentManager::createComponentCore(const st
 	{
 		return make_unique<PhysicsComponent>();
 	}
+	else if (name == "humancontroller")
+	{
+		return make_unique<HumanControllerComponent>();
+	}
 
 	throw runtime_error("Component type not found: " + name);
 }
@@ -166,3 +170,7 @@ std::vector<shared_ptr<Component>> hiage::ComponentManager::getComponentsOfType(
 	return componentCache[type];
 }
 
+hiage::HumanControllerComponent::HumanControllerComponent() : Component(HumanControllerComponent::TYPEID)
+{
+
+}
