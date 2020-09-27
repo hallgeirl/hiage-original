@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object name="MarioBig" type="Mario">
-  <sprite name="MarioBig" />
   <components>
     <component type="physical" />
     <component type="movable" />

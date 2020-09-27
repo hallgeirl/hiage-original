@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object name="CoinFading" type="Decoration">
-  <sprite name="Coin" />
   <components>
     <component type="physical" />
+    <component type="renderable">
+      <sprite>Coin</sprite>
+    </component>
   </components>
   <scripts>    
     <script type="init" function="initFadingCoin" />
