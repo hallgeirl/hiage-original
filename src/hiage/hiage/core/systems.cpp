@@ -5,7 +5,7 @@ using namespace std;
 using namespace hiage;
 
 
-System::System(Game& game, ComponentManager& componentManager, EntityManager& entityManager) : componentManager(componentManager), entityManager(entityManager), game(game)
+System::System(Game& game, GameState& gameState) : game(game), gameState(gameState)
 {
 }
 
@@ -13,13 +13,13 @@ System::~System()
 {
 }
 
-MovementSystem::MovementSystem(Game& game, ComponentManager& componentManager, EntityManager& entityManager) : System(game, componentManager, entityManager)
+MovementSystem::MovementSystem(Game& game, GameState& gameState) : System(game, gameState)
 {
 }
 
 void MovementSystem::update(double frametime)
 {
-	auto& componentTuples = this->entityManager.queryComponentGroup<PhysicalComponent, MovableComponent>(PhysicalComponent::TYPEID, MovableComponent::TYPEID);
+	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicalComponent, MovableComponent>(PhysicalComponent::TYPEID, MovableComponent::TYPEID);
 	for (auto& t : componentTuples)
 	{
 		auto& physical = std::get<0>(t);
@@ -31,13 +31,13 @@ void MovementSystem::update(double frametime)
 	}
 }
 
-ObjectRenderingSystem::ObjectRenderingSystem(Game& game, ComponentManager& componentManager, EntityManager& entityManager, Renderer& renderer) : System(game, componentManager, entityManager), renderer(renderer)
+ObjectRenderingSystem::ObjectRenderingSystem(Game& game, GameState& gameState) : System(game, gameState)
 {
 }
 
 void ObjectRenderingSystem::update(double frameTime)
 {
-	auto& componentTuples = this->entityManager.queryComponentGroup<PhysicalComponent, RenderableComponent>(PhysicalComponent::TYPEID, RenderableComponent::TYPEID);
+	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicalComponent, RenderableComponent>(PhysicalComponent::TYPEID, RenderableComponent::TYPEID);
 
 	Display& disp = game.getDisplay();
 	Renderer& renderer = disp.getRenderer();
@@ -72,18 +72,17 @@ void ObjectRenderingSystem::update(double frameTime)
 }
 
 
-SystemsFactory::SystemsFactory(ComponentManager& componentManager, EntityManager& entityManager, Game& game) : componentManager(componentManager), entityManager(entityManager), game(game)
+SystemsFactory::SystemsFactory(Game& game, GameState& gameState) : game(game), gameState(gameState)
 {
-
 }
 
 unique_ptr<System> hiage::SystemsFactory::createSystem(std::string name)
 {
 	if (name == "movement")
-		return make_unique<MovementSystem>(game, componentManager, entityManager);
+		return make_unique<MovementSystem>(game, gameState);
 
 	if (name == "objectrendering")
-		return make_unique<ObjectRenderingSystem>(game, componentManager, entityManager, game.getDisplay().getRenderer());
+		return make_unique<ObjectRenderingSystem>(game, gameState);
 	
 	throw runtime_error("Unknown system name: " + name);
 }

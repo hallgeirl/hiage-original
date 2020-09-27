@@ -401,7 +401,7 @@ const std::string& Game::getObjectFile(std::string name) const
     Gamestate class
 */
 
-GameState::GameState(Game& game) : gameInstance(game), systemsFactory(componentManager, entityManager, game), entityManager(game, *this), componentManager(game)
+GameState::GameState(Game& game) : gameInstance(game), systemsFactory(game, *this), entityManager(game, *this), componentManager(game)
 {
 
 }

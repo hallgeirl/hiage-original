@@ -5,10 +5,8 @@
 
 namespace hiage
 {
-	class ComponentManager;
-	class EntityManager;
 	class Game;
-	class Renderer;
+	class GameState;
 
 	/*
 		Systems
@@ -16,12 +14,11 @@ namespace hiage
 	class System
 	{
 	protected:
-		ComponentManager& componentManager;
-		EntityManager& entityManager;
 		Game& game;
+		GameState& gameState;
 
 	public:
-		System(Game& game, ComponentManager& componentManager, EntityManager& entityManager);
+		System(Game& game, GameState& gameState);
 		virtual ~System();
 		virtual void update(double frameTime) = 0;
 	};
@@ -29,17 +26,20 @@ namespace hiage
 	class MovementSystem : public System
 	{
 	public:
-		MovementSystem(Game& game, ComponentManager& componentManager, EntityManager& entityManager);
+		MovementSystem(Game& game, GameState& gameState);
 		virtual void update(double frametime) override;
 	};
 
 	class ObjectRenderingSystem : public System
 	{
-	private:
-		Renderer& renderer;
 	public:
-		ObjectRenderingSystem(Game& game, ComponentManager& componentManager, EntityManager& entityManager, Renderer& renderer);
+		ObjectRenderingSystem(Game& game, GameState& gameState);
 		virtual void update(double frameTime) override;
+	};
+
+	class GravitySystem : public System
+	{
+
 	};
 
 
@@ -56,10 +56,9 @@ namespace hiage
 	{
 	private:
 		Game& game;
-		ComponentManager& componentManager;
-		EntityManager& entityManager;
+		GameState& gameState;
 	public:
-		SystemsFactory(ComponentManager& componentFactory, EntityManager& entityManager, Game& game);
+		SystemsFactory(Game& game, GameState& gameState);
 		virtual std::unique_ptr<System> createSystem(std::string name);
 	};
 }
