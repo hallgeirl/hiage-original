@@ -13,6 +13,8 @@
 #include "../util/exceptions.h"
 #include "../sdl-includes.h"
 #include <filesystem>
+#include <thread>
+#include <chrono>
 
 #pragma warning(push, 0)
 #include <tinyxml.h>
@@ -24,7 +26,7 @@ using namespace hiage;
 using namespace std;
 using namespace std::filesystem;
 
-Game::Game() : gameTimer(true)
+Game::Game(double framerateLimit) : gameTimer(true), lastFrameTime(0.05), framerateLimit(120)
 {
 	running = false;
 	timeFactor = 1;
@@ -207,11 +209,44 @@ void Game::setGameState(GameState * state)
 	states.back()->init();
 }
 
-void Game::run(double frametime, bool doEvents)
-{
-	display.beginRender();
 
-	frametime *= timeFactor;
+/*
+Timer timer;
+	
+	while (game.isRunning())
+	{
+		timer.reset();
+
+		game.run(frameTime, true);
+
+		//cout << timer.getTime() << endl;
+		frameTime = timer.getTime();
+
+
+		//cap at 500 FPS
+
+		double frameTimeMicroseconds = frameTime * 1000000;
+		long microsecondsToSleep = frameTimeLimitMicroseconds - frameTimeMicroseconds;
+		if (microsecondsToSleep > 1)
+		{
+			std::this_thread::sleep_for(std::chrono::microseconds(microsecondsToSleep));
+		}
+		frameTime = timer.getTime();
+
+		if (frameTime > 0.020)
+		{
+			frameTime = 0.020;
+		}
+	}
+
+
+*/
+
+void Game::run(bool doEvents)
+{
+	Timer frameTimer(true);		 //!< Used for frame limiting.
+	
+	display.beginRender();
 
     SDL_Event event;
 
@@ -229,9 +264,9 @@ void Game::run(double frametime, bool doEvents)
 
 	if (!states.empty())
 	{
-		states.back()->handleEvents(frametime);
-		states.back()->update(frametime);
-		states.back()->render(frametime);
+		states.back()->handleEvents(lastFrameTime);
+		states.back()->update(lastFrameTime);
+		states.back()->render(lastFrameTime);
 	}
 	display.render();
 
@@ -250,7 +285,23 @@ void Game::run(double frametime, bool doEvents)
 
 	glEnable(GL_TEXTURE_2D);
 
-	scriptVM.executeLine(string("frametime=") + frametime);
+	/*
+	* Limit framerate
+	*/
+	double frameTimeLimitMicroseconds = 1000000. / framerateLimit;
+	if (framerateLimit > 0)
+	{
+		double frameTimeMicroseconds = frameTimer.getTime() * 1000000;
+		long microsecondsToSleep = (frameTimeLimitMicroseconds - frameTimeMicroseconds / 100.);
+
+		if (microsecondsToSleep > 1)
+		{
+			std::this_thread::sleep_for(std::chrono::microseconds(microsecondsToSleep));
+		}
+	}
+	lastFrameTime = frameTimer.getTime() * timeFactor;
+
+	scriptVM.executeLine(string("frametime=") + lastFrameTime);
 }
 
 double Game::getTimeFactor()

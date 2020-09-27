@@ -23,7 +23,7 @@ namespace hiage
 			int x,y;
 			double delay;
 			int nextFrame;
-			Rect collisionBox;
+			BoundingBox<double> collisionBox;
 		};
 
 	private:
@@ -40,7 +40,7 @@ namespace hiage
 
 		void setName(const std::string animName) {animationName = animName;}
 		std::string getName(){return animationName;}
-		void addFrame(int x, int y, double delay, uint nextFrame, Rect colBox);
+		void addFrame(int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox);
 		void runAnimation(double timeFactor);
 		void reset() { frameTimer = 0; currentFrame = 0; }
 
@@ -80,7 +80,7 @@ namespace hiage
 		void render(Renderer &renderer, const Vector2<double>& position, ObjectZ z, float rotation = 0, bool hFlip = false, bool vFlip = false, float maxSize = 0);
 
 		uint addAnimation(const char * name);
-		void addFrame(uint animID, int x, int y, double delay, uint nextFrame, Rect colBox);
+		void addFrame(uint animID, int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox);
 		const std::string getAnimationName(uint animID);
 		void updateAnimation(double timefactor);
 		void playAnimation(int anim, double speed = 1) { currentAnimation = anim; animationSpeed = speed; }
@@ -90,7 +90,7 @@ namespace hiage
 
 		int getWidth() const { return frameWidth; }
 		int getHeight() const { return frameHeight; }
-		Rect getCollisionBox() const;
+		BoundingBox<double> getCollisionBox() const;
 
 		Sprite & operator=(Sprite);
 	};

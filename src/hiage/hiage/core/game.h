@@ -42,7 +42,8 @@ namespace hiage
 		InputManager	input;		//!< Used to handle input.
 		AudioManager	audio;		//!< All sounds and music are stored and handled here.
         double          timeFactor;
-
+		double			framerateLimit;
+		double			lastFrameTime;
 		//resources
 		TextureManager	textureManager;	//!< Stores the loaded textures.
 		SpriteManager	spriteManager;	//!< Stores the loaded sprites.
@@ -72,8 +73,7 @@ namespace hiage
 		LuaVM scriptVM; //!< The LUA script's virtual machine class
 
 	public:
-
-		Game();
+		Game(double framerateLimit);
 		virtual ~Game();
 
 		/*!
@@ -90,7 +90,7 @@ namespace hiage
 			Runs the game. This should be called every time the main game loop loops.
 			\param frameTime The amount of time used to render the last frame, in seconds.
 		*/
-		void run(double frameTime, bool doEvents = true);
+		void run(bool doEvents = true);
 
         void setTimeFactor(double value);
         double getTimeFactor();

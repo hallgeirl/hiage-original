@@ -28,23 +28,24 @@
 */
 namespace hiage
 {
-	struct Rect
+	template<typename T>
+	struct BoundingBox
 	{
-		double left, right, top, bottom;
-		Rect(double l, double r, double t, double b)
+		T left, right, top, bottom;
+		BoundingBox(T left, T right, T top, T bottom)
 		{
-			left = l;
-			right = r;
-			top = t;
-			bottom = b;
+			this->left = left;
+			this->right = right;
+			this->top = top;
+			this->bottom = bottom;
 		}
-		Rect()
+		BoundingBox()
 		{
 			left = right = top = bottom = 0;
 		}
 	};
 
-	inline std::ostream & operator <<(std::ostream &stream, const Rect &r)
+	inline std::ostream & operator <<(std::ostream &stream, const BoundingBox<double> &r)
 	{
 		stream << "Left: " << r.left << " Top: " << r.top << " Right: " << r.right << " Bottom: " << r.bottom;
 		return stream;

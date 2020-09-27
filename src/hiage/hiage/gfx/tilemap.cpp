@@ -111,11 +111,11 @@ void Tilemap::importMap(unsigned int *** data)
 	}
 }
 
-Rect Tilemap::getTilesInRect(float left, float top, float right, float bottom) const
+BoundingBox<double> Tilemap::getTilesInRect(float left, float top, float right, float bottom) const
 {
 	//check that the rect is inside the tilemap
 	float tilemap_right, tilemap_left, tilemap_top, tilemap_bottom;
-	Rect rect(0,0,0,0);
+	BoundingBox<double> rect(0,0,0,0);
 
 	tilemap_left = 0;
 	tilemap_right = (float)(tilesize * width);

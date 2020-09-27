@@ -20,15 +20,15 @@ MovementSystem::MovementSystem(Game& game, GameState& gameState) : System(game, 
 
 void MovementSystem::update(double frametime)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicalComponent, MovableComponent>();
+	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent>();
 	for (auto& t : componentTuples)
 	{
 		auto& physical = std::get<0>(t);
 		auto& movement = std::get<1>(t);
 		
-		auto vel = movement->getVelocity();
-		auto pos = physical->getPosition();
-		physical->setPosition(pos + vel * frametime);
+		auto vel = movement->getData();
+		auto pos = physical->getData();
+		physical->getData().set(pos + vel * frametime);
 	}
 }
 
@@ -38,7 +38,7 @@ ObjectRenderingSystem::ObjectRenderingSystem(Game& game, GameState& gameState) :
 
 void ObjectRenderingSystem::update(double frameTime)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicalComponent, RenderableComponent>();
+	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, RenderableComponent>();
 
 	Display& disp = game.getDisplay();
 	Renderer& renderer = disp.getRenderer();
@@ -57,8 +57,8 @@ void ObjectRenderingSystem::update(double frameTime)
 		auto& phyiscal = std::get<0>(t);
 		auto& renderable = std::get<1>(t);
 
-		auto& pos = phyiscal->getPosition();
-		auto& sprite = renderable->getSprite();
+		auto& pos = phyiscal->getData();
+		auto& sprite = renderable->getData();
 		
 		//check if the object is inside the viewport
 		if ((pos.getX() + sprite.getWidth() >= viewLeft) && (pos.getX() <= viewRight))
@@ -79,13 +79,15 @@ hiage::GravitySystem::GravitySystem(Game& game, GameState& gameState) : System(g
 
 void hiage::GravitySystem::update(double frameTime)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicsComponent, MovableComponent>();
+	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicsComponent, VelocityComponent>();
 
 	for (auto& t : componentTuples)
 	{
 		auto& physical = std::get<0>(t);
 		auto& movement = std::get<1>(t);
-		movement->accellerate(magnitude * frameTime, Vector2<double>(0, -1));
+
+		auto& vel = movement->getData();
+		vel.add(Vector2<double>(0, -1) * magnitude * frameTime);
 	}
 }
 
@@ -96,7 +98,7 @@ hiage::HumanControllerSystem::HumanControllerSystem(Game& game, GameState& gameS
 
 void hiage::HumanControllerSystem::update(double frameTime)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<HumanControllerComponent, MovableComponent>();
+	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<HumanControllerComponent, VelocityComponent>();
 	for (auto& t : componentTuples)
 	{
 		auto& controller = std::get<0>(t);
@@ -104,22 +106,26 @@ void hiage::HumanControllerSystem::update(double frameTime)
 
 		// TODO: Implement proper key bindings and generally more flexibility here.
 		// Might need a component that defines accelleration magnitude as well. Or perhaps this could go into the movement component?
+		auto& vel = movement->getData();
+
 		auto& inputManager = game.getInputManager();
+		double magnitude = 100. * frameTime;
+
 		if (inputManager.keyDown(SDL_SCANCODE_RIGHT))
 		{
-			movement->accellerate(100. * frameTime, Vector2<double>(1, 0));
+			vel.add(Vector2<double>(1, 0) * magnitude);
 		}
 		if (inputManager.keyDown(SDL_SCANCODE_LEFT))
 		{
-			movement->accellerate(100. * frameTime, Vector2<double>(-1, 0));
+			vel.add(Vector2<double>(-1, 0) * magnitude);
 		}
 		if (inputManager.keyDown(SDL_SCANCODE_DOWN))
 		{
-			movement->accellerate(100. * frameTime, Vector2<double>(0, -1));
+			vel.add(Vector2<double>(0, -1) * magnitude);
 		}
 		if (inputManager.keyDown(SDL_SCANCODE_UP))
 		{
-			movement->accellerate(100. * frameTime, Vector2<double>(0, 1));
+			vel.add(Vector2<double>(0, 1) * magnitude);
 		}
 	}
 }

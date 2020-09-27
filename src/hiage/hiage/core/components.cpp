@@ -6,87 +6,6 @@ using namespace hiage;
 using namespace std;
 
 
-hiage::Component::Component(int typeId) : typeId(typeId)
-{
-}
-
-hiage::Component::~Component()
-{
-}
-
-int hiage::Component::getTypeId()
-{
-	return typeId;
-}
-
-hiage::PhysicalComponent::PhysicalComponent() : Component(PhysicalComponent::TYPEID)
-{
-
-}
-
-hiage::PhysicalComponent::PhysicalComponent(double x, double y) : Component(PhysicalComponent::TYPEID), position(x,y)
-{
-}
-
-void PhysicalComponent::setPosition(double x, double y)
-{
-	position.set(x, y);
-}
-
-void hiage::PhysicalComponent::setPosition(const Vector2<double> pos)
-{
-	position.set(pos);
-}
-
-const Vector2<double>& PhysicalComponent::getPosition() const
-{
-	return position;
-}
-
-hiage::MovableComponent::MovableComponent() : Component(MovableComponent::TYPEID)
-{
-}
-
-hiage::MovableComponent::MovableComponent(double velX, double velY) : Component(MovableComponent::TYPEID), velocity(velX, velY)
-{
-}
-
-void MovableComponent::setVelocity(double xVel, double yVel)
-{
-	velocity.set(xVel, yVel);
-}
-
-void hiage::MovableComponent::setVelocity(const Vector2<double> vel)
-{
-	velocity.set(vel);
-}
-
-const Vector2<double>& MovableComponent::getVelocity() const
-{
-	return velocity;
-}
-
-void MovableComponent::accellerate(double magnitude, const Vector2<double>& directionNormalized)
-{
-	velocity += directionNormalized * magnitude;
-}
-
-
-hiage::RenderableComponent::RenderableComponent(const Sprite& sprite) : Component(RenderableComponent::TYPEID), sprite(sprite)
-{
-
-}
-
-Sprite& hiage::RenderableComponent::getSprite()
-{
-	return sprite;
-}
-
-hiage::PhysicsComponent::PhysicsComponent() : Component(PhysicsComponent::TYPEID)
-{
-}
-
-
 /*
 	ComponentManager
 */
@@ -104,23 +23,35 @@ std::unique_ptr<Component> hiage::ComponentManager::createComponentCore(const st
 		if (runtimeAttributes.find("y") != runtimeAttributes.end())
 			y = *(double*)(runtimeAttributes.at("y"));
 
-		return make_unique<PhysicalComponent>(x, y);
+		return make_unique<PositionComponent>(Vector2<double>(x, y));
 	}
 	else if (name == "movable")
-	{
-		return make_unique<MovableComponent>();
-	}
+		return make_unique<VelocityComponent>();
 	else if (name == "renderable")
-	{
 		return createRenderable(attributes);
-	}
 	else if (name == "physics")
-	{
 		return make_unique<PhysicsComponent>();
-	}
 	else if (name == "humancontroller")
-	{
 		return make_unique<HumanControllerComponent>();
+	else if (name == "collidable")
+		return make_unique<CollidableComponent>();
+	else if (name == "boundingbox")
+	{
+		int x = 0, y = 0, width = 16, height = 16;
+
+		if (attributes.find("left") != attributes.end())
+			x = std::stoi(attributes.at("left"));
+
+		if (attributes.find("bottom") != attributes.end())
+			y = std::stoi(attributes.at("bottom"));
+
+		if (attributes.find("width") != attributes.end())
+			width = std::stoi(attributes.at("width"));
+
+		if (attributes.find("height") != attributes.end())
+			height = std::stoi(attributes.at("height"));
+		return make_unique<BoundingBoxComponent>(BoundingBox<int>(x, x + width, y + height, y));
+		
 	}
 
 	throw runtime_error("Component type not found: " + name);
@@ -168,9 +99,4 @@ std::vector<shared_ptr<Component>> hiage::ComponentManager::getComponentsOfType(
 		return vector<shared_ptr<Component>>();
 
 	return componentCache[type];
-}
-
-hiage::HumanControllerComponent::HumanControllerComponent() : Component(HumanControllerComponent::TYPEID)
-{
-
 }

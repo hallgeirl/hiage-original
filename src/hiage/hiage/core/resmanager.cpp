@@ -133,7 +133,7 @@ SpriteManager::Resource * SpriteManager::loadResource(const std::string& path)
 		{
 			int x, y, nextFrame;
 			double delay;
-			Rect colBox;
+			BoundingBox<double> colBox;
 			std::string p_sTemp = "";
 
 			frameElement->Attribute("x",&x);

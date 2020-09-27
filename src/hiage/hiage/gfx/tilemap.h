@@ -37,7 +37,7 @@ namespace hiage
 		void render(Renderer &renderer, float camx, float camy, float zoom, float aspect, ObjectZ depth, int layer);
 		void importMap(unsigned int *** data);
 
-		Rect 			getTilesInRect(float left, float top, float right, float bottom) const;
+		BoundingBox<double>	getTilesInRect(float left, float top, float right, float bottom) const;
 		Vector2<double> getTileCoordinates(float x, float y, int layer) const;
 		unsigned int 	getTile(uint x, uint y, uint z) const;
 		void 			setTile(uint x, uint y, uint ulayer, uint tile);

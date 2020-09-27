@@ -12,89 +12,85 @@ namespace hiage
 	/*
 	Components
 	*/
+
 	class Component
 	{
 	private:
 		int typeId;
 	protected:
-		Component(int typeId);
+		Component(int typeId) : typeId(typeId) { }
 	public:
-		virtual ~Component();
-		int getTypeId();
+		virtual ~Component() { }
+		int getTypeId() { return typeId; }
 	};
 
-#define NOARG
-#define DEFINE_COMPONENT(NAME, PRIVATE, PUBLIC, _TYPEID) \
-class NAME : public Component \
-{\
-private: \
-	PRIVATE \
-public: \
-	NAME() : Component(NAME::TYPEID) {} \
-	static const int TYPEID = _TYPEID; \
-	PUBLIC \
-}
-
-	class PhysicalComponent : public Component
+	/*
+	* A templated component that can be used for defining components that doesn't own any data, i.e. "tag" type components.
+	*/
+	template<int TypeID>
+	class DatalessComponent : public Component
 	{
-	private:
-		Vector2<double>	position;   //current position
 	public:
-		PhysicalComponent();
-		PhysicalComponent(double x, double y);
-
-		static const int TYPEID = 1;
-		void setPosition(double x, double y);
-		void setPosition(const Vector2<double> pos);
-		const Vector2<double>& getPosition() const;
-	};
-
-	class MovableComponent : public Component
-	{
-	private:
-		Vector2<double> velocity;      //current speed
-	public:
-		MovableComponent();
-		MovableComponent(double velX, double velY);
-
-		static const int TYPEID = 2;
-		void setVelocity(double xVel, double yVel);
-		void setVelocity(const Vector2<double> vel);
-		const Vector2<double>& getVelocity() const;
-		void accellerate(double magnitude, const Vector2<double>& directionNormalized);
-	};
-
-	class RenderableComponent : public Component
-	{
-	private:
-		Sprite sprite;
-	public:
-		RenderableComponent(const Sprite& sprite);
-
-		Sprite& getSprite();
-
-		static const int TYPEID = 3;
-	};
-
-
-	//DEFINE_COMPONENT(GravityComponent, NOARG, NOARG, 4);
-
-	class PhysicsComponent : public Component
-	{
-	private:
-	public:
-		PhysicsComponent();
+		DatalessComponent() : Component(TypeID) { }
+		DatalessComponent(const DatalessComponent<TypeID>& c) : Component(TypeID) { *this = c; }
 		
-		static const int TYPEID = 4;
+		static const int TYPEID = TypeID;
 	};
 
-	class HumanControllerComponent : public Component
+	/*
+	* A simple component containing a set of data. 
+	*/
+	template<typename T, int TypeID>
+	class GenericComponent : public DatalessComponent<TypeID>
 	{
 	private:
+		T data;
 	public:
-		HumanControllerComponent();
+		GenericComponent() : DatalessComponent() { }
+		GenericComponent(const GenericComponent<T, TypeID>& c) : DatalessComponent() { *this = c; }
+		GenericComponent(const T& data) : DatalessComponent(), data(data) { }
 
-		static const int TYPEID = 5;
+		T& getData() { return data; }
+		void setData(const T& newValue) { data = newValue; }
+	};
+
+	/*
+	* Concrete component definitions
+	*/
+	class PositionComponent : public GenericComponent<Vector2<double>, 1>
+	{
+		using GenericComponent::GenericComponent;
+	};
+
+	class VelocityComponent : public GenericComponent<Vector2<double>, 2>
+	{
+		using GenericComponent::GenericComponent;
+	};
+
+	class RenderableComponent : public GenericComponent<Sprite, 3>
+	{
+		using GenericComponent::GenericComponent;
+	};
+
+
+	class PhysicsComponent : public DatalessComponent<4>
+	{
+		using DatalessComponent::DatalessComponent;
+	};
+
+	class HumanControllerComponent : public DatalessComponent<5>
+	{
+		using DatalessComponent::DatalessComponent;
+	};
+
+	class BoundingBoxComponent : public GenericComponent<BoundingBox<int>, 6>
+	{
+		using GenericComponent::GenericComponent;
+	};
+
+	class CollidableComponent : public DatalessComponent<7>
+	{
+		using DatalessComponent::DatalessComponent;
 	};
 
 	/*

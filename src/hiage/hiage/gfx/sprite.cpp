@@ -12,7 +12,7 @@ SpriteAnimation::SpriteAnimation() : currentFrame(0), frameTimer(0)
 }
 
 //add a new frame to the animation
-void SpriteAnimation::addFrame(int x, int y, double delay, uint nextFrame, Rect colBox)
+void SpriteAnimation::addFrame(int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox)
 {
 	Frame *fr = new Frame;
 	fr->x = x;
@@ -32,7 +32,7 @@ void SpriteAnimation::addFrame(int x, int y, double delay, uint nextFrame, Rect 
 	}
 	else
 	{
-		memset(&fr->collisionBox, 0, sizeof(Rect));
+		memset(&fr->collisionBox, 0, sizeof(BoundingBox<double>));
 	}
 
 	frames.push_back(fr);
@@ -185,7 +185,7 @@ unsigned int Sprite::addAnimation(const char * name)
 }
 
 //add a frame to the animation
-void Sprite::addFrame(uint animID, int x, int y, double delay, uint nextFrame, Rect colBox)
+void Sprite::addFrame(uint animID, int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox)
 {
 	//check for boundaries
 	if (animID <= animations.size()-1)
@@ -267,7 +267,7 @@ Sprite & Sprite::operator=(Sprite sprite)
 	return *this;
 }
 
-Rect Sprite::getCollisionBox() const
+BoundingBox<double> Sprite::getCollisionBox() const
 {
 	if ((currentAnimation >= 0) && (currentAnimation < animations.size()))
 	{
@@ -275,7 +275,7 @@ Rect Sprite::getCollisionBox() const
 	}
 	else
 	{
-		Rect r(0,0,0,0);
+		BoundingBox<double> r(0,0,0,0);
 		return r;
 	}
 }
