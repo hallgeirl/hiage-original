@@ -6,6 +6,13 @@
     <component type="renderable">
       <sprite>BlockQuestion</sprite>
     </component>
+    <component type="boundingbox">
+      <left>0</left>
+      <bottom>0</bottom>
+      <width>16</width>
+      <height>16</height>
+    </component>
+    <component type="collidable" />
   </components>
   <scripts>
     <script type="objcollision" function="blockCollide" />

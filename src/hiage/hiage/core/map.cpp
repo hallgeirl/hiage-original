@@ -16,7 +16,7 @@
 using namespace hiage;
 using namespace std;
 
-Map::Map(Game &game, GameState& gameState) : gameInstance(game), gameState(gameState)
+Map::Map(Game &game, GameState& gameState) : gameInstance(game), gameState(gameState), tilemap()
 {
     background = 0;
     objectDeletedFlag = false;
@@ -913,7 +913,10 @@ void Map::setFlag(std::string flag, bool value)
         updateOffscreen = value;
     }
 }
-
+const Tilemap& Map::getTilemap() const
+{
+    return tilemap;
+}
 
 
 /*
@@ -923,10 +926,15 @@ void Map::setFlag(std::string flag, bool value)
 MapState::MapState(Game &game) : GameState(game), gamemap(game, *this)
 {
     auto sysFactory = getSystemsFactory();
-    systems.push_back(sysFactory.createSystem("movement"));
-    systems.push_back(sysFactory.createSystem("objectrendering"));
-    systems.push_back(sysFactory.createSystem("gravity"));
-    systems.push_back(sysFactory.createSystem("humancontroller"));
+    systems.push_back(sysFactory.createSystem<HumanControllerSystem>());
+    systems.push_back(sysFactory.createSystem<MovementSystem>());
+    systems.push_back(sysFactory.createSystem<GravitySystem>());
+    systems.push_back(sysFactory.createSystem<ObjectObjectCollisionSystem>());
+    
+    auto& tilemap = gamemap.getTilemap();
+    systems.push_back(sysFactory.createSystem<ObjectTileCollisionSystem, const Tilemap&>(tilemap));
+    systems.push_back(sysFactory.createSystem<ObjectRenderingSystem>());
+
 }
 
 MapState::~MapState()

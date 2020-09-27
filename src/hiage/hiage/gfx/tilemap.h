@@ -46,6 +46,7 @@ namespace hiage
 		int 			getWidth();
 		int 			getHeight();
 		int				getLayers();
+		bool			isLoaded() const;
 
 
 	};

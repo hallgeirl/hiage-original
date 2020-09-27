@@ -98,6 +98,7 @@ namespace hiage
         void            setTile(int x, int y, int layer, int newTile);
         void            setTileAt(double x, double y, int layer, int newTile);
 
+		const Tilemap&	getTilemap() const;
         void            setFlag(std::string flag, bool value);
 
 

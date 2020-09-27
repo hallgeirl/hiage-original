@@ -44,7 +44,7 @@ namespace hiage
 			Returns the length of the vector (sqrt(x^2 + y^2)).
 			\return The length of the vector.
 		*/
-		const double length()
+		const double length() const
 		{
 			return sqrt((x * x) + (y * y));
 		}

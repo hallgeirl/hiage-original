@@ -1,6 +1,7 @@
 #include "systems.hpp"
 #include "game.h"
 #include <SDL/SDL.h>
+#include <algorithm>
 
 using namespace std;
 using namespace hiage;
@@ -130,23 +131,163 @@ void hiage::HumanControllerSystem::update(double frameTime)
 	}
 }
 
+void hiage::ObjectObjectCollisionSystem::update(double frameTime)
+{
+	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent>();
+	PositionComponentComparator<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent> comp;
+
+	// Sort by x coordinate
+	std::sort(componentTuples.begin(), componentTuples.end(), comp);
+	
+	// Check for collisions
+	for (int i = 0; i < componentTuples.size(); i++)
+	{
+		auto& c1 = componentTuples[i];
+		const auto& pos1 = get<0>(c1)->getData();
+		const auto& vel1 = get<1>(c1)->getData();
+
+		for (int j = i + 1; j < componentTuples.size(); j++)
+		{
+			auto& c2 = componentTuples[j];
+			const auto& pos2 = get<0>(c2)->getData();
+			const auto& vel2 = get<1>(c2)->getData();
+			
+			
+			// Position of both objects at the time of collision
+			Vector2<double> colPos1, colPos2;
+
+			//check the distance between them
+			//TODO: Put in a better distance check based on relative velocities.
+			double distance = (get<0>(c1)->getData() - get<0>(c2)->getData()).length();
+			if (distance > 50)
+			{
+				continue;
+			}
+
+			// Store the current position and speed for both objects
+			double dspeed1 = vel1.length() * frameTime;
+			double dspeed2 = vel2.length() * frameTime;
+
+			//get the speed of the fastest object (the one that will move furthest during the next frame)
+			int dspeed;
+			if (dspeed1 > dspeed2)
+			{
+				dspeed = (int)ceil(dspeed1);
+			}
+			else
+			{
+				dspeed = (int)ceil(dspeed2);
+			}
+
+			//find the delta velocity vector (largest increments should have length 1)
+			Vector2<double> dvelocity1 = vel1 * frameTime / dspeed;
+			Vector2<double> dvelocity2 = vel2 * frameTime / dspeed;
+		    //TODO: Optimization
+			bool collided = false;
+			auto currentPosition1 = Vector2<double>(pos1),
+				 currentPosition2 = Vector2<double>(pos2);
+
+			//check for collisions during the next frame
+			for (int i = 0; i < dspeed; i++)
+			{
+				BoundingBox<double> colRect1 = get<3>(c1)->getData();
+				BoundingBox<double> colRect2 = get<3>(c2)->getData();
+
+				//get the collision rect for both objects
+				colRect1.left += pos1.getX();
+				colRect1.right += pos1.getX();
+				colRect1.top += pos1.getY();
+				colRect1.bottom += pos1.getY();
+
+				colRect2.left += pos2.getX();
+				colRect2.right += pos2.getX();
+				colRect2.top += pos2.getY();
+				colRect2.bottom += pos2.getY();
+
+				//do the rects intersect?
+				if (colRect1.left < colRect2.right && colRect1.right > colRect2.left && colRect1.top > colRect2.bottom && colRect1.bottom < colRect2.top)
+				{
+					collided = true;
+
+					colPos1 = currentPosition1;
+					colPos2 = currentPosition2;
+					break;
+				}
+
+				//increment the position for a new check
+				currentPosition1 -= dvelocity1;
+				currentPosition2 -= dvelocity2;
+			}
+
+			if (collided)
+			{
+				// TODO: Handle collision!
+			}
+		}
+	}
+}
+
+
 SystemsFactory::SystemsFactory(Game& game, GameState& gameState) : game(game), gameState(gameState)
 {
 }
 
-unique_ptr<System> hiage::SystemsFactory::createSystem(std::string name)
+void hiage::ObjectTileCollisionSystem::update(double frameTime)
 {
-	if (name == "movement")
-		return make_unique<MovementSystem>(game, gameState);
+	if (!tilemap.isLoaded())
+		return; 
 
-	if (name == "objectrendering")
-		return make_unique<ObjectRenderingSystem>(game, gameState);
+	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent>();
 
-	if (name == "gravity")
-		return make_unique<GravitySystem>(game, gameState);
+	for (auto& c : componentTuples)
+	{
+		const auto& pos = get<0>(c)->getData();
+		const auto& vel = get<1>(c)->getData();
 
-	if (name == "humancontroller")
-		return make_unique<HumanControllerSystem>(game, gameState);
+		int dspeed = (int)ceil(vel.length() * frameTime);
+		Vector2<double> dvelocity = vel * frameTime / dspeed;
+		Vector2<double> currentPosition = pos;
 
-	throw runtime_error("Unknown system name: " + name);
+		bool collided = false;
+
+		for (int i = 0; i < dspeed; i++)
+		{
+			//get the collision box of the sprite
+			BoundingBox<double> colRect = get<3>(c)->getData();
+			colRect.left += currentPosition.getX();
+			colRect.right += currentPosition.getX();
+			colRect.bottom += currentPosition.getY();
+			colRect.top += currentPosition.getY();
+
+			int tileSize = tilemap.getTileSize();
+
+			BoundingBox<double> tilerect = tilemap.getTilesInRect(colRect.left - tileSize, colRect.top + tileSize, colRect.right + tileSize, colRect.bottom - tileSize);
+			if (((tilerect.right - tilerect.left) > 0) && ((tilerect.top - tilerect.bottom) > 0))
+			{
+				for (int x = (int)tilerect.left; x <= (int)tilerect.right; x++)
+				{
+					for (int y = (int)tilerect.bottom; y <= (int)tilerect.top; y++)
+					{
+						//onMapCollision(tilemap, x * tileSize, y * tileSize + tileSize, x * tileSize + tileSize, y * tileSize, tilemap->getTileset()->getTile(tilemap->getTile(x,y,0)).block, frametime);
+						if (tilemap.getTileset()->getTile(tilemap.getTile(x, y, 0)).block > 0)
+						{
+							BoundingBox<double> tile;
+							tile.left = (double)x * tileSize;
+							tile.right = (double)x * tileSize + tileSize;
+							tile.top = (double)y * tileSize + tileSize;
+							tile.bottom = (double)y * tileSize;
+							if (colRect.left < tile.right && colRect.right > tile.left && colRect.top > tile.bottom && colRect.bottom < tile.top)
+							{
+								// TODO - Handle collision
+							}
+						}
+					}
+				}
+				break;
+			}
+
+			//increment the position by one step
+			currentPosition -= dvelocity;
+		}
+	}
 }

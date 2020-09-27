@@ -43,6 +43,15 @@ namespace hiage
 		{
 			left = right = top = bottom = 0;
 		}
+
+		// From int->double/float/whatever is fine. Make this an explicitly allowed conversion.
+		BoundingBox(const BoundingBox<int>& other)
+		{
+			left = other.left;
+			right = other.right;
+			top = other.top;
+			bottom = other.bottom;
+		}
 	};
 
 	inline std::ostream & operator <<(std::ostream &stream, const BoundingBox<double> &r)

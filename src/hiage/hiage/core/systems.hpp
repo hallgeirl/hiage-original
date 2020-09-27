@@ -7,6 +7,7 @@ namespace hiage
 {
 	class Game;
 	class GameState;
+	class Tilemap;
 
 	/*
 		Systems
@@ -54,6 +55,31 @@ namespace hiage
 		virtual void update(double frameTime) override;
 	};
 
+	class ObjectObjectCollisionSystem : public System
+	{
+	public:
+		ObjectObjectCollisionSystem(Game& game, GameState& gameState) : System(game, gameState) {}
+		virtual void update(double frameTime) override;
+	};
+
+	class ObjectTileCollisionSystem : public System
+	{
+	private:
+		const Tilemap& tilemap;
+	public:
+		ObjectTileCollisionSystem(Game& game, GameState& gameState, const Tilemap& tilemap) : System(game, gameState), tilemap(tilemap) {}
+		virtual void update(double frameTime) override;
+	};
+
+	template<typename ...TAll>
+	struct PositionComponentComparator {
+		bool operator()(std::tuple<std::shared_ptr<TAll>...> a,
+						std::tuple<std::shared_ptr<TAll>...> b) const
+		{
+			return get<0>(a)->getData().getX() < get<0>(b)->getData().getX();
+		}
+	};
+
 
 	// List of currently missing systems:
 	// - Script system??
@@ -63,7 +89,6 @@ namespace hiage
 	/*
 		SystemsFactory
 	*/
-
 	class SystemsFactory
 	{
 	private:
@@ -71,6 +96,11 @@ namespace hiage
 		GameState& gameState;
 	public:
 		SystemsFactory(Game& game, GameState& gameState);
-		virtual std::unique_ptr<System> createSystem(std::string name);
+		
+		template<typename T, typename ...TRest>
+		std::unique_ptr<System> createSystem(TRest... args)
+		{ 
+			return make_unique<T>(game, gameState, args...);
+		};
 	};
 }

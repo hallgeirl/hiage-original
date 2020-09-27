@@ -27,7 +27,7 @@ Tilemap::Tilemap() : created(false), tilesize(32)
 	layers = 0;
 }
 
-Tilemap::Tilemap(int width, int height, int layers, int tilesize)
+Tilemap::Tilemap(int width, int height, int layers, int tilesize) : created(false)
 {
 	createMap(width,height,layers,tilesize);
 
@@ -321,4 +321,9 @@ int Tilemap::getHeight()
 int Tilemap::getLayers()
 {
 	return layers;
+}
+
+bool hiage::Tilemap::isLoaded() const
+{
+	return created;
 }
