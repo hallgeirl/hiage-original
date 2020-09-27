@@ -41,28 +41,8 @@ namespace hiage
 		
 		int getObjectCount();
 
-		// TODO - remove this eventually
-		/*
-		Entity& getObjectByIndex(int index)
-		{
-			return *entities[index];
-		}
-
-		
 		template <typename T>
-		T& getObjectByIndex(int index)
-		{
-			return (T&)(*entities[index]);
-		}
-
-		void removeObjectByIndex(int index)
-		{
-			entities.erase(entities.begin() + index);
-		}*/
-
-
-		template <typename T>
-		std::vector<std::shared_ptr<T>> queryComponentGroup(int typeId)
+		std::vector<std::shared_ptr<T>> queryComponentGroup()
 		{
 			// TODO - Use archetypes here later - for now, just use this naive implementation
 
@@ -72,7 +52,7 @@ namespace hiage
 				auto& componentList = components[e->getEntityId()]
 				for (auto& c : componentList)
 				{ 
-					if (c->getTypeId() == typeId)
+					if (c->getTypeId() == T::TYPEID)
 						results.push_back(std::shared_ptr<T>(std::dynamic_pointer_cast<T>(c)));
 				}
 			}
@@ -80,51 +60,78 @@ namespace hiage
 			return results;
 		}
 
-		template <typename T1, typename T2>
-		std::vector<std::tuple<std::shared_ptr<T1>, std::shared_ptr<T2>>> queryComponentGroup(int typeId1, int typeId2)
+		template <class T, class TNext, class...TRest>
+		std::vector<std::tuple<std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>> queryComponentGroup()
 		{
 			// TODO - Use archetypes here later - for now, just use this naive implementation
 			// This is quite ugly - but will have to do for now
 
-			std::vector<std::tuple<std::shared_ptr<T1>, std::shared_ptr<T2>>> results;
+			std::vector<std::tuple<std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>> results;
 			for (auto& e : entities)
 			{
 				bool found1 = false, found2 = false;
-				std::shared_ptr<T1> c1; 
-				std::shared_ptr<T2> c2;
+				std::shared_ptr<T> c1;
+
 				auto& componentList = components[e->getEntityId()];
-				for (auto& c : componentList)
-				{
-					if (c->getTypeId() == typeId1)
-					{
-						c1 = std::dynamic_pointer_cast<T1>(c);
-						found1 = true;
-					}
-					if (c->getTypeId() == typeId2)
-					{
-						c2 = std::dynamic_pointer_cast<T2>(c);
-						found2 = true;
-					}
-				}
-				if (found1 && found2)
-				{
-					results.push_back(std::make_tuple(c1, c2));
-				}
+				auto& it = componentList.begin();
+				auto res = queryComponentGroupCore<T, TNext, TRest...>(it, componentList);
+				if (it != componentList.end()) // If we haven't iterated to end(), we found one component of each type.
+					results.push_back(res);
 			}
 
 			return results;
 		}
+		
+		// Recursion: Find the next matching component
+		template <class T, class TNext, class...TRest>
+		std::tuple<std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...> queryComponentGroupCore(std::vector<std::shared_ptr<Component>>::iterator& it, std::vector<std::shared_ptr<Component>>& componentList)
+		{
+			for (; it != componentList.end(); it++)
+			{
+				std::shared_ptr<T> c1;
+				int typeId = T::TYPEID;
+				if ((*it)->getTypeId() == typeId)
+				{
+					c1 = std::dynamic_pointer_cast<T>(*it);
+					
+					
+					// Reset the iterator, begin again in the recursive call. This is certainly not very efficient, but will do OK until I get a proper archetype system up.
+					it = componentList.begin();
+					auto& recursiveResult = queryComponentGroupCore<TNext, TRest...>(it, componentList);
+					if (it == componentList.end())
+						return std::tuple<std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>();
 
+					auto t = std::tuple_cat(std::make_tuple(c1), recursiveResult);
+
+					return t;					
+				}
+			}
+			return std::tuple<std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>();
+		}
+
+		// Base case: Returns a tuple with one element
+		template <class T>
+		std::tuple<std::shared_ptr<T>> queryComponentGroupCore(std::vector<std::shared_ptr<Component>>::iterator& it, std::vector<std::shared_ptr<Component>>& componentList)
+		{
+			for (; it != componentList.end(); it++)
+			{
+				std::shared_ptr<T> c1;
+
+				
+				if ((*it)->getTypeId() == T::TYPEID)
+				{
+					c1 = std::dynamic_pointer_cast<T>(*it);
+
+					return std::make_tuple(c1);
+				}
+			}
+			return std::tuple<std::shared_ptr<T>>(nullptr);
+		}
+		
 		/*!
 
 		*/
 		Entity& createEntity(std::string objectName, const std::map<std::string, void*>& attributes);
-
-		/*template <typename ObjectClass>
-		void registerObject(std::string objectName)
-		{
-			objects[objectName] = &createEntity<ObjectClass>;
-		}*/
 	};
 
 	class FontFactory

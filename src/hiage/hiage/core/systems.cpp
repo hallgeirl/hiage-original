@@ -20,7 +20,7 @@ MovementSystem::MovementSystem(Game& game, GameState& gameState) : System(game, 
 
 void MovementSystem::update(double frametime)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicalComponent, MovableComponent>(PhysicalComponent::TYPEID, MovableComponent::TYPEID);
+	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicalComponent, MovableComponent>();
 	for (auto& t : componentTuples)
 	{
 		auto& physical = std::get<0>(t);
@@ -38,7 +38,7 @@ ObjectRenderingSystem::ObjectRenderingSystem(Game& game, GameState& gameState) :
 
 void ObjectRenderingSystem::update(double frameTime)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicalComponent, RenderableComponent>(PhysicalComponent::TYPEID, RenderableComponent::TYPEID);
+	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicalComponent, RenderableComponent>();
 
 	Display& disp = game.getDisplay();
 	Renderer& renderer = disp.getRenderer();
@@ -79,7 +79,7 @@ hiage::GravitySystem::GravitySystem(Game& game, GameState& gameState) : System(g
 
 void hiage::GravitySystem::update(double frameTime)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicsComponent, MovableComponent>(PhysicsComponent::TYPEID, MovableComponent::TYPEID);
+	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicsComponent, MovableComponent>();
 
 	for (auto& t : componentTuples)
 	{
@@ -89,6 +89,40 @@ void hiage::GravitySystem::update(double frameTime)
 	}
 }
 
+
+hiage::HumanControllerSystem::HumanControllerSystem(Game& game, GameState& gameState) : System(game, gameState)
+{
+}
+
+void hiage::HumanControllerSystem::update(double frameTime)
+{
+	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<HumanControllerComponent, MovableComponent>();
+	for (auto& t : componentTuples)
+	{
+		auto& controller = std::get<0>(t);
+		auto& movement = std::get<1>(t);
+
+		// TODO: Implement proper key bindings and generally more flexibility here.
+		// Might need a component that defines accelleration magnitude as well. Or perhaps this could go into the movement component?
+		auto& inputManager = game.getInputManager();
+		if (inputManager.keyDown(SDL_SCANCODE_RIGHT))
+		{
+			movement->accellerate(100. * frameTime, Vector2<double>(1, 0));
+		}
+		if (inputManager.keyDown(SDL_SCANCODE_LEFT))
+		{
+			movement->accellerate(100. * frameTime, Vector2<double>(-1, 0));
+		}
+		if (inputManager.keyDown(SDL_SCANCODE_DOWN))
+		{
+			movement->accellerate(100. * frameTime, Vector2<double>(0, -1));
+		}
+		if (inputManager.keyDown(SDL_SCANCODE_UP))
+		{
+			movement->accellerate(100. * frameTime, Vector2<double>(0, 1));
+		}
+	}
+}
 
 SystemsFactory::SystemsFactory(Game& game, GameState& gameState) : game(game), gameState(gameState)
 {
@@ -109,38 +143,4 @@ unique_ptr<System> hiage::SystemsFactory::createSystem(std::string name)
 		return make_unique<HumanControllerSystem>(game, gameState);
 
 	throw runtime_error("Unknown system name: " + name);
-}
-
-hiage::HumanControllerSystem::HumanControllerSystem(Game& game, GameState& gameState) : System(game, gameState)
-{
-}
-
-void hiage::HumanControllerSystem::update(double frameTime)
-{
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<HumanControllerComponent, MovableComponent>(HumanControllerComponent::TYPEID, MovableComponent::TYPEID);
-	for (auto& t : componentTuples)
-	{
-		auto& controller = std::get<0>(t);
-		auto& movement = std::get<1>(t);
-
-		// TODO: Implement proper key bindings and generally more flexibility here.
-		// Might need a component that defines accelleration magnitude as well. Or perhaps this could go into the movement component?
-		auto& inputManager = game.getInputManager();
-		if (inputManager.keyDown(SDL_SCANCODE_RIGHT))
-		{
-			movement->accellerate(100.*frameTime, Vector2<double>(1, 0));
-		}
-		if (inputManager.keyDown(SDL_SCANCODE_LEFT))
-		{ 
-			movement->accellerate(100. * frameTime, Vector2<double>(-1, 0));
-		}
-		if (inputManager.keyDown(SDL_SCANCODE_DOWN))
-		{
-			movement->accellerate(100. * frameTime, Vector2<double>(0, -1));
-		}
-		if (inputManager.keyDown(SDL_SCANCODE_UP))
-		{
-			movement->accellerate(100. * frameTime, Vector2<double>(0, 1));
-		}
-	}
 }
