@@ -7,6 +7,7 @@
 
 namespace hiage 
 {
+	class Game;
 
 	/*
 	Components
@@ -28,6 +29,7 @@ namespace hiage
 		Vector2<double>	position;   //current position
 	public:
 		PhysicalComponent();
+		PhysicalComponent(double x, double y);
 
 		static const int TYPEID = 1;
 		void setPosition(double x, double y);
@@ -41,6 +43,7 @@ namespace hiage
 		Vector2<double> velocity;      //current speed
 	public:
 		MovableComponent();
+		MovableComponent(double velX, double velY);
 
 		static const int TYPEID = 2;
 		void setVelocity(double xVel, double yVel);
@@ -54,7 +57,7 @@ namespace hiage
 	private:
 		Sprite sprite;
 	public:
-		RenderableComponent();
+		RenderableComponent(const Sprite& sprite);
 
 		Sprite& getSprite();
 
@@ -62,24 +65,23 @@ namespace hiage
 	};
 
 	/*
-	ComponentFactory
+	ComponentManager
 	*/
 
 	class ComponentManager
 	{
 	private: 
 		std::map<std::string, std::vector<std::shared_ptr<Component>>> componentCache;
-		std::unique_ptr<Component> createComponentCore(const std::string& type, const std::map<std::string, std::string>& attributes) const;
+		// TODO - Make it possible to register new component factory classes
+		std::unique_ptr<Component> createComponentCore(const std::string& type, const std::map<std::string, std::string>& attributes, const std::map<std::string, void*>& runtimeAttributes);
+		std::unique_ptr<Component> createRenderable(const std::map<std::string, std::string>& attributes);
+
+		Game& game;
 	public:
+		ComponentManager(Game& game);
+		~ComponentManager();
 		// todo: after rewriting everything to ECS - see if we can drop to using unique_ptr.
-		std::shared_ptr<Component> createComponent(const std::string& type, const std::map<std::string, std::string>& attributes);
+		std::shared_ptr<Component> createComponent(const std::string& type, const std::map<std::string, std::string>& attributes, const std::map<std::string, void*>& runtimeAttributes);
 		std::vector<std::shared_ptr<Component>> getComponentsOfType(const std::string& type);
-
-		template <typename T>
-		T queryComponentGroup()
-		{
-			// TODO - Use archetypes here later
-
-		}
 	};
 }

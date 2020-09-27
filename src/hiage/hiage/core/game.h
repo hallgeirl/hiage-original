@@ -147,7 +147,7 @@ namespace hiage
 			\param name Name of the object. The name of an object is specified in it's XML file.
 			\return The path of the XML file containing the object data.
 		*/
-		std::string         getObjectFile(std::string name);
+		const std::string&         getObjectFile(std::string name) const;
 
 		/*!
 			Returns the name of the sprite associated with the object with the specified name.

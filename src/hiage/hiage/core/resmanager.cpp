@@ -9,7 +9,7 @@
 using namespace hiage;
 using namespace std;
 
-TextureManager::Resource * TextureManager::loadResource(const char * path)
+TextureManager::Resource * TextureManager::loadResource(const std::string& path)
 {
 	clog << "Loading texture: " << path << endl << flush;
 	Texture * texture = new Texture();
@@ -18,7 +18,7 @@ TextureManager::Resource * TextureManager::loadResource(const char * path)
 	resource->resource = texture;
 
 	//load the xml file
-	TiXmlDocument xmlDoc(path);
+	TiXmlDocument xmlDoc(path.c_str());
 	if (!xmlDoc.LoadFile())
 	{
 		throw IOException("ERROR: Could not open XML file.");
@@ -57,7 +57,7 @@ TextureManager::Resource * TextureManager::loadResource(const char * path)
 	return resource;
 }
 
-SpriteManager::Resource * SpriteManager::loadResource(const char * path)
+SpriteManager::Resource * SpriteManager::loadResource(const std::string& path)
 {
 	clog << "Loading sprite: " << path << endl << flush;
 	Sprite * sprite = new Sprite();
@@ -66,7 +66,7 @@ SpriteManager::Resource * SpriteManager::loadResource(const char * path)
 	resource->resource = sprite;
 
 	//load a xml file
-	TiXmlDocument xmlDoc(path);
+	TiXmlDocument xmlDoc(path.c_str());
 
 	if (!xmlDoc.LoadFile())
 	{
@@ -184,7 +184,7 @@ SpriteManager::Resource * SpriteManager::loadResource(const char * path)
 	return resource;
 }
 
-TilesetManager::Resource * TilesetManager::loadResource(const char * path)
+TilesetManager::Resource * TilesetManager::loadResource(const std::string& path)
 {
 	clog << "Loading tile set: " << path << endl << flush;
 	Tileset * tileset = new Tileset();
@@ -193,7 +193,7 @@ TilesetManager::Resource * TilesetManager::loadResource(const char * path)
 	resource->resource = tileset;
 
 	//load a xml file
-	TiXmlDocument xmlDoc(path);
+	TiXmlDocument xmlDoc(path.c_str());
 
 	if (!xmlDoc.LoadFile())
 	{
@@ -262,7 +262,7 @@ TilesetManager::Resource * TilesetManager::loadResource(const char * path)
 	return resource;
 }
 
-FontManager::Resource * FontManager::loadResource(const char * path)
+FontManager::Resource * FontManager::loadResource(const std::string& path)
 {
 	clog << "Loading font: " << path << endl << flush;
 	Font * font = new Font();
@@ -271,7 +271,7 @@ FontManager::Resource * FontManager::loadResource(const char * path)
 	resource->resource = font;
 
 	//load a xml file
-	TiXmlDocument xmlDoc(path);
+	TiXmlDocument xmlDoc(path.c_str());
 
 	if (!xmlDoc.LoadFile())
 	{

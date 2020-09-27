@@ -63,26 +63,26 @@ void Game::loadResources(std::string dir, ResourceTypeEnum resType)
 				{
                     case ResourceTypeEnum::SPRITE:
                     {
-                        spriteManager.load(itr.path().string().c_str());
+                        spriteManager.load(itr.path().string(), "");
                         break;
                     }
 
                         //case Object:
                     case ResourceTypeEnum::TEXTURE:
                     {
-                        textureManager.load(itr.path().string().c_str());
+                        textureManager.load(itr.path().string(), "");
                         break;
                     }
 
                     case ResourceTypeEnum::TILESET:
                     {
-                        tilesetManager.load(itr.path().string().c_str());
+                        tilesetManager.load(itr.path().string(), "");
                         break;
                     }
 
                     case ResourceTypeEnum::FONT:
                     {
-                        fontManager.load(itr.path().string().c_str());
+                        fontManager.load(itr.path().string(), "");
                         break;
                     }
 
@@ -392,16 +392,16 @@ ObjectList & Game::getObjectList()
     return objectList;
 }
 
-std::string Game::getObjectFile(std::string name)
+const std::string& Game::getObjectFile(std::string name) const
 {
-    return objectList[name];
+    return objectList.at(name);
 }
 
 /*
     Gamestate class
 */
 
-GameState::GameState(Game &game) : gameInstance(game), systemsFactory(componentManager, entityManager, game)
+GameState::GameState(Game& game) : gameInstance(game), systemsFactory(componentManager, entityManager, game), entityManager(game, *this), componentManager(game)
 {
 
 }

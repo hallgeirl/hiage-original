@@ -10,11 +10,12 @@
 #include "game.h"
 #include "gamestate.hpp"
 #include "entity.h"
+#include <tinyxml.h>
 
 using namespace hiage;
 using namespace std;
 
-EntityManager::EntityManager()
+EntityManager::EntityManager(const Game& game, const GameState& gameState) : game(game), gameState(gameState)
 {
 
 }
@@ -23,11 +24,11 @@ EntityManager::~EntityManager()
 {
 }
 
-Entity& EntityManager::createObject(std::string objectName, Game * game, const GameState& gameState)
+Entity& EntityManager::createEntity(std::string objectName, const std::map<std::string, void*>& attributes)
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
 
-	std::string objectFile = game->getObjectFile(objectName);
+	std::string objectFile = game.getObjectFile(objectName);
 	std::string objName = objectName;
 
 	clog << "Loading information from file " << objectFile << endl << flush;
@@ -36,25 +37,108 @@ Entity& EntityManager::createObject(std::string objectName, Game * game, const G
 		throw Exception("ERROR: No filename specified for object creation.");
 	}
 
-	SpriteManager::Resource * sprite = game->getSpriteManager().requestResourceCopy(game->getObjectSprite(objectName).c_str());
-	if (!sprite)
-	{
-		throw Exception(string("ERROR: Could not retrieve sprite for object ") + objectName);
+	clog << "Loading entity from file..." << endl;
 
+	//load the xml file
+	TiXmlDocument xmlDoc(objectFile.c_str());
+	if (!xmlDoc.LoadFile())
+	{
+		throw IOException(string("ERROR: Could not open XML file ") + objectFile);
 	}
 
-	TextureManager::Resource * texture = game->getTextureManager().requestResourcePtr(sprite->strData1.c_str());
-	if (!texture)
-	{
-		throw Exception(string("ERROR: Could not retrieve texture for object ") + objectName);
-	}
-	sprite->resource->create(texture->resource, sprite->intData1, sprite->intData2);
+	TiXmlElement* objectElement = 0;
+	objectElement = xmlDoc.FirstChildElement("object");
 
-	PhysicalEntity * entity = new PhysicalEntity;
-	entity->createFromFile(objectFile, sprite->resource, gameState);
+	//check if it's a texture file
+	if (!objectElement)
+	{
+		throw IOException(string("ERROR: Could not find XML element <object> "));
+	}
+
+	//type = objectElement->Attribute("type");
+	auto entityName = objectElement->Attribute("name");
+	auto entityType = objectElement->Attribute("type");
+	vector<shared_ptr<Component>> componentList;
+
+	//store the sprite name in StrData1
+	//spriteElement = objectElement->FirstChildElement("sprite");
+
+	TiXmlElement* componentsElement = objectElement->FirstChildElement("components");
+	if (componentsElement)
+	{
+		TiXmlElement* componentElement = componentsElement->FirstChildElement("component");
+		string componentType;
+
+		auto componentFactory = gameState.getComponentManager();
+		while (componentElement)
+		{
+			componentType = componentElement->Attribute("type");
+			map<string, string> componentAttributes;
+
+			auto childElement = componentElement->FirstChildElement();
+			while (childElement)
+			{
+				std::string key = childElement->Value();
+				std::string value = childElement->GetText();
+				componentAttributes[key] = value;
+
+				childElement = childElement->NextSiblingElement();
+			}
+
+			componentList.push_back(componentFactory.createComponent(componentType, componentAttributes, attributes));
+			componentElement = componentElement->NextSiblingElement("component");
+		}
+	}
+
+	//store the script functions to use
+	/*
+	* This must be rewritten for ECS
+	*
+	TiXmlElement* scriptsElement = objectElement->FirstChildElement("scripts");
+
+	if (scriptsElement)
+	{
+		TiXmlElement* scriptElement = scriptsElement->FirstChildElement("script");
+		string scriptType, scriptFunction;
+
+		while (scriptElement)
+		{
+			scriptType = scriptElement->Attribute("type");
+			scriptFunction = scriptElement->Attribute("function");
+
+			if (!scriptType.length() || !scriptFunction.length())
+			{
+				clog << "Warning: Malformed object XML file in <script>: Missing type or function attribute (or they are at 0 length)." << endl;
+				continue;
+			}
+
+			if (!scriptType.compare("init"))
+			{
+				initScripts.push_back(scriptFunction);
+			}
+			else if (!scriptType.compare("update"))
+			{
+				updateScripts.push_back(scriptFunction);
+			}
+			else if (!scriptType.compare("collision"))
+			{
+				collisionScripts.push_back(scriptFunction);
+			}
+			else if (!scriptType.compare("objcollision"))
+			{
+				objectCollisionScripts.push_back(scriptFunction);
+			}
+
+			scriptElement = scriptElement->NextSiblingElement("script");
+		}
+	}
+	*/
 
 	//Entity* ent = (Entity*)entity;
-	entities.push_back(make_unique<PhysicalEntity>(*entity));
+	auto ent = make_unique<Entity>();
+	components[ent->getEntityId()] = componentList;
+
+	entities.push_back(std::move(ent));
 
 	return *entities[entities.size() - 1];
 }

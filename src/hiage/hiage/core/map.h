@@ -40,7 +40,7 @@ namespace hiage
                                                                 //So we queue the creation for after the scripts.
     private:
         //sort objects based on X-position
-        std::vector<PhysicalEntity*>    sortObjects(const std::vector<PhysicalEntity*> & array);
+//        std::vector<PhysicalEntity*>    sortObjects(const std::vector<PhysicalEntity*> & array);
 
     public:
         //scripts that should be run during loading, updating or shutdown of map
@@ -56,12 +56,12 @@ namespace hiage
 		/*!
 			Create a new object to add to the map. Runs initialization scripts.
 		*/
-		PhysicalEntity &createObject(std::string name, double x, double y);
+		/*PhysicalEntity &createObject(std::string name, double x, double y);
 		PhysicalEntity &createObject(std::string name, double x, double y, bool runScripts);
 		PhysicalEntity &getObject(int index);
-		PhysicalEntity &getObjectAt(double x, double y);
-		size_t          getObjectCount();
-		void            deleteObject(int index);
+		PhysicalEntity &getObjectAt(double x, double y);*/
+		//size_t          getObjectCount();
+		//void            deleteObject(int index);
 
 		// TODO - reimplement later
 		//void            deleteObjectAt(double x, double y);

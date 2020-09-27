@@ -26,9 +26,12 @@ namespace hiage
 	{
 	private:
 		std::vector<std::unique_ptr<Entity>> entities;
+		std::map<int, std::vector<std::shared_ptr<Component>>> components; // Entity ID -> component list
+		const Game& game;
+		const GameState& gameState;
 
 	public:
-		EntityManager();
+		EntityManager(const Game& game, const GameState& gameState);
 
 
 		EntityManager(EntityManager&) = delete; // Doesn't make sense to copy
@@ -39,21 +42,23 @@ namespace hiage
 		int getObjectCount();
 
 		// TODO - remove this eventually
+		/*
 		Entity& getObjectByIndex(int index)
 		{
 			return *entities[index];
 		}
 
+		
 		template <typename T>
 		T& getObjectByIndex(int index)
 		{
 			return (T&)(*entities[index]);
 		}
+
 		void removeObjectByIndex(int index)
 		{
 			entities.erase(entities.begin() + index);
-		}
-
+		}*/
 
 
 		template <typename T>
@@ -64,10 +69,11 @@ namespace hiage
 			std::vector<std::shared_ptr<T>> results;
 			for (auto& e : entities)
 			{
-				for (auto& c : e->getComponents())
+				auto& componentList = components[e->getEntityId()]
+				for (auto& c : componentList)
 				{ 
 					if (c->getTypeId() == typeId)
-						results.push_back(c);
+						results.push_back(std::shared_ptr<T>(std::dynamic_pointer_cast<T>(c)));
 				}
 			}
 
@@ -86,12 +92,19 @@ namespace hiage
 				bool found1 = false, found2 = false;
 				std::shared_ptr<T1> c1; 
 				std::shared_ptr<T2> c2;
-				for (auto& c : e->getComponents())
+				auto& componentList = components[e->getEntityId()];
+				for (auto& c : componentList)
 				{
 					if (c->getTypeId() == typeId1)
+					{
 						c1 = std::dynamic_pointer_cast<T1>(c);
+						found1 = true;
+					}
 					if (c->getTypeId() == typeId2)
+					{
 						c2 = std::dynamic_pointer_cast<T2>(c);
+						found2 = true;
+					}
 				}
 				if (found1 && found2)
 				{
@@ -105,7 +118,7 @@ namespace hiage
 		/*!
 
 		*/
-		Entity& createObject(std::string objectName, Game * game, const GameState& gameState);
+		Entity& createEntity(std::string objectName, const std::map<std::string, void*>& attributes);
 
 		/*template <typename ObjectClass>
 		void registerObject(std::string objectName)

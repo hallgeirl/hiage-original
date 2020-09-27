@@ -10,14 +10,18 @@ namespace hiage
 	class Game;
 	class Renderer;
 
+	/*
+		Systems
+	*/
 	class System
 	{
 	protected:
 		ComponentManager& componentManager;
 		EntityManager& entityManager;
+		Game& game;
 
 	public:
-		System(ComponentManager& componentManager, EntityManager& entityManager);
+		System(Game& game, ComponentManager& componentManager, EntityManager& entityManager);
 		virtual ~System();
 		virtual void update(double frameTime) = 0;
 	};
@@ -25,7 +29,7 @@ namespace hiage
 	class MovementSystem : public System
 	{
 	public:
-		MovementSystem(ComponentManager& componentManager, EntityManager& entityManager);
+		MovementSystem(Game& game, ComponentManager& componentManager, EntityManager& entityManager);
 		virtual void update(double frametime) override;
 	};
 
@@ -34,9 +38,19 @@ namespace hiage
 	private:
 		Renderer& renderer;
 	public:
-		ObjectRenderingSystem(ComponentManager& componentManager, EntityManager& entityManager, Renderer& renderer);
+		ObjectRenderingSystem(Game& game, ComponentManager& componentManager, EntityManager& entityManager, Renderer& renderer);
 		virtual void update(double frameTime) override;
 	};
+
+
+	// List of currently missing systems:
+	// - Script system??
+	// - Collision
+	// - Object destruction?
+	// - Controllers
+	/*
+		SystemsFactory
+	*/
 
 	class SystemsFactory
 	{

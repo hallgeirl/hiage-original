@@ -95,9 +95,10 @@ void LuaVM::initialize()
  	luabind::module(vm)
 	[
 		luabind::class_<Map>("Map")
-			.def("spawn", (PhysicalEntity & (Map::*)(string,double,double))&Map::createObject)
-			.def("destroy", &Map::deleteObject)
-            .def("getobject", &Map::getObject)
+			//.def("spawn", (PhysicalEntity & (Map::*)(string,double,double))&Map::createObject)
+			//.def("destroy", &Map::deleteObject)
+            //.def("getobject", &Map::getObject)
+
             //.def("load", (void (Map::*)(string))&Map::createFromFile)
             .def("load", &Map::queueCreateMap)
             //.def("unload", &Map::destroy)
@@ -108,7 +109,7 @@ void LuaVM::initialize()
 	];
 
     //entity class
-	luabind::module(vm)
+/*	luabind::module(vm)
 	[
 		luabind::class_<PhysicalEntity>("Entity")
 			//get/set position
@@ -144,6 +145,7 @@ void LuaVM::initialize()
             .def("name", &PhysicalEntity::getName)
 
     ];
+	*/
 
     //timer class
     luabind::module(vm)

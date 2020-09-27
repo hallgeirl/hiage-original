@@ -29,7 +29,12 @@ Entity::~Entity()
 {
 }
 
+int hiage::Entity::getEntityId() const
+{
+    return entityId;
+}
 
+/*
 PhysicalEntity::PhysicalEntity() : collidedWithMap(false), collided(false)
 {
 	sprite = 0;
@@ -43,103 +48,6 @@ PhysicalEntity::PhysicalEntity() : collidedWithMap(false), collided(false)
 PhysicalEntity::~PhysicalEntity()
 {
 }
-
-void PhysicalEntity::createFromFile(std::string path, Sprite * sprite, const GameState& gameState)
-{
-	clog << "Loading entity from file..." << endl;
-
-	//load the xml file
-	TiXmlDocument xmlDoc(path.c_str());
-	if (!xmlDoc.LoadFile())
-	{
-		throw IOException(string("ERROR: Could not open XML file ") + path);
-	}
-
-	TiXmlElement *	objectElement   = 0;
-	objectElement = xmlDoc.FirstChildElement("object");
-
-	//check if it's a texture file
-	if (!objectElement)
-	{
-		throw IOException(string("ERROR: Could not find XML element <object> "));
-	}
-
-	//type = objectElement->Attribute("type");
-	entityName = objectElement->Attribute("name");
-	entityType = objectElement->Attribute("type");
-
-	//store the sprite name in StrData1
-	//spriteElement = objectElement->FirstChildElement("sprite");
-
-    TiXmlElement* componentsElement = objectElement->FirstChildElement("components");
-    if (componentsElement)
-    {
-        TiXmlElement* componentElement = componentsElement->FirstChildElement("component");
-        string componentType;
-
-        auto componentFactory = gameState.getComponentManager();
-        while (componentElement)
-        {
-            componentType = componentElement->Attribute("type");
-            map<string, string> componentAttributes;
-
-            auto childElement = componentElement->FirstChildElement();
-            while (childElement)
-            {
-                std::string key = childElement->Value();
-                std::string value = childElement->GetText();
-                componentAttributes[key] = value;
-
-                childElement = childElement->NextSiblingElement();
-            }
-            
-            this->components.push_back(componentFactory.createComponent(componentType, componentAttributes));
-            componentElement = componentElement->NextSiblingElement("component");
-        }
-    }
-    //store the script functions to use
-    TiXmlElement* scriptsElement = objectElement->FirstChildElement("scripts");
-    if (scriptsElement)
-    {
-        TiXmlElement *  scriptElement = scriptsElement->FirstChildElement("script");
-        string scriptType, scriptFunction;
-
-        while (scriptElement)
-        {
-            scriptType = scriptElement->Attribute("type");
-            scriptFunction = scriptElement->Attribute("function");
-
-            if (!scriptType.length() || !scriptFunction.length())
-            {
-                clog << "Warning: Malformed object XML file in <script>: Missing type or function attribute (or they are at 0 length)." << endl;
-                continue;
-            }
-            if (!scriptType.compare("init"))
-            {
-                initScripts.push_back(scriptFunction);
-            }
-            else if (!scriptType.compare("update"))
-            {
-                updateScripts.push_back(scriptFunction);
-            }
-            else if (!scriptType.compare("collision"))
-            {
-                collisionScripts.push_back(scriptFunction);
-            }
-            else if (!scriptType.compare("objcollision"))
-            {
-                objectCollisionScripts.push_back(scriptFunction);
-            }
-
-            scriptElement = scriptElement->NextSiblingElement("script");
-        }
-    }
-
-	this->sprite = sprite;
-}
-
-
-
 
 bool PhysicalEntity::getDestructionFlag() const
 {
@@ -159,10 +67,11 @@ void PhysicalEntity::render(Renderer &renderer, ObjectZ z)
 		sprite->render(renderer, z, 0, hFlip, vFlip);
 	}
 }
-
+*/
 /*
     Position manipulation
 */
+/*
 void PhysicalEntity::setPosition(double x, double y)
 {
     PhysicalComponent& c = getComponentOfType<PhysicalComponent>();
@@ -203,11 +112,12 @@ double PhysicalEntity::getY()
 {
     return getPosition().getY();
 }
+*/
 
 /*
     Speed manipulation
 */
-
+/*
 
 void PhysicalEntity::accellerate(double magnitude, Vector2<double> direction)
 {
@@ -311,10 +221,12 @@ const Sprite * PhysicalEntity::getSprite() const
 	return sprite;
 }
 
+*/
 /*
     Collision stuff
 */
 //check collision between the entity and a target rect
+/*
 bool PhysicalEntity::willCollide(PhysicalEntity &target, double frameTime, Vector2<double> &colPos1, Vector2<double> &colPos2)
 {
 	if (!canCollide || !sprite || !target.canCollide)
@@ -537,7 +449,7 @@ void PhysicalEntity::flipx(bool value)
 }
 
 
-
+*/
 /*
 void PhysicalEntity::setCollided(bool col)
 {

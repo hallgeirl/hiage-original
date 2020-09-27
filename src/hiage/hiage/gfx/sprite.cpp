@@ -2,6 +2,7 @@
 
 #include "sprite.h"
 #include "../util/exceptions.h"
+#include "../util/vector2.h"
 
 using namespace std;
 using namespace hiage;
@@ -61,7 +62,7 @@ void SpriteAnimation::runAnimation(double timefactor)
 	}
 }
 
-Sprite::Sprite() : animationSpeed(1), currentAnimation(0), x(0), y(0), frameWidth(0), frameHeight(0), texture(nullptr)
+Sprite::Sprite() : animationSpeed(1), currentAnimation(0), frameWidth(0), frameHeight(0), texture(nullptr)
 {
 }
 
@@ -80,20 +81,18 @@ void Sprite::create(Texture * texture, int frameWidth, int frameHeight)
 	this->texture = texture;
 	this->frameWidth = frameWidth;
 	this->frameHeight = frameHeight;
-
-	setPosition(0,0);
 }
 
-void Sprite::render(Renderer &renderer, ObjectZ z, float rotation, bool hFlip, bool vFlip, float maxSize)
+void Sprite::render(Renderer &renderer, const Vector2<double>& position, ObjectZ z, float rotation, bool hFlip, bool vFlip, float maxSize)
 {
 	//current sprite's position and dimensions
-	float x = this->x;
-	float y = this->y;
+	double x = position.getX();
+	double y = position.getY();
 
 	uint texwidth = texture->getWidth();
 	uint texheight = texture->getHeight();
 
-    float spriteWidth, spriteHeight;
+	double spriteWidth, spriteHeight;
 
     if (maxSize > 0 && (frameWidth > maxSize || frameHeight > maxSize))
     {

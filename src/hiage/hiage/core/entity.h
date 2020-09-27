@@ -34,10 +34,10 @@ namespace hiage
 		int entityId;
 		static int entityCounter;
 	protected:
-		std::vector<std::shared_ptr<Component>> components;
+		//std::vector<std::shared_ptr<Component>> components;
 
 		/* TODO - Remove getComponentOfType* once everything is ported to ECS. For now, this function is useful to "wrap" the components in functions in MovableEntity etc.*/
-
+		/*
 		template <typename T> 
 		T& getComponentOfType()
 		{
@@ -76,18 +76,23 @@ namespace hiage
 
 			throw runtime_error("getComponentOfTypeReadOnly must not be called on objects without the requested component type.");
 		}
-
+		*/
 	public:
 		Entity();
 		//Entity(const Entity&) = delete;
-		virtual ~Entity();
+		~Entity();
+		int getEntityId() const;
+
 		// Todo - reorganize so this won't be needed (probably should be owned by entitymanager)
-		virtual std::vector<std::shared_ptr<Component>>& getComponents() { return components; }
-		virtual void setDestructionFlag(bool val) {}
-		virtual bool getDestructionFlag() const { return false; }
+		//virtual std::vector<std::shared_ptr<Component>>& getComponents() { return components; }
+
+		/*virtual void setDestructionFlag(bool val) {}
+		virtual bool getDestructionFlag() const { return false; }*/
 	};
 
 	//interface for movable objects
+	// REMOVED - not needed for ECS
+	/*
 	class MovableEntity
 	{
 	public:
@@ -151,8 +156,6 @@ namespace hiage
                                 PhysicalEntity();
 		virtual 			    ~PhysicalEntity();
 
-		void 				    createFromFile(std::string path, Sprite * sprite, const GameState& gameState);
-
 		//EntityBase
 		virtual void 		    setDestructionFlag(bool val);
 		virtual bool 		    getDestructionFlag() const;
@@ -211,7 +214,5 @@ namespace hiage
         //get name of entity
         std::string             getName();
         std::string             getType();
-
-
-	};
+	};*/
 }

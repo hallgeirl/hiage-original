@@ -1,5 +1,5 @@
 #include "components.hpp"
-
+#include "game.h"
 #include <memory>
 
 using namespace hiage;
@@ -16,12 +16,16 @@ hiage::Component::~Component()
 
 int hiage::Component::getTypeId()
 {
-	return 0;
+	return typeId;
 }
 
 hiage::PhysicalComponent::PhysicalComponent() : Component(PhysicalComponent::TYPEID)
 {
 
+}
+
+hiage::PhysicalComponent::PhysicalComponent(double x, double y) : Component(PhysicalComponent::TYPEID), position(x,y)
+{
 }
 
 void PhysicalComponent::setPosition(double x, double y)
@@ -40,6 +44,10 @@ const Vector2<double>& PhysicalComponent::getPosition() const
 }
 
 hiage::MovableComponent::MovableComponent() : Component(MovableComponent::TYPEID)
+{
+}
+
+hiage::MovableComponent::MovableComponent(double velX, double velY) : Component(MovableComponent::TYPEID), velocity(velX, velY)
 {
 }
 
@@ -63,24 +71,35 @@ void MovableComponent::accellerate(double magnitude, const Vector2<double>& dire
 	velocity += directionNormalized * magnitude;
 }
 
-struct B {
-	virtual void bar() { std::cout << "B::bar\n"; }
-	virtual ~B() = default;
-};
-struct D : B
+
+hiage::RenderableComponent::RenderableComponent(const Sprite& sprite) : Component(RenderableComponent::TYPEID), sprite(sprite)
 {
-	D() { std::cout << "D::D\n"; }
-	~D() { std::cout << "D::~D\n"; }
-	void bar() override { std::cout << "D::bar\n"; }
-};
+
+}
+
+Sprite& hiage::RenderableComponent::getSprite()
+{
+	return sprite;
+}
+
+/*
+	ComponentManager
+*/
 
 
-
-std::unique_ptr<Component> hiage::ComponentManager::createComponentCore(const std::string& name, const std::map<std::string, std::string>& attributes) const
+std::unique_ptr<Component> hiage::ComponentManager::createComponentCore(const std::string& name, const std::map<std::string, std::string>& attributes, const std::map<std::string, void*>& runtimeAttributes)
 {
 	if (name == "physical")
 	{
-		return make_unique<PhysicalComponent>();
+		double x = 0, y = 0;
+
+		if (runtimeAttributes.find("x") != runtimeAttributes.end())
+			x = *(double*)(runtimeAttributes.at("x"));
+
+		if (runtimeAttributes.find("y") != runtimeAttributes.end())
+			y = *(double*)(runtimeAttributes.at("y"));
+
+		return make_unique<PhysicalComponent>(x, y);
 	}
 	else if (name == "movable")
 	{
@@ -88,18 +107,44 @@ std::unique_ptr<Component> hiage::ComponentManager::createComponentCore(const st
 	}
 	else if (name == "renderable")
 	{
-		return make_unique<RenderableComponent>();
+		return createRenderable(attributes);
 	}
 
 	throw runtime_error("Component type not found: " + name);
 }
 
-shared_ptr<Component> ComponentManager::createComponent(const std::string& type, const std::map<std::string, std::string>& attributes)
+
+hiage::ComponentManager::ComponentManager(Game& game) : game(game)
+{
+}
+
+hiage::ComponentManager::~ComponentManager()
+{
+}
+
+std::unique_ptr<Component> hiage::ComponentManager::createRenderable(const std::map<std::string, std::string>& attributes)
+{
+	const auto& spriteName = attributes.at(std::string("sprite"));
+
+	SpriteManager::Resource* sprite = game.getSpriteManager().requestResourceCopy(spriteName);
+	TextureManager::Resource* texture = game.getTextureManager().requestResourcePtr(sprite->strData1.c_str());
+
+	if (!texture)
+	{
+		throw Exception(string("ERROR: Could not retrieve texture for sprite ") + spriteName);
+	}
+	sprite->resource->create(texture->resource, sprite->intData1, sprite->intData2);
+
+	return make_unique<RenderableComponent>(*sprite->resource);
+}
+
+
+shared_ptr<Component> ComponentManager::createComponent(const std::string& type, const std::map<std::string, std::string>& attributes, const std::map<std::string, void*>& runtimeAttributes)
 {
 	if (componentCache.find(type) == componentCache.end())
 		componentCache[type] = vector<shared_ptr<Component>>();
 
-	componentCache[type].push_back(createComponentCore(type));
+	componentCache[type].push_back(createComponentCore(type, attributes, runtimeAttributes));
 	
 	return componentCache[type][componentCache[type].size()-1];
 }
@@ -110,14 +155,4 @@ std::vector<shared_ptr<Component>> hiage::ComponentManager::getComponentsOfType(
 		return vector<shared_ptr<Component>>();
 
 	return componentCache[type];
-}
-
-hiage::RenderableComponent::RenderableComponent() : Component(RenderableComponent::TYPEID)
-{
-
-}
-
-Sprite& hiage::RenderableComponent::getSprite()
-{
-	return sprite;
 }

@@ -36,7 +36,7 @@ const int Map::MAPVERSION = 100;
 
 
 //sort the objects using the quicksort algorithm
-std::vector<PhysicalEntity*> Map::sortObjects(const std::vector<PhysicalEntity*> & array)
+/*std::vector<PhysicalEntity*> Map::sortObjects(const std::vector<PhysicalEntity*> & array)
 {
     vector<PhysicalEntity*> less;
     vector<PhysicalEntity*> greater;
@@ -71,7 +71,7 @@ std::vector<PhysicalEntity*> Map::sortObjects(const std::vector<PhysicalEntity*>
     less.insert(less.end(), greater.begin(), greater.end());
 
     return less;
-}
+}*/
 
 void Map::createFromFile(std::string path, bool runScripts)
 {
@@ -227,6 +227,8 @@ void Map::createFromFile(std::string path, bool runScripts)
 		throw IOException("ERROR: Number of objects is less than 0.");
 	}
 
+
+    auto& em = gameState.getEntityManager();
 	for (int i = 0; i < temp; i++)
 	{
 		int buffsize;
@@ -244,7 +246,11 @@ void Map::createFromFile(std::string path, bool runScripts)
 		file.read((char*)&objy, 8);
 
 		clog << "Creating object " << buffer << " at (" << objx << ", " << objy << ")\n" << flush;
-		createObject(buffer, objx, objy, runScripts);
+        
+        em.createEntity(buffer, {
+            { "x", &objx }, 
+            { "y", &objy }
+        });
 
 		delete [] buffer;
 	}
@@ -451,7 +457,7 @@ void Map::destroy()
 
 
 //create a new object on the map
-PhysicalEntity &Map::createObject(std::string name, double x, double y, bool runScripts)
+/*PhysicalEntity &Map::createObject(std::string name, double x, double y, bool runScripts)
 {
     //create the actual object
     auto& em = gameState.getEntityManager();
@@ -479,13 +485,13 @@ PhysicalEntity &Map::createObject(std::string name, double x, double y, bool run
     //return a reference to the object (for use in the scripts for instance)
 	return (obj);
 }
-
-PhysicalEntity &Map::createObject(std::string name, double x, double y)
+*/
+/*PhysicalEntity &Map::createObject(std::string name, double x, double y)
 {
     return createObject(name, x, y, true);
-}
+}*/
 
-
+/*
 
 PhysicalEntity& Map::getObject(int index)
 {
@@ -533,6 +539,7 @@ void Map::deleteObject(int index)
     auto& obj = em.getObjectByIndex<Entity>(index);
     obj.setDestructionFlag(true);
 }
+*/
 /*
 * 
 * TODO - reimplement later
@@ -566,29 +573,9 @@ void Map::render()
     double camX = disp.getCamX();
     double camY = disp.getCamY();
 
-    double viewLeft = camX - (zoom * aspect);
-    double viewRight = camX + (zoom * aspect);
-    double viewTop = camY + zoom;
-    double viewBottom = camY - zoom;
 
-    //render the objects
-    auto& em = gameState.getEntityManager();
-    for (size_t i = 0; i < em.getObjectCount(); i++)
-	{
-        auto& obj = em.getObjectByIndex<PhysicalEntity>(i);
-	    //check if the object is inside the viewport
-	    if ((obj.getX() + obj.getSprite()->getWidth() >= viewLeft) && (obj.getX() <= viewRight))
-        {
-            if ((obj.getY() + obj.getSprite()->getHeight() >= viewBottom) && (obj.getY() <= viewTop))
-            {
-                obj.render(renderer, ObjectZ::MIDDLE);
-            }
-        }
-	}
-
+    //Render the tilemap
     ObjectZ depth = ObjectZ::MIDDLE_BACK;
-
-    //and the tilemap
 	for (int i = 0; i < tilemap.getLayers(); i++)
 	{
 	    switch (i)
@@ -659,7 +646,7 @@ void Map::render()
 
 void Map::update(double frameTime)
 {
-    Display & disp = gameInstance.getDisplay();
+/*    Display & disp = gameInstance.getDisplay();
 
     double aspect = disp.getAspectRatio();
     double zoom = disp.getZoom();
@@ -809,7 +796,7 @@ void Map::update(double frameTime)
     {
         gameInstance.scriptVM.executeLine(updateScripts[i] + "()");
     }
-
+    */
     if (createMapQueuedFlag)
     {
         createFromFile(mapToCreate);
