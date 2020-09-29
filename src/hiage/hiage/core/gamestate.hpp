@@ -4,6 +4,7 @@
 #include "entitymanager.hpp"
 #include "systems.hpp"
 #include "components.hpp"
+#include "events.hpp"
 
 namespace hiage
 {
@@ -21,6 +22,7 @@ namespace hiage
 		ComponentManager	componentManager;
 		SystemsFactory		systemsFactory;
 		EntityManager		entityManager;
+		EventQueue			eventQueue;
 
 	protected:
 		Game& gameInstance;
@@ -43,7 +45,9 @@ namespace hiage
 		void changeState(Game* game, GameState* state);
 
 		const ComponentManager& getComponentManager() const;
-		EntityManager& getEntityManager();
 		const SystemsFactory& getSystemsFactory() const;
+
+		EntityManager& getEntityManager();
+		EventQueue& getEventQueue();
 	};
 }

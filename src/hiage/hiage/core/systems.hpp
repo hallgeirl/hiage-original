@@ -55,31 +55,41 @@ namespace hiage
 		virtual void update(double frameTime) override;
 	};
 
-	class ObjectObjectCollisionSystem : public System
+	/// <summary>
+	/// Detects collisions between two objects. 
+	/// For detected collisions, put an event on the gamestate's event queue.
+	/// </summary>
+	class ObjectObjectCollisionDetectionSystem : public System
 	{
 	public:
-		ObjectObjectCollisionSystem(Game& game, GameState& gameState) : System(game, gameState) {}
+		ObjectObjectCollisionDetectionSystem(Game& game, GameState& gameState) : System(game, gameState) {}
 		virtual void update(double frameTime) override;
 	};
 
-	class ObjectTileCollisionSystem : public System
+	/// <summary>
+	/// Detects collisions between an object and a tile. 
+	/// For detected collisions, put an event on the gamestate's event queue.
+	/// </summary>
+	class ObjectTileCollisionDetectionSystem : public System
 	{
 	private:
 		const Tilemap& tilemap;
 	public:
-		ObjectTileCollisionSystem(Game& game, GameState& gameState, const Tilemap& tilemap) : System(game, gameState), tilemap(tilemap) {}
+		ObjectTileCollisionDetectionSystem(Game& game, GameState& gameState, const Tilemap& tilemap) : System(game, gameState), tilemap(tilemap) {}
 		virtual void update(double frameTime) override;
 	};
 
-	template<typename ...TAll>
-	struct PositionComponentComparator {
-		bool operator()(std::tuple<std::shared_ptr<TAll>...> a,
-						std::tuple<std::shared_ptr<TAll>...> b) const
-		{
-			return get<0>(a)->getData().getX() < get<0>(b)->getData().getX();
-		}
-	};
 
+	/// <summary>
+	/// Handles collisions between objects and tiles by blocking passage.
+	/// In essence, it will handle object-tile collision events.
+	/// </summary>
+	class BlockingTileSystem : public System
+	{
+	public:
+		BlockingTileSystem(Game& game, GameState& gameState) : System(game, gameState) {}
+		virtual void update(double frameTime) override;
+	};
 
 	// List of currently missing systems:
 	// - Script system??

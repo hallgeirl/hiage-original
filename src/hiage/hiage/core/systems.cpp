@@ -131,7 +131,17 @@ void hiage::HumanControllerSystem::update(double frameTime)
 	}
 }
 
-void hiage::ObjectObjectCollisionSystem::update(double frameTime)
+// Used for sorting based on the x coordinate of objects
+template<typename ...TAll>
+struct PositionComponentComparator {
+	bool operator()(std::tuple<std::shared_ptr<TAll>...> a,
+		std::tuple<std::shared_ptr<TAll>...> b) const
+	{
+		return get<0>(a)->getData().getX() < get<0>(b)->getData().getX();
+	}
+};
+
+void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 {
 	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent>();
 	PositionComponentComparator<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent> comp;
@@ -232,7 +242,7 @@ SystemsFactory::SystemsFactory(Game& game, GameState& gameState) : game(game), g
 {
 }
 
-void hiage::ObjectTileCollisionSystem::update(double frameTime)
+void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 {
 	if (!tilemap.isLoaded())
 		return; 
@@ -278,7 +288,12 @@ void hiage::ObjectTileCollisionSystem::update(double frameTime)
 							tile.bottom = (double)y * tileSize;
 							if (colRect.left < tile.right && colRect.right > tile.left && colRect.top > tile.bottom && colRect.bottom < tile.top)
 							{
-								// TODO - Handle collision
+								gameState.getEventQueue().enqueue(std::make_unique<ObjectTileCollisionEvent>(ObjectTileCollisionData{ 
+									.entityId = 1, 
+									.objectPosition = currentPosition, 
+									.tilePosition = Vector2<int>(x,y)/*,
+									.normalVector = Vector2<double>(0,1) todo - implement collision detection that actually finds the normal vector for the collision (see my C# hiage)*/
+								}));
 							}
 						}
 					}
@@ -289,5 +304,16 @@ void hiage::ObjectTileCollisionSystem::update(double frameTime)
 			//increment the position by one step
 			currentPosition -= dvelocity;
 		}
+	}
+}
+
+void hiage::BlockingTileSystem::update(double frameTime)
+{
+	unique_ptr<Event> evt;
+	while ((evt = gameState.getEventQueue().dequeue(BuiltinEventTypes::Collision_ObjectTile)) != nullptr)
+	{
+		auto& myEvt = dynamic_cast<ObjectTileCollisionEvent&>(*evt);
+
+
 	}
 }

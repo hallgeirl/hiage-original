@@ -16,7 +16,7 @@ namespace hiage
 	class Component
 	{
 	private:
-		int typeId;
+		int typeId; // Component type
 	protected:
 		Component(int typeId) : typeId(typeId) { }
 	public:
