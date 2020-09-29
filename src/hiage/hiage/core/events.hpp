@@ -36,14 +36,15 @@ namespace hiage
 		const T& getData() const { return data; };
 	};
 
-	// Collision events
+	/*
+	Collision events
+	*/
 	struct ObjectTileCollisionData
 	{
 		int entityId;
 		Vector2<double> objectPosition;
 		Vector2<int> tilePosition;
 		Vector2<double> normalVector;
-
 	};
 	class ObjectTileCollisionEvent : public GenericEvent<ObjectTileCollisionData>
 	{
@@ -51,6 +52,21 @@ namespace hiage
 		ObjectTileCollisionEvent(const ObjectTileCollisionData& theData) : GenericEvent(BuiltinEventTypes::Collision_ObjectTile, theData) {}
 	};
 
+	struct ObjectObjectCollisionData
+	{
+		int entityId1, entityId2;
+		Vector2<double> objectPosition1, objectPosition2;
+		Vector2<double> normalVector;
+	};
+	class ObjectObjectCollisionEvent : public GenericEvent<ObjectObjectCollisionData>
+	{
+	public:
+		ObjectObjectCollisionEvent(const ObjectObjectCollisionData& theData) : GenericEvent(BuiltinEventTypes::Collision_ObjectObject, theData) {}
+	};
+
+	/*
+	Event queue
+	*/
 	class EventQueue
 	{
 	private:

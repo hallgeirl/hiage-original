@@ -105,20 +105,20 @@ namespace hiage
 
 			return nullptr;
 		}
-
+		
 		template <typename T>
-		std::vector<std::shared_ptr<T>> queryComponentGroup()
+		std::vector<std::tuple<int, std::shared_ptr<T>>> queryComponentGroup()
 		{
 			// TODO - Use archetypes here later - for now, just use this naive implementation
 
-			std::vector<std::shared_ptr<T>> results;
+			std::vector<std::tuple<int, std::shared_ptr<T>>> results;
 			for (auto& e : entities)
 			{
 				auto& res = queryComponentGroup<T>(e->getEntityId());
 				if (res != nullptr)
-					results.push_back(res);
+					results.push_back(std::make_tuple(e->getEntityId(), res));
 			}
-
+			
 			return results;
 		}
 
@@ -136,20 +136,20 @@ namespace hiage
 
 			return std::tuple<std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>();
 		}
-
+		
 		template <class T, class TNext, class...TRest>
-		std::vector<std::tuple<std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>> queryComponentGroup()
+		std::vector<std::tuple<int, std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>> queryComponentGroup()
 		{
 			// TODO - Use archetypes here later - for now, just use this naive implementation
 			// This is quite ugly - but will have to do for now
 
-			std::vector<std::tuple<std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>> results;
+			std::vector<std::tuple<int, std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>> results;
 			for (auto& e : entities)
 			{
 				auto& res = queryComponentGroup<T, TNext, TRest...>(e->getEntityId());
 
 				if (std::get<0>(res) != nullptr)
-					results.push_back(res);
+					results.push_back(std::tuple_cat(std::make_tuple(e->getEntityId()), res));
 			}
 
 			return results;

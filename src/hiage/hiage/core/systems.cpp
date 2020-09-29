@@ -24,8 +24,8 @@ void MovementSystem::update(double frametime)
 	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent>();
 	for (auto& t : componentTuples)
 	{
-		auto& physical = std::get<0>(t);
-		auto& movement = std::get<1>(t);
+		auto& physical = std::get<1>(t);
+		auto& movement = std::get<2>(t);
 		
 		auto vel = movement->getData();
 		auto pos = physical->getData();
@@ -55,8 +55,8 @@ void ObjectRenderingSystem::update(double frameTime)
 
 	for (auto& t : componentTuples)
 	{
-		auto& phyiscal = std::get<0>(t);
-		auto& renderable = std::get<1>(t);
+		auto& phyiscal = std::get<1>(t);
+		auto& renderable = std::get<2>(t);
 
 		auto& pos = phyiscal->getData();
 		auto& sprite = renderable->getData();
@@ -84,8 +84,8 @@ void hiage::GravitySystem::update(double frameTime)
 
 	for (auto& t : componentTuples)
 	{
-		auto& physical = std::get<0>(t);
-		auto& movement = std::get<1>(t);
+		auto& physical = std::get<1>(t);
+		auto& movement = std::get<2>(t);
 
 		auto& vel = movement->getData();
 		vel.add(Vector2<double>(0, -1) * magnitude * frameTime);
@@ -102,8 +102,8 @@ void hiage::HumanControllerSystem::update(double frameTime)
 	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<HumanControllerComponent, VelocityComponent>();
 	for (auto& t : componentTuples)
 	{
-		auto& controller = std::get<0>(t);
-		auto& movement = std::get<1>(t);
+		auto& controller = std::get<1>(t);
+		auto& movement = std::get<2>(t);
 
 		// TODO: Implement proper key bindings and generally more flexibility here.
 		// Might need a component that defines accelleration magnitude as well. Or perhaps this could go into the movement component?
@@ -134,10 +134,10 @@ void hiage::HumanControllerSystem::update(double frameTime)
 // Used for sorting based on the x coordinate of objects
 template<typename ...TAll>
 struct PositionComponentComparator {
-	bool operator()(std::tuple<std::shared_ptr<TAll>...> a,
-		std::tuple<std::shared_ptr<TAll>...> b) const
+	bool operator()(std::tuple<int, std::shared_ptr<TAll>...> a,
+		std::tuple<int, std::shared_ptr<TAll>...> b) const
 	{
-		return get<0>(a)->getData().getX() < get<0>(b)->getData().getX();
+		return get<1>(a)->getData().getX() < get<1>(b)->getData().getX();
 	}
 };
 
@@ -153,14 +153,16 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 	for (int i = 0; i < componentTuples.size(); i++)
 	{
 		auto& c1 = componentTuples[i];
-		const auto& pos1 = get<0>(c1)->getData();
-		const auto& vel1 = get<1>(c1)->getData();
+		auto entityId1 = get<0>(c1);
+		const auto& pos1 = get<1>(c1)->getData();
+		const auto& vel1 = get<2>(c1)->getData();
 
 		for (int j = i + 1; j < componentTuples.size(); j++)
 		{
 			auto& c2 = componentTuples[j];
-			const auto& pos2 = get<0>(c2)->getData();
-			const auto& vel2 = get<1>(c2)->getData();
+			auto entityId2 = get<0>(c2);
+			const auto& pos2 = get<1>(c2)->getData();
+			const auto& vel2 = get<2>(c2)->getData();
 			
 			
 			// Position of both objects at the time of collision
@@ -168,7 +170,7 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 
 			//check the distance between them
 			//TODO: Put in a better distance check based on relative velocities.
-			double distance = (get<0>(c1)->getData() - get<0>(c2)->getData()).length();
+			double distance = (get<1>(c1)->getData() - get<1>(c2)->getData()).length();
 			if (distance > 50)
 			{
 				continue;
@@ -200,8 +202,8 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 			//check for collisions during the next frame
 			for (int i = 0; i < dspeed; i++)
 			{
-				BoundingBox<double> colRect1 = get<3>(c1)->getData();
-				BoundingBox<double> colRect2 = get<3>(c2)->getData();
+				BoundingBox<double> colRect1 = get<4>(c1)->getData();
+				BoundingBox<double> colRect2 = get<4>(c2)->getData();
 
 				//get the collision rect for both objects
 				colRect1.left += pos1.getX();
@@ -231,7 +233,13 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 
 			if (collided)
 			{
-				// TODO: Handle collision!
+				gameState.getEventQueue().enqueue(std::make_unique<ObjectObjectCollisionEvent>(ObjectObjectCollisionData{
+									.entityId1 = entityId1,
+									.entityId2 = entityId2,
+									.objectPosition1 = currentPosition1,
+									.objectPosition2 = currentPosition2
+									/*, .normalVector = Vector2<double>(0,1) todo - implement collision detection that actually finds the normal vector for the collision (see my C# hiage)*/
+					}));
 			}
 		}
 	}
@@ -251,8 +259,9 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 
 	for (auto& c : componentTuples)
 	{
-		const auto& pos = get<0>(c)->getData();
-		const auto& vel = get<1>(c)->getData();
+		const auto entityId = get<0>(c);
+		const auto& pos = get<1>(c)->getData();
+		const auto& vel = get<2>(c)->getData();
 
 		int dspeed = (int)ceil(vel.length() * frameTime);
 		Vector2<double> dvelocity = vel * frameTime / dspeed;
@@ -263,7 +272,7 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 		for (int i = 0; i < dspeed; i++)
 		{
 			//get the collision box of the sprite
-			BoundingBox<double> colRect = get<3>(c)->getData();
+			BoundingBox<double> colRect = get<4>(c)->getData();
 			colRect.left += currentPosition.getX();
 			colRect.right += currentPosition.getX();
 			colRect.bottom += currentPosition.getY();
@@ -289,7 +298,7 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 							if (colRect.left < tile.right && colRect.right > tile.left && colRect.top > tile.bottom && colRect.bottom < tile.top)
 							{
 								gameState.getEventQueue().enqueue(std::make_unique<ObjectTileCollisionEvent>(ObjectTileCollisionData{ 
-									.entityId = 1, 
+									.entityId = entityId,
 									.objectPosition = currentPosition, 
 									.tilePosition = Vector2<int>(x,y)/*,
 									.normalVector = Vector2<double>(0,1) todo - implement collision detection that actually finds the normal vector for the collision (see my C# hiage)*/
@@ -314,6 +323,12 @@ void hiage::BlockingTileSystem::update(double frameTime)
 	{
 		auto& myEvt = dynamic_cast<ObjectTileCollisionEvent&>(*evt);
 
-
+		auto& components = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, BoundingBoxComponent>(myEvt.getData().entityId);
+		auto& pos = std::get<0>(components)->getData();
+		auto& vel = std::get<1>(components)->getData();
+		auto& bb = std::get<2>(components)->getData();
+		// TODO - Make this a proper collision handling, respecting the normal vector of the collision.
+		vel.setY(0);
+		pos.setY(myEvt.getData().tilePosition.getY() * 32. - bb.bottom);
 	}
 }
