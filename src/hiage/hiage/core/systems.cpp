@@ -202,22 +202,16 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 			//check for collisions during the next frame
 			for (int i = 0; i < dspeed; i++)
 			{
-				BoundingBox<double> colRect1 = get<4>(c1)->getData();
-				BoundingBox<double> colRect2 = get<4>(c2)->getData();
+				auto colRect1 = get<4>(c1)->getData();
+				auto colRect2 = get<4>(c2)->getData();
 
 				//get the collision rect for both objects
-				colRect1.left += pos1.getX();
-				colRect1.right += pos1.getX();
-				colRect1.top += pos1.getY();
-				colRect1.bottom += pos1.getY();
+				colRect1.translate(pos1);
 
-				colRect2.left += pos2.getX();
-				colRect2.right += pos2.getX();
-				colRect2.top += pos2.getY();
-				colRect2.bottom += pos2.getY();
+				colRect2.translate(pos2);
 
 				//do the rects intersect?
-				if (colRect1.left < colRect2.right && colRect1.right > colRect2.left && colRect1.top > colRect2.bottom && colRect1.bottom < colRect2.top)
+				if (colRect1.getLeft() < colRect2.getRight() && colRect1.getRight() > colRect2.getLeft() && colRect1.getTop() > colRect2.getBottom() && colRect1.getBottom() < colRect2.getTop())
 				{
 					collided = true;
 
@@ -272,15 +266,12 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 		for (int i = 0; i < dspeed; i++)
 		{
 			//get the collision box of the sprite
-			BoundingBox<double> colRect = get<4>(c)->getData();
-			colRect.left += currentPosition.getX();
-			colRect.right += currentPosition.getX();
-			colRect.bottom += currentPosition.getY();
-			colRect.top += currentPosition.getY();
+			BoundingPolygon colRect = get<4>(c)->getData();
+			colRect.translate(currentPosition);
 
 			int tileSize = tilemap.getTileSize();
 
-			BoundingBox<double> tilerect = tilemap.getTilesInRect(colRect.left - tileSize, colRect.top + tileSize, colRect.right + tileSize, colRect.bottom - tileSize);
+			BoundingBox<double> tilerect = tilemap.getTilesInRect(colRect.getLeft() - tileSize, colRect.getTop() + tileSize, colRect.getRight() + tileSize, colRect.getBottom() - tileSize);
 			if (((tilerect.right - tilerect.left) > 0) && ((tilerect.top - tilerect.bottom) > 0))
 			{
 				for (int x = (int)tilerect.left; x <= (int)tilerect.right; x++)
@@ -295,7 +286,7 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 							tile.right = (double)x * tileSize + tileSize;
 							tile.top = (double)y * tileSize + tileSize;
 							tile.bottom = (double)y * tileSize;
-							if (colRect.left < tile.right && colRect.right > tile.left && colRect.top > tile.bottom && colRect.bottom < tile.top)
+							if (colRect.getLeft() < tile.right && colRect.getRight() > tile.left && colRect.getTop() > tile.bottom && colRect.getBottom() < tile.top)
 							{
 								gameState.getEventQueue().enqueue(std::make_unique<ObjectTileCollisionEvent>(ObjectTileCollisionData{ 
 									.entityId = entityId,
@@ -329,6 +320,6 @@ void hiage::BlockingTileSystem::update(double frameTime)
 		auto& bb = std::get<2>(components)->getData();
 		// TODO - Make this a proper collision handling, respecting the normal vector of the collision.
 		vel.setY(0);
-		pos.setY(myEvt.getData().tilePosition.getY() * 32. - bb.bottom);
+		pos.setY(myEvt.getData().tilePosition.getY() * 32. - bb.getBottom());
 	}
 }

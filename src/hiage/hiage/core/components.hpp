@@ -2,6 +2,7 @@
 
 #include "../util/vector2.h"
 #include "../gfx/sprite.h"
+#include "collisions.hpp"
 
 #include <memory>
 
@@ -83,7 +84,7 @@ namespace hiage
 		using DatalessComponent::DatalessComponent;
 	};
 
-	class BoundingBoxComponent : public GenericComponent<BoundingBox<int>, 6>
+	class BoundingBoxComponent : public GenericComponent<BoundingPolygon, 6>
 	{
 		using GenericComponent::GenericComponent;
 	};

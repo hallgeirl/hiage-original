@@ -3,6 +3,7 @@
 #include "texture.h"
 #include "tileset.h"
 #include "renderer.h"
+#include "../core/collisions.hpp"
 
 #include "../core/typedefs.h"
 #include "../util/vector2.h"

@@ -50,7 +50,15 @@ std::unique_ptr<Component> hiage::ComponentManager::createComponentCore(const st
 
 		if (attributes.find("height") != attributes.end())
 			height = std::stoi(attributes.at("height"));
-		return make_unique<BoundingBoxComponent>(BoundingBox<int>(x, x + width, y + height, y));
+		
+		BoundingPolygon poly;
+		poly.addVertex((double)x, y);
+		poly.addVertex((double)x, (double)y + height);
+		poly.addVertex((double)x + width, (double)y + height);
+		poly.addVertex((double)x + width, y);
+		poly.buildNormals();
+
+		return make_unique<BoundingBoxComponent>(poly);
 		
 	}
 

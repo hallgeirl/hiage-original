@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../util/vector2.h"
+#include "boundingpolygon.hpp"
 
 #include <algorithm>
 #include <vector>
@@ -26,27 +27,6 @@ namespace hiage
 		double getDistance(const Projection& p) const;
 
 		bool isOverlapping(const Projection& p) const;
-	};
-
-	class BoundingPolygon
-	{
-	private:
-		std::vector<Vector2<double>> vertices;
-		std::vector<Vector2<double>> edgeNormals;
-		bool dirty;
-		double left, right, bottom, top; // Polygon boundaries
-	public:
-		BoundingPolygon();
-		void addVertex(const Vector2<double>& vert);
-		void buildNormals();
-
-		const std::vector<Vector2<double>>& getVertices() const;
-		const std::vector<Vector2<double>>& getEdgeNormals() const;
-
-		double getLeft() const;
-		double getRight() const;
-		double getTop() const;
-		double getBottom() const;
 	};
 
 	struct CollisionResult
