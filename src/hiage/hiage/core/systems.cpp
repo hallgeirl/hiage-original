@@ -247,7 +247,7 @@ SystemsFactory::SystemsFactory(Game& game, GameState& gameState) : game(game), g
 void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 {
 	if (!tilemap.isLoaded())
-		return; 
+		return;
 
 	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent>();
 
@@ -257,52 +257,72 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 		const auto& pos = get<1>(c)->getData();
 		const auto& vel = get<2>(c)->getData();
 
-		int dspeed = (int)ceil(vel.length() * frameTime);
-		Vector2<double> dvelocity = vel * frameTime / dspeed;
+		Vector2<double> dvelocity = vel * frameTime;
 		Vector2<double> currentPosition = pos;
 
 		bool collided = false;
 
-		for (int i = 0; i < dspeed; i++)
+		//get the collision box of the object
+		BoundingPolygon objectPolygon = get<4>(c)->getData();
+		objectPolygon.translate(currentPosition);
+
+		int tileSize = tilemap.getTileSize();
+
+		// Get bounding box for tiles within the sprite's overlap
+		BoundingBox<double> tilerect = tilemap.getTilesInRect(objectPolygon.getLeft() - tileSize, objectPolygon.getTop() + tileSize, objectPolygon.getRight() + tileSize, objectPolygon.getBottom() - tileSize);
+
+		if (((tilerect.right - tilerect.left) > 0) && ((tilerect.top - tilerect.bottom) > 0))
 		{
-			//get the collision box of the sprite
-			BoundingPolygon colRect = get<4>(c)->getData();
-			colRect.translate(currentPosition);
-
-			int tileSize = tilemap.getTileSize();
-
-			BoundingBox<double> tilerect = tilemap.getTilesInRect(colRect.getLeft() - tileSize, colRect.getTop() + tileSize, colRect.getRight() + tileSize, colRect.getBottom() - tileSize);
-			if (((tilerect.right - tilerect.left) > 0) && ((tilerect.top - tilerect.bottom) > 0))
+			for (int x = (int)tilerect.left; x <= (int)tilerect.right; x++)
 			{
-				for (int x = (int)tilerect.left; x <= (int)tilerect.right; x++)
+				for (int y = (int)tilerect.bottom; y <= (int)tilerect.top; y++)
 				{
-					for (int y = (int)tilerect.bottom; y <= (int)tilerect.top; y++)
+					// todo: should do a single object->multiple polygon test
+					vector<BoundingPolygon> tilePolygons;
+					int blockType = tilemap.getTileset()->getTile(tilemap.getTile(x, y, 0)).block;
+					// block == 1 means fully blocking - i.e. all edges are blocking.
+					if (blockType == 1)
 					{
-						//onMapCollision(tilemap, x * tileSize, y * tileSize + tileSize, x * tileSize + tileSize, y * tileSize, tilemap->getTileset()->getTile(tilemap->getTile(x,y,0)).block, frametime);
-						if (tilemap.getTileset()->getTile(tilemap.getTile(x, y, 0)).block > 0)
-						{
-							BoundingBox<double> tile;
-							tile.left = (double)x * tileSize;
-							tile.right = (double)x * tileSize + tileSize;
-							tile.top = (double)y * tileSize + tileSize;
-							tile.bottom = (double)y * tileSize;
-							if (colRect.getLeft() < tile.right && colRect.getRight() > tile.left && colRect.getTop() > tile.bottom && colRect.getBottom() < tile.top)
-							{
-								gameState.getEventQueue().enqueue(std::make_unique<ObjectTileCollisionEvent>(ObjectTileCollisionData{ 
-									.entityId = entityId,
-									.objectPosition = currentPosition, 
-									.tilePosition = Vector2<int>(x,y)/*,
-									.normalVector = Vector2<double>(0,1) todo - implement collision detection that actually finds the normal vector for the collision (see my C# hiage)*/
-								}));
-							}
-						}
+						BoundingPolygon p;
+						
+						// lower left
+						p.addVertex((double)x * tileSize, (double)y * tileSize);
+						// upper left
+						p.addVertex((double)x * tileSize, (double)y * tileSize +  tileSize);
+						// upper right
+						p.addVertex((double)x * tileSize + tileSize, (double)y * tileSize + tileSize);
+						// lower right
+						p.addVertex((double)x * tileSize + tileSize, (double)y * tileSize);
+						p.buildNormals();
+						tilePolygons.push_back(p);
+					}
+					// block == 2 means blocking from above, but not from below
+					else if (blockType == 2)
+					{
+						BoundingPolygon p;
+
+						// upper left
+ 						p.addVertex((double)x * tileSize, (double)y * tileSize + tileSize);
+						// upper right
+						p.addVertex((double)x * tileSize + tileSize, (double)y * tileSize + tileSize);
+						p.buildNormals();
+						tilePolygons.push_back(p);
+					}
+
+					auto result = collisionTester.testCollision(objectPolygon, vel * frameTime, tilePolygons, -1);
+					if (result.hasIntersected || result.isIntersecting)
+					{
+						gameState.getEventQueue().enqueue(std::make_unique<ObjectTileCollisionEvent>(ObjectTileCollisionData{
+							.entityId = entityId,
+							.objectPosition = currentPosition,
+							.tilePosition = Vector2<int>(x,y),
+							.normalVector = result.hitNormal
+							}));
 					}
 				}
-				break;
 			}
 
-			//increment the position by one step
-			currentPosition -= dvelocity;
+			break;
 		}
 	}
 }
@@ -318,8 +338,9 @@ void hiage::BlockingTileSystem::update(double frameTime)
 		auto& pos = std::get<0>(components)->getData();
 		auto& vel = std::get<1>(components)->getData();
 		auto& bb = std::get<2>(components)->getData();
+		
 		// TODO - Make this a proper collision handling, respecting the normal vector of the collision.
 		vel.setY(0);
-		pos.setY(myEvt.getData().tilePosition.getY() * 32. - bb.getBottom());
+		pos.setY(myEvt.getData().tilePosition.getY() * 16. + 16 - bb.getBottom());
 	}
 }

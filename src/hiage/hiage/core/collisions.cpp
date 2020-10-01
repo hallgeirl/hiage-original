@@ -29,7 +29,7 @@ void hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projectio
 	{
 		isIntersecting = true;
 #if DEBUG_COLLISION_OBJECT_POLYGON || DEBUG_COLLISION_OBJECT_OBJECT
-		Log.Write("\tIntersecting." << endl;
+		clog << "\tIntersecting." << endl;
 #endif
 	}
 	else
@@ -51,14 +51,14 @@ void hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projectio
 			//then ignore it because it can't collide. Also, if the axis belongs to object 2,
 			//and the axis faces the same direction as the velocity, also ignore it.
 #if DEBUG_COLLISION_OBJECT_POLYGON
-			clog << "\tAxis dot Velocity: " << axis.DotProduct(relativeVelocity) * (axisOwner == 0 ? -1 : 1) << " Axis: " << axis << endl;
+			clog << "\tAxis dot Velocity: " << axis.dot(relativeVelocity) * (axisOwner == 0 ? -1 : 1) << " Axis: " << axis << endl;
 #endif
 
 			//Ignore this test if the axis faces the wrong way
 			if (axis.dot(relativeVelocity) * (axisOwner == 0 ? -1 : 1) > 1e-12)
 			{
 #if DEBUG_COLLISION_OBJECT_POLYGON || DEBUG_COLLISION_OBJECT_OBJECT
-				clog << "\tIgnoring test because the edge faces the wrong way. Dot: " << axis.DotProduct(relativeVelocity) * (axisOwner == 0 ? -1 : 1) << "Owner: " + axisOwner;
+				clog << "\tIgnoring test because the edge faces the wrong way. Dot: " << axis.dot(relativeVelocity) * (axisOwner == 0 ? -1 : 1) << "Owner: " + axisOwner;
 #endif
 				distance = -std::numeric_limits<double>::infinity();
 				isIntersecting = true;
@@ -71,7 +71,7 @@ void hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projectio
 					hasIntersected = true;
 
 #if DEBUG_COLLISION_OBJECT_POLYGON || DEBUG_COLLISION_OBJECT_OBJECT
-				clog << "\tCollision time: " + t << endl;
+				clog << "\tCollision time: " << t << endl;
 #endif
 			}
 		}
@@ -109,7 +109,7 @@ void hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projectio
 
 Projection hiage::SATCollisionTester::projectPolygon(const BoundingPolygon& p, const Vector2<double>& axis)
 {
-	double minimum = -std::numeric_limits<double>::infinity(), max = std::numeric_limits<double>::infinity();
+	double minimum = std::numeric_limits<double>::infinity(), max = -std::numeric_limits<double>::infinity();
 
 	for (auto& v : p.getVertices())
 	{
@@ -151,7 +151,7 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 
 #if DEBUG_COLLISION_OBJECT_POLYGON
 	int collCount = 0;
-	Log.Write("Testing collision object vs polygon, polygon count: " + polygons.Count << endl;
+	clog << "Testing collision object vs polygon, polygon count: " + polygons.size() << endl;
 #endif
 
 
@@ -171,14 +171,14 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 		if (p2.getVertices().size() == 2 && p2.getEdgeNormals()[0].dot(velocityFrame) >= 0)
 		{
 #if DEBUG_COLLISION_OBJECT_POLYGON
-			Log.Write("Polygon has only one edge, which faces the same way as the movement direction. Ignoring." << endl;
+			clog << "Polygon has only one edge, which faces the same way as the movement direction. Ignoring." << endl;
 #endif
 			continue;
 		}
 
 #if DEBUG_COLLISION_OBJECT_POLYGON
-		Log.Write("Object bounding polygon: " + o.BoundingPolygon << endl;
-		Log.Write("Testing polygon " + p << endl;
+		clog << "Object bounding polygon: " << p2 << endl;
+		clog << "Testing polygon " << p << endl;
 #endif
 
 		//Collision results for the current polygon
@@ -238,7 +238,7 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 	if (finalResult.hasIntersected || finalResult.isIntersecting)
 	{
 #if DEBUG_COLLISION_OBJECT_POLYGON
-		clog << "COLLISION." << " Time: " << finalResult.collisionTime << " Normal: " << finalResult.hitNormal << " Remaining: " << remainingFrameTime << " Collision polygon: " << firstCollisionPolygon << " Velocity: " << o.Velocity << " Translation vector: " << finalResult.minimumTranslationVector << endl;
+		clog << "COLLISION." << " Time: " << finalResult.collisionTime << " Normal: " << finalResult.hitNormal << " Translation vector: " << finalResult.minimumTranslationVector << endl;
 		collCount++;
 #endif
 	}

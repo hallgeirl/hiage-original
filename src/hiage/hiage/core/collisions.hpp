@@ -29,6 +29,12 @@ namespace hiage
 		bool isOverlapping(const Projection& p) const;
 	};
 
+	inline std::ostream& operator <<(std::ostream& stream, const Projection& r)
+	{
+		stream << "projection(min: " << r.minimum << " max:" << r.maximum << ")" << std::endl;
+		return stream;
+	}
+
 	struct CollisionResult
 	{
 		// Bounding polygons will intersect at t=(0 <= CollisionTime < 1) into the future

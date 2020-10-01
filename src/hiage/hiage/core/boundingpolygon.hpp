@@ -2,6 +2,7 @@
 
 #include "../util/vector2.h"
 
+#include <iostream>
 #include <vector>
 
 namespace hiage 
@@ -27,5 +28,12 @@ namespace hiage
 		double getRight() const;
 		double getTop() const;
 		double getBottom() const;
+
 	};
+
+	inline std::ostream& operator <<(std::ostream& stream, const BoundingPolygon& r)
+	{
+		//stream << "Left: " << r.left << " Top: " << r.top << " Right: " << r.right << " Bottom: " << r.bottom;
+		return stream;
+	}
 }

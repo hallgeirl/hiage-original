@@ -25,11 +25,11 @@ void hiage::BoundingPolygon::buildNormals()
 
 	auto edgeNormalCount = vertices.size();
 	// For 2 vertices, there's 1 edge. For more than 2 vertices, # edges = # vertices.
-	if (vertices.size() > 2)
+	if (vertices.size() == 2)
 		edgeNormalCount--;
 
-	int left = 0; bottom = 0;
-	right = 0; top = 0;
+	left = numeric_limits<int>::max(); bottom = numeric_limits<int>::max();
+	right = numeric_limits<int>::min(); top = numeric_limits<int>::min();
 
 	for (int i = 0; i < edgeNormalCount; i++)
 	{
@@ -42,20 +42,20 @@ void hiage::BoundingPolygon::buildNormals()
 		edgeNormals.push_back(normal);
 
 		//Update outer boundaries
-		if (vertices[i].getX() < left) left = i;
-		if (vertices[i].getX() > right) right = i;
-		if (vertices[i].getY() < bottom) bottom = i;
-		if (vertices[i].getY() > top) top = i;
+		if (vertices[i].getX() < left) left = vertices[i].getX();
+		if (vertices[i].getX() > right) right = vertices[i].getX();
+		if (vertices[i].getY() < bottom) bottom = vertices[i].getY();
+		if (vertices[i].getY() > top) top = vertices[i].getY();
 	}
 
 	// Compute the bounds for the last vertex if needed
 	for (int i = edgeNormalCount; i < vertices.size(); i++)
 	{
 		//Update outer boundaries
-		if (vertices[i].getX() < left) left = i;
-		if (vertices[i].getX() > right) right = i;
-		if (vertices[i].getY() < bottom) bottom = i;
-		if (vertices[i].getY() > top) top = i;
+		if (vertices[i].getX() < left) left = vertices[i].getX();
+		if (vertices[i].getX() > right) right = vertices[i].getX();
+		if (vertices[i].getY() < bottom) bottom = vertices[i].getY();
+		if (vertices[i].getY() > top) top = vertices[i].getY();
 	}
 
 	dirty = false;
