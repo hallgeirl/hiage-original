@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include "../core/typedefs.h"
 
@@ -208,6 +208,21 @@ namespace hiage
 		}
 
 		/*!
+			Performs vector inversion / unary - and returns the results.
+			\param v The second vector.
+			\note This does not change this vector.
+			\return The resulting vector.
+		*/
+		Vector2 operator -() const
+		{
+			Vector2 v2;
+			v2 = *this;
+			v2.subtract(v);
+
+			return v2;
+		}
+
+		/*!
 			Returns a scaled vector, scaled by f.
 			\param f The scale factor.
 			\note This does not change this vector.
@@ -328,6 +343,7 @@ namespace hiage
 			return true;
 		}
 	};
+	typedef Vector2<double> Vec2d;
 
 	inline std::ostream & operator <<(std::ostream &stream, const Vector2<double> &v)
 	{

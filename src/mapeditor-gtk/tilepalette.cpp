@@ -6,7 +6,7 @@
 	Description:
 */
 
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include "tilepalette.h"
 

@@ -27,7 +27,7 @@ add_library(hiage STATIC
 	"hiage/util/exceptions.cpp"
 	"hiage/util/timer.cpp"
 	"hiage/core/components.cpp" 
-	"hiage/core/systems.cpp" "hiage/core/gamestate.hpp" "hiage/core/events.hpp" "hiage/core/events.cpp" "hiage/core/gamestate.cpp")
+	"hiage/core/systems.cpp" "hiage/core/gamestate.hpp" "hiage/core/events.hpp" "hiage/core/events.cpp" "hiage/core/gamestate.cpp" "hiage/core/collisions.hpp" "hiage/core/collisions.cpp")
 
 target_include_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/include ${PROJECT_SOURCE_DIR}/third_party/src/tinyxml)
 

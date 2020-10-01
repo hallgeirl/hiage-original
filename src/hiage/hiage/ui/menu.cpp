@@ -3,7 +3,7 @@
 #endif
 
 #include <GL/gl.h>
-#include <math.h>
+#include <cmath>
 
 #include "menu.h"
 

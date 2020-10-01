@@ -1,5 +1,7 @@
 #pragma once
 
+#include "collisions.hpp"
+
 #include <string>
 #include <memory>
 
@@ -61,6 +63,9 @@ namespace hiage
 	/// </summary>
 	class ObjectObjectCollisionDetectionSystem : public System
 	{
+	private:
+		SATCollisionTester collisionTester;
+
 	public:
 		ObjectObjectCollisionDetectionSystem(Game& game, GameState& gameState) : System(game, gameState) {}
 		virtual void update(double frameTime) override;
@@ -74,6 +79,8 @@ namespace hiage
 	{
 	private:
 		const Tilemap& tilemap;
+		SATCollisionTester collisionTester;
+
 	public:
 		ObjectTileCollisionDetectionSystem(Game& game, GameState& gameState, const Tilemap& tilemap) : System(game, gameState), tilemap(tilemap) {}
 		virtual void update(double frameTime) override;

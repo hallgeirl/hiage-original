@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include <GL/gl.h>
-#include <math.h>
+#include <cmath>
 #include "tilemap.h"
 #include "../util/exceptions.h"
 
