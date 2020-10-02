@@ -164,13 +164,13 @@ Font * FontFactory::createFont(string fontName, Game * game)
 {
     Font * font = new Font();
     //attempt to load the main font
-	FontManager::Resource * fontResource = game->getFontManager().requestResourcePtr(fontName.c_str());
+	auto& fontResource = game->getFontManager().requestResourcePtr(fontName.c_str());
 	if (!fontResource)
 	{
 	    throw Exception("ERROR: Could not retrieve font.");
 	}
 
-	TextureManager::Resource * textureResource = game->getTextureManager().requestResourcePtr(fontResource->strData1.c_str());
+	auto& textureResource = game->getTextureManager().requestResourcePtr(fontResource->strData1.c_str());
 	if (!textureResource)
 	{
 	    throw Exception("ERROR: Could not retrieve texture for font.");

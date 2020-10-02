@@ -7,7 +7,6 @@
       <sprite>Goomba</sprite>
     </component>
     <component type="physics" />
-    
     <component type="boundingbox">
       <left>5</left>
       <bottom>1</bottom>

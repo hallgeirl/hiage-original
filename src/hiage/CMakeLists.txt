@@ -11,7 +11,7 @@ add_library(hiage STATIC
 	"hiage/core/inputmanager.cpp"
 	"hiage/core/map.cpp"
 	"hiage/core/entitymanager.cpp"
-	"hiage/core/resmanager.cpp"
+	"hiage/core/resourcemanager.cpp"
 	"hiage/core/script_lua.cpp"
 	"hiage/gfx/display.cpp"
 	"hiage/gfx/fonts.cpp"
@@ -35,6 +35,8 @@ target_link_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/lib/win-x
 
 target_link_libraries(hiage PUBLIC SDL2.lib OpenGL32.dll SDL2_Mixer.lib SDL2main lua_static luabind tinyxml)
 target_compile_features(hiage PUBLIC cxx_std_20)
+
+add_definitions(-DNOMINMAX)
 
 # Collision debugging
 # add_definitions(-DDEBUG_COLLISION_OBJECT_POLYGON)

@@ -78,8 +78,8 @@ std::unique_ptr<Component> hiage::ComponentManager::createRenderable(const std::
 {
 	const auto& spriteName = attributes.at(std::string("sprite"));
 
-	SpriteManager::Resource* sprite = game.getSpriteManager().requestResourceCopy(spriteName);
-	TextureManager::Resource* texture = game.getTextureManager().requestResourcePtr(sprite->strData1.c_str());
+	auto& sprite = game.getSpriteManager().requestResourceCopy(spriteName);
+	auto& texture = game.getTextureManager().requestResourcePtr(sprite->strData1.c_str());
 
 	if (!texture)
 	{

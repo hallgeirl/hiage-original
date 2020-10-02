@@ -16,7 +16,7 @@
 #include "../gfx/particles.h"
 
 #include "inputmanager.h"
-#include "resmanager.h"
+#include "resourcemanager.hpp"
 #include "typedefs.h"
 #include "audio.h"
 #include "script_lua.h"

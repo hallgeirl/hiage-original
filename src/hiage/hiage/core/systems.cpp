@@ -321,8 +321,6 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 					}
 				}
 			}
-
-			break;
 		}
 	}
 }

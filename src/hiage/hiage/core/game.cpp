@@ -53,7 +53,6 @@ void Game::loadResources(std::string dir, ResourceTypeEnum resType)
 	try
 	{
 		for (const auto& itr : recursive_directory_iterator(dir))
-		//for (directory_iterator itr(dir); itr != end_itr; itr++)
 		{
 			if (itr.is_directory())
 			{
@@ -299,7 +298,7 @@ void Game::run(bool doEvents)
 			std::this_thread::sleep_for(std::chrono::microseconds(microsecondsToSleep));
 		}
 	}
-	lastFrameTime = frameTimer.getTime() * timeFactor;
+	lastFrameTime = std::min(frameTimer.getTime(), 0.02) * timeFactor;
 
 	scriptVM.executeLine(string("frametime=") + lastFrameTime);
 }

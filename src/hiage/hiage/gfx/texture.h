@@ -33,8 +33,6 @@ namespace hiage
 		short getWidth() { return width; }
 		short getHeight() { return height; }
 
-//		const unsigned char * getTextureData() {return imageData;}
-
 	private:
 		unsigned int textureID;
 		short width;

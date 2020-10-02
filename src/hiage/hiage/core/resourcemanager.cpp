@@ -1,4 +1,4 @@
-#include "resmanager.h"
+#include "resourcemanager.hpp"
 #pragma warning(push, 0)
 #include <tinyxml.h>
 #pragma warning(pop)
@@ -9,11 +9,11 @@
 using namespace hiage;
 using namespace std;
 
-TextureManager::Resource * TextureManager::loadResource(const std::string& path)
+std::unique_ptr<Resource<Texture>> TextureManager::loadResource(const std::string& path)
 {
 	clog << "Loading texture: " << path << endl << flush;
 	Texture * texture = new Texture();
-	Resource * resource = new Resource;
+	Resource<Texture> * resource = new Resource<Texture>;
 
 	resource->resource = texture;
 
@@ -54,14 +54,14 @@ TextureManager::Resource * TextureManager::loadResource(const std::string& path)
 
 	clog << "OK: Texture loaded successfully.\n" << flush;
 
-	return resource;
+	return std::unique_ptr<Resource<Texture>>(resource);
 }
 
-SpriteManager::Resource * SpriteManager::loadResource(const std::string& path)
+std::unique_ptr<Resource<Sprite>> SpriteManager::loadResource(const std::string& path)
 {
 	clog << "Loading sprite: " << path << endl << flush;
 	Sprite * sprite = new Sprite();
-	Resource * resource = new Resource;
+	Resource<Sprite> * resource = new Resource<Sprite>;
 
 	resource->resource = sprite;
 
@@ -181,14 +181,14 @@ SpriteManager::Resource * SpriteManager::loadResource(const std::string& path)
 
 	clog << "OK: Sprite loaded successfully.\n" << flush;
 
-	return resource;
+	return std::unique_ptr<Resource<Sprite>>(resource);
 }
 
-TilesetManager::Resource * TilesetManager::loadResource(const std::string& path)
+std::unique_ptr<Resource<Tileset>> TilesetManager::loadResource(const std::string& path)
 {
 	clog << "Loading tile set: " << path << endl << flush;
 	Tileset * tileset = new Tileset();
-	Resource * resource = new Resource;
+	Resource<Tileset> * resource = new Resource<Tileset>;
 
 	resource->resource = tileset;
 
@@ -259,14 +259,14 @@ TilesetManager::Resource * TilesetManager::loadResource(const std::string& path)
 		clog << "Warning: Tile set is empty.\n" << flush;
 	}
 
-	return resource;
+	return std::unique_ptr<Resource<Tileset>>(resource);
 }
 
-FontManager::Resource * FontManager::loadResource(const std::string& path)
+std::unique_ptr<Resource<Font>> FontManager::loadResource(const std::string& path)
 {
 	clog << "Loading font: " << path << endl << flush;
 	Font * font = new Font();
-	Resource * resource = new Resource;
+	Resource<Font> * resource = new Resource<Font>;
 
 	resource->resource = font;
 
@@ -395,5 +395,5 @@ FontManager::Resource * FontManager::loadResource(const std::string& path)
 
     clog << "OK: Font loaded successfully.\n" << flush;
 
-	return resource;
+	return std::unique_ptr<Resource<Font>>(resource);
 }

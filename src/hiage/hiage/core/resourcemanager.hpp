@@ -1,7 +1,6 @@
 #pragma once
 
 
-#include "resmanager.h"
 #include "typedefs.h"
 
 #include "../gfx/texture.h"
@@ -12,32 +11,34 @@
 #include "../util/exceptions.h"
 
 #include <vector>
+#include <memory>
 
 namespace hiage
 {
-	//template class to manage loaded resources (textures, sounds etc.)
-	template <class T> class ResourceManager
+	template<typename T>
+	class Resource
 	{
 	public:
-		class Resource
-		{
-		public:
-			//name of the resource
-			std::string name;
+		//name of the resource
+		std::string name;
 
-			//the resource itself (texture, sprite etc.)
-			T * resource;
+		//the resource itself (texture, sprite etc.)
+		T* resource;
 
-			//in case some information needs to be handled outside the resource manager
-			int intData1, intData2, intData3;
-			std::string strData1, strData2, strData3;
-		};
+		//in case some information needs to be handled outside the resource manager
+		int intData1, intData2, intData3;
+		std::string strData1, strData2, strData3;
+	};
+
+	//template class to manage loaded resources (textures, sounds etc.)
+	template <typename T>
+	class ResourceManager
+	{
+	private:
+		std::vector<std::unique_ptr<Resource<T>>> resources;
 
 	private:
-		std::vector<Resource *>	resources;
-
-	private:
-		int findResourceIndex(std::string name)
+		int findResourceIndex(const std::string& name) const
 		{
 			if (name.length() == 0)
 			{
@@ -55,15 +56,11 @@ namespace hiage
 		}
 
 	protected:
-		virtual Resource * loadResource(const std::string& file) = 0;
+		virtual std::unique_ptr<Resource<T>> loadResource(const std::string& file) = 0;
 
 	public:
 		virtual ~ResourceManager()
 		{
-			for (unsigned int i = 0; i < resources.size(); i++)
-			{
-				delete resources[i];
-			}
 		}
 
 		//front-end for loading a resource.
@@ -75,26 +72,26 @@ namespace hiage
 				return -1;
 			}
 
-			Resource * resource = loadResource(file);
+			auto resource = loadResource(file);
 
-			if (!resource)
+			if (resource == nullptr)
 			{
 				return -1;
 			}
-
+			
 			//if a name for the resource was passed to the function, override whatever name that was set from LoadResource.
 			if (name.length() > 0)
 			{
 				resource->name = name;
 			}
 
-			resources.push_back(resource);
-
+			resources.push_back(std::move(resource));
+			
 			return (int)(resources.size() - 1);
 		}
 
 
-		Resource * requestResourcePtr(const char * name)
+		const std::unique_ptr<Resource<T>>& requestResourcePtr(const std::string& name) const
 		{
 			int index = findResourceIndex(name);
 			if (index >= 0)
@@ -105,7 +102,7 @@ namespace hiage
 			throw Exception(string("ERROR: Could not find resource ") + name);
 		}
 
-		Resource * requestResourcePtr(unsigned int index)
+		const std::unique_ptr<Resource<T>>& requestResourcePtr(unsigned int index) const
 		{
 			if (index < resources.size() && index >= 0)
 			{
@@ -114,39 +111,24 @@ namespace hiage
 
 			throw Exception(string("ERROR: Could not find resource with index ") + index);
 		}
-		// TODO - Fix this so we use smart pointers.
+
 		//returns a copy of a resource object
-		Resource * requestResourceCopy(std::string name)
+		std::unique_ptr<Resource<T>> requestResourceCopy(std::string name)
 		{
 			int index = findResourceIndex(name);
 			if (index >= 0)
 			{
-				Resource * copy = new Resource;
+				Resource<T> * copy = new Resource<T>;
 				*copy = *resources[index];
 				copy->resource = new T;
 				*copy->resource = *resources[index]->resource;
 
-				return copy;
+				return std::unique_ptr<Resource<T>>(copy);
 			}
 
 			throw Exception(string("ERROR: Could not find resource ") + name);
 		}
-
-		/*
-		Resource * requestResourceCopy(int index)
-		{
-			if (index < resources.size())
-			{
-				Resource * copy = new Resource;
-
-				*copy = *resources[index];
-
-				return copy;
-			}
-
-			throw Exception(string("ERROR: Could not find resource with index ") + index);
-		}
-		*/
+		
 		int getResourceCount()
 		{
 		    return resources.size();
@@ -158,24 +140,24 @@ namespace hiage
 	class __IMPORTEXPORT TextureManager : public ResourceManager<Texture>
 	{
 	protected:
-		virtual Resource * loadResource(const std::string& path) override;
+		virtual std::unique_ptr<Resource<Texture>> loadResource(const std::string& path) override;
 	};
 
 	class __IMPORTEXPORT SpriteManager : public ResourceManager<Sprite>
 	{
 	protected:
-		virtual Resource * loadResource(const std::string& path) override;
+		virtual std::unique_ptr<Resource<Sprite>> loadResource(const std::string& path) override;
 	};
 
 	class __IMPORTEXPORT TilesetManager : public ResourceManager<Tileset>
 	{
 	protected:
-		virtual Resource * loadResource(const std::string& path) override;
+		virtual std::unique_ptr<Resource<Tileset>> loadResource(const std::string& path) override;
 	};
 
 	class __IMPORTEXPORT FontManager : public ResourceManager<Font>
 	{
     protected:
-        virtual Resource * loadResource(const std::string& path) override;
+        virtual std::unique_ptr<Resource<Font>> loadResource(const std::string& path) override;
 	};
 }
