@@ -1,0 +1,36 @@
+{
+  "name": "MarioBig",
+  "type": "Mario",
+  "components": [
+    {
+      "type": "physical"
+    },
+    {
+      "type": "movable"
+    },
+    {
+      "type": "renderable",
+      "properties": {
+        "sprite": "MarioBig"
+      }
+    },
+    {
+      "type": "physics"
+    },
+    {
+      "type": "humancontroller"
+    },
+    {
+      "type": "boundingbox",
+      "properties": {
+        "left": 1,
+        "bottom": 1,
+        "width": 10,
+        "height": 20
+      }
+    },
+    {
+      "type": "collidable"
+    }
+  ]
+}

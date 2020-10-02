@@ -10,6 +10,8 @@
 
 #include "../util/exceptions.h"
 
+#include "resourcedescriptors.hpp"
+
 #include <vector>
 #include <memory>
 
@@ -136,6 +138,7 @@ namespace hiage
 	};
 
 
+
 	//some specialized resource managers for the resources included in the engine
 	class __IMPORTEXPORT TextureManager : public ResourceManager<Texture>
 	{
@@ -159,5 +162,11 @@ namespace hiage
 	{
     protected:
         virtual std::unique_ptr<Resource<Font>> loadResource(const std::string& path) override;
+	};
+
+	class __IMPORTEXPORT ObjectManager : public ResourceManager<ObjectDescriptor>
+	{
+	protected:
+		virtual std::unique_ptr<Resource<ObjectDescriptor>> loadResource(const std::string& path) override;
 	};
 }

@@ -118,6 +118,11 @@ void Game::loadResources(std::string dir, ResourceTypeEnum resType)
                     {
                         break;
                     }
+					case ResourceTypeEnum::OBJECT_JSON:
+					{
+						objectManager.load(itr.path().string(), "");
+						break;
+					}
 				}
 			}
 		}

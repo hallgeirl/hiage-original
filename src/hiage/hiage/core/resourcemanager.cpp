@@ -3,11 +3,19 @@
 #include <tinyxml.h>
 #pragma warning(pop)
 
+#include <json/json.hpp>
+
 #include <sstream>
 #include <iostream>
 
+#include <fstream>
+#include <streambuf>
+
+
 using namespace hiage;
 using namespace std;
+using json = nlohmann::json;
+
 
 std::unique_ptr<Resource<Texture>> TextureManager::loadResource(const std::string& path)
 {
@@ -396,4 +404,77 @@ std::unique_ptr<Resource<Font>> FontManager::loadResource(const std::string& pat
     clog << "OK: Font loaded successfully.\n" << flush;
 
 	return std::unique_ptr<Resource<Font>>(resource);
+}
+
+
+std::string getPropertyName(const std::string& propertyNameRoot, const std::string& propertyKey)
+{
+	if (propertyNameRoot.size() == 0)
+		return propertyKey;
+
+	return propertyNameRoot + "." + propertyKey;
+}
+
+void getPropertiesRecursively(json& j, std::unordered_map<std::string, std::variant<std::string, double>>& properties, const std::string& propertyNameRoot)
+{
+	for (auto& prop : j.items())
+	{
+		if (prop.value().is_array() || prop.value().is_object())
+		{
+			getPropertiesRecursively(prop.value(), properties, getPropertyName(propertyNameRoot, prop.key()));
+		}
+		else if (prop.value().is_string())
+		{
+			properties[getPropertyName(propertyNameRoot,prop.key())] = static_cast<std::string>(prop.value());
+		}
+		else if (prop.value().is_number())
+		{
+			properties[getPropertyName(propertyNameRoot, prop.key())] = static_cast<double>(prop.value());
+		}
+	}
+}
+
+void getPropertiesRecursively(json& j, std::unordered_map<std::string, std::variant<std::string, double>>& properties)
+{
+	getPropertiesRecursively(j, properties, "");
+}
+
+std::unique_ptr<Resource<ObjectDescriptor>> ObjectManager::loadResource(const std::string& path)
+{
+	std::ifstream t(path);
+	std::string str((std::istreambuf_iterator<char>(t)),
+		std::istreambuf_iterator<char>());
+
+	auto j = json::parse(str);
+
+	auto& name = j.at("name");
+	auto& type = j.at("type");
+
+	ObjectDescriptor* objectDesc = new ObjectDescriptor();
+	objectDesc->name = name;
+	objectDesc->type = type;
+	
+
+	auto& components = j.at("components");
+
+	for (auto& c : components)
+	{
+		ComponentDescriptor compDesc;
+
+		auto& componentType = c.at("type");
+		if (c.contains("properties"))
+		{
+			auto& properties = c.at("properties");
+			getPropertiesRecursively(properties, compDesc.properties);
+		}
+		
+		compDesc.type = componentType;
+		objectDesc->components.push_back(compDesc);
+	}
+
+	Resource<ObjectDescriptor> res;
+	res.name = objectDesc->name;
+	res.resource = objectDesc;
+	
+	return std::make_unique<Resource<ObjectDescriptor>>(res);
 }
