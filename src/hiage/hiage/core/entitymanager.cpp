@@ -39,8 +39,7 @@ Entity& EntityManager::createEntity(std::string objectName, const std::unordered
 
 	for (auto& c : objectDescResource->resource->components)
 	{
-		auto& componentType = c.type;
-		shared_ptr<Component> cShared = componentFactory.createComponent(componentType, c.properties, runtimeProperties);
+		shared_ptr<Component> cShared = componentFactory.createComponent(c, runtimeProperties);
 		componentList.push_back(cShared);
 	}
 

@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <memory>
 #include <variant>
+#include "resourcedescriptors.hpp"
 
 namespace hiage 
 {
@@ -105,16 +106,68 @@ namespace hiage
 	ComponentManager
 	*/
 
+	class ComponentFactory
+	{
+	public:
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const = 0;
+	};
+
+	template<typename T>
+	class GenericComponentFactory : public ComponentFactory
+	{
+	public:
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const override
+		{
+			return std::make_unique<T>();
+		}
+
+	};
+
+	class BoundingBoxComponentFactory : public ComponentFactory
+	{
+	public:
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const override;
+	};
+
+	class PhysicalComponentFactory : public ComponentFactory
+	{
+	public:
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const override;
+	};
+
+	class RenderableComponentFactory : public ComponentFactory
+	{
+	private:
+		const Game& game;
+	public:
+		RenderableComponentFactory(const Game& game);
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const override;
+	};
+
+
+	class StateComponentFactory : public ComponentFactory
+	{
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const override;
+	};
+
 	class ComponentManager
 	{
 	private: 
 		// TODO - Make it possible to register new component factory classes
 		std::unique_ptr<Component> createRenderable(const std::unordered_map<std::string, std::variant<std::string, double>>& properties) const;
-
+		
+		std::unordered_map<std::string, std::unique_ptr<ComponentFactory>> componentFactories;
 		Game& game;
 	public:
 		ComponentManager(Game& game);
 		~ComponentManager();
-		std::unique_ptr<Component> createComponent(const std::string& type, const std::unordered_map<std::string, std::variant<std::string, double>>& properties, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const;
+
+		template<typename T, typename ...TRest>
+		void addComponentFactory(const std::string& componentType, TRest... args)
+		{
+			componentFactories[componentType] = std::make_unique<T>(args...);
+		}
+
+		std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const;
 	};
 }

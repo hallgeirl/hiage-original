@@ -12,7 +12,15 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	MarioGame game;
+    KeyBindings keyBindings;
+    keyBindings.mapKey("left", "goLeft");
+    keyBindings.mapKey("right", "goRight");
+    keyBindings.mapKey("up", "lookUp");
+    keyBindings.mapKey("down", "crouch");
+    keyBindings.mapKey("space", "jump");
+    keyBindings.mapKey("lshift", "run");
+
+	MarioGame game(keyBindings);
 	game.initialize(1024, 768, false);
 
     game.scriptVM.runFile("data/scripts/objects.lua");

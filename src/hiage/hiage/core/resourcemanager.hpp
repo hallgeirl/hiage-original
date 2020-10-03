@@ -115,7 +115,7 @@ namespace hiage
 		}
 
 		//returns a copy of a resource object
-		std::unique_ptr<Resource<T>> requestResourceCopy(std::string name)
+		std::unique_ptr<Resource<T>> requestResourceCopy(std::string name) const
 		{
 			int index = findResourceIndex(name);
 			if (index >= 0)

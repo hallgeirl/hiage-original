@@ -112,19 +112,19 @@ void hiage::HumanControllerSystem::update(double frameTime)
 		auto& inputManager = game.getInputManager();
 		double magnitude = 100. * frameTime;
 
-		if (inputManager.keyDown(SDL_SCANCODE_RIGHT))
+		if (inputManager.keyDown("goRight"))
 		{
 			vel.add(Vector2<double>(1, 0) * magnitude);
 		}
-		if (inputManager.keyDown(SDL_SCANCODE_LEFT))
+		if (inputManager.keyDown("goLeft"))
 		{
 			vel.add(Vector2<double>(-1, 0) * magnitude);
 		}
-		if (inputManager.keyDown(SDL_SCANCODE_DOWN))
+		if (inputManager.keyDown("crouch"))
 		{
 			vel.add(Vector2<double>(0, -1) * magnitude);
 		}
-		if (inputManager.keyDown(SDL_SCANCODE_UP))
+		if (inputManager.keyDown("lookUp"))
 		{
 			vel.add(Vector2<double>(0, 1) * magnitude);
 		}

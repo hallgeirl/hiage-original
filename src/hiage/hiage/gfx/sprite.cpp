@@ -197,7 +197,7 @@ void Sprite::addFrame(uint animID, int x, int y, double delay, uint nextFrame, B
 
 const std::string& Sprite::getCurrentAnimationName() const
 {
-	
+	static const string empty = "";
 	//check for boundaries
 	if (currentAnimation >= 0 && currentAnimation <= animations.size()-1)
 	{
@@ -208,7 +208,7 @@ const std::string& Sprite::getCurrentAnimationName() const
 	{
 		clog << "Warning: Sprite::getAnimationName(int) returns an empty string due to nonexistant id " << currentAnimation << endl << flush;
 
-		return "";
+		return empty;
 	}
 }
 

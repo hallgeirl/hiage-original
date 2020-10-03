@@ -15,7 +15,7 @@
 #include "../gfx/display.h"
 #include "../gfx/particles.h"
 
-#include "inputmanager.h"
+#include "inputmanager.hpp"
 #include "resourcemanager.hpp"
 #include "typedefs.h"
 #include "audio.h"
@@ -73,7 +73,9 @@ namespace hiage
 		LuaVM scriptVM; //!< The LUA script's virtual machine class
 
 	public:
-		Game(double framerateLimit);
+		Game(double framerateLimit, const KeyBindings& keyBindings);
+		Game(const Game&) = delete;
+
 		virtual ~Game();
 
 		/*!
@@ -132,9 +134,9 @@ namespace hiage
 		//! Returns a reference to the audioManager object.
 		AudioManager &      getAudioManager();
 		//! Returns a reference to the textureManager object.
-		TextureManager &    getTextureManager();
+		const TextureManager&	 getTextureManager() const;
 		//! Returns a reference to the spriteManager object.
-		SpriteManager &     getSpriteManager();
+		const SpriteManager&     getSpriteManager() const;
 		//! Returns a reference to the tilesetManager object.
 		TilesetManager &    getTilesetManager();
 		//! Returns a reference to the fontManager object.

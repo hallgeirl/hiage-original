@@ -30,6 +30,7 @@ namespace hiage
 
 	public:
 		GameState(Game& game);
+		GameState(const GameState&) = delete;
 		virtual ~GameState();
 		virtual void init() = 0;
 		virtual void initScript() {}

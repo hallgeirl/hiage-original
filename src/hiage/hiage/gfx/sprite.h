@@ -39,7 +39,7 @@ namespace hiage
 		~SpriteAnimation();
 
 		void setName(const std::string animName) {animationName = animName;}
-		std::string getName(){return animationName;}
+		const std::string& getName() const { return animationName; }
 		void addFrame(int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox);
 		void runAnimation(double timeFactor);
 		void reset() { frameTimer = 0; currentFrame = 0; }

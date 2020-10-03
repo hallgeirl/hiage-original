@@ -26,7 +26,7 @@ using namespace hiage;
 using namespace std;
 using namespace std::filesystem;
 
-Game::Game(double framerateLimit) : gameTimer(true), lastFrameTime(0.05), framerateLimit(120)
+Game::Game(double framerateLimit, const KeyBindings& keyBindings) : gameTimer(true), lastFrameTime(0.05), framerateLimit(120), input(keyBindings)
 {
 	running = false;
 	timeFactor = 1;
@@ -366,11 +366,11 @@ AudioManager & Game::getAudioManager()
     return audio;
 }
 
-TextureManager & Game::getTextureManager()
+const TextureManager& Game::getTextureManager() const
 {
     return textureManager;
 }
-SpriteManager & Game::getSpriteManager()
+const SpriteManager& Game::getSpriteManager() const
 {
     return spriteManager;
 }

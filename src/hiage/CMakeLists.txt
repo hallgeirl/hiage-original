@@ -5,14 +5,21 @@ cmake_minimum_required (VERSION 3.15)
 
 add_library(hiage STATIC
 	"hiage/core/audio.cpp"
+	"hiage/core/boundingpolygon.cpp" 
+	"hiage/core/collisions.cpp" 
+	"hiage/core/components.cpp" 
 	"hiage/core/entity.cpp"
+	"hiage/core/entitymanager.cpp"
+	"hiage/core/events.cpp" 
 	"hiage/core/game.cpp"
-	
+	"hiage/core/gamestate.cpp" 
 	"hiage/core/inputmanager.cpp"
 	"hiage/core/map.cpp"
-	"hiage/core/entitymanager.cpp"
+	"hiage/core/resourcedescriptors.hpp"
 	"hiage/core/resourcemanager.cpp"
 	"hiage/core/script_lua.cpp"
+	"hiage/core/systems.cpp" 
+	
 	"hiage/gfx/display.cpp"
 	"hiage/gfx/fonts.cpp"
 	"hiage/gfx/particles.cpp"
@@ -26,8 +33,7 @@ add_library(hiage STATIC
 	"hiage/ui/windows.cpp"
 	"hiage/util/exceptions.cpp"
 	"hiage/util/timer.cpp"
-	"hiage/core/components.cpp" 
-	"hiage/core/systems.cpp" "hiage/core/gamestate.hpp" "hiage/core/events.hpp" "hiage/core/events.cpp" "hiage/core/gamestate.cpp" "hiage/core/collisions.hpp" "hiage/core/collisions.cpp" "hiage/core/boundingpolygon.hpp" "hiage/core/boundingpolygon.cpp" "hiage/core/resourcedescriptors.hpp")
+)
 
 target_include_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/include ${PROJECT_SOURCE_DIR}/third_party/src/tinyxml)
 
