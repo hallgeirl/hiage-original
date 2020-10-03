@@ -1,0 +1,47 @@
+{
+    "name": "GreenShell",
+    "type": "Shell",
+    "components": [
+        {
+            "type": "physical"
+        },
+        {
+            "type": "movable"
+        },
+        {
+            "type": "renderable",
+            "properties": {
+                "sprite": "GreenShell"
+            }
+        },
+        {
+            "type": "physics"
+        }
+    ],
+    "scripts": [
+        {
+            "type": "init",
+            "function": "initShell"
+        },
+        {
+            "type": "update",
+            "function": "updateAnimations"
+        },
+        {
+            "type": "update",
+            "function": "applyPhysics"
+        },
+        {
+            "type": "update",
+            "function": "updateShell"
+        },
+        {
+            "type": "collision",
+            "function": "landcreatureCollide"
+        },
+        {
+            "type": "objcollision",
+            "function": "shellCollide"
+        }
+    ]
+}

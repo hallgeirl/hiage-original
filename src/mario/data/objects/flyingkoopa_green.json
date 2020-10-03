@@ -1,0 +1,43 @@
+{
+  "name": "GreenFlyingKoopa",
+  "type": "FlyingKoopa",
+  "components": [
+     {
+        "type": "physical"
+     },
+     {
+        "type": "movable"
+     },
+     {
+        "type": "renderable",
+        "properties": {
+          "sprite": "GreenFlyingKoopa"
+        }
+     },
+     {
+        "type": "physics"
+     }
+  ],
+  "scripts": [
+     {
+        "type": "init",
+        "function": "initFlyingKoopa"
+     },
+     {
+        "type": "init",
+        "function": "updateFlyingKoopa"
+     },
+     {
+        "type": "update",
+        "function": "updateGroundAI"
+     },
+     {
+        "type": "update",
+        "function": "updateAnimations"
+     },
+     {
+        "type": "collision",
+        "function": "landcreatureCollide"
+     }
+  ]
+}

@@ -88,8 +88,7 @@ namespace hiage
 		TEXTURE = 3,
 		TILESET = 4,
 		FONT = 5,
-		TILE = 6,
-		OBJECT_JSON = 7
+		TILE = 6
 
 	};
 }

@@ -4,7 +4,9 @@
 #include "../gfx/sprite.h"
 #include "collisions.hpp"
 
+#include <unordered_map>
 #include <memory>
+#include <variant>
 
 namespace hiage 
 {
@@ -101,17 +103,13 @@ namespace hiage
 	class ComponentManager
 	{
 	private: 
-		std::map<std::string, std::vector<std::shared_ptr<Component>>> componentCache;
 		// TODO - Make it possible to register new component factory classes
-		std::unique_ptr<Component> createComponentCore(const std::string& type, const std::map<std::string, std::string>& attributes, const std::map<std::string, void*>& runtimeAttributes);
-		std::unique_ptr<Component> createRenderable(const std::map<std::string, std::string>& attributes);
+		std::unique_ptr<Component> createRenderable(const std::unordered_map<std::string, std::variant<std::string, double>>& properties) const;
 
 		Game& game;
 	public:
 		ComponentManager(Game& game);
 		~ComponentManager();
-		// todo: after rewriting everything to ECS - see if we can drop to using unique_ptr.
-		std::shared_ptr<Component> createComponent(const std::string& type, const std::map<std::string, std::string>& attributes, const std::map<std::string, void*>& runtimeAttributes);
-		std::vector<std::shared_ptr<Component>> getComponentsOfType(const std::string& type);
+		std::unique_ptr<Component> createComponent(const std::string& type, const std::unordered_map<std::string, std::variant<std::string, double>>& properties, const std::map<std::string, void*>& runtimeAttributes) const;
 	};
 }

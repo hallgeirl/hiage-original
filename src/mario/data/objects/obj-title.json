@@ -1,0 +1,15 @@
+{
+  "name": "Title",
+  "type": "Title",
+  "components": [
+    {
+      "type": "physical"
+    },
+    {
+      "type": "renderable",
+      "properties": {
+        "sprite": "Title"
+      }
+    }
+  ]
+}

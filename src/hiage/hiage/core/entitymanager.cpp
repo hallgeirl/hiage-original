@@ -27,112 +27,22 @@ EntityManager::~EntityManager()
 Entity& EntityManager::createEntity(std::string objectName, const std::map<std::string, void*>& attributes)
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
-
-	std::string objectFile = game.getObjectFile(objectName);
-	std::string objName = objectName;
-
-	clog << "Loading information from file " << objectFile << endl << flush;
-	if (!objectFile.length())
-	{
-		throw Exception("ERROR: No filename specified for object creation.");
-	}
-
-	clog << "Loading entity from file..." << endl;
-
-	//load the xml file
-	TiXmlDocument xmlDoc(objectFile.c_str());
-	if (!xmlDoc.LoadFile())
-	{
-		throw IOException(string("ERROR: Could not open XML file ") + objectFile);
-	}
-
-	TiXmlElement* objectElement = 0;
-	objectElement = xmlDoc.FirstChildElement("object");
-
-	//check if it's a texture file
-	if (!objectElement)
-	{
-		throw IOException(string("ERROR: Could not find XML element <object> "));
-	}
+	auto& objectManager = game.getObjectManager();
+	auto& objectDescResource = objectManager.requestResourcePtr(objectName);
 
 	//type = objectElement->Attribute("type");
-	auto entityName = objectElement->Attribute("name");
-	auto entityType = objectElement->Attribute("type");
+	const auto& entityName = objectDescResource->resource->name;
+	const auto& entityType = objectDescResource->resource->type;
+	
 	vector<shared_ptr<Component>> componentList;
+	auto& componentFactory = gameState.getComponentManager();
 
-	//store the sprite name in StrData1
-	//spriteElement = objectElement->FirstChildElement("sprite");
-
-	TiXmlElement* componentsElement = objectElement->FirstChildElement("components");
-	if (componentsElement)
+	for (auto& c : objectDescResource->resource->components)
 	{
-		TiXmlElement* componentElement = componentsElement->FirstChildElement("component");
-		string componentType;
-
-		auto componentFactory = gameState.getComponentManager();
-		while (componentElement)
-		{
-			componentType = componentElement->Attribute("type");
-			map<string, string> componentAttributes;
-
-			auto childElement = componentElement->FirstChildElement();
-			while (childElement)
-			{
-				std::string key = childElement->Value();
-				std::string value = childElement->GetText();
-				componentAttributes[key] = value;
-
-				childElement = childElement->NextSiblingElement();
-			}
-
-			componentList.push_back(componentFactory.createComponent(componentType, componentAttributes, attributes));
-			componentElement = componentElement->NextSiblingElement("component");
-		}
+		auto& componentType = c.type;
+		shared_ptr<Component> cShared = componentFactory.createComponent(componentType, c.properties, attributes);
+		componentList.push_back(cShared);
 	}
-
-	//store the script functions to use
-	/*
-	* This must be rewritten for ECS
-	*
-	TiXmlElement* scriptsElement = objectElement->FirstChildElement("scripts");
-
-	if (scriptsElement)
-	{
-		TiXmlElement* scriptElement = scriptsElement->FirstChildElement("script");
-		string scriptType, scriptFunction;
-
-		while (scriptElement)
-		{
-			scriptType = scriptElement->Attribute("type");
-			scriptFunction = scriptElement->Attribute("function");
-
-			if (!scriptType.length() || !scriptFunction.length())
-			{
-				clog << "Warning: Malformed object XML file in <script>: Missing type or function attribute (or they are at 0 length)." << endl;
-				continue;
-			}
-
-			if (!scriptType.compare("init"))
-			{
-				initScripts.push_back(scriptFunction);
-			}
-			else if (!scriptType.compare("update"))
-			{
-				updateScripts.push_back(scriptFunction);
-			}
-			else if (!scriptType.compare("collision"))
-			{
-				collisionScripts.push_back(scriptFunction);
-			}
-			else if (!scriptType.compare("objcollision"))
-			{
-				objectCollisionScripts.push_back(scriptFunction);
-			}
-
-			scriptElement = scriptElement->NextSiblingElement("script");
-		}
-	}
-	*/
 
 	//Entity* ent = (Entity*)entity;
 	auto ent = make_unique<Entity>();

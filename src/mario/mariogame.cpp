@@ -24,7 +24,6 @@ void MarioGame::onInit()
 		loadResources("data/tilesets", ResourceTypeEnum::TILESET);
 		loadResources("data/objects", ResourceTypeEnum::OBJECT);
 		loadResources("data/fonts", ResourceTypeEnum::FONT);
-		loadResources("data/objects_json", ResourceTypeEnum::OBJECT_JSON);
 
 		audio.loadWav("NormalHit1", "data/audio/hit_normal1.wav");
 		audio.loadWav("NormalHit2", "data/audio/hit_normal2.wav");

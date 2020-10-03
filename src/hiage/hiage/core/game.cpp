@@ -87,38 +87,11 @@ void Game::loadResources(std::string dir, ResourceTypeEnum resType)
                         break;
                     }
 
-                    case ResourceTypeEnum::OBJECT:
-                    {
-                        //load the xml file
-
-                        string temp = itr.path().string();
-                        TiXmlDocument xmlDoc;
-                        xmlDoc.LoadFile(temp.c_str());
-
-                        if (!xmlDoc.LoadFile())
-                        {
-                            continue;
-                        }
-
-                        TiXmlElement * objectElement = 0;
-
-                        objectElement = xmlDoc.FirstChildElement("object");
-                        if (objectElement)
-                        {
-                            std::string tempName = objectElement->Attribute("name");
-                            if (tempName.length())
-                            {
-                                objectList[tempName] = itr.path().string();
-                            }
-                        }
-                        break;
-                    }
-
                     case ResourceTypeEnum::TILE:
                     {
                         break;
                     }
-					case ResourceTypeEnum::OBJECT_JSON:
+					case ResourceTypeEnum::OBJECT:
 					{
 						objectManager.load(itr.path().string(), "");
 						break;
@@ -378,36 +351,6 @@ void Game::drawTexture(std::string texname, double x, double y)
     renderer.endRender();
 }
 
-
-std::string Game::getObjectSprite(std::string name)
-{
-	std::string sprite = "";
-
-	//load the xml file
-	TiXmlDocument xmlDoc(objectList[name].c_str());
-	if (!xmlDoc.LoadFile())
-	{
-		return sprite;
-	}
-
-	TiXmlElement *	objectElement = 0;
-	TiXmlElement *	spriteElement = 0;
-
-	objectElement = xmlDoc.FirstChildElement("object");
-
-	//check if it's an object file
-	if (!objectElement)
-	{
-		return sprite;
-	}
-
-	//store the sprite name
-	spriteElement = objectElement->FirstChildElement("sprite");
-	sprite = spriteElement->Attribute("name");
-
-	return sprite;
-}
-
 Display & Game::getDisplay()
 {
     return display;
@@ -442,12 +385,8 @@ FontManager & Game::getFontManager()
     return fontManager;
 }
 
-ObjectList & Game::getObjectList()
+const ObjectManager& hiage::Game::getObjectManager() const
 {
-    return objectList;
+	return objectManager;
 }
 
-const std::string& Game::getObjectFile(std::string name) const
-{
-    return objectList.at(name);
-}

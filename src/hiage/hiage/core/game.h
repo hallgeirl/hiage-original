@@ -50,7 +50,6 @@ namespace hiage
 		TilesetManager	tilesetManager;	//!< Stores the loaded tilesets.
 		FontManager     fontManager;	//!< Stores all loaded fonts.
 		ObjectManager	objectManager;  //!< Stores all loaded objects.
-		std::map<std::string, std::string>		objectList;		//!< Contains the path to all XML files that is loaded, with the object name associated with each path.
 		Timer           gameTimer;       //!< The elapsed time since the game class was initialized.
 		bool running;
 
@@ -141,22 +140,6 @@ namespace hiage
 		//! Returns a reference to the fontManager object.
 		FontManager &       getFontManager();
 		//! Returns a reference to the object list.
-		ObjectList &        getObjectList(); // TODO - remove this once migrated to ObjectManager for object loading
-		
-		ObjectManager &		getObjectManager();
-
-		/*!
-			Returns the XML file name containing the object's properties associated with the specified name.
-			\param name Name of the object. The name of an object is specified in it's XML file.
-			\return The path of the XML file containing the object data.
-		*/
-		const std::string&         getObjectFile(std::string name) const;
-
-		/*!
-			Returns the name of the sprite associated with the object with the specified name.
-			\param name Name of the object. The name of an object is specified in it's XML file.
-			\return The name of the sprite associated with the object.
-		*/
-		std::string         getObjectSprite(std::string name);
+		const ObjectManager & getObjectManager() const;
 	};
 }

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object name="Title" type="Title">
-  <components>
-    <component type="physical" />
-    <component type="renderable">
-      <sprite>Title</sprite>
-    </component>
-  </components>
-</object>

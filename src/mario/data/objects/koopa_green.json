@@ -1,0 +1,47 @@
+{
+  "name": "GreenKoopa",
+  "type": "Koopa",
+  "components": [
+     {
+        "type": "physical"
+     },
+     {
+        "type": "movable"
+     },
+     {
+        "type": "renderable",
+        "properties": {
+          "sprite": "GreenKoopa"
+        }
+     },
+     {
+        "type": "physics"
+     }
+  ],
+  "scripts": [
+     {
+        "type": "init",
+        "function": "initKoopa"
+     },
+     {
+        "type": "update",
+        "function": "applyPhysics"
+     },
+     {
+        "type": "update",
+        "function": "updateGroundAI"
+     },
+     {
+        "type": "update",
+        "function": "updateAnimations"
+     },
+     {
+        "type": "collision",
+        "function": "landcreatureCollide"
+     },
+     {
+        "type": "objcollision",
+        "function": "groundMonsterCollide"
+     }
+  ]
+}

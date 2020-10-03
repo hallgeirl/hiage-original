@@ -1,0 +1,43 @@
+{
+  "name": "Mushroom",
+  "type": "Mushroom",
+  "components": [
+     {
+        "type": "physical"
+     },
+     {
+        "type": "movable"
+     },
+     {
+        "type": "renderable",
+        "properties": {
+          "sprite": "Mushroom"
+        }
+     },
+     {
+        "type": "physics"
+     }
+  ],
+  "scripts": [
+     {
+        "type": "init",
+        "function": "initMushroom"
+     },
+     {
+        "type": "update",
+        "function": "updateAnimations"
+     },
+     {
+        "type": "update",
+        "function": "applyPhysics"
+     },
+     {
+        "type": "collision",
+        "function": "landcreatureCollide"
+     },
+     {
+        "type": "update",
+        "function": "updateGroundAI"
+     }
+  ]
+}
