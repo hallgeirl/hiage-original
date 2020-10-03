@@ -24,7 +24,7 @@ EntityManager::~EntityManager()
 {
 }
 
-Entity& EntityManager::createEntity(std::string objectName, const std::map<std::string, void*>& attributes)
+Entity& EntityManager::createEntity(std::string objectName, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties)
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
 	auto& objectManager = game.getObjectManager();
@@ -40,7 +40,7 @@ Entity& EntityManager::createEntity(std::string objectName, const std::map<std::
 	for (auto& c : objectDescResource->resource->components)
 	{
 		auto& componentType = c.type;
-		shared_ptr<Component> cShared = componentFactory.createComponent(componentType, c.properties, attributes);
+		shared_ptr<Component> cShared = componentFactory.createComponent(componentType, c.properties, runtimeProperties);
 		componentList.push_back(cShared);
 	}
 

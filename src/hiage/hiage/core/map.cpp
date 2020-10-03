@@ -248,8 +248,8 @@ void Map::createFromFile(std::string path, bool runScripts)
 		clog << "Creating object " << buffer << " at (" << objx << ", " << objy << ")\n" << flush;
         
         em.createEntity(buffer, {
-            { "x", &objx }, 
-            { "y", &objy }
+            { "x", objx }, 
+            { "y", objy }
         });
 
 		delete [] buffer;
@@ -941,6 +941,7 @@ MapState::MapState(Game &game) : GameState(game), gamemap(game, *this)
     systems.push_back(sysFactory.createSystem<BlockingTileSystem>());
 
     // Rendering
+    systems.push_back(sysFactory.createSystem<AnimationSystem>());
     systems.push_back(sysFactory.createSystem<ObjectRenderingSystem>());
 }
 

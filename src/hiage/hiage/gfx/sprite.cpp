@@ -195,17 +195,18 @@ void Sprite::addFrame(uint animID, int x, int y, double delay, uint nextFrame, B
 	}
 }
 
-const std::string Sprite::getAnimationName(uint animID)
+const std::string& Sprite::getCurrentAnimationName() const
 {
+	
 	//check for boundaries
-	if (animID <= animations.size()-1)
+	if (currentAnimation >= 0 && currentAnimation <= animations.size()-1)
 	{
 		//return the name
-		return animations[animID]->getName();
+		return animations.at(currentAnimation)->getName();
 	}
 	else
 	{
-		clog << "Warning: Sprite::getAnimationName(int) returns an empty string due to nonexistant id " << animID << endl << flush;
+		clog << "Warning: Sprite::getAnimationName(int) returns an empty string due to nonexistant id " << currentAnimation << endl << flush;
 
 		return "";
 	}

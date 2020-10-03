@@ -35,17 +35,17 @@ std::unique_ptr<Component> hiage::ComponentManager::createRenderable(const std::
 }
 
 
-unique_ptr<Component> ComponentManager::createComponent(const std::string& type, const std::unordered_map<std::string, std::variant<std::string, double>>& properties, const std::map<std::string, void*>& runtimeAttributes) const
+unique_ptr<Component> ComponentManager::createComponent(const std::string& type, const std::unordered_map<std::string, std::variant<std::string, double>>& properties, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const
 {
 	if (type == "physical")
 	{
 		double x = 0, y = 0;
 
-		if (runtimeAttributes.find("x") != runtimeAttributes.end())
-			x = *(double*)(runtimeAttributes.at("x"));
+		if (runtimeProperties.find("x") != runtimeProperties.end())
+			x = get<double>(runtimeProperties.at("x"));
 
-		if (runtimeAttributes.find("y") != runtimeAttributes.end())
-			y = *(double*)(runtimeAttributes.at("y"));
+		if (runtimeProperties.find("y") != runtimeProperties.end())
+			y = get<double>(runtimeProperties.at("y"));
 
 		return make_unique<PositionComponent>(Vector2<double>(x, y));
 	}

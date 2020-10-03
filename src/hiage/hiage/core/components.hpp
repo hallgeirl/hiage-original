@@ -115,6 +115,6 @@ namespace hiage
 	public:
 		ComponentManager(Game& game);
 		~ComponentManager();
-		std::unique_ptr<Component> createComponent(const std::string& type, const std::unordered_map<std::string, std::variant<std::string, double>>& properties, const std::map<std::string, void*>& runtimeAttributes) const;
+		std::unique_ptr<Component> createComponent(const std::string& type, const std::unordered_map<std::string, std::variant<std::string, double>>& properties, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const;
 	};
 }

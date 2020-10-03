@@ -362,21 +362,15 @@ void hiage::AnimationSystem::update(double frameTime)
 	for (auto& t : componentTuples)
 	{
 		auto& renderable = std::get<1>(t);
-		auto& state = std::get<2>(t);
-
+		auto& stateName = std::get<2>(t)->getData();
+		
 		auto& sprite = renderable->getData();
-
-/*		if (sprite.getAnimationName())
-		//check if the object is inside the viewport
-		if ((pos.getX() + sprite.getWidth() >= viewLeft) && (pos.getX() <= viewRight))
+		auto& animName = sprite.getCurrentAnimationName();
+		
+		if (stateName != animName)
 		{
-			if ((pos.getY() + sprite.getHeight() >= viewBottom) && (pos.getY() <= viewTop))
-			{
-				// Render sprite
-				sprite.render(renderer, pos, ObjectZ::MIDDLE);
-				sprite.updateAnimation(frameTime);
-			}
-		}*/
+			sprite.playAnimation(stateName);
+		}
 	}
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            

@@ -159,7 +159,7 @@ namespace hiage
 		/*!
 
 		*/
-		Entity& createEntity(std::string objectName, const std::map<std::string, void*>& attributes);
+		Entity& createEntity(std::string objectName, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties);
 	};
 
 	class FontFactory

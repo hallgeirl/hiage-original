@@ -79,7 +79,7 @@ namespace hiage
 
 		uint addAnimation(const std::string&);
 		void addFrame(uint animID, int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox);
-		const std::string getAnimationName(uint animID);
+		const std::string& getCurrentAnimationName() const;
 		void updateAnimation(double timefactor);
 		void playAnimation(int anim, double speed = 1) { currentAnimation = anim; animationSpeed = speed; }
 		bool playAnimation(const std::string& anim, bool resetIfRunning = true, double speed = 1);
