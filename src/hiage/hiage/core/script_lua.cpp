@@ -28,11 +28,6 @@ LuaVM::LuaVM(const std::string& dataRoot) : dataRoot(dataRoot)
 	initialize();
 }
 
-LuaVM::LuaVM(LuaVM &obj)
-{
-	initialize();
-}
-
 LuaVM::~LuaVM()
 {
 	lua_close(vm);

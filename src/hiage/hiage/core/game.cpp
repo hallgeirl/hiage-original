@@ -27,7 +27,7 @@ using namespace std;
 using namespace std::filesystem;
 
 Game::Game(double framerateLimit, const KeyBindings& keyBindings, const std::string& dataRoot) 
-	: gameTimer(true), lastFrameTime(0.05), framerateLimit(120), dataRoot(dataRoot), 
+	: gameTimer(true), lastFrameTime(0.05), framerateLimit(framerateLimit), dataRoot(dataRoot),
 	scriptVM(dataRoot), input(keyBindings), audio(dataRoot), textureManager(dataRoot), spriteManager(dataRoot), objectManager(dataRoot), tilesetManager(dataRoot), fontManager(dataRoot)
 {
 	running = false;
@@ -218,7 +218,7 @@ void Game::run(bool doEvents)
 	{
 		states.back()->handleEvents(lastFrameTime);
 		states.back()->update(lastFrameTime);
-		states.back()->render(lastFrameTime);
+		states.back()->render();
 	}
 	display.render();
 
@@ -244,7 +244,7 @@ void Game::run(bool doEvents)
 	if (framerateLimit > 0)
 	{
 		double frameTimeMicroseconds = frameTimer.getTime() * 1000000;
-		long microsecondsToSleep = (frameTimeLimitMicroseconds - frameTimeMicroseconds / 100.);
+		long microsecondsToSleep = (long)(frameTimeLimitMicroseconds - frameTimeMicroseconds / 100.);
 
 		if (microsecondsToSleep > 1)
 		{

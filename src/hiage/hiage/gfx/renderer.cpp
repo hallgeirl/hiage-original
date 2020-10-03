@@ -58,7 +58,7 @@ void Renderer::beginRender(ObjectZ zposition, Texture *texture)
 	currentZ = zposition;
 
 	renderObjects[static_cast<int>(currentZ)].push_back(RenderObject(zposition, texture));
-	currentRenderObject = renderObjects[static_cast<int>(currentZ)].size() - 1;
+	currentRenderObject = (int)renderObjects[static_cast<size_t>(currentZ)].size() - 1;
 }
 
 //add a vertex

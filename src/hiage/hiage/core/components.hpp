@@ -125,6 +125,7 @@ namespace hiage
 	class ComponentFactory
 	{
 	public:
+		virtual ~ComponentFactory() {};
 		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const = 0;
 	};
 
@@ -132,7 +133,7 @@ namespace hiage
 	class GenericComponentFactory : public ComponentFactory
 	{
 	public:
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const override
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor&, const std::unordered_map<std::string, std::variant<std::string, double>>&) const override
 		{
 			return std::make_unique<T>();
 		}

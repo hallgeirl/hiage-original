@@ -109,7 +109,6 @@ std::unique_ptr<Resource<Sprite>> SpriteManager::loadResource(const std::string&
 	if (!textureElement)
 	{
 		throw IOException("ERROR: Could not find XML element <texture>.");
-		return 0;
 	}
 	resource->strData1 = textureElement->Attribute("name");
 	clog << "- Texture name: " << resource->strData1 << endl << flush;
@@ -219,7 +218,6 @@ std::unique_ptr<Resource<Tileset>> TilesetManager::loadResource(const std::strin
 	if (!tilesetElement)
 	{
 		throw IOException("ERROR: Could not find XML element <tileset>.");
-		return 0;
 	}
 
 	resource->name = tilesetElement->Attribute("name");
@@ -227,7 +225,7 @@ std::unique_ptr<Resource<Tileset>> TilesetManager::loadResource(const std::strin
 
 	Texture * texture;
 	std::string texPath;
-	int id, delay, block, nextTile, counter = 0;
+	int id, delay = 0, block, nextTile, counter = 0;
 
 	tileElement = tilesetElement->FirstChildElement("tile");
 
@@ -337,8 +335,7 @@ std::unique_ptr<Resource<Font>> FontManager::loadResource(const std::string& pat
     }
 
     //load the character table
-    int rowCount = 0;
-    unsigned int charsPerRow = 0;
+    size_t charsPerRow = 0;
 
     vector<vector<char> > rows;
     while (rowElement)
@@ -373,7 +370,7 @@ std::unique_ptr<Resource<Font>> FontManager::loadResource(const std::string& pat
 
     //allocate memory for character table
     char ** charTable = new char*[charsPerRow];
-    rowCount = rows.size();
+    auto rowCount = rows.size();
 
     for (unsigned int i = 0; i < charsPerRow; i++)
     {
@@ -397,7 +394,7 @@ std::unique_ptr<Resource<Font>> FontManager::loadResource(const std::string& pat
         }
     }
     clog << "- Character table done.\n" << flush;
-    font->setCharacterTable(charTable, charsPerRow, rowCount);
+    font->setCharacterTable(charTable, (int)charsPerRow, (int)rowCount);
 
     for (unsigned int i = 0; i < charsPerRow; i++)
     {

@@ -153,10 +153,10 @@ namespace hiage
 			\param x The new x-component.
 			\param y The new y-component.
 		*/
-		void set(T x, T y)
+		void set(T x_, T y_)
 		{
-			this->x = x;
-			this->y = y;
+			this->x = x_;
+			this->y = y_;
 		}
 
 		void set(const Vector2<T> &v)
@@ -169,18 +169,18 @@ namespace hiage
 			Set the x-component of this vector individually.
 			\param x The new x-component.
 		*/
-		void setX(T x)
+		void setX(T x_)
 		{
-			this->x = x;
+			this->x = x_;
 		}
 
 		/*!
 			Set the y-component of this vector individually.
 			\param y The new y-component.
 		*/
-		void setY(T y)
+		void setY(T y_)
 		{
-			this->y = y;
+			this->y = y_;
 		}
 
 		//operator overloads

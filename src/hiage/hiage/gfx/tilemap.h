@@ -15,16 +15,16 @@ namespace hiage
 	{
 
 	private:
-		uint width;
-		uint height;
-		uint layers;
-		uint tilesize;
-		bool created;
+		uint _width;
+		uint _height;
+		uint _layers;
+		uint _tilesize;
+		bool _created;
 
-		unsigned int ***tilemap;
+		unsigned int ***_tilemap;
 
 		//texture list
-		Tileset * tileset;
+		Tileset * _tileset;
 
 	public:
 		Tilemap();
@@ -35,15 +35,15 @@ namespace hiage
 		void setTileset(Tileset * tileset);
 		void destroy();
 
-		void render(Renderer &renderer, float camx, float camy, float zoom, float aspect, ObjectZ depth, int layer);
+		void render(Renderer &renderer, double camx, double camy, double zoom, double aspect, ObjectZ depth, int layer);
 		void importMap(unsigned int *** data);
 
-		BoundingBox<double>	getTilesInRect(float left, float top, float right, float bottom) const;
-		Vector2<double> getTileCoordinates(float x, float y, int layer) const;
+		BoundingBox<double>	getTilesInRect(double left, double top, double right, double bottom) const;
+		Vector2<double> getTileCoordinates(double x, double y, int layer) const;
 		unsigned int 	getTile(uint x, uint y, uint z) const;
 		void 			setTile(uint x, uint y, uint ulayer, uint tile);
-		Tileset * 		getTileset() const { return tileset; }
-		int 			getTileSize() const { return tilesize; }
+		Tileset * 		getTileset() const { return _tileset; }
+		int 			getTileSize() const { return _tilesize; }
 		int 			getWidth();
 		int 			getHeight();
 		int				getLayers();

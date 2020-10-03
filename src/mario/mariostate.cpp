@@ -44,7 +44,7 @@ MarioState::~MarioState()
 
 }
 
-void MarioState::render(double frametime)
+void MarioState::render()
 {
 	gamemap.render();
 }
@@ -55,7 +55,7 @@ void MarioState::update(double frametime)
     gamemap.update(frametime);
 }
 
-void MarioState::handleEvents(double frametime)
+void MarioState::handleEvents(double)
 {
 
 }

@@ -7,9 +7,9 @@ CharacterStateMachineSystem::CharacterStateMachineSystem(Game& game, GameState& 
 {
 }
 
-void CharacterStateMachineSystem::update(double frameTime)
+void CharacterStateMachineSystem::update(double)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, StateComponent>();
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, StateComponent>();
 
 	for (auto& c : componentTuples)
 	{

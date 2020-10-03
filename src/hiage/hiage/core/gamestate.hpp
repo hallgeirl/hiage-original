@@ -40,7 +40,7 @@ namespace hiage
 
 		virtual void handleEvents(double frametime) = 0;
 		virtual void update(double frametime);
-		virtual void render(double frametime) = 0;
+		virtual void render() = 0;
 
 		void changeState(Game* game, GameState* state);
 

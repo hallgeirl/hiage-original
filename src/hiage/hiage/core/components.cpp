@@ -30,7 +30,7 @@ std::unique_ptr<Component> hiage::ComponentManager::createRenderable(const std::
 {
 	const auto& spriteName = get<std::string>(properties.at(std::string("sprite")));
 
-	auto& sprite = game.getSpriteManager().requestResourceCopy(spriteName);
+	auto sprite = game.getSpriteManager().requestResourceCopy(spriteName);
 	auto& texture = game.getTextureManager().requestResourcePtr(sprite->strData1.c_str());
 
 	if (!texture)
@@ -56,12 +56,11 @@ unique_ptr<Component> ComponentManager::createComponent(const ComponentDescripto
 	throw runtime_error("Component type not found: " + type);
 }
 
-std::unique_ptr<Component> hiage::BoundingBoxComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const
+std::unique_ptr<Component> hiage::BoundingBoxComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>&) const
 {
-	auto& type = componentDescriptor.type;
 	auto& properties = componentDescriptor.properties;
 
-	int x = 0, y = 0, width = 16, height = 16;
+	double x = 0, y = 0, width = 16, height = 16;
 
 	if (properties.find("left") != properties.end())
 		x = get<double>(properties.at("left"));
@@ -85,7 +84,7 @@ std::unique_ptr<Component> hiage::BoundingBoxComponentFactory::createComponent(c
 	return make_unique<BoundingBoxComponent>(poly);
 }
 
-std::unique_ptr<Component> hiage::PhysicalComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const
+std::unique_ptr<Component> hiage::PhysicalComponentFactory::createComponent(const ComponentDescriptor&, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const
 {
 	double x = 0, y = 0;
 
@@ -102,13 +101,13 @@ hiage::RenderableComponentFactory::RenderableComponentFactory(const Game& game) 
 {
 }
 
-std::unique_ptr<Component> hiage::RenderableComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const
+std::unique_ptr<Component> hiage::RenderableComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>&) const
 {
 	auto& properties = componentDescriptor.properties;
 
 	const auto& spriteName = get<std::string>(properties.at(std::string("sprite")));
 
-	auto& sprite = game.getSpriteManager().requestResourceCopy(spriteName);
+	auto sprite = game.getSpriteManager().requestResourceCopy(spriteName);
 	auto& texture = game.getTextureManager().requestResourcePtr(sprite->strData1.c_str());
 
 	if (!texture)
@@ -120,7 +119,7 @@ std::unique_ptr<Component> hiage::RenderableComponentFactory::createComponent(co
 	return make_unique<RenderableComponent>(*sprite->resource);
 }
 
-std::unique_ptr<Component> hiage::StateComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const
+std::unique_ptr<Component> hiage::StateComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>&) const
 {
 	auto& properties = componentDescriptor.properties;
 	auto& initialState = get<std::string>(properties.at("initial"));
@@ -130,7 +129,7 @@ std::unique_ptr<Component> hiage::StateComponentFactory::createComponent(const C
 	return make_unique<StateComponent>(state);
 }
 
-std::unique_ptr<Component> hiage::PhysicsComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const
+std::unique_ptr<Component> hiage::PhysicsComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>&) const
 {
 	auto& properties = componentDescriptor.properties;
 

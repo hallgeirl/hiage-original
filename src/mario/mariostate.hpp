@@ -14,6 +14,6 @@ public:
 
 	virtual void handleEvents(double frametime);
 	virtual void update(double frametime) override;
-	virtual void render(double frametime);
+	virtual void render();
 };
 

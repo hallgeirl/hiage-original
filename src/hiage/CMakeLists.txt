@@ -41,6 +41,10 @@ target_link_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/lib/win-x
 target_link_libraries(hiage PUBLIC SDL2.lib OpenGL32.dll SDL2_Mixer.lib SDL2main lua_static luabind tinyxml)
 target_compile_features(hiage PUBLIC cxx_std_20)
 
+target_compile_options(hiage
+    PRIVATE "-W4"
+)
+
 add_definitions(-DNOMINMAX)
 
 # Collision debugging

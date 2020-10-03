@@ -613,19 +613,19 @@ void Map::render()
                 break;
 
 	    }
-	    tilemap.render(renderer, disp.getCamX(), disp.getCamY(), disp.getZoom(), disp.getAspectRatio(), depth, i);
+	    tilemap.render(renderer, camX, camY, zoom, aspect, depth, i);
 	}
 
 	//and the background
 	//TODO: add support for choosing parallax options
     if (background)
     {
-        float offset;
+        double offset;
         offset = disp.getCamX() / 1.5;
 
-        float startx = (disp.getCamX() - (float)disp.getViewWidth() - offset) / background->getWidth();
-        float endx = startx + ((float)disp.getViewWidth() / (float)background->getWidth());
-        float y = disp.getCamY() - (disp.getViewHeight() / 2);
+        double startx = (disp.getCamX() - (float)disp.getViewWidth() - offset) / background->getWidth();
+        double endx = startx + ((float)disp.getViewWidth() / (float)background->getWidth());
+        double y = disp.getCamY() - (disp.getViewHeight() / 2);
 
         startx -= 1.0f;
         endx += 1.0f;
@@ -644,7 +644,7 @@ void Map::render()
     }
 }
 
-void Map::update(double frameTime)
+void Map::update(double)
 {
 /*    Display & disp = gameInstance.getDisplay();
 
@@ -834,6 +834,7 @@ void Map::setBackground(std::string textureName)
         catch (Exception &e)
         {
             background = 0;
+            clog << "Warning: Error loading background: " << e.what() << endl;
         }
     }
     else
@@ -846,7 +847,7 @@ void Map::setBackground(std::string textureName)
 //set a new tileset
 void Map::setTileset(string ts)
 {
-     if (ts.length() > 0)
+    if (ts.length() > 0)
     {
         try
         {
@@ -855,7 +856,7 @@ void Map::setTileset(string ts)
         }
         catch (Exception &e)
         {
-
+            clog << "Warning: Error setting tilseset: " << e.what() << endl;
         }
     }
 }

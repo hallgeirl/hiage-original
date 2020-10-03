@@ -27,31 +27,31 @@ namespace hiage
 		};
 
 	private:
-		int	currentFrame;	//current frame that is showing
-		double frameTimer;	//keeps track of when to go to the next frame
-		double velocitySpeedupFactor;
+		int	_currentFrame;	//current frame that is showing
+		double _frameTimer;	//keeps track of when to go to the next frame
+		double _velocitySpeedupFactor;
 
-		std::vector<Frame*> frames;
-		std::string animationName;
+		std::vector<Frame*> _frames;
+		std::string _animationName;
 
 	public:
 		SpriteAnimation();
 		~SpriteAnimation();
 
-		void setName(const std::string& animName) {animationName = animName;}
-		void setVelocitySpeedupFactor(double factor) { velocitySpeedupFactor = factor; }
-		const std::string& getName() const { return animationName; }
+		void setName(const std::string& animName) {_animationName = animName;}
+		void setVelocitySpeedupFactor(double factor) { _velocitySpeedupFactor = factor; }
+		const std::string& getName() const { return _animationName; }
 		void addFrame(int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox);
 
 		void runAnimation(double timeFactor, double velocity);
-		void reset() { frameTimer = 0; currentFrame = 0; }
+		void reset() { _frameTimer = 0; _currentFrame = 0; }
 
-		Frame * getCurrentFrame() { return frames[currentFrame]; }
+		Frame * getCurrentFrame() { return _frames[_currentFrame]; }
 
 		//check if the animation is playing. if the next frame is the same as this one, it's not.
 		bool isPlaying()
 		{
-			return (frameTimer > 0);
+			return (_frameTimer > 0);
 		}
 	};
 
@@ -60,16 +60,16 @@ namespace hiage
 	{
 	private:
 		//pointer to the texture that is used
-		Texture * texture;
+		Texture * _texture;
 
 		//frame dimensions
-		int frameWidth;
-		int frameHeight;
+		int _frameWidth;
+		int _frameHeight;
 
 		//animation
-		double animationSpeed;
-		uint currentAnimation;
-		std::vector<SpriteAnimation *> animations;
+		double _animationSpeed;
+		uint _currentAnimation;
+		std::vector<SpriteAnimation *> _animations;
 
 	public:
 		Sprite();
@@ -83,14 +83,14 @@ namespace hiage
 		void addFrame(uint animID, int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox);
 		const std::string& getCurrentAnimationName() const;
 		void updateAnimation(double timefactor, double velocity);
-		void playAnimation(int anim, double speed = 1) { currentAnimation = anim; animationSpeed = speed; }
+		void playAnimation(int anim, double speed = 1) { _currentAnimation = anim; _animationSpeed = speed; }
 		bool playAnimation(const std::string& anim, bool resetIfRunning = true, double speed = 1);
 
 
-		bool animationIsPlaying() { return (animations[currentAnimation]->isPlaying()); }
+		bool animationIsPlaying() { return (_animations[_currentAnimation]->isPlaying()); }
 
-		int getWidth() const { return frameWidth; }
-		int getHeight() const { return frameHeight; }
+		int getWidth() const { return _frameWidth; }
+		int getHeight() const { return _frameHeight; }
 
 		Sprite & operator=(Sprite);
 	};

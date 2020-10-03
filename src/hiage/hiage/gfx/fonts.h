@@ -12,11 +12,11 @@ namespace hiage
     class __IMPORTEXPORT Font
     {
     private:
-        int characterWidth, characterHeight;
-        Texture *texture;
-        char ** characterTable;
-        int tableRows, tableCols;
-        bool loaded;
+        int _characterWidth, _characterHeight;
+        Texture *_texture;
+        char ** _characterTable;
+        int _tableRows, _tableCols;
+        bool _loaded;
 
     public:
         Font();
@@ -31,6 +31,6 @@ namespace hiage
         int getTableRows();
         int getTableCols();
 
-        void renderText(Renderer &renderer, std::string text, Vector2<double> position, float scale = 1, float spacing = 0);
+        void renderText(Renderer &renderer, std::string text, Vector2<double> position, double scale = 1, double spacing = 0);
     };
 }

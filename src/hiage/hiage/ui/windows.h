@@ -8,12 +8,12 @@ namespace hiage
 	class __IMPORTEXPORT UIWindow
 	{
 	private:
-		float x,y;
-		float width, height;
-		float borderWidth;
-		ubyte borderRed, borderBlue, borderGreen, borderAlpha;
-		ubyte red, blue, green, alpha;
-		bool  initialized;
+		float _x,_y;
+		float _width, _height;
+		float _borderWidth;
+		ubyte _borderRed, _borderBlue, _borderGreen, _borderAlpha;
+		ubyte _red, _blue, _green, _alpha;
+		bool  _initialized;
 
 	protected:
 		Vector2<double> windowToEnvironment(Vector2<double> Coord);

@@ -33,7 +33,11 @@ namespace hiage
 
 	inline std::ostream& operator <<(std::ostream& stream, const BoundingPolygon& r)
 	{
-		//stream << "Left: " << r.left << " Top: " << r.top << " Right: " << r.right << " Bottom: " << r.bottom;
+		stream << "BoundingPolygon: " << std::endl;
+		for (auto& v : r.getVertices())
+		{
+			stream << "vertex (" << v.getX() << "," << v.getY() << ")" << std::endl;
+		}
 		return stream;
 	}
 }

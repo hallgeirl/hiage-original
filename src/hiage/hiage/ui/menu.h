@@ -11,12 +11,12 @@ namespace hiage
 	class UIItem
 	{
 	private:
-		std::string label;
+		std::string _label;
 		//TODO: fix font
 		//COutlineFont * m_pFont;
-		Texture *	background;
-		float		x,y,z;
-		bool		initialized;
+		Texture *	_background;
+		float		_x,_y,_z;
+		bool		_initialized;
 
 	public:
 		UIItem();
@@ -24,7 +24,7 @@ namespace hiage
 		//TODO: fix font
 		//bool Create(const char * pcLabel, COutlineFont * pFont, CTexture * pBackground);
 		void render(float x, float y, float z, float width, float height);
-		void setLabel(const char * label) {this->label = label;}
+		void setLabel(const char * label) {this->_label = label;}
 	};
 
 	//a menu object
@@ -36,21 +36,21 @@ namespace hiage
 //		template class __IMPORTEXPORT std::vector<CUIItem *>;
 
 	private:
-		int						currentItem;	//currently selected item
-		std::vector<UIItem *>	items;		//all items in the menu
+		int						_currentItem;	//currently selected item
+		std::vector<UIItem *>	_items;		//all items in the menu
 
 		//dimensions
-		float		width, itemHeight;
+		float		_width, _itemHeight;
 
-		unsigned int maxItemsShow;
+		unsigned int _maxItemsShow;
 
-		float x,y;
+		float _x,_y;
 
-		std::string	title;
-		bool		initialized;
+		std::string	_title;
+		bool		_initialized;
 		//TODO: Fix font
 //		COutlineFont *		m_Font;
-		Texture *	cursor;
+		Texture *	_cursor;
 
 		//CTexture
 
@@ -67,6 +67,6 @@ namespace hiage
 
 		void render(float z);
 
-		void setPosition(float x, float y) { this->x = x; this->y = y; }
+		void setPosition(float x, float y) { this->_x = x; this->_y = y; }
 	};
 }

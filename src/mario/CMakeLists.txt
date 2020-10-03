@@ -14,6 +14,10 @@ target_compile_features(mario PUBLIC cxx_std_20)
 
 add_definitions(-DDATAROOT="${PROJECT_SOURCE_DIR}/mario/data")
 
+target_compile_options(mario
+    PRIVATE "-W4"
+)
+
 add_custom_command(TARGET mario POST_BUILD        # Adds a post-build event to MyTest
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake - E copy_if_different..."
         "${PROJECT_SOURCE_DIR}/third_party/lib/win-x64/SDL/SDL2.dll"      # <--this is in-file

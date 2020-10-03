@@ -28,7 +28,7 @@ void GameState::update(double frametime)
 	{
 		sys->update(frametime);
 	}
-	auto& remainingEvents = eventQueue.dequeueAll();
+	auto remainingEvents = eventQueue.dequeueAll();
 	eventQueue.clear();
 
 	for (auto& evt : remainingEvents)

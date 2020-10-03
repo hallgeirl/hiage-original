@@ -31,7 +31,7 @@ void hiage::BoundingPolygon::buildNormals()
 	left = numeric_limits<int>::max(); bottom = numeric_limits<int>::max();
 	right = numeric_limits<int>::min(); top = numeric_limits<int>::min();
 
-	for (int i = 0; i < edgeNormalCount; i++)
+	for (auto i = 0; i < edgeNormalCount; i++)
 	{
 		Vector2<double> edge, normal;
 
@@ -49,7 +49,7 @@ void hiage::BoundingPolygon::buildNormals()
 	}
 
 	// Compute the bounds for the last vertex if needed
-	for (int i = edgeNormalCount; i < vertices.size(); i++)
+	for (auto i = edgeNormalCount; i < vertices.size(); i++)
 	{
 		//Update outer boundaries
 		if (vertices[i].getX() < left) left = vertices[i].getX();

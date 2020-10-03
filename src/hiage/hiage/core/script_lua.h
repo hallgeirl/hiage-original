@@ -43,7 +43,7 @@ namespace hiage
 			Constructs a LuaVM object and initializes it (loads all libraries, etc.)
 		*/
 		LuaVM(const std::string& dataRoot);
-		LuaVM(LuaVM &obj);
+		LuaVM(LuaVM &) = delete;
 		~LuaVM();
 
 		/*!

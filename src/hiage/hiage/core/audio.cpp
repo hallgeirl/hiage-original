@@ -30,7 +30,7 @@ bool AudioManager::initialize(int frequency, int bits)
 		throw FatalException("ERROR: Invalid bit depth selection.");
 	}
 
-	Uint16 audioFormat;
+	Uint16 audioFormat = AUDIO_S8;
 
 	switch (bits)
 	{

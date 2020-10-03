@@ -21,7 +21,7 @@ MovementSystem::MovementSystem(Game& game, GameState& gameState) : System(game, 
 
 void MovementSystem::update(double frametime)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent>();
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent>();
 	for (auto& t : componentTuples)
 	{
 		auto& physical = std::get<1>(t);
@@ -39,7 +39,7 @@ ObjectRenderingSystem::ObjectRenderingSystem(Game& game, GameState& gameState) :
 
 void ObjectRenderingSystem::update(double frameTime)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, RenderableComponent>();
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, RenderableComponent>();
 
 	Display& disp = game.getDisplay();
 	Renderer& renderer = disp.getRenderer();
@@ -67,12 +67,12 @@ void ObjectRenderingSystem::update(double frameTime)
 		{
 			if ((pos.getY() + sprite.getHeight() >= viewBottom) && (pos.getY() <= viewTop))
 			{
-				auto& vel = gameState.getEntityManager().queryComponentGroup<VelocityComponent>(entityId);
+				auto vel = gameState.getEntityManager().queryComponentGroup<VelocityComponent>(entityId);
 				double velocity = 0;
 				if (vel != nullptr)
 					velocity = vel->getData().getX();
 
-				auto& state = gameState.getEntityManager().queryComponentGroup<StateComponent>(entityId);
+				auto state = gameState.getEntityManager().queryComponentGroup<StateComponent>(entityId);
 				
 				bool hflip = false, vflip = false;
 				if (state != nullptr)
@@ -100,7 +100,7 @@ hiage::PhysicsSystem::PhysicsSystem(Game& game, GameState& gameState) : System(g
 
 void hiage::PhysicsSystem::update(double frameTime)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicsComponent, VelocityComponent>();
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicsComponent, VelocityComponent>();
 
 	for (auto& t : componentTuples)
 	{
@@ -124,10 +124,9 @@ hiage::HumanControllerSystem::HumanControllerSystem(Game& game, GameState& gameS
 
 void hiage::HumanControllerSystem::update(double frameTime)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<HumanControllerComponent, VelocityComponent>();
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<HumanControllerComponent, VelocityComponent>();
 	for (auto& t : componentTuples)
 	{
-		auto& controller = std::get<1>(t);
 		auto& movement = std::get<2>(t);
 
 		// TODO: Implement proper key bindings and generally more flexibility here.
@@ -168,7 +167,7 @@ struct PositionComponentComparator {
 
 void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent>();
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent>();
 	PositionComponentComparator<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent> comp;
 
 	// Sort by x coordinate
@@ -225,7 +224,7 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 				 currentPosition2 = Vector2<double>(pos2);
 
 			//check for collisions during the next frame
-			for (int i = 0; i < dspeed; i++)
+			for (int k = 0; k < dspeed; k++)
 			{
 				auto colRect1 = get<4>(c1)->getData();
 				auto colRect2 = get<4>(c2)->getData();
@@ -274,7 +273,7 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 	if (!tilemap.isLoaded())
 		return;
 
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent>();
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent>();
 
 	for (auto& c : componentTuples)
 	{
@@ -284,8 +283,6 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 
 		Vector2<double> dvelocity = vel * frameTime;
 		Vector2<double> currentPosition = pos;
-
-		bool collided = false;
 
 		//get the collision box of the object
 		BoundingPolygon objectPolygon = get<4>(c)->getData();
@@ -350,14 +347,14 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 	}
 }
 
-void hiage::BlockingTileSystem::update(double frameTime)
+void hiage::BlockingTileSystem::update(double)
 {
 	unique_ptr<Event> evt;
 	while ((evt = gameState.getEventQueue().dequeue(BuiltinEventTypes::Collision_ObjectTile)) != nullptr)
 	{
 		auto& myEvt = dynamic_cast<ObjectTileCollisionEvent&>(*evt);
 
-		auto& components = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, BoundingBoxComponent>(myEvt.getData().entityId);
+		auto components = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, BoundingBoxComponent>(myEvt.getData().entityId);
 		auto& pos = std::get<0>(components)->getData();
 		auto& vel = std::get<1>(components)->getData();
 		auto& bb = std::get<2>(components)->getData();
@@ -368,29 +365,15 @@ void hiage::BlockingTileSystem::update(double frameTime)
 	}
 }
 
-void hiage::AnimationSystem::update(double frameTime)
+void hiage::AnimationSystem::update(double)
 {
-	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<RenderableComponent, StateComponent>();
-
-	Display& disp = game.getDisplay();
-	Renderer& renderer = disp.getRenderer();
-	double aspect = disp.getAspectRatio();
-	double zoom = disp.getZoom();
-	double camX = disp.getCamX();
-	double camY = disp.getCamY();
-
-	double viewLeft = camX - (zoom * aspect);
-	double viewRight = camX + (zoom * aspect);
-	double viewTop = camY + zoom;
-	double viewBottom = camY - zoom;
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<RenderableComponent, StateComponent>();
 
 	for (auto& t : componentTuples)
 	{
-		int entityId = get<0>(t);
 		auto& renderable = std::get<1>(t);
 		auto& state = std::get<2>(t)->getData();
 		auto& sprite = renderable->getData();
-		auto& animName = sprite.getCurrentAnimationName();
 
 		sprite.playAnimation(state.stateName, false);
 	}

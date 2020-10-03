@@ -48,7 +48,7 @@ namespace hiage
 
 					// Reset the iterator, begin again in the recursive call. This is certainly not very efficient, but will do OK until I get a proper archetype system up.
 					it = componentList.begin();
-					auto& recursiveResult = queryComponentGroupCore<TNext, TRest...>(it, componentList);
+					auto recursiveResult = queryComponentGroupCore<TNext, TRest...>(it, componentList);
 					if (it == componentList.end())
 						return std::tuple<std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>();
 
@@ -89,8 +89,6 @@ namespace hiage
 
 		~EntityManager();
 		
-		int getObjectCount();
-
 		template <typename T>
 		std::shared_ptr<T> queryComponentGroup(int entityId)
 		{
@@ -129,7 +127,7 @@ namespace hiage
 			// This is quite ugly - but will have to do for now
 
 			auto& componentList = components[entityId];
-			auto& it = componentList.begin();
+			auto it = componentList.begin();
 			auto res = queryComponentGroupCore<T, TNext, TRest...>(it, componentList);
 			if (it != componentList.end()) // If we haven't iterated to end(), we found one component of each type.
 				return res;
@@ -146,7 +144,7 @@ namespace hiage
 			std::vector<std::tuple<int, std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>> results;
 			for (auto& e : entities)
 			{
-				auto& res = queryComponentGroup<T, TNext, TRest...>(e->getEntityId());
+				auto res = queryComponentGroup<T, TNext, TRest...>(e->getEntityId());
 
 				if (std::get<0>(res) != nullptr)
 					results.push_back(std::tuple_cat(std::make_tuple(e->getEntityId()), res));

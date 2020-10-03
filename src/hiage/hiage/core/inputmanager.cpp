@@ -277,7 +277,7 @@ bool InputManager::keyDown(const std::string& action)
 
 int InputManager::mouseButtonDown(Vector2<double> * pPos)
 {
-	Uint8 keys;
+	Uint32 keys;
 	if (pPos)
 	{
 		int x, y;
@@ -302,7 +302,7 @@ int InputManager::mouseButtonDown(Vector2<double> * pPos)
 
 bool InputManager::mouseButtonDown(int button, Vector2<double> * pos)
 {
-	Uint8 keys;
+	Uint32 keys;
 	if (pos)
 	{
 		int x, y;

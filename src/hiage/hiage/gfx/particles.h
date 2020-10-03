@@ -44,8 +44,8 @@ namespace hiage
 		typedef std::list<ParticlePtr> ParticleArray;
 
 	private:
-		ParticleArray	particles;
-		Texture *		texture;
+		ParticleArray	_particles;
+		Texture *		_texture;
 
 	public:
 		ParticleSystem();

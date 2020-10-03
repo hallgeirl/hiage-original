@@ -30,10 +30,6 @@ Entity& EntityManager::createEntity(std::string objectName, const std::unordered
 	auto& objectManager = game.getObjectManager();
 	auto& objectDescResource = objectManager.requestResourcePtr(objectName);
 
-	//type = objectElement->Attribute("type");
-	const auto& entityName = objectDescResource->resource->name;
-	const auto& entityType = objectDescResource->resource->type;
-	
 	vector<shared_ptr<Component>> componentList;
 	auto& componentFactory = gameState.getComponentManager();
 
@@ -43,18 +39,12 @@ Entity& EntityManager::createEntity(std::string objectName, const std::unordered
 		componentList.push_back(cShared);
 	}
 
-	//Entity* ent = (Entity*)entity;
 	auto ent = make_unique<Entity>();
 	components[ent->getEntityId()] = componentList;
 
 	entities.push_back(std::move(ent));
 
 	return *entities[entities.size() - 1];
-}
-
-int EntityManager::getObjectCount()
-{
-	return entities.size();
 }
 
 /*

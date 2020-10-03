@@ -10,7 +10,7 @@
 using namespace hiage;
 using namespace std;
 
-int main(int argc, char* argv[])
+int main(int, char*)
 {
     KeyBindings keyBindings;
     keyBindings.mapKey("left", "goLeft");
@@ -26,8 +26,6 @@ int main(int argc, char* argv[])
     game.scriptVM.runFile("scripts/objects.lua");
     game.scriptVM.runFile("scripts/ui.lua");
     game.scriptVM.runFile("scripts/initgame.lua");
-
-    double frameTimeLimitMicroseconds = 1000000. / 120.;
 
 	while (game.isRunning())
 	{
