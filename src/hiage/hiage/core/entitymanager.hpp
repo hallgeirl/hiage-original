@@ -169,6 +169,6 @@ namespace hiage
 
 	    ~FontFactory();
 
-	    Font * createFont(std::string fontName, Game * game);
+	    Font * createFont(const std::string& fontName, Game * game);
 	};
 }

@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include <hiage/util/timer.h>
-#include "mariogame.h"
+#include "mariogame.hpp"
 #include <chrono>
 #include <thread>
 

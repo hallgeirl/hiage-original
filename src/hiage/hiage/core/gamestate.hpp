@@ -18,13 +18,12 @@ namespace hiage
 	*/
 	class __IMPORTEXPORT GameState
 	{
-	private:
+	protected:
 		ComponentManager	componentManager;
 		SystemsFactory		systemsFactory;
 		EntityManager		entityManager;
 		EventQueue			eventQueue;
 
-	protected:
 		Game& gameInstance;
 		std::vector<std::unique_ptr<System>> systems;
 

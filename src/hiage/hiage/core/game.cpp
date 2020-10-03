@@ -1,5 +1,5 @@
 /*!
-	\file com_game.cpp
+	\file game.cpp
 
 	\author Hallgeir Lien
 
@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-#include "game.h"
+#include "game.hpp"
 #include "entitymanager.hpp"
 #include "../util/exceptions.h"
 #include "../sdl-includes.h"

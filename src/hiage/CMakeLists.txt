@@ -15,7 +15,6 @@ add_library(hiage STATIC
 	"hiage/core/gamestate.cpp" 
 	"hiage/core/inputmanager.cpp"
 	"hiage/core/map.cpp"
-	"hiage/core/resourcedescriptors.hpp"
 	"hiage/core/resourcemanager.cpp"
 	"hiage/core/script_lua.cpp"
 	"hiage/core/systems.cpp" 

@@ -13,7 +13,7 @@
 //includes used to register the classes
 #include "map.h"
 #include "entity.h"
-#include "game.h"
+#include "game.hpp"
 #include "../util/timer.h"
 
 #include "../lua-includes.h"

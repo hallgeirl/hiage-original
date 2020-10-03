@@ -7,7 +7,7 @@
 */
 
 #include "entitymanager.hpp"
-#include "game.h"
+#include "game.hpp"
 #include "gamestate.hpp"
 #include "entity.h"
 #include <tinyxml.h>
@@ -69,7 +69,7 @@ FontFactory::~FontFactory()
 {
 }
 
-Font * FontFactory::createFont(string fontName, Game * game)
+Font * FontFactory::createFont(const string& fontName, Game * game)
 {
     Font * font = new Font();
     //attempt to load the main font

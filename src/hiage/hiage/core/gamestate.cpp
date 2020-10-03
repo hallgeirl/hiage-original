@@ -1,5 +1,5 @@
 #include "gamestate.hpp"
-#include "game.h"
+#include "game.hpp"
 
 using namespace hiage;
 

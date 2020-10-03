@@ -1,7 +1,5 @@
-#include <hiage/core/game.h>
-#include <hiage/core/entity.h>
+#include <hiage/core/game.hpp>
 #include <hiage/core/map.h>
-
 
 class MarioState : public hiage::MapState
 {

@@ -925,24 +925,7 @@ const Tilemap& Map::getTilemap() const
 
 MapState::MapState(Game &game) : GameState(game), gamemap(game, *this)
 {
-    auto sysFactory = getSystemsFactory();
-    
-    // Movement and controllers
-    systems.push_back(sysFactory.createSystem<HumanControllerSystem>());
-    systems.push_back(sysFactory.createSystem<MovementSystem>());
-    systems.push_back(sysFactory.createSystem<GravitySystem>());
-    
-    // Collision detection
-    systems.push_back(sysFactory.createSystem<ObjectObjectCollisionDetectionSystem>());
-    auto& tilemap = gamemap.getTilemap();
-    systems.push_back(sysFactory.createSystem<ObjectTileCollisionDetectionSystem, const Tilemap&>(tilemap));
 
-    // Collision handling
-    systems.push_back(sysFactory.createSystem<BlockingTileSystem>());
-
-    // Rendering
-    systems.push_back(sysFactory.createSystem<AnimationSystem>());
-    systems.push_back(sysFactory.createSystem<ObjectRenderingSystem>());
 }
 
 MapState::~MapState()

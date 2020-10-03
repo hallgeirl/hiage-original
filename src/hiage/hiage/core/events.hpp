@@ -9,7 +9,8 @@ namespace hiage
 {
 	struct BuiltinEventTypes
 	{
-		static const int Collision_ObjectTile = 1,
+		static const int 
+			Collision_ObjectTile = 1,
 			Collision_ObjectObject = 2;
 	};
 

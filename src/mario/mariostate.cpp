@@ -4,9 +4,11 @@
 
 */
 
+#include "mariostate.hpp"
+#include "systems.hpp"
+
 #include <hiage/core/entitymanager.hpp>
 #include <hiage/core/script_lua.h>
-#include "mariostate.h"
 
 using namespace hiage;
 using namespace std;
@@ -14,7 +16,26 @@ using namespace std;
 
 MarioState::MarioState(hiage::Game &game) : MapState(game)
 {
+    auto sysFactory = getSystemsFactory();
 
+    // Movement and controllers
+    systems.push_back(sysFactory.createSystem<HumanControllerSystem>());
+    systems.push_back(sysFactory.createSystem<MovementSystem>());
+    systems.push_back(sysFactory.createSystem<GravitySystem>());
+
+    // Collision detection
+    systems.push_back(sysFactory.createSystem<ObjectObjectCollisionDetectionSystem>());
+    auto& tilemap = gamemap.getTilemap();
+    systems.push_back(sysFactory.createSystem<ObjectTileCollisionDetectionSystem, const Tilemap&>(tilemap));
+
+    // Collision handling
+    systems.push_back(sysFactory.createSystem<BlockingTileSystem>());
+
+    systems.push_back(sysFactory.createSystem<CharacterStateMachineSystem>());
+
+    // Rendering
+    systems.push_back(sysFactory.createSystem<AnimationSystem>());
+    systems.push_back(sysFactory.createSystem<ObjectRenderingSystem>());
 }
 
 

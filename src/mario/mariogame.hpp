@@ -1,4 +1,4 @@
-#include <hiage/core/game.h>
+#include <hiage/core/game.hpp>
 #include <hiage/core/inputmanager.hpp>
 
 

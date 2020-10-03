@@ -3,8 +3,8 @@
 	\author $(author)
 */
 
-#include "mariogame.h"
-#include "mariostate.h"
+#include "mariogame.hpp"
+#include "mariostate.hpp"
 
 using namespace hiage;
 using namespace std;

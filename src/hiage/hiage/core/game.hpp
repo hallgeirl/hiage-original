@@ -1,5 +1,5 @@
 /*!
-	\file com_game.h
+	\file game.hpp
 
 	\author Hallgeir Lien
 

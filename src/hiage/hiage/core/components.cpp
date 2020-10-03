@@ -1,5 +1,5 @@
 #include "components.hpp"
-#include "game.h"
+#include "game.hpp"
 #include <memory>
 
 using namespace hiage;

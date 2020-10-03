@@ -13,7 +13,7 @@ Copyright (C) Hallgeir Lien - 2008
 #include <tinyxml.h>
 #pragma warning(pop)
 #include "entity.h"
-#include "game.h"
+#include "game.hpp"
 
 using namespace hiage;
 using namespace std;

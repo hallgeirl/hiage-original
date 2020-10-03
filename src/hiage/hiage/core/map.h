@@ -12,7 +12,7 @@
 
 #include "entity.h"
 #include "../gfx/tilemap.h"
-#include "game.h"
+#include "game.hpp"
 
 namespace hiage
 {
