@@ -96,6 +96,11 @@ namespace hiage
 		using DatalessComponent::DatalessComponent;
 	};
 
+	class StateComponent : public GenericComponent<std::string, 8>
+	{
+		using GenericComponent::GenericComponent;
+	};
+
 	/*
 	ComponentManager
 	*/

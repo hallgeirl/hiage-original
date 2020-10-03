@@ -69,8 +69,6 @@ namespace hiage
 		uint currentAnimation;
 		std::vector<SpriteAnimation *> animations;
 
-
-
 	public:
 		Sprite();
 		~Sprite();
@@ -79,18 +77,18 @@ namespace hiage
 
 		void render(Renderer &renderer, const Vector2<double>& position, ObjectZ z, float rotation = 0, bool hFlip = false, bool vFlip = false, float maxSize = 0);
 
-		uint addAnimation(const char * name);
+		uint addAnimation(const std::string&);
 		void addFrame(uint animID, int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox);
 		const std::string getAnimationName(uint animID);
 		void updateAnimation(double timefactor);
 		void playAnimation(int anim, double speed = 1) { currentAnimation = anim; animationSpeed = speed; }
-		bool playAnimation(const char * anim, bool resetIfRunning = true, double speed = 1);
+		bool playAnimation(const std::string& anim, bool resetIfRunning = true, double speed = 1);
+
 
 		bool animationIsPlaying() { return (animations[currentAnimation]->isPlaying()); }
 
 		int getWidth() const { return frameWidth; }
 		int getHeight() const { return frameHeight; }
-		BoundingBox<double> getCollisionBox() const;
 
 		Sprite & operator=(Sprite);
 	};

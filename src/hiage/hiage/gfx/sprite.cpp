@@ -168,7 +168,7 @@ void Sprite::render(Renderer &renderer, const Vector2<double>& position, ObjectZ
 }
 
 //add an animation to the sprite
-unsigned int Sprite::addAnimation(const char * name)
+unsigned int Sprite::addAnimation(const std::string& name)
 {
 	clog << "Adding animation " << name << " to sprite...\n" << flush;
 	SpriteAnimation * animation = new SpriteAnimation;
@@ -211,7 +211,7 @@ const std::string Sprite::getAnimationName(uint animID)
 	}
 }
 
-bool Sprite::playAnimation(const char * anim, bool resetIfRunning, double speed)
+bool Sprite::playAnimation(const std::string& anim, bool resetIfRunning, double speed)
 {
 	for (uint i = 0; i < animations.size(); i++)
 	{
@@ -265,17 +265,4 @@ Sprite & Sprite::operator=(Sprite sprite)
 	}
 
 	return *this;
-}
-
-BoundingBox<double> Sprite::getCollisionBox() const
-{
-	if ((currentAnimation >= 0) && (currentAnimation < animations.size()))
-	{
-		return animations[currentAnimation]->getCurrentFrame()->collisionBox;
-	}
-	else
-	{
-		BoundingBox<double> r(0,0,0,0);
-		return r;
-	}
 }

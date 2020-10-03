@@ -59,6 +59,8 @@ unique_ptr<Component> ComponentManager::createComponent(const std::string& type,
 		return make_unique<HumanControllerComponent>();
 	else if (type == "collidable")
 		return make_unique<CollidableComponent>();
+	else if (type == "state")
+		return make_unique<StateComponent>();
 	else if (type == "boundingbox")
 	{
 		int x = 0, y = 0, width = 16, height = 16;

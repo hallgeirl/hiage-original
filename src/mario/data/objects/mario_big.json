@@ -30,6 +30,12 @@
       }
     },
     {
+      "type": "state",
+      "properties": {
+        "initial": "stand"
+      }
+    },
+    {
       "type": "collidable"
     }
   ],

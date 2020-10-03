@@ -98,6 +98,13 @@ namespace hiage
 		virtual void update(double frameTime) override;
 	};
 
+	class AnimationSystem : public System
+	{
+	public:
+		AnimationSystem(Game& game, GameState& gameState) : System(game, gameState) {}
+		virtual void update(double frameTime) override;
+	};
+
 	// List of currently missing systems:
 	// - Script system??
 	// - Collision

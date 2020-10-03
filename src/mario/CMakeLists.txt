@@ -18,10 +18,10 @@ add_custom_command(TARGET mario POST_BUILD        # Adds a post-build event to M
         "${PROJECT_SOURCE_DIR}/third_party/lib/win-x64/SDL/SDL2.dll"      # <--this is in-file
         $<TARGET_FILE_DIR:mario>)                 # <--this is out-file path
 
-add_custom_command(TARGET mario POST_BUILD 
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-        "${PROJECT_SOURCE_DIR}/mario/data"
-        $<TARGET_FILE_DIR:mario>/data)
+add_custom_command(TARGET mario PRE_LINK        # Adds a post-build event to MyTest
+    COMMAND ${CMAKE_COMMAND} -E copy_directory  # which executes "cmake - E copy_if_different..."
+        "${PROJECT_SOURCE_DIR}/mario/data"      # <--this is in-file
+        $<TARGET_FILE_DIR:mario>/data)                 # <--this is out-file path
 
 add_custom_command(TARGET mario POST_BUILD        # Adds a post-build event to MyTest
     COMMAND ${CMAKE_COMMAND} -E copy_directory  # which executes "cmake - E copy_if_different..."
