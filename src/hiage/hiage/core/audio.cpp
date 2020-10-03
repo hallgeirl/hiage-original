@@ -3,10 +3,14 @@
 
 #include "../sdl-includes.h"
 #include <iostream>
-
+#include <filesystem>
 
 using namespace std;
 using namespace hiage;
+
+AudioManager::AudioManager(const std::string& dataRoot) : dataRoot(dataRoot)
+{
+}
 
 bool AudioManager::initialize(int frequency, int bits)
 {
@@ -49,10 +53,13 @@ bool AudioManager::initialize(int frequency, int bits)
 	return true;
 }
 
-void AudioManager::loadWav(std::string name, std::string file)
+void AudioManager::loadWav(const std::string& name, const std::string& file)
 {
-	clog << "Loading WAV file " << file << ", and assigning name " << name << "...\n" << flush;
-	Mix_Chunk * sound = Mix_LoadWAV(file.c_str());
+	std::filesystem::path root = dataRoot;
+	auto fullPath = root / file;
+
+	clog << "Loading WAV file " << fullPath.string() << ", and assigning name " << name << "...\n" << flush;
+	Mix_Chunk * sound = Mix_LoadWAV(fullPath.string().c_str());
 
 	if (!sound)
 	{
@@ -64,10 +71,13 @@ void AudioManager::loadWav(std::string name, std::string file)
 	clog << "OK: WAV file was loaded successfully.\n" << flush;
 }
 
-void AudioManager::loadOgg(std::string name, std::string file)
+void AudioManager::loadOgg(const std::string& name, const std::string& file)
 {
-	clog << "Loading OGG file " << file << ", and assigning name " << name << "...\n" << flush;
-	Mix_Music * mus = Mix_LoadMUS(file.c_str());
+	std::filesystem::path root = dataRoot;
+	auto fullPath = root / file;
+
+	clog << "Loading OGG file " << fullPath.string() << ", and assigning name " << name << "...\n" << flush;
+	Mix_Music * mus = Mix_LoadMUS(fullPath.string().c_str());
 
 	if (!mus)
 	{
@@ -79,12 +89,12 @@ void AudioManager::loadOgg(std::string name, std::string file)
 	clog << "OK: OGG file was loaded successfully.\n" << flush;
 }
 
-void AudioManager::playWav(std::string name)
+void AudioManager::playWav(const std::string& name)
 {
 	Mix_PlayChannel(-1, sounds[name], 0);
 }
 
-void AudioManager::playOgg(std::string name, bool loop)
+void AudioManager::playOgg(const std::string& name, bool loop)
 {
     if (loop)
     {

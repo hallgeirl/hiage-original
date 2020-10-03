@@ -23,9 +23,9 @@ int main(int argc, char* argv[])
 	MarioGame game(keyBindings);
 	game.initialize(1024, 768, false);
 
-    game.scriptVM.runFile("data/scripts/objects.lua");
-    game.scriptVM.runFile("data/scripts/ui.lua");
-    game.scriptVM.runFile("data/scripts/initgame.lua");
+    game.scriptVM.runFile("scripts/objects.lua");
+    game.scriptVM.runFile("scripts/ui.lua");
+    game.scriptVM.runFile("scripts/initgame.lua");
 
     double frameTimeLimitMicroseconds = 1000000. / 120.;
 

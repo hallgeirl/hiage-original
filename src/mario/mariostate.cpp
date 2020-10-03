@@ -21,7 +21,7 @@ MarioState::MarioState(hiage::Game &game) : MapState(game)
     // Movement and controllers
     systems.push_back(sysFactory.createSystem<HumanControllerSystem>());
     systems.push_back(sysFactory.createSystem<MovementSystem>());
-    systems.push_back(sysFactory.createSystem<GravitySystem>());
+    systems.push_back(sysFactory.createSystem<PhysicsSystem>());
 
     // Collision detection
     systems.push_back(sysFactory.createSystem<ObjectObjectCollisionDetectionSystem>());

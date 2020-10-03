@@ -53,8 +53,10 @@ namespace hiage
 		Timer           gameTimer;       //!< The elapsed time since the game class was initialized.
 		bool running;
 
+		std::string		dataRoot;		// Path to the data directory for the game's assets
 		std::vector<GameState *> states;	//!< The game states. The game state can be changed with setGameState, pushState and popState.
 
+		void loadResourcesRecursive(std::string dir, ResourceTypeEnum resType);
 	protected:
 		/*!
 			onInit is called after the game object has been initialized.
@@ -73,7 +75,7 @@ namespace hiage
 		LuaVM scriptVM; //!< The LUA script's virtual machine class
 
 	public:
-		Game(double framerateLimit, const KeyBindings& keyBindings);
+		Game(double framerateLimit, const KeyBindings& keyBindings, const std::string& dataRoot);
 		Game(const Game&) = delete;
 
 		virtual ~Game();
@@ -104,6 +106,8 @@ namespace hiage
 		void printText(Font & font, std::string text, double x, double y, double scale = 1, double spacing = 0);
 
         void drawTexture(std::string texname, double x, double y);
+
+		std::string getResourcePath(const std::string& relativePath) const;
 
 		/*!
 			Shuts the game down. De-initializes everything and frees any used resources. Be sure to not call run() after this.

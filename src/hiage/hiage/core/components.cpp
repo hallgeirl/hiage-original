@@ -14,7 +14,7 @@ hiage::ComponentManager::ComponentManager(Game& game) : game(game)
 {
 	addComponentFactory<PhysicalComponentFactory>("physical");
 	addComponentFactory<GenericComponentFactory<VelocityComponent>>("movable");
-	addComponentFactory<GenericComponentFactory<PhysicsComponent>>("physics");
+	addComponentFactory<PhysicsComponentFactory>("physics");
 	addComponentFactory<GenericComponentFactory<HumanControllerComponent>>("humancontroller");
 	addComponentFactory<GenericComponentFactory<CollidableComponent>>("collidable");
 	addComponentFactory<BoundingBoxComponentFactory>("boundingbox");
@@ -124,6 +124,26 @@ std::unique_ptr<Component> hiage::StateComponentFactory::createComponent(const C
 {
 	auto& properties = componentDescriptor.properties;
 	auto& initialState = get<std::string>(properties.at("initial"));
+	
+	State state;
+	state.stateName = initialState;
+	return make_unique<StateComponent>(state);
+}
 
-	return make_unique<StateComponent>(initialState);
+std::unique_ptr<Component> hiage::PhysicsComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const
+{
+	auto& properties = componentDescriptor.properties;
+
+	PhysicsProperties props;
+
+	if (properties.contains("friction.air"))
+		props.airResistance = get<double>(properties.at("friction.air"));
+
+	if (properties.contains("friction.ground"))
+		props.groundFriction = get<double>(properties.at("friction.ground"));
+
+	if (properties.contains("gravity"))
+		props.hasGravity = get<double>(properties.at("gravity")) != 0;
+
+	return make_unique<PhysicsComponent>(props);
 }

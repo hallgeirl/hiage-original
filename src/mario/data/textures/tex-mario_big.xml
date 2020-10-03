@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <texture name="MarioBig">
-  <bitmap path="data/gfx/sprites/mario_big.tga" />
+  <bitmap path="gfx/sprites/mario_big.tga" />
 </texture>

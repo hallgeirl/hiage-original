@@ -10,6 +10,7 @@
 
 #include <fstream>
 #include <streambuf>
+#include <filesystem>
 
 
 using namespace hiage;
@@ -51,12 +52,7 @@ std::unique_ptr<Resource<Texture>> TextureManager::loadResource(const std::strin
 	bitmapElement = textureElement->FirstChildElement("bitmap");
 	bitmap = bitmapElement->Attribute("path");
 
-	//check if the texture can be loaded
-	/*if (!texture->loadTexture(bitmap.c_str()))
-	{
-		throw IOException(string("ERROR: Could not load texture ") + bitmap.c_str());
-	}*/
-	texture->loadTexture(bitmap.c_str());
+	texture->loadTexture(getResourcePath(bitmap).c_str());
 
 	resource->strData1 = bitmap;
 
@@ -135,7 +131,15 @@ std::unique_ptr<Resource<Sprite>> SpriteManager::loadResource(const std::string&
 			continue;
 		}
 
-		i = sprite->addAnimation(animationElement->Attribute("name"));
+		auto velocitySpeedupFactorAttr = animationElement->Attribute("velocitySpeedupFactor");
+		double velocitySpeedupFactor = 0;
+		if (velocitySpeedupFactorAttr)
+		{
+			animationElement->Attribute("velocitySpeedupFactor", &velocitySpeedupFactor);
+		}
+
+		i = sprite->addAnimation(animationElement->Attribute("name"), velocitySpeedupFactor);
+		
 
 		while (frameElement)
 		{
@@ -249,7 +253,8 @@ std::unique_ptr<Resource<Tileset>> TilesetManager::loadResource(const std::strin
 
 		//TODO: Debug message? And is the Texture deleted?
 		texture = new Texture;
-		texture->loadTexture(texPath.c_str());
+		
+		texture->loadTexture(getResourcePath(texPath).c_str());
 
         if (nextTile != -1)
         {

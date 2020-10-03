@@ -18,10 +18,12 @@
 
 #include "../lua-includes.h"
 
+#include <filesystem>
+
 using namespace std;
 using namespace hiage;
 
-LuaVM::LuaVM()
+LuaVM::LuaVM(const std::string& dataRoot) : dataRoot(dataRoot)
 {
 	initialize();
 }
@@ -227,7 +229,9 @@ void LuaVM::runScript(std::string name)
 
 void LuaVM::runFile(std::string path)
 {
-    lua_dofile(vm, path.c_str());
+	std::filesystem::path root = dataRoot;
+	auto scriptPath = root / path;
+    lua_dofile(vm, scriptPath.string().c_str());
 }
 
 

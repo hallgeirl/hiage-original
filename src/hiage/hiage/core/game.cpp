@@ -26,7 +26,9 @@ using namespace hiage;
 using namespace std;
 using namespace std::filesystem;
 
-Game::Game(double framerateLimit, const KeyBindings& keyBindings) : gameTimer(true), lastFrameTime(0.05), framerateLimit(120), input(keyBindings)
+Game::Game(double framerateLimit, const KeyBindings& keyBindings, const std::string& dataRoot) 
+	: gameTimer(true), lastFrameTime(0.05), framerateLimit(120), dataRoot(dataRoot), 
+	scriptVM(dataRoot), input(keyBindings), audio(dataRoot), textureManager(dataRoot), spriteManager(dataRoot), objectManager(dataRoot), tilesetManager(dataRoot), fontManager(dataRoot)
 {
 	running = false;
 	timeFactor = 1;
@@ -45,6 +47,11 @@ Game::~Game()
 
 //traverse a specified directory and load the resources in it
 void Game::loadResources(std::string dir, ResourceTypeEnum resType)
+{
+	loadResourcesRecursive(getResourcePath(dir), resType);
+}
+
+void Game::loadResourcesRecursive(std::string dir, ResourceTypeEnum resType)
 {
 	directory_iterator end_itr;
 
@@ -186,38 +193,6 @@ void Game::setGameState(GameState * state)
 	states.back()->init();
 }
 
-
-/*
-Timer timer;
-	
-	while (game.isRunning())
-	{
-		timer.reset();
-
-		game.run(frameTime, true);
-
-		//cout << timer.getTime() << endl;
-		frameTime = timer.getTime();
-
-
-		//cap at 500 FPS
-
-		double frameTimeMicroseconds = frameTime * 1000000;
-		long microsecondsToSleep = frameTimeLimitMicroseconds - frameTimeMicroseconds;
-		if (microsecondsToSleep > 1)
-		{
-			std::this_thread::sleep_for(std::chrono::microseconds(microsecondsToSleep));
-		}
-		frameTime = timer.getTime();
-
-		if (frameTime > 0.020)
-		{
-			frameTime = 0.020;
-		}
-	}
-
-
-*/
 
 void Game::run(bool doEvents)
 {
@@ -390,3 +365,10 @@ const ObjectManager& hiage::Game::getObjectManager() const
 	return objectManager;
 }
 
+std::string hiage::Game::getResourcePath(const std::string& relativePath) const
+{
+	std::filesystem::path root = dataRoot;
+	auto fullPath = root / relativePath;
+
+	return fullPath.string();
+}

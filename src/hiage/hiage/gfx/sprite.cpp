@@ -7,7 +7,7 @@
 using namespace std;
 using namespace hiage;
 
-SpriteAnimation::SpriteAnimation() : currentFrame(0), frameTimer(0)
+SpriteAnimation::SpriteAnimation() : currentFrame(0), frameTimer(0), velocitySpeedupFactor(0)
 {
 }
 
@@ -46,11 +46,11 @@ SpriteAnimation::~SpriteAnimation()
 	}
 }
 
-void SpriteAnimation::runAnimation(double timefactor)
+void SpriteAnimation::runAnimation(double timefactor, double velocity)
 {
 	if (frames.size() > 0)
 	{
-		frameTimer -= timefactor;
+		frameTimer -= (timefactor + abs(velocitySpeedupFactor * velocity * timefactor));
 		if (frameTimer <= 0)
 		{
 			if (currentFrame != frames[currentFrame]->nextFrame)
@@ -168,14 +168,14 @@ void Sprite::render(Renderer &renderer, const Vector2<double>& position, ObjectZ
 }
 
 //add an animation to the sprite
-unsigned int Sprite::addAnimation(const std::string& name)
+unsigned int Sprite::addAnimation(const std::string& name, double velocitySpeedupFactor)
 {
 	clog << "Adding animation " << name << " to sprite...\n" << flush;
 	SpriteAnimation * animation = new SpriteAnimation;
 	animations.push_back(animation);
 
 	animations[animations.size()-1]->setName(name);
-
+	animations[animations.size()-1]->setVelocitySpeedupFactor(velocitySpeedupFactor);
 	if (animations.size() == 1)
 	{
 		currentAnimation = 0;
@@ -227,7 +227,7 @@ bool Sprite::playAnimation(const std::string& anim, bool resetIfRunning, double 
 			}
 
 			currentAnimation = i;
-			animationSpeed = speed;
+			animationSpeed = speed;;
 
 			return true;
 		}
@@ -236,11 +236,11 @@ bool Sprite::playAnimation(const std::string& anim, bool resetIfRunning, double 
 	return false;
 }
 
-void Sprite::updateAnimation(double timefactor)
+void Sprite::updateAnimation(double timefactor, double velocity)
 {
 	if ((currentAnimation >= 0) && (currentAnimation <= animations.size()-1))
 	{
-		animations[currentAnimation]->runAnimation(timefactor * animationSpeed);
+		animations[currentAnimation]->runAnimation(timefactor * animationSpeed, velocity);
 	}
 }
 

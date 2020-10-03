@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <texture name="GreenShell">
-  <bitmap path="data/gfx/sprites/shell_green.tga" />
+  <bitmap path="gfx/sprites/shell_green.tga" />
 </texture>

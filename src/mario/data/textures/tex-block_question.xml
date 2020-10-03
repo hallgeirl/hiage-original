@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <texture name="BlockQuestion">
-  <bitmap path="data/gfx/sprites/block-question.tga" />
+  <bitmap path="gfx/sprites/block-question.tga" />
 </texture>

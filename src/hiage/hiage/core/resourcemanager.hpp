@@ -38,6 +38,7 @@ namespace hiage
 	{
 	private:
 		std::vector<std::unique_ptr<Resource<T>>> resources;
+		std::string dataRoot;
 
 	private:
 		int findResourceIndex(const std::string& name) const
@@ -58,9 +59,20 @@ namespace hiage
 		}
 
 	protected:
+		std::string getResourcePath(const std::string& relativePath)
+		{
+			std::filesystem::path root = dataRoot;
+			auto fullPath = root / relativePath;
+			
+			return fullPath.string();
+		}
+
 		virtual std::unique_ptr<Resource<T>> loadResource(const std::string& file) = 0;
 
 	public:
+		ResourceManager(const std::string& dataRoot) : dataRoot(dataRoot)
+		{
+		}
 		virtual ~ResourceManager()
 		{
 		}
@@ -144,29 +156,39 @@ namespace hiage
 	{
 	protected:
 		virtual std::unique_ptr<Resource<Texture>> loadResource(const std::string& path) override;
+	public:
+		TextureManager(const std::string& dataRoot) : ResourceManager(dataRoot) { }
 	};
 
 	class __IMPORTEXPORT SpriteManager : public ResourceManager<Sprite>
 	{
 	protected:
 		virtual std::unique_ptr<Resource<Sprite>> loadResource(const std::string& path) override;
+	public:
+		SpriteManager(const std::string& dataRoot) : ResourceManager(dataRoot) { }
 	};
 
 	class __IMPORTEXPORT TilesetManager : public ResourceManager<Tileset>
 	{
 	protected:
 		virtual std::unique_ptr<Resource<Tileset>> loadResource(const std::string& path) override;
+	public:
+		TilesetManager(const std::string& dataRoot) : ResourceManager(dataRoot) { }
 	};
 
 	class __IMPORTEXPORT FontManager : public ResourceManager<Font>
 	{
     protected:
         virtual std::unique_ptr<Resource<Font>> loadResource(const std::string& path) override;
+	public:
+		FontManager(const std::string& dataRoot) : ResourceManager(dataRoot) { }
 	};
 
 	class __IMPORTEXPORT ObjectManager : public ResourceManager<ObjectDescriptor>
 	{
 	protected:
 		virtual std::unique_ptr<Resource<ObjectDescriptor>> loadResource(const std::string& path) override;
+	public:
+		ObjectManager(const std::string& dataRoot) : ResourceManager(dataRoot) { }
 	};
 }

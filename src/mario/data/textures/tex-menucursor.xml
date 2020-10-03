@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <texture name="MenuCursor">
-  <bitmap path="data/gfx/menucursor.tga" />
+  <bitmap path="gfx/menucursor.tga" />
 </texture>

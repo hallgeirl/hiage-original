@@ -72,6 +72,13 @@ namespace hiage
 			return *this;
 		}
 
+		Vector2<T> normalized() const
+		{
+			double vlength = length();
+
+			return Vector2(x / vlength, y / vlength);
+		}
+
 
 
 		/*!

@@ -88,7 +88,7 @@ void Map::createFromFile(std::string path, bool runScripts)
     //delete the old map
     destroy();
 
-	ifstream file(path.c_str());
+    ifstream file(gameInstance.getResourcePath(path).c_str());
 	if (!file.is_open())
 	{
 		throw IOException(string("ERROR: Could not open file ") + path);

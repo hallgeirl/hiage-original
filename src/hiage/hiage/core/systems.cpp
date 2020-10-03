@@ -55,6 +55,7 @@ void ObjectRenderingSystem::update(double frameTime)
 
 	for (auto& t : componentTuples)
 	{
+		auto entityId = std::get<0>(t);
 		auto& phyiscal = std::get<1>(t);
 		auto& renderable = std::get<2>(t);
 
@@ -66,29 +67,53 @@ void ObjectRenderingSystem::update(double frameTime)
 		{
 			if ((pos.getY() + sprite.getHeight() >= viewBottom) && (pos.getY() <= viewTop))
 			{
+				auto& vel = gameState.getEntityManager().queryComponentGroup<VelocityComponent>(entityId);
+				double velocity = 0;
+				if (vel != nullptr)
+					velocity = vel->getData().getX();
+
+				auto& state = gameState.getEntityManager().queryComponentGroup<StateComponent>(entityId);
+				
+				bool hflip = false, vflip = false;
+				if (state != nullptr)
+				{
+					auto& metadata = state->getData().metadata;
+					if (metadata.contains("x-flip") && get<int>(metadata.at("x-flip")) != 0)
+						hflip = true;
+					if (metadata.contains("y-flip") && get<int>(metadata.at("y-flip")) != 0)
+						vflip = true;
+				}
+
 				// Render sprite
-				sprite.render(renderer, pos, ObjectZ::MIDDLE);
-				sprite.updateAnimation(frameTime);
+				sprite.render(renderer, pos, ObjectZ::MIDDLE, 0.f, hflip, vflip);
+
+				// Update animations
+				sprite.updateAnimation(frameTime, velocity);
 			}
 		}
 	}
 }
 
-hiage::GravitySystem::GravitySystem(Game& game, GameState& gameState) : System(game, gameState)
+hiage::PhysicsSystem::PhysicsSystem(Game& game, GameState& gameState) : System(game, gameState)
 {
 }
 
-void hiage::GravitySystem::update(double frameTime)
+void hiage::PhysicsSystem::update(double frameTime)
 {
 	auto& componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicsComponent, VelocityComponent>();
 
 	for (auto& t : componentTuples)
 	{
-		auto& physical = std::get<1>(t);
+		auto& physics = std::get<1>(t);
 		auto& movement = std::get<2>(t);
-
 		auto& vel = movement->getData();
-		vel.add(Vector2<double>(0, -1) * magnitude * frameTime);
+
+		auto& physicsProps = physics->getData();
+		if (physicsProps.hasGravity)
+			vel.add(Vector2<double>(0, -1) * gravity * frameTime);
+		
+		if (physicsProps.airResistance > 0)
+			vel.subtract(vel.normalized() * physicsProps.airResistance);
 	}
 }
 
@@ -110,23 +135,23 @@ void hiage::HumanControllerSystem::update(double frameTime)
 		auto& vel = movement->getData();
 
 		auto& inputManager = game.getInputManager();
-		double magnitude = 100. * frameTime;
+		double gravity = 100. * frameTime;
 
 		if (inputManager.keyDown("goRight"))
 		{
-			vel.add(Vector2<double>(1, 0) * magnitude);
+			vel.add(Vector2<double>(1, 0) * gravity);
 		}
 		if (inputManager.keyDown("goLeft"))
 		{
-			vel.add(Vector2<double>(-1, 0) * magnitude);
+			vel.add(Vector2<double>(-1, 0) * gravity);
 		}
 		if (inputManager.keyDown("crouch"))
 		{
-			vel.add(Vector2<double>(0, -1) * magnitude);
+			vel.add(Vector2<double>(0, -1) * gravity);
 		}
 		if (inputManager.keyDown("lookUp"))
 		{
-			vel.add(Vector2<double>(0, 1) * magnitude);
+			vel.add(Vector2<double>(0, 1) * gravity);
 		}
 	}
 }
@@ -361,16 +386,13 @@ void hiage::AnimationSystem::update(double frameTime)
 
 	for (auto& t : componentTuples)
 	{
+		int entityId = get<0>(t);
 		auto& renderable = std::get<1>(t);
-		auto& stateName = std::get<2>(t)->getData();
-		
+		auto& state = std::get<2>(t)->getData();
 		auto& sprite = renderable->getData();
 		auto& animName = sprite.getCurrentAnimationName();
-		
-		if (stateName != animName)
-		{
-			sprite.playAnimation(stateName);
-		}
+
+		sprite.playAnimation(state.stateName, false);
 	}
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            

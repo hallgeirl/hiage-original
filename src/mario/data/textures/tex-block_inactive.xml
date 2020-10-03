@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <texture name="BlockInactive">
-  <bitmap path="data/gfx/sprites/block-inactive.tga" />
+  <bitmap path="gfx/sprites/block-inactive.tga" />
 </texture>

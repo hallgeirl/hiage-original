@@ -77,9 +77,16 @@ namespace hiage
 	};
 
 
-	class PhysicsComponent : public DatalessComponent<4>
+	struct PhysicsProperties
 	{
-		using DatalessComponent::DatalessComponent;
+		double airResistance, groundFriction;
+		
+		bool hasGravity;
+	};
+
+	class PhysicsComponent : public GenericComponent<PhysicsProperties, 4>
+	{
+		using GenericComponent::GenericComponent;
 	};
 
 	class HumanControllerComponent : public DatalessComponent<5>
@@ -97,7 +104,16 @@ namespace hiage
 		using DatalessComponent::DatalessComponent;
 	};
 
-	class StateComponent : public GenericComponent<std::string, 8>
+	// Used for "object state" when it comes to animations (e.g. "on ground", "standing", "walking", "jumping", "falling") and allowed actions (e.g. jumping is allowed when standing, etc.)
+	// The actual rules are defined by the system that handles this component. This is just the container of the state name and metadata attached to the state.
+
+	struct State
+	{
+		std::string stateName;
+		std::unordered_map < std::string, std::variant<std::string, int, double>> metadata;
+	};
+
+	class StateComponent : public GenericComponent<State, 8>
 	{
 		using GenericComponent::GenericComponent;
 	};
@@ -123,6 +139,12 @@ namespace hiage
 
 	};
 
+	class PhysicsComponentFactory : public ComponentFactory
+	{
+	public:
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const override;
+	};
+
 	class BoundingBoxComponentFactory : public ComponentFactory
 	{
 	public:
@@ -143,7 +165,6 @@ namespace hiage
 		RenderableComponentFactory(const Game& game);
 		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const override;
 	};
-
 
 	class StateComponentFactory : public ComponentFactory
 	{

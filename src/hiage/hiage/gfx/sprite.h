@@ -29,8 +29,8 @@ namespace hiage
 	private:
 		int	currentFrame;	//current frame that is showing
 		double frameTimer;	//keeps track of when to go to the next frame
+		double velocitySpeedupFactor;
 
-		//C_COM_DynArray<Frame*> m_Frames;
 		std::vector<Frame*> frames;
 		std::string animationName;
 
@@ -38,10 +38,12 @@ namespace hiage
 		SpriteAnimation();
 		~SpriteAnimation();
 
-		void setName(const std::string animName) {animationName = animName;}
+		void setName(const std::string& animName) {animationName = animName;}
+		void setVelocitySpeedupFactor(double factor) { velocitySpeedupFactor = factor; }
 		const std::string& getName() const { return animationName; }
 		void addFrame(int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox);
-		void runAnimation(double timeFactor);
+
+		void runAnimation(double timeFactor, double velocity);
 		void reset() { frameTimer = 0; currentFrame = 0; }
 
 		Frame * getCurrentFrame() { return frames[currentFrame]; }
@@ -77,10 +79,10 @@ namespace hiage
 
 		void render(Renderer &renderer, const Vector2<double>& position, ObjectZ z, float rotation = 0, bool hFlip = false, bool vFlip = false, float maxSize = 0);
 
-		uint addAnimation(const std::string&);
+		uint addAnimation(const std::string&, double velocitySpeedupFactor);
 		void addFrame(uint animID, int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox);
 		const std::string& getCurrentAnimationName() const;
-		void updateAnimation(double timefactor);
+		void updateAnimation(double timefactor, double velocity);
 		void playAnimation(int anim, double speed = 1) { currentAnimation = anim; animationSpeed = speed; }
 		bool playAnimation(const std::string& anim, bool resetIfRunning = true, double speed = 1);
 
