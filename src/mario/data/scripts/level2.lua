@@ -21,7 +21,7 @@ function updateMap()
     map.player:accel(600, 1, 0)
     map.player.maxspeed = 50
   elseif map.goaltimer:reached(10) then
-    map:load("data/maps/testmap.map")
+    map:load("data/maps/testmap.json")
   end
   
 --  screen:camera(4500-4500*math.cos(map.maptimer:get()), map.player:y())

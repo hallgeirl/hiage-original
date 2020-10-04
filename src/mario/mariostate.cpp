@@ -80,7 +80,7 @@ void MarioState::init()
 	//game->scriptVM.loadScript("TestScript", "data/scripts/testscript.lua");
 	//game->scriptVM.runScript("TestScript");
 
-	//gamemap.createFromFile("data/maps/testlevel1.map");
+	//gamemap.createFromFile("data/maps/testlevel1.json");
 }
 
 

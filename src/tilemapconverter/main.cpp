@@ -82,7 +82,7 @@ int main(int, char*)
 
     for (auto map : mapsToConvert)
     {
-        m.createFromFile(map);
+        //m.createFromFile(map);
         
         std::string destFilename = map;
         replace(destFilename, ".map", ".json");

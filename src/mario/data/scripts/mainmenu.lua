@@ -44,7 +44,7 @@ function updateMap()
 
   if map.newgameshell:x() > 650 then map.selected = "NewGame" elseif map.quitshell:x() > 650 then map.selected = "Quit" end
   if map.selected == "NewGame" and map.mario:x() > 650 then
-    game.currentlevel = "data/maps/level2.map"
+    game.currentlevel = "data/maps/level2.json"
     map:load(game.currentlevel)
   end
 

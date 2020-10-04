@@ -1,5 +1,5 @@
--- game.currentlevel = "data/maps/mainmenu.map"
-game.currentlevel = "maps/mainmenu.map"
+-- game.currentlevel = "data/maps/mainmenu.json"
+game.currentlevel = "maps/mainmenu.json"
 map:load(game.currentlevel)
 map:setflag("updateoffscreen", false)
 

@@ -11,12 +11,15 @@ namespace hiage
 	*/
 
 	class ComponentProperties : public std::unordered_map<std::string, std::variant<std::string, double>>
-	{};
+	{
+	public:
+		ComponentProperties() {}
+	};
 
 	struct ComponentDescriptor
 	{
         std::string type;
-        std::unordered_map<std::string, std::variant<std::string, double>> properties; 
+		ComponentProperties properties;
 	};
 
 	struct ObjectDescriptor

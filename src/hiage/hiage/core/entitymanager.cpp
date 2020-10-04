@@ -24,7 +24,7 @@ EntityManager::~EntityManager()
 {
 }
 
-void EntityManager::createEntity(std::string objectName, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties)
+void EntityManager::createEntity(std::string objectName, const ComponentProperties& runtimeProperties)
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
 	auto& objectManager = _game.getObjectManager();
@@ -45,7 +45,7 @@ void EntityManager::createEntity(std::string objectName, const std::unordered_ma
 	_entities.push_back(std::move(ent));
 }
 
-void EntityManager::createEntity(std::string objectName, const std::unordered_map<std::string, std::unordered_map<std::string, std::variant<std::string, double>>>& componentRuntimeProperties)
+void EntityManager::createEntity(std::string objectName, const std::unordered_map<std::string, ComponentProperties>& componentRuntimeProperties)
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
 	auto& objectManager = _game.getObjectManager();
@@ -56,7 +56,7 @@ void EntityManager::createEntity(std::string objectName, const std::unordered_ma
 
 	for (auto& c : objectDescResource->resource->components)
 	{
-		std::unordered_map<std::string, std::variant<std::string, double>> runtimeProperties;
+		ComponentProperties runtimeProperties;
 		if (componentRuntimeProperties.contains(c.type))
 			runtimeProperties = componentRuntimeProperties.at(c.type);
 		

@@ -21,7 +21,7 @@ function updateMap()
     map.player:accel(600, 1, 0)
     map.player.maxspeed = 50
   elseif map.goaltimer:reached(7) then
-    map:load("data/maps/level2.map")
+    map:load("data/maps/level2.json")
   end
   
   if screen:camerax() < (screen:zoom() * screen:aspect()) then

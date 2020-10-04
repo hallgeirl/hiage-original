@@ -417,7 +417,7 @@ std::string getPropertyName(const std::string& propertyNameRoot, const std::stri
 	return propertyNameRoot + "." + propertyKey;
 }
 
-void getPropertiesRecursively(json& j, std::unordered_map<std::string, std::variant<std::string, double>>& properties, const std::string& propertyNameRoot)
+void getPropertiesRecursively(json& j, ComponentProperties& properties, const std::string& propertyNameRoot)
 {
 	for (auto& prop : j.items())
 	{
@@ -436,7 +436,7 @@ void getPropertiesRecursively(json& j, std::unordered_map<std::string, std::vari
 	}
 }
 
-void getPropertiesRecursively(json& j, std::unordered_map<std::string, std::variant<std::string, double>>& properties)
+void getPropertiesRecursively(json& j, ComponentProperties& properties)
 {
 	getPropertiesRecursively(j, properties, "");
 }

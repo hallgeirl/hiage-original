@@ -157,8 +157,8 @@ namespace hiage
 		/*!
 		Create entity
 		*/
-		void createEntity(std::string objectName, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties);
-		void createEntity(std::string objectName, const std::unordered_map<std::string, std::unordered_map<std::string, std::variant<std::string, double>>>& componentRuntimeProperties);
+		void createEntity(std::string objectName, const ComponentProperties& runtimeProperties);
+		void createEntity(std::string objectName, const std::unordered_map<std::string, ComponentProperties>& componentRuntimeProperties);
 		const std::vector<std::unique_ptr<Entity>>& getEntities();
 		void destroyAll();
 	};

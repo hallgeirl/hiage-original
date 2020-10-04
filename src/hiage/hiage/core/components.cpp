@@ -26,7 +26,7 @@ hiage::ComponentManager::~ComponentManager()
 {
 }
 
-std::unique_ptr<Component> hiage::ComponentManager::createRenderable(const std::unordered_map<std::string, std::variant<std::string, double>>& properties) const
+std::unique_ptr<Component> hiage::ComponentManager::createRenderable(const ComponentProperties& properties) const
 {
 	const auto& spriteName = get<std::string>(properties.at(std::string("sprite")));
 
@@ -43,7 +43,7 @@ std::unique_ptr<Component> hiage::ComponentManager::createRenderable(const std::
 }
 
 
-unique_ptr<Component> ComponentManager::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const
+unique_ptr<Component> ComponentManager::createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const
 {
 	auto& type = componentDescriptor.type;
 
@@ -56,7 +56,7 @@ unique_ptr<Component> ComponentManager::createComponent(const ComponentDescripto
 	throw runtime_error("Component type not found: " + type);
 }
 
-std::unique_ptr<Component> hiage::BoundingBoxComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>&) const
+std::unique_ptr<Component> hiage::BoundingBoxComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties&) const
 {
 	auto& properties = componentDescriptor.properties;
 
@@ -84,7 +84,7 @@ std::unique_ptr<Component> hiage::BoundingBoxComponentFactory::createComponent(c
 	return make_unique<BoundingBoxComponent>(poly);
 }
 
-std::unique_ptr<Component> hiage::PhysicalComponentFactory::createComponent(const ComponentDescriptor&, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const
+std::unique_ptr<Component> hiage::PhysicalComponentFactory::createComponent(const ComponentDescriptor&, const ComponentProperties& runtimeProperties) const
 {
 	double x = 0, y = 0;
 
@@ -101,7 +101,7 @@ hiage::RenderableComponentFactory::RenderableComponentFactory(const Game& game) 
 {
 }
 
-std::unique_ptr<Component> hiage::RenderableComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>&) const
+std::unique_ptr<Component> hiage::RenderableComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties&) const
 {
 	auto& properties = componentDescriptor.properties;
 
@@ -119,7 +119,7 @@ std::unique_ptr<Component> hiage::RenderableComponentFactory::createComponent(co
 	return make_unique<RenderableComponent>(*sprite->resource);
 }
 
-std::unique_ptr<Component> hiage::StateComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>&) const
+std::unique_ptr<Component> hiage::StateComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties&) const
 {
 	auto& properties = componentDescriptor.properties;
 	auto& initialState = get<std::string>(properties.at("initial"));
@@ -129,7 +129,7 @@ std::unique_ptr<Component> hiage::StateComponentFactory::createComponent(const C
 	return make_unique<StateComponent>(state);
 }
 
-std::unique_ptr<Component> hiage::PhysicsComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>&) const
+std::unique_ptr<Component> hiage::PhysicsComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties&) const
 {
 	auto& properties = componentDescriptor.properties;
 

@@ -126,14 +126,14 @@ namespace hiage
 	{
 	public:
 		virtual ~ComponentFactory() {};
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const = 0;
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const = 0;
 	};
 
 	template<typename T>
 	class GenericComponentFactory : public ComponentFactory
 	{
 	public:
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor&, const std::unordered_map<std::string, std::variant<std::string, double>>&) const override
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor&, const ComponentProperties&) const override
 		{
 			return std::make_unique<T>();
 		}
@@ -143,19 +143,19 @@ namespace hiage
 	class PhysicsComponentFactory : public ComponentFactory
 	{
 	public:
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const override;
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
 	};
 
 	class BoundingBoxComponentFactory : public ComponentFactory
 	{
 	public:
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const override;
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
 	};
 
 	class PhysicalComponentFactory : public ComponentFactory
 	{
 	public:
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const override;
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
 	};
 
 	class RenderableComponentFactory : public ComponentFactory
@@ -164,19 +164,19 @@ namespace hiage
 		const Game& game;
 	public:
 		RenderableComponentFactory(const Game& game);
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const override;
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
 	};
 
 	class StateComponentFactory : public ComponentFactory
 	{
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const override;
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
 	};
 
 	class ComponentManager
 	{
 	private: 
 		// TODO - Make it possible to register new component factory classes
-		std::unique_ptr<Component> createRenderable(const std::unordered_map<std::string, std::variant<std::string, double>>& properties) const;
+		std::unique_ptr<Component> createRenderable(const ComponentProperties& properties) const;
 		
 		std::unordered_map<std::string, std::unique_ptr<ComponentFactory>> componentFactories;
 		Game& game;
@@ -190,6 +190,6 @@ namespace hiage
 			componentFactories[componentType] = std::make_unique<T>(args...);
 		}
 
-		std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties) const;
+		std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const;
 	};
 }

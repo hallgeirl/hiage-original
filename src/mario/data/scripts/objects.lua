@@ -354,9 +354,9 @@ function updatePlayer ( o )
   if o.deathtimer:reached(4) then
     game.lives = game.lives - 1
     if game.lives == 0 then
-      map:load("data/maps/gameover.map")
+      map:load("data/maps/gameover.json")
     else
-      map:load("data/maps/deathmenu.map")
+      map:load("data/maps/deathmenu.json")
     end
   end
 

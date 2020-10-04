@@ -41,206 +41,6 @@ Map::~Map()
 const int Map::MAPVERSION = 100;
 
 
-void Map::createFromFile(std::string path, bool runScripts)
-{
-
-#pragma warning (push)
-#pragma warning (disable:26451) // arithmetic overflow warning on indexing
-	//map loading goes here
-	clog << "Loading map from file " << path << endl << flush;
-
-	int width, height, layers, tilesize;
-	long temp, version;
-	char *buffer;
-
-    //delete the old map
-    destroy();
-
-    ifstream file(_game.getResourcePath(path).c_str());
-	if (!file.is_open())
-	{
-		throw IOException(string("ERROR: Could not open file ") + path);
-	}
-
-	file.read((char*)&version, 4);
-	file.read((char*)&width, 4);
-	file.read((char*)&height, 4);
-	file.read((char*)&layers, 4);
-	file.read((char*)&tilesize, 4);
-
-	clog << "- Dimensions: " << width << "x" << height << "x" << layers << endl << flush;
-
-	//read tileset name
-	file.read((char*)&temp, 4);
-	buffer = new char[temp+1];
-	file.read(buffer, temp);
-	buffer[temp] = 0;
-
-	//create the map and set the tileset
-	_tilemap.createMap(width,height,layers,tilesize);
-
-	_tilemap.setTileset(_game.getTilesetManager().requestResourcePtr(buffer)->resource);
-	_tilesetName = buffer;
-
-	delete [] buffer;
-
-	//read background name
-	file.read((char*)&temp, 4);
-	buffer = new char[temp+1];
-	file.read(buffer, temp);
-	buffer[temp] = 0;
-    setBackground(buffer);
-    _backgroundName = buffer;
-
-	delete [] buffer;
-
-    //scripts
-    //script files to include
-
-    //number of include scripts
-    file.read((char*)&temp, 4);
-
-    //script filenames
-    for (int i = 0; i < temp; i++)
-    {
-        int temp2;
-        //length of file name
-        file.read((char*)&temp2, 4);
-        buffer = new char[temp2+1];
-        buffer[temp2] = 0;
-
-        //file name of the script to include
-        file.read(buffer, temp2);
-        _includeScripts.push_back(string(buffer));
-        delete [] buffer;
-    }
-
-    //number of init scripts
-    file.read((char*)&temp, 4);
-
-    //script functions
-    for (int i = 0; i < temp; i++)
-    {
-        int temp2;
-        //length of function name
-        file.read((char*)&temp2, 4);
-        buffer = new char[temp2+1];
-        buffer[temp2] = 0;
-
-        //function name
-        file.read(buffer, temp2);
-        _initScripts.push_back(string(buffer));
-
-        delete [] buffer;
-    }
-
-    //number of update scripts
-    file.read((char*)&temp, 4);
-
-    //script functions
-    for (int i = 0; i < temp; i++)
-    {
-        int temp2;
-        //length of function name
-        file.read((char*)&temp2, 4);
-        buffer = new char[temp2+1];
-        buffer[temp2] = 0;
-
-        //function name
-        file.read(buffer, temp2);
-        _updateScripts.push_back(string(buffer));
-
-        delete [] buffer;
-    }
-
-    //number of shutdown scripts
-    file.read((char*)&temp, 4);
-
-    //script functions
-    for (int i = 0; i < temp; i++)
-    {
-        int temp2;
-        //length of function name
-        file.read((char*)&temp2, 4);
-        buffer = new char[temp2+1];
-        buffer[temp2] = 0;
-
-        //function name
-        file.read(buffer, temp2);
-        _shutdownScripts.push_back(string(buffer));
-
-        delete [] buffer;
-    }
-
-
-
-	//load tile data
-	for (int z = 0; z < layers; z++)
-	{
-		for (int y = 0; y < height; y++)
-		{
-			for (int x = 0; x < width; x++)
-			{
-				int tile;
-				file.read((char*)&tile, 4);
-				_tilemap.setTile(x,y,z,tile);
-			}
-		}
-	}
-
-	//load objects
-	file.read((char*)&temp, 4);
-	if (temp < 0)
-	{
-		throw IOException("ERROR: Number of objects is less than 0.");
-	}
-
-
-    auto& em = _gameState.getEntityManager();
-    em.destroyAll();
-
-	for (int i = 0; i < temp; i++)
-	{
-		int buffsize;
-		double objx, objy;
-
-		//get object name
-		file.read((char*)&buffsize, 4);
-		buffer = new char[buffsize+1];
-
-		file.read(buffer, buffsize);
-		buffer[buffsize] = 0;
-
-		//position
-		file.read((char*)&objx, 8);
-		file.read((char*)&objy, 8);
-
-		clog << "Creating object " << buffer << " at (" << objx << ", " << objy << ")\n" << flush;
-        
-        em.createEntity(buffer, {
-            { "x", objx }, 
-            { "y", objy }
-        });
-
-		delete [] buffer;
-	}
-
-	//include the script files
-    for (unsigned int i = 0; i < _includeScripts.size(); i++)
-    {
-        _game.scriptVM.runFile(_includeScripts[i]);
-    }
-
-    if (runScripts)
-    {
-        //run initialization scripts
-        for (unsigned int i = 0; i < _initScripts.size(); i++)
-        {
-            _game.scriptVM.executeLine(_initScripts[i] + "()");
-        }
-    }
-#pragma warning(pop)
-}
 
 void hiage::Map::loadFromJson(std::string path, bool runScripts)
 {
@@ -308,52 +108,31 @@ void hiage::Map::loadFromJson(std::string path, bool runScripts)
         string objName = o.at("name");
 
         auto& components = o.at("components");
-        
+        unordered_map<string, ComponentProperties> componentProps;
         for (auto& c : components)
         {
-            auto type = c.at("type");
             
+            auto type = c.at("type");
+            if (c.contains("runtimeProperties"))
+            {
+                componentProps[type] = ComponentProperties();
+                for (auto& p : c.at("runtimeProperties").items())
+                {
+                    if (p.value().is_string())
+                        componentProps[type][p.key()] = (string)p.value();
+                    else if (p.value().is_number())
+                        componentProps[type][p.key()] = (double)p.value();
+                }
+            }
         }
-        /*em.createEntity(buffer, {
-            { "x", objx },
-            { "y", objy }
-            });*/
+        em.createEntity(objName, componentProps);
     }
-
-    /*
-
-	for (int i = 0; i < temp; i++)
-	{
-		int buffsize;
-		double objx, objy;
-
-		//get object name
-		file.read((char*)&buffsize, 4);
-		buffer = new char[buffsize+1];
-
-		file.read(buffer, buffsize);
-		buffer[buffsize] = 0;
-
-		//position
-		file.read((char*)&objx, 8);
-		file.read((char*)&objy, 8);
-
-		clog << "Creating object " << buffer << " at (" << objx << ", " << objy << ")\n" << flush;
-        
-        em.createEntity(buffer, {
-            { "x", objx }, 
-            { "y", objy }
-        });
-
-		delete [] buffer;
-	}
 
 	//include the script files
-    for (unsigned int i = 0; i < includeScripts.size(); i++)
+    for (auto& script : _includeScripts)
     {
-        gameInstance.scriptVM.runFile(includeScripts[i]);
+        _game.scriptVM.runFile(script);
     }
-     */
 
     if (runScripts)
     {
@@ -371,11 +150,6 @@ void Map::queueCreateMap(string path)
 {
     _mapToCreate = path;
     _createMapQueuedFlag = true;
-}
-
-void Map::createFromFile(string path)
-{
-    createFromFile(path, true);
 }
 
 //create an empty map (deletes any current content)
@@ -835,7 +609,7 @@ void Map::update(double)
     */
     if (_createMapQueuedFlag)
     {
-        createFromFile(_mapToCreate);
+        loadFromJson(_mapToCreate, true);
         _createMapQueuedFlag = false;
     }
 }

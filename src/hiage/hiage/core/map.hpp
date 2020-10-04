@@ -54,8 +54,6 @@ namespace hiage
 		//void            deleteObjectAt(double x, double y);
 
 		//map creation/loading/saving
-		void            createFromFile(std::string path);
-		void            createFromFile(std::string path, bool runScripts);
 		void            loadFromJson(std::string path, bool runScripts);
         void            createEmpty(int width, int height, int layers, int tileSize, bool onlyTiles = false);
         void            saveAsJson(std::string path);

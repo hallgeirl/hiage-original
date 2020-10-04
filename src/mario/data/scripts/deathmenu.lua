@@ -26,7 +26,7 @@ function updateMap()
     if map.currentitem == 1 then
       map:load(game.currentlevel)
     elseif map.currentitem == 2 then
-      map:load("data/maps/mainmenu.map")
+      map:load("data/maps/mainmenu.json")
     end
   end
   screen:camera(screen:zoom() * screen:aspect(), screen:zoom())
