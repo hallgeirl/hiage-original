@@ -121,7 +121,7 @@ void Display::setCamPosition(float x, float y)
 	_camY = y;
 
 	glLoadIdentity();
-	glTranslatef(-_camX,-_camY,0);
+	glTranslated(-_camX,-_camY,0);
 }
 
 void Display::setZoom(double value)
@@ -142,7 +142,7 @@ void Display::beginRender()
 	glClearColor(0.0f,0.0f,0.0f,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glTranslatef(-_camX,-_camY,0);
+	glTranslated(-_camX,-_camY,0);
 
 	_renderer.clearBuffer();
 }
@@ -170,7 +170,7 @@ void Display::setState(DisplayState state, bool value)
 }
 
 //viewport width
-float Display::getViewWidth()
+double Display::getViewWidth()
 {
 	if (_width > _height)
 	{
@@ -181,7 +181,7 @@ float Display::getViewWidth()
 }
 
 //viewport height
-float Display::getViewHeight()
+double Display::getViewHeight()
 {
 	if (_height > _width)
 	{
@@ -197,8 +197,8 @@ Vector2<double> Display::windowToViewport(Vector2<double> coord)
 	Vector2<double> newcoord;
 
 	//find the ratio between the viewport and window dimensions
-	float xRatio = _width / getViewWidth();
-	float yRatio = _height / getViewHeight();
+	double xRatio = _width / getViewWidth();
+	double yRatio = _height / getViewHeight();
 
 	if (_width > _height)
 	{
@@ -223,8 +223,8 @@ Vector2<double> Display::windowToEnvironment(Vector2<double> coord)
 
 Vector2<double> Display::environmentToWindow(Vector2<double> coord)
 {
-	float xRatio = _width / getViewWidth();
-	float yRatio = _height / getViewHeight();
+	double xRatio = _width / getViewWidth();
+	double yRatio = _height / getViewHeight();
 
 	Vector2<double> newcoord;
 

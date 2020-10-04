@@ -1,5 +1,5 @@
 /*
-File: entity.h
+File: entity.hpp
 
 Author: Hallgeir Lien
 
@@ -15,7 +15,7 @@ Description: Header for the most basic entity classes/interfaces:
 #include "../gfx/sprite.h"
 #include "typedefs.h"
 #include "../util/vector2.h"
-#include "../gfx/tilemap.h"
+#include "../gfx/tilemap.hpp"
 
 #include "components.hpp"
 #include <iostream>
@@ -31,12 +31,14 @@ namespace hiage
 	class Entity
 	{
 	private:
-		int entityId;
+		int _entityId;
 		static int entityCounter;
+		std::string _name; // The name of the object descriptor used to create this entity. This is needed in order to propely save maps.
 	public:
-		Entity();
-		//Entity(const Entity&) = delete;
+		Entity(const std::string& name);
+		Entity(const Entity&) = delete;
 		~Entity();
 		int getEntityId() const;
+		const std::string& getName() const;
 	};
 }

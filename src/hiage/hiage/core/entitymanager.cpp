@@ -9,7 +9,7 @@
 #include "entitymanager.hpp"
 #include "game.hpp"
 #include "gamestate.hpp"
-#include "entity.h"
+#include "entity.hpp"
 #include <tinyxml.h>
 
 using namespace hiage;
@@ -24,7 +24,7 @@ EntityManager::~EntityManager()
 {
 }
 
-Entity& EntityManager::createEntity(std::string objectName, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties)
+void EntityManager::createEntity(std::string objectName, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties)
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
 	auto& objectManager = game.getObjectManager();
@@ -39,13 +39,17 @@ Entity& EntityManager::createEntity(std::string objectName, const std::unordered
 		componentList.push_back(cShared);
 	}
 
-	auto ent = make_unique<Entity>();
+	auto ent = make_unique<Entity>(objectName);
 	components[ent->getEntityId()] = componentList;
 
 	entities.push_back(std::move(ent));
-
-	return *entities[entities.size() - 1];
 }
+
+const std::vector<std::unique_ptr<Entity>>& hiage::EntityManager::getEntities()
+{
+	return entities;
+}
+
 
 /*
     Font factory class

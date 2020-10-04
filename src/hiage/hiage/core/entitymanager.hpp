@@ -6,7 +6,7 @@
 */
 #pragma once
 
-#include "entity.h"
+#include "entity.hpp"
 #include "../util/exceptions.h"
 #include "../gfx/fonts.h"
 
@@ -155,9 +155,10 @@ namespace hiage
 
 
 		/*!
-
+		Create entity
 		*/
-		Entity& createEntity(std::string objectName, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties);
+		void createEntity(std::string objectName, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties);
+		const std::vector<std::unique_ptr<Entity>>& getEntities();
 	};
 
 	class FontFactory

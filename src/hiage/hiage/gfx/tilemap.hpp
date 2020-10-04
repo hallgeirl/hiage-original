@@ -45,6 +45,7 @@ namespace hiage
 		BoundingBox<double>	getTilesInRect(double left, double top, double right, double bottom) const;
 		Vector2<double> getTileCoordinates(double x, double y, int layer) const;
 		unsigned int 	getTile(uint x, uint y, uint z) const;
+		const std::vector<uint32_t>& getTilemapRaw();
 		void 			setTile(uint x, uint y, uint ulayer, uint tile);
 		Tileset * 		getTileset() const { return _tileset; }
 		int 			getTileSize() const { return _tilesize; }

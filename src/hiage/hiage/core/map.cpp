@@ -41,44 +41,6 @@ Map::~Map()
 const int Map::MAPVERSION = 100;
 
 
-//sort the objects using the quicksort algorithm
-/*std::vector<PhysicalEntity*> Map::sortObjects(const std::vector<PhysicalEntity*> & array)
-{
-    vector<PhysicalEntity*> less;
-    vector<PhysicalEntity*> greater;
-    vector<PhysicalEntity*> equal;
-
-    if (array.size() <= 1)
-    {
-        return array;
-    }
-
-    double pivot = array[(int)(array.size() / 2)]->getX();
-
-    for (size_t i = 0; i < array.size(); i++)
-    {
-        if (array[i]->getX() < pivot)
-        {
-            less.push_back(array[i]);
-        }
-        if (array[i]->getX() > pivot)
-        {
-            greater.push_back(array[i]);
-        }
-        if (array[i]->getX() == pivot)
-        {
-            equal.push_back(array[i]);
-        }
-    }
-
-    less = sortObjects(less);
-    less.insert(less.end(), equal.begin(), equal.end());
-    greater = sortObjects(greater);
-    less.insert(less.end(), greater.begin(), greater.end());
-
-    return less;
-}*/
-
 void Map::createFromFile(std::string path, bool runScripts)
 {
 
@@ -303,7 +265,7 @@ void Map::createEmpty(int width, int height, int layers, int tileSize, bool only
 void Map::saveAsJson(string path)
 {
     clog << "Saving map to file " << path.c_str() << endl << flush;
-    //string tileSet = "grassland"; //TODO: get the real tileset name
+    
     int mapWidth = tilemap.getWidth();
     int mapHeight = tilemap.getHeight();
     int mapLayers = tilemap.getLayers();
@@ -315,6 +277,35 @@ void Map::saveAsJson(string path)
         throw Exception("ERROR: Invalid map dimensions.");
     }
 
+    auto& em = gameState.getEntityManager();
+
+    vector<json> objectsToSave;
+    for (auto& e : em.getEntities())
+    {
+        auto comp = em.queryComponentGroup<PositionComponent>(e->getEntityId());
+        vector<json> componentsJson;
+
+        if (comp != nullptr)
+        {
+            json compJson = {
+                { "type", "physical" },
+                { "runtimeProperties", {
+                    { "x", comp->getData().getX() },
+                    { "y", comp->getData().getY() },
+                }}
+            };
+
+            componentsJson.push_back(compJson);
+            
+        }
+
+        json obj = {
+            { "name", e->getName() },
+            { "components", componentsJson }
+        };
+
+        objectsToSave.push_back(obj);
+    }
 
     json j = {
         { "version", MAPVERSION },
@@ -327,198 +318,31 @@ void Map::saveAsJson(string path)
             { "tilesetName", tilesetName },
             { "backgroundName", backgroundName }
         }},
-        { "scripts", { 
+        { "scripts", {
             { "include", includeScripts },
             { "init", initScripts },
             { "update", updateScripts },
             { "shutdown", shutdownScripts }
-        }}/*,
-        { "tileData", }*/
+        }},
+        { "tileData", Base64::Encode<uint32_t>(tilemap.getTilemapRaw())},
+        { "entities", objectsToSave }
     };
 
-    cout << j << endl;
-    //tile data
-    //(writing in format: x1y1l1 x2y1l1 x3y1l1 ... x1y2l1 x2y2l1 x3y2l1 ... x1y1l2 x2y1l2 x3y1l2
-  /*  clog << "Saving tilemap..." << endl;
-    for (int z = 0; z < mapLayers; z++)
+    auto jsonSource = j.dump(2);
+
+    //open file
+    ofstream file(path.c_str());
+    if (!file.is_open())
     {
-        for (int y = 0; y < mapHeight; y++)
-        {
-            for (int x = 0; x < mapWidth; x++)
-            {
-                int tile = tilemap.getTile(x, y, z);
-                file.write((char*)&tile, 4);
-            }
-        }
-    }
-    
-    //object data (object name + position, and number of objects)
-    temp = objects.size();
-
-    file.write((char*)&temp, 4);
-    for (unsigned int i = 0; i < objects.size(); i++)
-    {
-        //object name
-        string objectName = obj.getName();
-        clog << "Saving entity " << objectName << endl;
-        temp = objectName.size();
-        file.write((char*)&temp, 4);
-        file.write(objectName.c_str(), objectName.length());
-
-        //position
-        double objx = (int)obj.getX();
-        double objy = (int)obj.getY();
-
-        file.write((char*)&objx, 8);
-        file.write((char*)&objy, 8);
+        throw IOException(string("ERROR: Could not load file ") + path);
     }
 
+    file.write(jsonSource.c_str(), jsonSource.length());
 
     file.close();
-    */
+
     clog << "Map saving complete.\n" << flush;
 }
-
-/*
-void Map::saveToFile(string path)
-{
-	clog << "Saving map to file " << path.c_str() << endl << flush;
-	//string tileSet = "grassland"; //TODO: get the real tileset name
-	int mapWidth = tilemap.getWidth();
-	int mapHeight = tilemap.getHeight();
-	int mapLayers = tilemap.getLayers();
-	int temp;	//used to store string lengths etc.
-	int tileSize = tilemap.getTileSize();
-
-	//check for valid dimensions
-	if (mapWidth <= 0 || mapHeight <= 0 || mapLayers <= 0)
-	{
-		throw Exception("ERROR: Invalid map dimensions.");
-	}
-
-	//open file
-	ofstream file(path.c_str());
-	if (!file.is_open())
-	{
-		throw IOException(string("ERROR: Could not load file ") + path);
-	}
-
-	//store version of the map
-	file.write((char*)&MAPVERSION, 4);
-
-	//write dimensions
-	file.write((char*)&mapWidth, 4);
-	file.write((char*)&mapHeight, 4);
-	file.write((char*)&mapLayers, 4);
-	file.write((char*)&tileSize, 4);
-
-	//tileset name
-	temp = tilesetName.length();
-	file.write((char*)&temp, 4);
-	file.write(tilesetName.c_str(), tilesetName.length());
-
-	//background name
-	temp = backgroundName.length();
-	file.write((char*)&temp, 4);
-	file.write(backgroundName.c_str(), backgroundName.length());
-
-    //scripts
-    //script files to include
-    clog << "Saving script information..." << endl;
-    temp = includeScripts.size();
-    file.write((char*)&temp, 4);
-    for (int i = 0; i < temp; i++)
-    {
-        int temp2 = includeScripts[i].length();
-        file.write((char*)&temp2, 4);
-
-        file.write(includeScripts[i].c_str(), temp2);
-        clog << includeScripts[i].c_str() << endl;
-    }
-
-    //init scripts
-    temp = initScripts.size();
-    file.write((char*)&temp, 4);
-    for (int i = 0; i < temp; i++)
-    {
-        int temp2 = initScripts[i].length();
-        file.write((char*)&temp2, 4);
-
-        file.write(initScripts[i].c_str(), temp2);
-        clog << initScripts[i].c_str() << endl;
-    }
-
-    //update scripts
-    temp = updateScripts.size();
-    file.write((char*)&temp, 4);
-    for (int i = 0; i < temp; i++)
-    {
-        int temp2 = updateScripts[i].length();
-        file.write((char*)&temp2, 4);
-
-        file.write(updateScripts[i].c_str(), temp2);
-        clog << updateScripts[i].c_str() << endl;
-    }
-
-    //shutdown scripts
-    temp = shutdownScripts.size();
-    file.write((char*)&temp, 4);
-    for (int i = 0; i < temp; i++)
-    {
-        int temp2 = shutdownScripts[i].length();
-        file.write((char*)&temp2, 4);
-
-        file.write(shutdownScripts[i].c_str(), temp2);
-        clog << shutdownScripts[i].c_str() << endl;
-    }
-
-	//tile data
-	//(writing in format: x1y1l1 x2y1l1 x3y1l1 ... x1y2l1 x2y2l1 x3y2l1 ... x1y1l2 x2y1l2 x3y1l2
-	clog << "Saving tilemap..." << endl;
-	for (int z = 0; z < mapLayers; z++)
-	{
-		for (int y = 0; y < mapHeight; y++)
-		{
-			for (int x = 0; x < mapWidth; x++)
-			{
-				int tile = tilemap.getTile(x, y, z);
-				if (tilemap.getTile(x,y,z) < 0)
-				{
-					throw Exception(string("ERROR: Tile at (") + x + string(", ") + y + string(",") + z + ") is negative.");
-				}
-				file.write((char*)&tile, 4);
-			}
-		}
-	}
-
-	//object data (object name + position, and number of objects)
-	temp = objects.size();
-
-	file.write((char*)&temp, 4);
-	for (unsigned int i = 0; i < objects.size(); i++)
-	{
-		//object name
-		string objectName = obj.getName();
-		clog << "Saving entity " << objectName << endl;
-		temp = objectName.size();
-		file.write((char*)&temp, 4);
-		file.write(objectName.c_str(), objectName.length());
-
-		//position
-		double objx = (int)obj.getX();
-		double objy = (int)obj.getY();
-
-		file.write((char*)&objx, 8);
-		file.write((char*)&objy, 8);
-	}
-
-
-	file.close();
-
-	clog << "Map saving complete.\n" << flush;
-}*/
-
-
 
 //destroy the map content
 void Map::destroy()

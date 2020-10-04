@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 
+#include <base64/base64.hpp>
 
 using namespace hiage;
 using namespace std;
@@ -52,16 +53,39 @@ public:
 
 };
 
+
 int main(int, char*)
 {
+    std::vector<uint32_t> v;
+
+    v.push_back(123);
+    v.push_back(12938458);
+    
+    string result = macaron::Base64::Encode(v);
+
     KeyBindings dummyKeyBindings;
 
     DummyGame g(dummyKeyBindings);
     g.initialize(1024, 768, false);
     DummyGamestate gs(g);
     Map m(g, gs);
-    m.createFromFile("maps/mainmenu.map");
+
+    vector<string> mapsToConvert = {
+        "maps/deathmenu",
+        "maps/gameover.map",
+        "maps/level1.map",
+        "maps/level2.map",
+        "maps/mainmenu.map",
+        "maps/testmap.map"
+    };
+
+    for (auto map : mapsToConvert)
+    {
+        m.createFromFile(map);
+        auto dest = g.getResourcePath(map) + ".json";
+        m.saveAsJson(dest);
+    }
     
-    m.saveAsJson("foo");
+
     return 0;
 }

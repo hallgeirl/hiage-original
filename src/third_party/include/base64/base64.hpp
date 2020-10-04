@@ -29,10 +29,42 @@
 
 namespace macaron {
 
+    inline bool is_big_endian()
+    {
+        union {
+            uint32_t i;
+            char c[4];
+        } the_int = { 0x01020304 };
+
+        return the_int.c[0] == 1;
+    }
+
+    template<typename T>
+    inline unsigned char getByteAt(size_t i, const std::vector<T>& data)
+    {
+        static bool isBigEndian = is_big_endian();
+
+        size_t dataIndex = i / sizeof(T);
+        size_t byteIndex = i - dataIndex * sizeof(T);
+        
+        // Reverse byte order for big endian systems
+        if (isBigEndian)
+            byteIndex = sizeof(T) - byteIndex - 1;
+
+        size_t shift = byteIndex * 8;
+
+        T bitmask = 0xFF;
+        bitmask <<= shift;
+
+        unsigned char val = (unsigned char)((data[dataIndex] & bitmask) >> shift);
+
+        return val;
+    }
+
     class Base64 {
     public:
-
-        static std::string Encode(const std::string data) {
+        template <typename T>
+        static std::string Encode(const std::vector<T>& data) {
             static constexpr char sEncodingTable[] = {
               'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
               'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -44,27 +76,30 @@ namespace macaron {
               '4', '5', '6', '7', '8', '9', '+', '/'
             };
 
-            size_t in_len = data.size();
+            if (data.size() == 0)
+                return "";
+
+            size_t in_len = data.size() * sizeof(T);
             size_t out_len = 4 * ((in_len + 2) / 3);
             std::string ret(out_len, '\0');
             size_t i;
             char* p = const_cast<char*>(ret.c_str());
 
             for (i = 0; i < in_len - 2; i += 3) {
-                *p++ = sEncodingTable[(data[i] >> 2) & 0x3F];
-                *p++ = sEncodingTable[((data[i] & 0x3) << 4) | ((int)(data[i + 1] & 0xF0) >> 4)];
-                *p++ = sEncodingTable[((data[i + 1] & 0xF) << 2) | ((int)(data[i + 2] & 0xC0) >> 6)];
-                *p++ = sEncodingTable[data[i + 2] & 0x3F];
+                *p++ = sEncodingTable[(getByteAt(i, data) >> 2) & 0x3F];
+                *p++ = sEncodingTable[((getByteAt(i, data) & 0x3) << 4) | ((int)(getByteAt(i + 1, data) & 0xF0) >> 4)];
+                *p++ = sEncodingTable[((getByteAt(i + 1, data) & 0xF) << 2) | ((int)(getByteAt(i + 2, data) & 0xC0) >> 6)];
+                *p++ = sEncodingTable[getByteAt(i + 2, data) & 0x3F];
             }
             if (i < in_len) {
-                *p++ = sEncodingTable[(data[i] >> 2) & 0x3F];
+                *p++ = sEncodingTable[(getByteAt(i, data) >> 2) & 0x3F];
                 if (i == (in_len - 1)) {
-                    *p++ = sEncodingTable[((data[i] & 0x3) << 4)];
+                    *p++ = sEncodingTable[((getByteAt(i, data) & 0x3) << 4)];
                     *p++ = '=';
                 }
                 else {
-                    *p++ = sEncodingTable[((data[i] & 0x3) << 4) | ((int)(data[i + 1] & 0xF0) >> 4)];
-                    *p++ = sEncodingTable[((data[i + 1] & 0xF) << 2)];
+                    *p++ = sEncodingTable[((getByteAt(i, data) & 0x3) << 4) | ((int)(getByteAt(i + 1, data) & 0xF0) >> 4)];
+                    *p++ = sEncodingTable[((getByteAt(i + 1, data) & 0xF) << 2)];
                 }
                 *p++ = '=';
             }

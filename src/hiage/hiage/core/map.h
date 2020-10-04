@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 
-#include "entity.h"
-#include "../gfx/tilemap.h"
+#include "entity.hpp"
+#include "../gfx/tilemap.hpp"
 #include "game.hpp"
 
 namespace hiage
@@ -38,11 +38,8 @@ namespace hiage
                                                                 //that would mess up stuff when objects are destroyed
                                                                 //while their scripts are running.
                                                                 //So we queue the creation for after the scripts.
-    private:
-        //sort objects based on X-position
-//        std::vector<PhysicalEntity*>    sortObjects(const std::vector<PhysicalEntity*> & array);
 
-    public:
+	public:
         //scripts that should be run during loading, updating or shutdown of map
         std::vector<std::string>        includeScripts;     //script files to run before any other scripts are run
 		std::vector<std::string>        initScripts;

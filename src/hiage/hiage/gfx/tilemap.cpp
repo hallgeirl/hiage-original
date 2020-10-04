@@ -1,3 +1,6 @@
+#include "tilemap.hpp"
+#include "../util/exceptions.h"
+
 #ifdef WIN32
 #include <windows.h>
 #endif
@@ -6,9 +9,6 @@
 
 #include <GL/gl.h>
 #include <cmath>
-#include "tilemap.h"
-#include "../util/exceptions.h"
-
 
 using namespace hiage;
 using namespace std;
@@ -131,6 +131,11 @@ unsigned int Tilemap::getTile(uint x, uint y, uint z) const
 	}
 
 	return _tilemap[(size_t)z * _height * _width + (size_t)y * _width + (size_t)x];
+}
+
+const std::vector<uint32_t>& hiage::Tilemap::getTilemapRaw()
+{
+	return _tilemap;
 }
 
 void Tilemap::destroy()

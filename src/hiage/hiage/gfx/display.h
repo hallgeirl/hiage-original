@@ -28,8 +28,8 @@ namespace hiage
 
 		//zoom value (base clip range)
 		double _zoom;
-		float _camX, _camY;
-		float _aspect;
+		double _camX, _camY;
+		double _aspect;
 		int _width, _height;
 
 		//bitmask containing the display states
@@ -55,15 +55,15 @@ namespace hiage
 		double getZoom() { return _zoom; }
 
 		void setCamPosition(float x, float y);
-		float getCamX() { return _camX; }
-		float getCamY() { return _camY; }
-		float getAspectRatio() { return _aspect; }
+		double getCamX() { return _camX; }
+		double getCamY() { return _camY; }
+		double getAspectRatio() { return _aspect; }
 
 		//window dimensions
 		int getWidth() { return _width; }
 		int getHeight() { return _height; }
-		float getViewWidth();
-		float getViewHeight();
+		double getViewWidth();
+		double getViewHeight();
 
 		Renderer& getRenderer() { return _renderer; }
 
