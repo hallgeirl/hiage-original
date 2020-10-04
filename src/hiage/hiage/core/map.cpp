@@ -270,6 +270,7 @@ void hiage::Map::loadFromJson(std::string path, bool runScripts)
 
     _tilemap.createMap(width, height, layers, tileSize);
 
+    // Visuals (tileset+background)
     auto& visual = j.at("visual");
     string tilesetName = visual.at("tilesetName");
     string backgroundName = visual.at("backgroundName");
@@ -277,58 +278,49 @@ void hiage::Map::loadFromJson(std::string path, bool runScripts)
     _tilemap.setTileset(_game.getTilesetManager().requestResourcePtr(tilesetName)->resource);
     setBackground(backgroundName);
 
+    // Load scripts
     auto& scripts = j.at("scripts");
 
     for (string script : scripts.at("include"))
-    {
         _includeScripts.push_back(script);
-    }
 
     for (string script : scripts.at("init"))
-    {
         _initScripts.push_back(script);
-    }
 
     for (string script : scripts.at("update"))
-    {
         _updateScripts.push_back(script);
-    }
 
     for (string script : scripts.at("shutdown"))
-    {
         _updateScripts.push_back(script);
+
+    // Load tile data
+    string tileDatab64 = j.at("tileData");
+    _tilemap.importMap(Base64::Decode<uint32_t>(tileDatab64));
+
+
+    // Load objects
+    auto& objects = j.at("entities");
+
+    auto& em = _gameState.getEntityManager();
+
+    for (auto& o : objects)
+    {
+        string objName = o.at("name");
+
+        auto& components = o.at("components");
+        
+        for (auto& c : components)
+        {
+            auto type = c.at("type");
+            
+        }
+        /*em.createEntity(buffer, {
+            { "x", objx },
+            { "y", objy }
+            });*/
     }
 
-    string tileDatab64 = j.at("tileData");
-    
-    //Base64::Decode(tileDatab64);
-
     /*
-
-	//load tile data
-	for (int z = 0; z < layers; z++)
-	{
-		for (int y = 0; y < height; y++)
-		{
-			for (int x = 0; x < width; x++)
-			{
-				int tile;
-				file.read((char*)&tile, 4);
-				tilemap.setTile(x,y,z,tile);
-			}
-		}
-	}
-
-	//load objects
-	file.read((char*)&temp, 4);
-	if (temp < 0)
-	{
-		throw IOException("ERROR: Number of objects is less than 0.");
-	}
-
-
-    auto& em = gameState.getEntityManager();
-    em.destroyAll();
 
 	for (int i = 0; i < temp; i++)
 	{
@@ -485,6 +477,8 @@ void Map::destroy()
 {
     _tilemap.destroy();
 
+    auto& em = _gameState.getEntityManager();
+    em.destroyAll();
     _includeScripts.clear();
     _initScripts.clear();
     _updateScripts.clear();

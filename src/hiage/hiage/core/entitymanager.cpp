@@ -15,7 +15,7 @@
 using namespace hiage;
 using namespace std;
 
-EntityManager::EntityManager(const Game& game, const GameState& gameState) : game(game), gameState(gameState)
+EntityManager::EntityManager(const Game& game, const GameState& gameState) : _game(game), _gameState(gameState)
 {
 
 }
@@ -27,11 +27,11 @@ EntityManager::~EntityManager()
 void EntityManager::createEntity(std::string objectName, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties)
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
-	auto& objectManager = game.getObjectManager();
+	auto& objectManager = _game.getObjectManager();
 	auto& objectDescResource = objectManager.requestResourcePtr(objectName);
 
 	vector<shared_ptr<Component>> componentList;
-	auto& componentFactory = gameState.getComponentManager();
+	auto& componentFactory = _gameState.getComponentManager();
 
 	for (auto& c : objectDescResource->resource->components)
 	{
@@ -40,20 +40,44 @@ void EntityManager::createEntity(std::string objectName, const std::unordered_ma
 	}
 
 	auto ent = make_unique<Entity>(objectName);
-	components[ent->getEntityId()] = componentList;
+	_components[ent->getEntityId()] = componentList;
 
-	entities.push_back(std::move(ent));
+	_entities.push_back(std::move(ent));
 }
 
+void EntityManager::createEntity(std::string objectName, const std::unordered_map<std::string, std::unordered_map<std::string, std::variant<std::string, double>>>& componentRuntimeProperties)
+{
+	std::clog << "Creating object " << objectName << "..." << std::endl;
+	auto& objectManager = _game.getObjectManager();
+	auto& objectDescResource = objectManager.requestResourcePtr(objectName);
+
+	vector<shared_ptr<Component>> componentList;
+	auto& componentFactory = _gameState.getComponentManager();
+
+	for (auto& c : objectDescResource->resource->components)
+	{
+		std::unordered_map<std::string, std::variant<std::string, double>> runtimeProperties;
+		if (componentRuntimeProperties.contains(c.type))
+			runtimeProperties = componentRuntimeProperties.at(c.type);
+		
+		shared_ptr<Component> cShared = componentFactory.createComponent(c, runtimeProperties);
+		componentList.push_back(cShared);
+	}
+
+	auto ent = make_unique<Entity>(objectName);
+	_components[ent->getEntityId()] = componentList;
+
+	_entities.push_back(std::move(ent));
+}
 const std::vector<std::unique_ptr<Entity>>& hiage::EntityManager::getEntities()
 {
-	return entities;
+	return _entities;
 }
 
 void hiage::EntityManager::destroyAll()
 {
-	entities.clear();
-	components.clear();
+	_entities.clear();
+	_components.clear();
 }
 
 

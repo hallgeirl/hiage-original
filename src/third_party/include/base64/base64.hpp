@@ -61,6 +61,26 @@ namespace macaron {
         return val;
     }
 
+    template<typename T>
+    inline void setByteAt(size_t i_, std::vector<T>& data, unsigned char byteVal)
+    {
+        static bool isBigEndian = is_big_endian();
+
+        size_t dataIndex = i_ / sizeof(T);
+        size_t byteIndex = i_ - dataIndex * sizeof(T);
+
+        // Reverse byte order for big endian systems
+        if (isBigEndian)
+            byteIndex = sizeof(T) - byteIndex - 1;
+
+        size_t shift = byteIndex * 8;
+
+        T bitmask = byteVal;
+        bitmask <<= shift;
+
+        data[dataIndex] |= bitmask;
+    }
+
     class Base64 {
     public:
         template <typename T>
@@ -107,7 +127,9 @@ namespace macaron {
             return ret;
         }
 
-        static std::string Decode(const std::string& input, std::string& out) {
+
+        template <typename T>
+        static std::vector<T> Decode(const std::string& input) {
             static constexpr unsigned char kDecodingTable[] = {
               64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
               64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
@@ -127,14 +149,15 @@ namespace macaron {
               64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64
             };
 
+            std::vector<T> out;
             size_t in_len = input.size();
-            if (in_len % 4 != 0) return "Input data size is not a multiple of 4";
+            if (in_len % 4 != 0) throw runtime_error("Input data size is not a multiple of 4");
 
             size_t out_len = in_len / 4 * 3;
             if (input[in_len - 1] == '=') out_len--;
             if (input[in_len - 2] == '=') out_len--;
 
-            out.resize(out_len);
+            out.resize(out_len / 4);
 
             for (size_t i = 0, j = 0; i < in_len;) {
                 uint32_t a = input[i] == '=' ? 0 & i++ : kDecodingTable[static_cast<int>(input[i++])];
@@ -144,12 +167,12 @@ namespace macaron {
 
                 uint32_t triple = (a << 3 * 6) + (b << 2 * 6) + (c << 1 * 6) + (d << 0 * 6);
 
-                if (j < out_len) out[j++] = (triple >> 2 * 8) & 0xFF;
-                if (j < out_len) out[j++] = (triple >> 1 * 8) & 0xFF;
-                if (j < out_len) out[j++] = (triple >> 0 * 8) & 0xFF;
+                if (j < out_len) setByteAt(j++, out, (triple >> 2 * 8) & 0xFF);
+                if (j < out_len) setByteAt(j++, out, (triple >> 1 * 8) & 0xFF);
+                if (j < out_len) setByteAt(j++, out, (triple >> 0 * 8) & 0xFF);
             }
 
-            return "";
+            return out;
         }
 
     };

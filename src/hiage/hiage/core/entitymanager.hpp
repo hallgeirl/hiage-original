@@ -25,10 +25,10 @@ namespace hiage
 	class EntityManager
 	{
 	private:
-		std::vector<std::unique_ptr<Entity>> entities;
-		std::map<int, std::vector<std::shared_ptr<Component>>> components; // Entity ID -> component list
-		const Game& game;
-		const GameState& gameState;
+		std::vector<std::unique_ptr<Entity>> _entities;
+		std::map<int, std::vector<std::shared_ptr<Component>>> _components; // Entity ID -> component list
+		const Game& _game;
+		const GameState& _gameState;
 
 		/*
 			Component query helpers.
@@ -94,7 +94,7 @@ namespace hiage
 		{
 			// TODO - Use archetypes here later - for now, just use this naive implementation
 
-			auto& componentList = components[entityId];
+			auto& componentList = _components[entityId];
 			for (auto& c : componentList)
 			{
 				if (c->getTypeId() == T::TYPEID)
@@ -110,7 +110,7 @@ namespace hiage
 			// TODO - Use archetypes here later - for now, just use this naive implementation
 
 			std::vector<std::tuple<int, std::shared_ptr<T>>> results;
-			for (auto& e : entities)
+			for (auto& e : _entities)
 			{
 				auto& res = queryComponentGroup<T>(e->getEntityId());
 				if (res != nullptr)
@@ -126,7 +126,7 @@ namespace hiage
 			// TODO - Use archetypes here later - for now, just use this naive implementation
 			// This is quite ugly - but will have to do for now
 
-			auto& componentList = components[entityId];
+			auto& componentList = _components[entityId];
 			auto it = componentList.begin();
 			auto res = queryComponentGroupCore<T, TNext, TRest...>(it, componentList);
 			if (it != componentList.end()) // If we haven't iterated to end(), we found one component of each type.
@@ -142,7 +142,7 @@ namespace hiage
 			// This is quite ugly - but will have to do for now
 
 			std::vector<std::tuple<int, std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>> results;
-			for (auto& e : entities)
+			for (auto& e : _entities)
 			{
 				auto res = queryComponentGroup<T, TNext, TRest...>(e->getEntityId());
 
@@ -158,6 +158,7 @@ namespace hiage
 		Create entity
 		*/
 		void createEntity(std::string objectName, const std::unordered_map<std::string, std::variant<std::string, double>>& runtimeProperties);
+		void createEntity(std::string objectName, const std::unordered_map<std::string, std::unordered_map<std::string, std::variant<std::string, double>>>& componentRuntimeProperties);
 		const std::vector<std::unique_ptr<Entity>>& getEntities();
 		void destroyAll();
 	};

@@ -10,6 +10,9 @@ namespace hiage
 	Data structures to describe objects and other resources, acting as "blueprints" for creating them.
 	*/
 
+	class ComponentProperties : public std::unordered_map<std::string, std::variant<std::string, double>>
+	{};
+
 	struct ComponentDescriptor
 	{
         std::string type;

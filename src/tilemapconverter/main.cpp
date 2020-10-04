@@ -64,13 +64,6 @@ bool replace(std::string& str, const std::string& from, const std::string& to) {
 
 int main(int, char*)
 {
-    std::vector<uint32_t> v;
-
-    v.push_back(123);
-    v.push_back(12938458);
-    
-    string result = macaron::Base64::Encode(v);
-
     KeyBindings dummyKeyBindings;
 
     DummyGame g(dummyKeyBindings);
@@ -96,9 +89,9 @@ int main(int, char*)
         assert(map != destFilename);
 
         auto dest = g.getResourcePath(destFilename);
-        // m.saveAsJson(dest);
+        // Commented out to avoid accidental overwriting of map files
+        // m.saveAsJson(dest); 
     }
     
-
     return 0;
 }
