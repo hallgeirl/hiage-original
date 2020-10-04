@@ -70,7 +70,7 @@ namespace hiage
 		void            createFromFile(std::string path);
 		void            createFromFile(std::string path, bool runScripts);
         void            createEmpty(int width, int height, int layers, int tileSize, bool onlyTiles = false);
-        void            saveToFile(std::string path);
+        void            saveAsJson(std::string path);
         void            destroy();
 
         void            queueCreateMap(std::string path);

@@ -62,7 +62,7 @@ namespace hiage
 			onInit is called after the game object has been initialized.
 			This particular function MUST be inherited and implemented by the user of this engine.
 		*/
-		virtual void onInit() {};
+		virtual void onInit() = 0;
 
 		/*!
 			Loads all the XML resources in the specified directory of the specified resource type. It works recursively.

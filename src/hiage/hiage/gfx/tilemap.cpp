@@ -20,7 +20,7 @@ Tilemap::~Tilemap()
 
 Tilemap::Tilemap() : _created(false), _tilesize(32)
 {
-	_tilemap = 0;
+	_tilemap.clear();
 	_tileset = 0;
 	_width = 0;
 	_height = 0;
@@ -38,7 +38,7 @@ Tilemap::Tilemap(int width, int height, int layers, int tilesize) : _created(fal
 
 void Tilemap::createMap(int width, int height, int layers, int tilesize)
 {
-	if (_tilemap)
+	if (_created)
 	{
 		destroy();
 	}
@@ -47,69 +47,27 @@ void Tilemap::createMap(int width, int height, int layers, int tilesize)
 	this->_height = height;
 	this->_layers = layers;
 	this->_tilesize = tilesize;
-	int x,y,z;
-
-    cout << "CREATING MAP WITH " << width << " " << height << " " << layers << endl;
+    
+	cout << "CREATING MAP WITH " << width << " " << height << " " << layers << endl;
 	clog << "Allocating memory for tile map...\n" << flush;
 
 	//allocate memory for the tilemap
-	if ((_tilemap = new unsigned int**[width]) == NULL)
-	{
-		throw Exception("ERROR: Could not allocate memory for tile map.");
-	}
-
-	for (x = 0; x < width; x++)
-	{
-		if ((_tilemap[x] = new unsigned int*[height]) == NULL)
-		{
-			throw Exception("ERROR: Could not allocate memory for tile map.");
-		}
-	}
-
-	for (x = 0; x < width; x++)
-	{
-		for (y = 0; y < height; y++)
-		{
-			if ((_tilemap[x][y] = new unsigned int[layers]) == NULL)
-			{
-				throw Exception("ERROR: Could not allocate memory for tile map.");
-			}
-		}
-	}
-
-	for (x = 0; x < width; x++)
-	{
-		for (y = 0; y < height; y++)
-		{
-			for (z = 0; z < layers; z++)
-			{
-				_tilemap[x][y][z] = 0;
-			}
-		}
-	}
+	_tilemap.resize((size_t)width * height * layers, 0);
 
 	clog << "OK: Tilemap allocated successfully.\n" << flush;
 	_created = true;
 }
 
 //import a map
-void Tilemap::importMap(unsigned int *** data)
+void Tilemap::importMap(const std::vector<uint32_t>& data)
 {
-	uint x,y,z;
-
-	clog << "Importing map...\n" << flush;
-
-	for (x = 0; x < _width; x++)
+	if (data.size() != _tilemap.size())
 	{
-		for (y = 0; y < _height; y++)
-		{
-			for (z = 0; z < _layers; z++)
-			{
-				_tilemap[x][y][z] = data[x][y][z];
-			}
-		}
+		throw runtime_error("Tilemap::import: Mismatched sizes!");
 	}
+	_tilemap = data;
 }
+
 
 BoundingBox<double> Tilemap::getTilesInRect(double left, double top, double right, double bottom) const
 {
@@ -172,37 +130,18 @@ unsigned int Tilemap::getTile(uint x, uint y, uint z) const
 		return 0;
 	}
 
-	return _tilemap[x][y][z];
+	return _tilemap[(size_t)z * _height * _width + (size_t)y * _width + (size_t)x];
 }
 
 void Tilemap::destroy()
 {
-	uint x,y;
-
     cout << "DESTROYING MAP WITH " << _width << " " << _height << " " << _layers << endl;
-	if (!_tilemap)
-	{
-		return;
-	}
-
-	for (x = 0; x < _width; x++)
-	{
-		for (y = 0; y < _height; y++)
-		{
-		    if (_layers > 1)
-                delete [] _tilemap[x][y];
-            else
-                delete _tilemap[x][y];
-		}
-		delete [] _tilemap[x];
-	}
-
+	
 	_width = 0;
 	_height = 0;
 	_layers = 0;
-	_tilemap = 0;
 
-	delete [] _tilemap;
+	_tilemap.clear();
 }
 
 void Tilemap::render(Renderer &renderer, double camx, double camy, double zoom, double aspect, ObjectZ depth, int layer)
@@ -267,9 +206,9 @@ void Tilemap::render(Renderer &renderer, double camx, double camy, double zoom, 
 	{
 		for (y = (uint)ymin; y < (uint)ymax; y++)
 		{
-		    if (_tilemap[x][y][layer] == 0)
+		    if (_tilemap[(size_t)layer * _height * _width + (size_t)y * _width + x] == 0)
                 continue;
-            renderer.beginRender(depth, _tileset->getTile(_tilemap[x][y][layer]).texture);
+            renderer.beginRender(depth, _tileset->getTile(_tilemap[(size_t)layer * _height * _width + (size_t)y * _width + x]).texture);
 			renderer.addVertex((double)x * _tilesize, (double)y * _tilesize + _tilesize, 0, 0);
 			renderer.addVertex((double)x * _tilesize + _tilesize, (double)y * _tilesize + _tilesize, 1, 0);
 			renderer.addVertex((double)x * _tilesize + _tilesize, (double)y * _tilesize, 1, 1);
@@ -303,7 +242,7 @@ void Tilemap::setTile(uint x, uint y, uint z, uint tile)
 		//if ((tile >= 0) && (tile < tileset->getTileCount()))
 		if (tile >= 0)
 		{
-			_tilemap[x][y][z] = tile;
+			_tilemap[z * _height * _width + y * _width + x] = tile;
 		}
 	}
 }

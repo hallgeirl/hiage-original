@@ -6,15 +6,21 @@
 	Description:
 */
 
-#include <iostream>
-#include <fstream>
 #include "map.h"
 #include "entitymanager.hpp"
-
 #include "../lua-includes.h"
+
+#include <base64/base64.hpp>
+#include <json/json.hpp>
+
+#include <iostream>
+#include <fstream>
 
 using namespace hiage;
 using namespace std;
+
+using json = nlohmann::json;
+using Base64 = macaron::Base64;
 
 Map::Map(Game &game, GameState& gameState) : gameInstance(game), gameState(gameState), tilemap()
 {
@@ -294,10 +300,86 @@ void Map::createEmpty(int width, int height, int layers, int tileSize, bool only
     tilemap.createMap(width, height, layers, tileSize);
 }
 
+void Map::saveAsJson(string path)
+{
+    clog << "Saving map to file " << path.c_str() << endl << flush;
+    //string tileSet = "grassland"; //TODO: get the real tileset name
+    int mapWidth = tilemap.getWidth();
+    int mapHeight = tilemap.getHeight();
+    int mapLayers = tilemap.getLayers();
+    int tileSize = tilemap.getTileSize();
+
+    //check for valid dimensions
+    if (mapWidth <= 0 || mapHeight <= 0 || mapLayers <= 0)
+    {
+        throw Exception("ERROR: Invalid map dimensions.");
+    }
+
+
+    json j = {
+        { "version", MAPVERSION },
+        { "dimensions", {
+            { "width", mapWidth },
+            { "height", mapHeight },
+            { "tileSize", tileSize }
+        }},
+        { "visual", {
+            { "tilesetName", tilesetName },
+            { "backgroundName", backgroundName }
+        }},
+        { "scripts", { 
+            { "include", includeScripts },
+            { "init", initScripts },
+            { "update", updateScripts },
+            { "shutdown", shutdownScripts }
+        }}/*,
+        { "tileData", }*/
+    };
+
+    cout << j << endl;
+    //tile data
+    //(writing in format: x1y1l1 x2y1l1 x3y1l1 ... x1y2l1 x2y2l1 x3y2l1 ... x1y1l2 x2y1l2 x3y1l2
+  /*  clog << "Saving tilemap..." << endl;
+    for (int z = 0; z < mapLayers; z++)
+    {
+        for (int y = 0; y < mapHeight; y++)
+        {
+            for (int x = 0; x < mapWidth; x++)
+            {
+                int tile = tilemap.getTile(x, y, z);
+                file.write((char*)&tile, 4);
+            }
+        }
+    }
+    
+    //object data (object name + position, and number of objects)
+    temp = objects.size();
+
+    file.write((char*)&temp, 4);
+    for (unsigned int i = 0; i < objects.size(); i++)
+    {
+        //object name
+        string objectName = obj.getName();
+        clog << "Saving entity " << objectName << endl;
+        temp = objectName.size();
+        file.write((char*)&temp, 4);
+        file.write(objectName.c_str(), objectName.length());
+
+        //position
+        double objx = (int)obj.getX();
+        double objy = (int)obj.getY();
+
+        file.write((char*)&objx, 8);
+        file.write((char*)&objy, 8);
+    }
+
+
+    file.close();
+    */
+    clog << "Map saving complete.\n" << flush;
+}
+
 /*
-
-TODO - reimplement later
-
 void Map::saveToFile(string path)
 {
 	clog << "Saving map to file " << path.c_str() << endl << flush;

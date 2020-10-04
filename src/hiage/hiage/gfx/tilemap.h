@@ -8,6 +8,8 @@
 #include "../core/typedefs.h"
 #include "../util/vector2.h"
 
+#include <cstdint>
+
 namespace hiage
 {
 	//class for the tilemap
@@ -21,7 +23,8 @@ namespace hiage
 		uint _tilesize;
 		bool _created;
 
-		unsigned int ***_tilemap;
+		// Tiles stored in row major order
+		std::vector<uint32_t> _tilemap;
 
 		//texture list
 		Tileset * _tileset;
@@ -29,6 +32,7 @@ namespace hiage
 	public:
 		Tilemap();
 		Tilemap(int width, int height, int layers, int tilesize);
+		Tilemap(const Tilemap&) = delete;
 		~Tilemap();
 
 		void createMap(int width, int height, int layers, int tilesize);
@@ -36,7 +40,7 @@ namespace hiage
 		void destroy();
 
 		void render(Renderer &renderer, double camx, double camy, double zoom, double aspect, ObjectZ depth, int layer);
-		void importMap(unsigned int *** data);
+		void importMap(const std::vector<uint32_t>& data);
 
 		BoundingBox<double>	getTilesInRect(double left, double top, double right, double bottom) const;
 		Vector2<double> getTileCoordinates(double x, double y, int layer) const;
@@ -48,7 +52,5 @@ namespace hiage
 		int 			getHeight();
 		int				getLayers();
 		bool			isLoaded() const;
-
-
 	};
 }
