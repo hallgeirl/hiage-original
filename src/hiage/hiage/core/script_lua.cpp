@@ -11,7 +11,7 @@
 #include "../util/exceptions.h"
 
 //includes used to register the classes
-#include "map.h"
+#include "map.hpp"
 #include "entity.hpp"
 #include "game.hpp"
 #include "../util/timer.h"

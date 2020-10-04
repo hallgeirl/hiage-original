@@ -50,6 +50,12 @@ const std::vector<std::unique_ptr<Entity>>& hiage::EntityManager::getEntities()
 	return entities;
 }
 
+void hiage::EntityManager::destroyAll()
+{
+	entities.clear();
+	components.clear();
+}
+
 
 /*
     Font factory class

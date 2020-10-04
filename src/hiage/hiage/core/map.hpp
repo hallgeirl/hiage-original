@@ -22,43 +22,33 @@ namespace hiage
 	private:
         static const int MAPVERSION;
 
-		Game &                          gameInstance;	//reference to the game instance
-		GameState&						gameState;
-		Tilemap                         tilemap;
-		Texture *                       background;
+		Game &                          _game;	//reference to the game instance
+		GameState&						_gameState;
+		Tilemap                         _tilemap;
+		Texture *                       _background;
 
-		std::string                     tilesetName;
-		std::string                     backgroundName;
-		bool                            objectDeletedFlag;
+		std::string                     _tilesetName;
+		std::string                     _backgroundName;
+		bool                            _objectDeletedFlag;
 
         //some map flags
-        bool                            updateOffscreen;
-        bool                            createMapQueuedFlag;
-        std::string                     mapToCreate;            //We can't create a map directly in the script because
+        bool                            _updateOffscreen;
+        bool                            _createMapQueuedFlag;
+        std::string                     _mapToCreate;            //We can't create a map directly in the script because
                                                                 //that would mess up stuff when objects are destroyed
                                                                 //while their scripts are running.
                                                                 //So we queue the creation for after the scripts.
 
-	public:
+	private:
         //scripts that should be run during loading, updating or shutdown of map
-        std::vector<std::string>        includeScripts;     //script files to run before any other scripts are run
-		std::vector<std::string>        initScripts;
-		std::vector<std::string>        updateScripts;
-		std::vector<std::string>        shutdownScripts;
+        std::vector<std::string>        _includeScripts;     //script files to run before any other scripts are run
+		std::vector<std::string>        _initScripts;
+		std::vector<std::string>        _updateScripts;
+		std::vector<std::string>        _shutdownScripts;
 
 	public:
 		Map(Game &game, GameState& gameState);
 		~Map();
-
-		/*!
-			Create a new object to add to the map. Runs initialization scripts.
-		*/
-		/*PhysicalEntity &createObject(std::string name, double x, double y);
-		PhysicalEntity &createObject(std::string name, double x, double y, bool runScripts);
-		PhysicalEntity &getObject(int index);
-		PhysicalEntity &getObjectAt(double x, double y);*/
-		//size_t          getObjectCount();
-		//void            deleteObject(int index);
 
 		// TODO - reimplement later
 		//void            deleteObjectAt(double x, double y);
@@ -66,6 +56,7 @@ namespace hiage
 		//map creation/loading/saving
 		void            createFromFile(std::string path);
 		void            createFromFile(std::string path, bool runScripts);
+		void            loadFromJson(std::string path, bool runScripts);
         void            createEmpty(int width, int height, int layers, int tileSize, bool onlyTiles = false);
         void            saveAsJson(std::string path);
         void            destroy();

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <engine/game_map.h>
+#include <engine/game_map.hpp>
 #include <engine/util_fonts.h>
 #include <engine/util_timer.h>
 #include <engine/com_typedefs.h>

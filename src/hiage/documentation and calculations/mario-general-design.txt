@@ -7,7 +7,7 @@ States:
 Psudo-code:
 
 include menu.h
-include map.h
+include map.hpp
 
 
 class game {

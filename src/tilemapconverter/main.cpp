@@ -1,9 +1,9 @@
 
-#include <hiage/core/map.h>
+#include <hiage/core/map.hpp>
 
 #include <string>
 #include <iostream>
-
+#include <cassert>
 #include <base64/base64.hpp>
 
 using namespace hiage;
@@ -54,6 +54,14 @@ public:
 };
 
 
+bool replace(std::string& str, const std::string& from, const std::string& to) {
+    size_t start_pos = str.find(from);
+    if (start_pos == std::string::npos)
+        return false;
+    str.replace(start_pos, from.length(), to);
+    return true;
+}
+
 int main(int, char*)
 {
     std::vector<uint32_t> v;
@@ -71,7 +79,7 @@ int main(int, char*)
     Map m(g, gs);
 
     vector<string> mapsToConvert = {
-        "maps/deathmenu",
+        "maps/deathmenu.map",
         "maps/gameover.map",
         "maps/level1.map",
         "maps/level2.map",
@@ -82,8 +90,13 @@ int main(int, char*)
     for (auto map : mapsToConvert)
     {
         m.createFromFile(map);
-        auto dest = g.getResourcePath(map) + ".json";
-        m.saveAsJson(dest);
+        
+        std::string destFilename = map;
+        replace(destFilename, ".map", ".json");
+        assert(map != destFilename);
+
+        auto dest = g.getResourcePath(destFilename);
+        // m.saveAsJson(dest);
     }
     
 

@@ -6,7 +6,7 @@
 	Description:
 */
 
-#include "map.h"
+#include "map.hpp"
 #include "entitymanager.hpp"
 #include "../lua-includes.h"
 
@@ -22,15 +22,15 @@ using namespace std;
 using json = nlohmann::json;
 using Base64 = macaron::Base64;
 
-Map::Map(Game &game, GameState& gameState) : gameInstance(game), gameState(gameState), tilemap()
+Map::Map(Game &game, GameState& gameState) : _game(game), _gameState(gameState), _tilemap()
 {
-    background = 0;
-    objectDeletedFlag = false;
-    updateOffscreen = false;
+    _background = 0;
+    _objectDeletedFlag = false;
+    _updateOffscreen = false;
 
     //temp
-    mapToCreate = "";
-    createMapQueuedFlag = false;
+    _mapToCreate = "";
+    _createMapQueuedFlag = false;
 }
 
 Map::~Map()
@@ -56,7 +56,7 @@ void Map::createFromFile(std::string path, bool runScripts)
     //delete the old map
     destroy();
 
-    ifstream file(gameInstance.getResourcePath(path).c_str());
+    ifstream file(_game.getResourcePath(path).c_str());
 	if (!file.is_open())
 	{
 		throw IOException(string("ERROR: Could not open file ") + path);
@@ -77,10 +77,10 @@ void Map::createFromFile(std::string path, bool runScripts)
 	buffer[temp] = 0;
 
 	//create the map and set the tileset
-	tilemap.createMap(width,height,layers,tilesize);
+	_tilemap.createMap(width,height,layers,tilesize);
 
-	tilemap.setTileset(gameInstance.getTilesetManager().requestResourcePtr(buffer)->resource);
-	tilesetName = buffer;
+	_tilemap.setTileset(_game.getTilesetManager().requestResourcePtr(buffer)->resource);
+	_tilesetName = buffer;
 
 	delete [] buffer;
 
@@ -90,7 +90,7 @@ void Map::createFromFile(std::string path, bool runScripts)
 	file.read(buffer, temp);
 	buffer[temp] = 0;
     setBackground(buffer);
-    backgroundName = buffer;
+    _backgroundName = buffer;
 
 	delete [] buffer;
 
@@ -111,7 +111,7 @@ void Map::createFromFile(std::string path, bool runScripts)
 
         //file name of the script to include
         file.read(buffer, temp2);
-        includeScripts.push_back(string(buffer));
+        _includeScripts.push_back(string(buffer));
         delete [] buffer;
     }
 
@@ -129,7 +129,7 @@ void Map::createFromFile(std::string path, bool runScripts)
 
         //function name
         file.read(buffer, temp2);
-        initScripts.push_back(string(buffer));
+        _initScripts.push_back(string(buffer));
 
         delete [] buffer;
     }
@@ -148,7 +148,7 @@ void Map::createFromFile(std::string path, bool runScripts)
 
         //function name
         file.read(buffer, temp2);
-        updateScripts.push_back(string(buffer));
+        _updateScripts.push_back(string(buffer));
 
         delete [] buffer;
     }
@@ -167,12 +167,143 @@ void Map::createFromFile(std::string path, bool runScripts)
 
         //function name
         file.read(buffer, temp2);
-        shutdownScripts.push_back(string(buffer));
+        _shutdownScripts.push_back(string(buffer));
 
         delete [] buffer;
     }
 
 
+
+	//load tile data
+	for (int z = 0; z < layers; z++)
+	{
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				int tile;
+				file.read((char*)&tile, 4);
+				_tilemap.setTile(x,y,z,tile);
+			}
+		}
+	}
+
+	//load objects
+	file.read((char*)&temp, 4);
+	if (temp < 0)
+	{
+		throw IOException("ERROR: Number of objects is less than 0.");
+	}
+
+
+    auto& em = _gameState.getEntityManager();
+    em.destroyAll();
+
+	for (int i = 0; i < temp; i++)
+	{
+		int buffsize;
+		double objx, objy;
+
+		//get object name
+		file.read((char*)&buffsize, 4);
+		buffer = new char[buffsize+1];
+
+		file.read(buffer, buffsize);
+		buffer[buffsize] = 0;
+
+		//position
+		file.read((char*)&objx, 8);
+		file.read((char*)&objy, 8);
+
+		clog << "Creating object " << buffer << " at (" << objx << ", " << objy << ")\n" << flush;
+        
+        em.createEntity(buffer, {
+            { "x", objx }, 
+            { "y", objy }
+        });
+
+		delete [] buffer;
+	}
+
+	//include the script files
+    for (unsigned int i = 0; i < _includeScripts.size(); i++)
+    {
+        _game.scriptVM.runFile(_includeScripts[i]);
+    }
+
+    if (runScripts)
+    {
+        //run initialization scripts
+        for (unsigned int i = 0; i < _initScripts.size(); i++)
+        {
+            _game.scriptVM.executeLine(_initScripts[i] + "()");
+        }
+    }
+#pragma warning(pop)
+}
+
+void hiage::Map::loadFromJson(std::string path, bool runScripts)
+{
+    string fullPath = _game.getResourcePath(path);
+    clog << "Loading map from file " << path << endl << flush;
+
+    destroy();
+
+    std::ifstream t(fullPath);
+    std::string str((std::istreambuf_iterator<char>(t)),
+        std::istreambuf_iterator<char>());
+
+    auto j = json::parse(str);
+
+    auto& version = j.at("version");
+
+    clog << "Map version: " << version << endl;
+    auto& dimensions = j.at("dimensions");
+
+    int height = dimensions.at("height"),
+        width = dimensions.at("width"),
+        layers = dimensions.at("layers"),
+        tileSize = dimensions.at("tileSize");
+
+
+	clog << "- Dimensions: " << width << "x" << height << "x" << layers << endl << flush;
+
+    _tilemap.createMap(width, height, layers, tileSize);
+
+    auto& visual = j.at("visual");
+    string tilesetName = visual.at("tilesetName");
+    string backgroundName = visual.at("backgroundName");
+
+    _tilemap.setTileset(_game.getTilesetManager().requestResourcePtr(tilesetName)->resource);
+    setBackground(backgroundName);
+
+    auto& scripts = j.at("scripts");
+
+    for (string script : scripts.at("include"))
+    {
+        _includeScripts.push_back(script);
+    }
+
+    for (string script : scripts.at("init"))
+    {
+        _initScripts.push_back(script);
+    }
+
+    for (string script : scripts.at("update"))
+    {
+        _updateScripts.push_back(script);
+    }
+
+    for (string script : scripts.at("shutdown"))
+    {
+        _updateScripts.push_back(script);
+    }
+
+    string tileDatab64 = j.at("tileData");
+    
+    //Base64::Decode(tileDatab64);
+
+    /*
 
 	//load tile data
 	for (int z = 0; z < layers; z++)
@@ -197,6 +328,8 @@ void Map::createFromFile(std::string path, bool runScripts)
 
 
     auto& em = gameState.getEntityManager();
+    em.destroyAll();
+
 	for (int i = 0; i < temp; i++)
 	{
 		int buffsize;
@@ -228,22 +361,24 @@ void Map::createFromFile(std::string path, bool runScripts)
     {
         gameInstance.scriptVM.runFile(includeScripts[i]);
     }
+     */
 
     if (runScripts)
     {
         //run initialization scripts
-        for (unsigned int i = 0; i < initScripts.size(); i++)
+        for (unsigned int i = 0; i < _initScripts.size(); i++)
         {
-            gameInstance.scriptVM.executeLine(initScripts[i] + "()");
+            _game.scriptVM.executeLine(_initScripts[i] + "()");
         }
     }
-#pragma warning(pop)
+    
+   
 }
 
 void Map::queueCreateMap(string path)
 {
-    mapToCreate = path;
-    createMapQueuedFlag = true;
+    _mapToCreate = path;
+    _createMapQueuedFlag = true;
 }
 
 void Map::createFromFile(string path)
@@ -259,17 +394,17 @@ void Map::createEmpty(int width, int height, int layers, int tileSize, bool only
     {
         destroy();
     }
-    tilemap.createMap(width, height, layers, tileSize);
+    _tilemap.createMap(width, height, layers, tileSize);
 }
 
 void Map::saveAsJson(string path)
 {
     clog << "Saving map to file " << path.c_str() << endl << flush;
     
-    int mapWidth = tilemap.getWidth();
-    int mapHeight = tilemap.getHeight();
-    int mapLayers = tilemap.getLayers();
-    int tileSize = tilemap.getTileSize();
+    int mapWidth = _tilemap.getWidth();
+    int mapHeight = _tilemap.getHeight();
+    int mapLayers = _tilemap.getLayers();
+    int tileSize = _tilemap.getTileSize();
 
     //check for valid dimensions
     if (mapWidth <= 0 || mapHeight <= 0 || mapLayers <= 0)
@@ -277,7 +412,7 @@ void Map::saveAsJson(string path)
         throw Exception("ERROR: Invalid map dimensions.");
     }
 
-    auto& em = gameState.getEntityManager();
+    auto& em = _gameState.getEntityManager();
 
     vector<json> objectsToSave;
     for (auto& e : em.getEntities())
@@ -312,19 +447,20 @@ void Map::saveAsJson(string path)
         { "dimensions", {
             { "width", mapWidth },
             { "height", mapHeight },
+            { "layers", mapLayers },
             { "tileSize", tileSize }
         }},
         { "visual", {
-            { "tilesetName", tilesetName },
-            { "backgroundName", backgroundName }
+            { "tilesetName", _tilesetName },
+            { "backgroundName", _backgroundName }
         }},
         { "scripts", {
-            { "include", includeScripts },
-            { "init", initScripts },
-            { "update", updateScripts },
-            { "shutdown", shutdownScripts }
+            { "include", _includeScripts },
+            { "init", _initScripts },
+            { "update", _updateScripts },
+            { "shutdown", _shutdownScripts }
         }},
-        { "tileData", Base64::Encode<uint32_t>(tilemap.getTilemapRaw())},
+        { "tileData", Base64::Encode<uint32_t>(_tilemap.getTilemapRaw())},
         { "entities", objectsToSave }
     };
 
@@ -347,18 +483,18 @@ void Map::saveAsJson(string path)
 //destroy the map content
 void Map::destroy()
 {
-    tilemap.destroy();
+    _tilemap.destroy();
 
-    includeScripts.clear();
-    initScripts.clear();
-    updateScripts.clear();
-    shutdownScripts.clear();
+    _includeScripts.clear();
+    _initScripts.clear();
+    _updateScripts.clear();
+    _shutdownScripts.clear();
 
     //reset scripting
-    gameInstance.scriptVM.executeLine("map=nil");
-    luabind::globals(gameInstance.scriptVM.getVm())["map"] = this;
-	gameInstance.scriptVM.executeLine("map[\"objects\"]={}");
-	background = 0;
+    _game.scriptVM.executeLine("map=nil");
+    luabind::globals(_game.scriptVM.getVm())["map"] = this;
+	_game.scriptVM.executeLine("map[\"objects\"]={}");
+	_background = 0;
 }
 
 
@@ -472,7 +608,7 @@ void Map::deleteObjectAt(double x, double y)
 //Render the map
 void Map::render()
 {
-    Display &disp = gameInstance.getDisplay();
+    Display &disp = _game.getDisplay();
     Renderer &renderer = disp.getRenderer();
     double aspect = disp.getAspectRatio();
     double zoom = disp.getZoom();
@@ -482,7 +618,7 @@ void Map::render()
 
     //Render the tilemap
     ObjectZ depth = ObjectZ::MIDDLE_BACK;
-	for (int i = 0; i < tilemap.getLayers(); i++)
+	for (int i = 0; i < _tilemap.getLayers(); i++)
 	{
 	    switch (i)
 	    {
@@ -519,30 +655,30 @@ void Map::render()
                 break;
 
 	    }
-	    tilemap.render(renderer, camX, camY, zoom, aspect, depth, i);
+	    _tilemap.render(renderer, camX, camY, zoom, aspect, depth, i);
 	}
 
 	//and the background
 	//TODO: add support for choosing parallax options
-    if (background)
+    if (_background)
     {
         double offset;
         offset = disp.getCamX() / 1.5;
 
-        double startx = (disp.getCamX() - (float)disp.getViewWidth() - offset) / background->getWidth();
-        double endx = startx + ((float)disp.getViewWidth() / (float)background->getWidth());
+        double startx = (disp.getCamX() - (float)disp.getViewWidth() - offset) / _background->getWidth();
+        double endx = startx + ((float)disp.getViewWidth() / (float)_background->getWidth());
         double y = disp.getCamY() - (disp.getViewHeight() / 2);
 
         startx -= 1.0f;
         endx += 1.0f;
 
-        renderer.beginRender(ObjectZ::BACK, background);
+        renderer.beginRender(ObjectZ::BACK, _background);
         for (int x = (int)startx; x <= (int)endx; x++)
         {
-            renderer.addVertex((double)x * background->getWidth() + offset, (double)y + background->getHeight(), 0, 0);
-            renderer.addVertex((double)x * background->getWidth() + background->getWidth() + offset, (double)y + background->getHeight(), 1, 0);
-            renderer.addVertex((double)x * background->getWidth() + background->getWidth() + offset, y, 1, 1);
-            renderer.addVertex((double)x * background->getWidth() + offset, y, 0, 1);
+            renderer.addVertex((double)x * _background->getWidth() + offset, (double)y + _background->getHeight(), 0, 0);
+            renderer.addVertex((double)x * _background->getWidth() + _background->getWidth() + offset, (double)y + _background->getHeight(), 1, 0);
+            renderer.addVertex((double)x * _background->getWidth() + _background->getWidth() + offset, y, 1, 1);
+            renderer.addVertex((double)x * _background->getWidth() + offset, y, 0, 1);
 
         }
 
@@ -703,10 +839,10 @@ void Map::update(double)
         gameInstance.scriptVM.executeLine(updateScripts[i] + "()");
     }
     */
-    if (createMapQueuedFlag)
+    if (_createMapQueuedFlag)
     {
-        createFromFile(mapToCreate);
-        createMapQueuedFlag = false;
+        createFromFile(_mapToCreate);
+        _createMapQueuedFlag = false;
     }
 }
 
@@ -715,17 +851,17 @@ void Map::update(double)
 
 int Map::getWidth()
 {
-    return tilemap.getWidth();
+    return _tilemap.getWidth();
 }
 
 int Map::getHeight()
 {
-    return tilemap.getHeight();
+    return _tilemap.getHeight();
 }
 
 int Map::getLayerCount()
 {
-    return tilemap.getLayers();
+    return _tilemap.getLayers();
 }
 
 //set a new background
@@ -735,19 +871,19 @@ void Map::setBackground(std::string textureName)
     {
         try
         {
-            background = gameInstance.getTextureManager().requestResourcePtr(textureName.c_str())->resource;
+            _background = _game.getTextureManager().requestResourcePtr(textureName.c_str())->resource;
         }
         catch (Exception &e)
         {
-            background = 0;
+            _background = 0;
             clog << "Warning: Error loading background: " << e.what() << endl;
         }
     }
     else
     {
-        background = 0;
+        _background = 0;
     }
-    backgroundName = textureName;
+    _backgroundName = textureName;
 }
 
 //set a new tileset
@@ -757,8 +893,8 @@ void Map::setTileset(string ts)
     {
         try
         {
-            tilemap.setTileset(gameInstance.getTilesetManager().requestResourcePtr(ts.c_str())->resource);
-            tilesetName = ts;
+            _tilemap.setTileset(_game.getTilesetManager().requestResourcePtr(ts.c_str())->resource);
+            _tilesetName = ts;
         }
         catch (Exception &e)
         {
@@ -769,27 +905,27 @@ void Map::setTileset(string ts)
 
 std::string Map::getTilesetName()
 {
-    return tilesetName;
+    return _tilesetName;
 }
 
 int Map::getTileSize() const
 {
-    return tilemap.getTileSize();
+    return _tilemap.getTileSize();
 }
 
 unsigned int Map::getTile(int x, int y, int layer)
 {
-    return tilemap.getTile(x, y, layer);
+    return _tilemap.getTile(x, y, layer);
 }
 
 unsigned int Map::getTileAt(int x, int y, int layer)
 {
-	int tilesize = tilemap.getTileSize();
+	int tilesize = _tilemap.getTileSize();
 
 	int xTile = (int)(x / tilesize);
 	int yTile = (int)(y / tilesize);
 
-    return tilemap.getTile(xTile, yTile, layer);
+    return _tilemap.getTile(xTile, yTile, layer);
 }
 
 void Map::setTileAt(double x, double y, int layer, int newTile)
@@ -799,30 +935,30 @@ void Map::setTileAt(double x, double y, int layer, int newTile)
 		return;
 	}
 
-	int tilesize = tilemap.getTileSize();
+	int tilesize = _tilemap.getTileSize();
 
 	int xTile = (int)(x / tilesize);
 	int yTile = (int)(y / tilesize);
 
 
-	tilemap.setTile(xTile, yTile, layer, newTile);
+	_tilemap.setTile(xTile, yTile, layer, newTile);
 }
 
 void Map::setTile(int x, int y, int layer, int newTile)
 {
-    tilemap.setTile(x, y, layer, newTile);
+    _tilemap.setTile(x, y, layer, newTile);
 }
 
 void Map::setFlag(std::string flag, bool value)
 {
     if (!flag.compare("updateoffscreen"))
     {
-        updateOffscreen = value;
+        _updateOffscreen = value;
     }
 }
 const Tilemap& Map::getTilemap() const
 {
-    return tilemap;
+    return _tilemap;
 }
 
 

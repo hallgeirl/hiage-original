@@ -1,6 +1,7 @@
 {
   "dimensions": {
     "height": 30,
+    "layers": 3,
     "tileSize": 16,
     "width": 100
   },
