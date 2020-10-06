@@ -50,7 +50,7 @@ void Display::initialize(int width, int height, bool fullscreen)
 
 	SDL_GL_CreateContext(this->_window);
 
-	_aspect = (float)width / (float)height;
+	_aspect = (double)width / (double)height;
 	clog << "- Aspect ratio: " << _aspect << endl << flush;
 
 	//enable opengl states
@@ -100,7 +100,7 @@ void Display::resize(int width, int height)
 	}
 	else
 	{
-		_aspect = (float)width / (float)height;
+		_aspect = (double)width / (double)height;
 
 		if (width > height)
 		{
@@ -115,7 +115,7 @@ void Display::resize(int width, int height)
 	glPopMatrix();
 }
 
-void Display::setCamPosition(float x, float y)
+void Display::setCamPosition(double x, double y)
 {
 	_camX = x;
 	_camY = y;
@@ -174,10 +174,10 @@ double Display::getViewWidth()
 {
 	if (_width > _height)
 	{
-		return ((float)_zoom * _aspect * 2);
+		return (_zoom * _aspect * 2);
 	}
 
-	return ((float)_zoom * 2);
+	return (_zoom * 2);
 }
 
 //viewport height
@@ -185,10 +185,10 @@ double Display::getViewHeight()
 {
 	if (_height > _width)
 	{
-		return ((float)_zoom / _aspect * 2);
+		return (_zoom / _aspect * 2);
 	}
 
-	return ((float)_zoom * 2);
+	return (_zoom * 2);
 }
 
 //converts window coordinates to viewport coodinates (moves the origin to the center, and inverts the y-axis)

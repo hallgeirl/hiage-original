@@ -105,6 +105,23 @@ namespace hiage
 		virtual void update(double frameTime) override;
 	};
 
+	// Used for e.g. camera tracking
+	class ObjectTrackingSystem : public System
+	{
+	public:
+		ObjectTrackingSystem(Game& game, GameState& gameState) : System(game, gameState) {}
+		virtual void update(double frameTime) override;
+	};
+
+	// Used for e.g. camera tracking
+	class CameraSystem : public System
+	{
+	public:
+		CameraSystem(Game& game, GameState& gameState) : System(game, gameState) {}
+		virtual void update(double frameTime) override;
+	};
+
+
 	// List of currently missing systems:
 	// - Script system??
 	// - Collision

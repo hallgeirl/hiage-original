@@ -20,6 +20,12 @@
     },
     {
       "components": [
+
+      ],
+      "name": "Camera"
+    },
+    {
+      "components": [
         {
           "runtimeProperties": {
             "x": 96.0,

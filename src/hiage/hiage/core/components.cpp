@@ -20,6 +20,9 @@ hiage::ComponentManager::ComponentManager(Game& game) : game(game)
 	addComponentFactory<BoundingBoxComponentFactory>("boundingbox");
 	addComponentFactory<RenderableComponentFactory, const Game&>("renderable", game);
 	addComponentFactory<StateComponentFactory>("state");
+	addComponentFactory<GenericComponentFactory<TrackingComponent>>("objecttracker");
+	addComponentFactory<GenericComponentFactory<TrackableComponent>>("trackable");
+	addComponentFactory<GenericComponentFactory<CameraComponent>>("camera");
 }
 
 hiage::ComponentManager::~ComponentManager()

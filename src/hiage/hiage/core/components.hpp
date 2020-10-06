@@ -104,16 +104,35 @@ namespace hiage
 		using DatalessComponent::DatalessComponent;
 	};
 
+	struct TrackingComponentProperties
+	{
+		std::string mode;
+	};
+	class TrackingComponent : public GenericComponent<TrackingComponentProperties, 8>
+	{
+		using GenericComponent::GenericComponent;
+	};
+
+	class TrackableComponent : public DatalessComponent<9>
+	{
+		using DatalessComponent::DatalessComponent;
+	};
+
+	class CameraComponent : public DatalessComponent<10>
+	{
+		using DatalessComponent::DatalessComponent;
+	};
+
 	// Used for "object state" when it comes to animations (e.g. "on ground", "standing", "walking", "jumping", "falling") and allowed actions (e.g. jumping is allowed when standing, etc.)
 	// The actual rules are defined by the system that handles this component. This is just the container of the state name and metadata attached to the state.
 
 	struct State
 	{
 		std::string stateName;
-		std::unordered_map < std::string, std::variant<std::string, int, double>> metadata;
+		std::unordered_map<std::string, std::variant<std::string, int, double>> metadata;
 	};
 
-	class StateComponent : public GenericComponent<State, 8>
+	class StateComponent : public GenericComponent<State, 11>
 	{
 		using GenericComponent::GenericComponent;
 	};
@@ -137,7 +156,6 @@ namespace hiage
 		{
 			return std::make_unique<T>();
 		}
-
 	};
 
 	class PhysicsComponentFactory : public ComponentFactory
@@ -175,7 +193,6 @@ namespace hiage
 	class ComponentManager
 	{
 	private: 
-		// TODO - Make it possible to register new component factory classes
 		std::unique_ptr<Component> createRenderable(const ComponentProperties& properties) const;
 		
 		std::unordered_map<std::string, std::unique_ptr<ComponentFactory>> componentFactories;

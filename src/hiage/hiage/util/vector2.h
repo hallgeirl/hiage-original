@@ -99,7 +99,7 @@ namespace hiage
 			\param v Vector to add to this.
 			\return A copy of the results.
 		*/
-		Vector2 add(Vector2 v)
+		Vector2 add(const Vector2& v)
 		{
 			x += v.x;
 			y += v.y;
@@ -112,7 +112,7 @@ namespace hiage
 			\param v Vector to subtract from this.
 			\return A copy of the results.
 		*/
-		Vector2 subtract(Vector2 v)
+		Vector2 subtract(const Vector2& v)
 		{
 			x -= v.x;
 			y -= v.y;
@@ -125,7 +125,7 @@ namespace hiage
 			\param v The second vector.
 			\return A copy of the results.
 		*/
-		T dot(Vector2 v) const
+		T dot(const Vector2& v) const
 		{
 			return ((x * v.x) + (y * v.y));
 		}

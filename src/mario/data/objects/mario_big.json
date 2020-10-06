@@ -45,6 +45,9 @@
     },
     {
       "type": "collidable"
+    },
+    {
+      "type": "trackable"
     }
   ],
   "scripts": [

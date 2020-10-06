@@ -54,7 +54,7 @@ namespace hiage
 		void setZoom(double value);
 		double getZoom() { return _zoom; }
 
-		void setCamPosition(float x, float y);
+		void setCamPosition(double x, double y);
 		double getCamX() { return _camX; }
 		double getCamY() { return _camY; }
 		double getAspectRatio() { return _aspect; }

@@ -378,4 +378,58 @@ void hiage::AnimationSystem::update(double)
 		sprite.playAnimation(state.stateName, false);
 	}
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+
+void hiage::ObjectTrackingSystem::update(double frameTime)
+{
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, TrackableComponent>();
+
+	if (componentTuples.size() == 0)
+		return;
+
+	auto trackingTarget = componentTuples[0];
+	auto& trackingPos = get<1>(trackingTarget)->getData();
+	auto& trackingVel = get<2>(trackingTarget)->getData();
+
+	auto trackingComponentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, TrackingComponent>();
+	for (auto& c : trackingComponentTuples)
+	{
+		auto& tracking = get<3>(c)->getData();
+		string mode = "elastic";
+		if (tracking.mode.length() > 0)
+			mode = tracking.mode;
+		
+		auto& pos = get<1>(c)->getData();
+		auto& vel = get<2>(c)->getData();
+		if (mode == "fixed")
+		{
+			pos.set(trackingPos);
+		} 
+		else if (mode == "elastic")
+		{
+			auto diff = (trackingPos + trackingVel) - pos;
+
+			vel.scale(0.5);
+			auto accelVector = diff * 100. + trackingVel;
+			vel.add(accelVector * frameTime);
+		}
+	}
+}
+
+void hiage::CameraSystem::update(double)
+{
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, CameraComponent>();
+
+	for (auto& c : componentTuples)
+	{
+		auto& pos = get<1>(c)->getData();
+
+		// TODO - Make boundaries configurable.
+		auto zoom = game.getDisplay().getZoom();
+		auto aspect = game.getDisplay().getAspectRatio();
+		auto leftBoundary = zoom * aspect;
+		auto bottomBoundary = zoom;
+
+
+		game.getDisplay().setCamPosition(std::max(pos.getX(), leftBoundary), std::max(pos.getY(), bottomBoundary));
+	}
+}

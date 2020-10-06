@@ -34,6 +34,8 @@ MarioState::MarioState(hiage::Game &game) : MapState(game)
     systems.push_back(sysFactory.createSystem<CharacterStateMachineSystem>());
 
     // Rendering
+    systems.push_back(sysFactory.createSystem<CameraSystem>());
+    systems.push_back(sysFactory.createSystem<ObjectTrackingSystem>());
     systems.push_back(sysFactory.createSystem<AnimationSystem>());
     systems.push_back(sysFactory.createSystem<ObjectRenderingSystem>());
 }

@@ -1,0 +1,27 @@
+{
+  "name": "Camera",
+  "type": "Mario",
+  "components": [
+    {
+      "type": "physical"
+    },
+    {
+      "type": "movable"
+    },
+    {
+      "type": "renderable",
+      "properties": {
+        "sprite": "BlockQuestion"
+      }
+    },
+    {
+      "type": "objecttracker",
+      "properties": {
+        "mode": "fixed"
+      }
+    },
+    {
+      "type": "camera"
+    }
+  ]
+}
