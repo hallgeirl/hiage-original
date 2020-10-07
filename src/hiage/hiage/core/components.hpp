@@ -29,33 +29,39 @@ namespace hiage
 	};
 
 	/*
-	* A templated component that can be used for defining components that doesn't own any data, i.e. "tag" type components.
-	*/
-	template<int TypeID>
-	class DatalessComponent : public Component
-	{
-	public:
-		DatalessComponent() : Component(TypeID) { }
-		DatalessComponent(const DatalessComponent<TypeID>& c) : Component(TypeID) { *this = c; }
-		
-		static const int TYPEID = TypeID;
-	};
-
-	/*
 	* A simple component containing a set of data. 
 	*/
 	template<typename T, int TypeID>
-	class GenericComponent : public DatalessComponent<TypeID>
+	class GenericComponent : public Component
 	{
 	private:
 		T data;
 	public:
-		GenericComponent() : DatalessComponent() { }
-		GenericComponent(const GenericComponent<T, TypeID>& c) : DatalessComponent() { *this = c; }
-		GenericComponent(const T& data) : DatalessComponent(), data(data) { }
-
+		GenericComponent() : Component(TypeID) { }
+		GenericComponent(const GenericComponent<T, TypeID>& c) : Component(TypeID) { *this = c; }
+		GenericComponent(const T& data) : Component(TypeID), data(data) { }
+		
 		T& getData() { return data; }
 		void setData(const T& newValue) { data = newValue; }
+
+		// Override this to define how the component's state is created from properties.
+		virtual T createState(const ComponentProperties&) 
+		{ 
+			return T();
+		}
+
+		static const int TYPEID = TypeID;
+	};
+
+	/*
+	* A templated component that can be used for defining components that doesn't own any data, i.e. "tag" type components.
+	*/
+	template<int TypeID>
+	class DatalessComponent : public GenericComponent<int, TypeID>
+	{
+	public:
+		DatalessComponent() : GenericComponent() { }
+		DatalessComponent(const DatalessComponent<TypeID>& c) : GenericComponent() { *this = c; }
 	};
 
 	/*
@@ -63,7 +69,9 @@ namespace hiage
 	*/
 	class PositionComponent : public GenericComponent<Vector2<double>, 1>
 	{
+	public:
 		using GenericComponent::GenericComponent;
+		virtual Vector2<double> createState(const ComponentProperties& properties) override;
 	};
 
 	class VelocityComponent : public GenericComponent<Vector2<double>, 2>
@@ -86,7 +94,9 @@ namespace hiage
 
 	class PhysicsComponent : public GenericComponent<PhysicsProperties, 4>
 	{
+	public:
 		using GenericComponent::GenericComponent;
+		virtual PhysicsProperties createState(const ComponentProperties& properties) override;
 	};
 
 	class HumanControllerComponent : public DatalessComponent<5>
@@ -94,14 +104,11 @@ namespace hiage
 		using DatalessComponent::DatalessComponent;
 	};
 
-	class BoundingBoxComponent : public GenericComponent<BoundingPolygon, 6>
+	class CollidableComponent : public GenericComponent<BoundingPolygon, 7>
 	{
+	public:
 		using GenericComponent::GenericComponent;
-	};
-
-	class CollidableComponent : public DatalessComponent<7>
-	{
-		using DatalessComponent::DatalessComponent;
+		virtual BoundingPolygon createState(const ComponentProperties& properties) override;
 	};
 
 	struct TrackingComponentProperties
@@ -134,7 +141,9 @@ namespace hiage
 
 	class StateComponent : public GenericComponent<State, 11>
 	{
+	public:
 		using GenericComponent::GenericComponent;
+		virtual State createState(const ComponentProperties& properties) override;
 	};
 
 	/*
@@ -152,28 +161,17 @@ namespace hiage
 	class GenericComponentFactory : public ComponentFactory
 	{
 	public:
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor&, const ComponentProperties&) const override
+		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override
 		{
-			return std::make_unique<T>();
+			ComponentProperties mergedProperties;
+			mergedProperties.insert(runtimeProperties.begin(), runtimeProperties.end());
+			mergedProperties.insert(componentDescriptor.properties.begin(), componentDescriptor.properties.end());
+			auto component = std::make_unique<T>();
+			auto state = component->createState(mergedProperties);
+			component->setData(state);
+
+			return std::move(component);
 		}
-	};
-
-	class PhysicsComponentFactory : public ComponentFactory
-	{
-	public:
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
-	};
-
-	class BoundingBoxComponentFactory : public ComponentFactory
-	{
-	public:
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
-	};
-
-	class PhysicalComponentFactory : public ComponentFactory
-	{
-	public:
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
 	};
 
 	class RenderableComponentFactory : public ComponentFactory
@@ -185,16 +183,9 @@ namespace hiage
 		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
 	};
 
-	class StateComponentFactory : public ComponentFactory
-	{
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
-	};
-
 	class ComponentManager
 	{
 	private: 
-		std::unique_ptr<Component> createRenderable(const ComponentProperties& properties) const;
-		
 		std::unordered_map<std::string, std::unique_ptr<ComponentFactory>> componentFactories;
 		Game& game;
 	public:

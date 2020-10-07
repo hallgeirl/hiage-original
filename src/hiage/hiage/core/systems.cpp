@@ -167,8 +167,8 @@ struct PositionComponentComparator {
 
 void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent>();
-	PositionComponentComparator<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent> comp;
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>();
+	PositionComponentComparator<PositionComponent, VelocityComponent, CollidableComponent> comp;
 
 	// Sort by x coordinate
 	std::sort(componentTuples.begin(), componentTuples.end(), comp);
@@ -226,8 +226,8 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 			//check for collisions during the next frame
 			for (int k = 0; k < dspeed; k++)
 			{
-				auto colRect1 = get<4>(c1)->getData();
-				auto colRect2 = get<4>(c2)->getData();
+				auto colRect1 = get<3>(c1)->getData();
+				auto colRect2 = get<3>(c2)->getData();
 
 				//get the collision rect for both objects
 				colRect1.translate(pos1);
@@ -273,7 +273,7 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 	if (!tilemap.isLoaded())
 		return;
 
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent, BoundingBoxComponent>();
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>();
 
 	for (auto& c : componentTuples)
 	{
@@ -285,7 +285,7 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 		Vector2<double> currentPosition = pos;
 
 		//get the collision box of the object
-		BoundingPolygon objectPolygon = get<4>(c)->getData();
+		BoundingPolygon objectPolygon = get<3>(c)->getData();
 		objectPolygon.translate(currentPosition);
 
 		int tileSize = tilemap.getTileSize();
@@ -355,7 +355,7 @@ void hiage::BlockingTileSystem::update(double)
 	{
 		auto& myEvt = dynamic_cast<ObjectTileCollisionEvent&>(*evt);
 
-		auto components = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, BoundingBoxComponent>(myEvt.getData().entityId);
+		auto components = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>(myEvt.getData().entityId);
 		auto& pos = std::get<0>(components)->getData();
 		auto& vel = std::get<1>(components)->getData();
 		auto& bb = std::get<2>(components)->getData();

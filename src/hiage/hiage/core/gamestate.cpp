@@ -31,11 +31,13 @@ void GameState::update(double frametime)
 	auto remainingEvents = eventQueue.dequeueAll();
 	eventQueue.clear();
 
+	// Uncomment for debugging
+	/*
 	for (auto& evt : remainingEvents)
 	{
-		// Uncomment for debugging
-		// std::clog << "Warning: Unhandled event of type " << evt->getType() << " at end of update cycle." << std::endl;
+		std::clog << "Warning: Unhandled event of type " << evt->getType() << " at end of update cycle." << std::endl;
 	}
+	*/
 }
 
 void GameState::changeState(Game* game, GameState* state)

@@ -2,36 +2,39 @@
   "name": "MarioSmall",
   "type": "Mario",
   "components": [
-     {
-        "type": "physical"
-     },
-     {
-        "type": "movable"
-     },
-     {
-        "type": "renderable",
-        "properties": {
-          "sprite": "MarioSmall"
-        }
-     },
-     {
-        "type": "physics"
-     },
-     {
-        "type": "humancontroller"
-     },
-     {
-        "type": "boundingbox",
-        "properties": {
-          "left": 1,
-          "bottom": 1,
-          "width": 10,
-          "height": 20
-        }
-     },
-     {
-        "type": "collidable"
-     }
+    {
+      "type": "physical"
+    },
+    {
+      "type": "movable"
+    },
+    {
+      "type": "renderable",
+      "properties": {
+        "sprite": "MarioSmall"
+      }
+    },
+    {
+      "type": "physics"
+    },
+    {
+      "type": "humancontroller"
+    },
+    {
+      "type": "collidable",
+      "properties": {
+        "left": 1,
+        "bottom": 1,
+        "width": 10,
+        "height": 20
+      }
+    },
+    {
+      "type": "state",
+      "properties": {
+        "initial": "stand"
+      }
+    }
   ],
   "scripts": [
      {

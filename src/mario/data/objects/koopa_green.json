@@ -14,9 +14,16 @@
           "sprite": "GreenKoopa"
         }
      },
-     {
-        "type": "physics"
-     }
+    {
+      "type": "physics",
+      "properties": {
+        "friction": {
+          "air": 0.1,
+          "ground": 1
+        },
+        "gravity": 1
+      }
+    }
   ],
   "scripts": [
      {

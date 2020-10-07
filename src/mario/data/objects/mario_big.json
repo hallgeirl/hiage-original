@@ -29,7 +29,7 @@
       "type": "humancontroller"
     },
     {
-      "type": "boundingbox",
+      "type": "collidable",
       "properties": {
         "left": 1,
         "bottom": 1,
@@ -40,11 +40,7 @@
     {
       "type": "state",
       "properties": {
-        "initial": "stand"
       }
-    },
-    {
-      "type": "collidable"
     },
     {
       "type": "trackable"

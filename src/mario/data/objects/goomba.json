@@ -14,20 +14,24 @@
           "sprite": "Goomba"
         }
      },
+    {
+      "type": "physics",
+      "properties": {
+        "friction": {
+          "air": 0.1,
+          "ground": 1
+        },
+        "gravity": 1
+      }
+    },
      {
-        "type": "physics"
-     },
-     {
-        "type": "boundingbox",
+        "type": "collidable",
         "properties": {
           "left": 5,
           "bottom": 1,
           "width": 20,
           "height": 20
         }
-     },
-     {
-        "type": "collidable"
      }
   ],
   "scripts": [

@@ -18,7 +18,7 @@ void CharacterStateMachineSystem::update(double)
 		auto c = gameState.getEntityManager().queryComponentGroup<StateComponent>(myEvt.getData().entityId);
 		if (c != nullptr)
 		{
-			auto& state = c->getData();
+			//auto& state = c->getData();
 
 			// normal vector of 30 degrees or higher => count as solid ground
 			if (myEvt.getData().normalVector.getY() > 0.5) {

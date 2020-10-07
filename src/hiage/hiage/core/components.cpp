@@ -12,14 +12,13 @@ using namespace std;
 
 hiage::ComponentManager::ComponentManager(Game& game) : game(game)
 {
-	addComponentFactory<PhysicalComponentFactory>("physical");
+	addComponentFactory<GenericComponentFactory<PositionComponent>>("physical");
 	addComponentFactory<GenericComponentFactory<VelocityComponent>>("movable");
-	addComponentFactory<PhysicsComponentFactory>("physics");
+	addComponentFactory<GenericComponentFactory<PhysicsComponent>>("physics");
 	addComponentFactory<GenericComponentFactory<HumanControllerComponent>>("humancontroller");
 	addComponentFactory<GenericComponentFactory<CollidableComponent>>("collidable");
-	addComponentFactory<BoundingBoxComponentFactory>("boundingbox");
 	addComponentFactory<RenderableComponentFactory, const Game&>("renderable", game);
-	addComponentFactory<StateComponentFactory>("state");
+	addComponentFactory<GenericComponentFactory<StateComponent>>("state");
 	addComponentFactory<GenericComponentFactory<TrackingComponent>>("objecttracker");
 	addComponentFactory<GenericComponentFactory<TrackableComponent>>("trackable");
 	addComponentFactory<GenericComponentFactory<CameraComponent>>("camera");
@@ -28,23 +27,6 @@ hiage::ComponentManager::ComponentManager(Game& game) : game(game)
 hiage::ComponentManager::~ComponentManager()
 {
 }
-
-std::unique_ptr<Component> hiage::ComponentManager::createRenderable(const ComponentProperties& properties) const
-{
-	const auto& spriteName = get<std::string>(properties.at(std::string("sprite")));
-
-	auto sprite = game.getSpriteManager().requestResourceCopy(spriteName);
-	auto& texture = game.getTextureManager().requestResourcePtr(sprite->strData1.c_str());
-
-	if (!texture)
-	{
-		throw Exception(string("ERROR: Could not retrieve texture for sprite ") + spriteName);
-	}
-	sprite->resource->create(texture->resource, sprite->intData1, sprite->intData2);
-
-	return make_unique<RenderableComponent>(*sprite->resource);
-}
-
 
 unique_ptr<Component> ComponentManager::createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const
 {
@@ -59,10 +41,9 @@ unique_ptr<Component> ComponentManager::createComponent(const ComponentDescripto
 	throw runtime_error("Component type not found: " + type);
 }
 
-std::unique_ptr<Component> hiage::BoundingBoxComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties&) const
-{
-	auto& properties = componentDescriptor.properties;
 
+BoundingPolygon hiage::CollidableComponent::createState(const ComponentProperties& properties)
+{
 	double x = 0, y = 0, width = 16, height = 16;
 
 	if (properties.find("left") != properties.end())
@@ -84,20 +65,20 @@ std::unique_ptr<Component> hiage::BoundingBoxComponentFactory::createComponent(c
 	poly.addVertex((double)x + width, y);
 	poly.buildNormals();
 
-	return make_unique<BoundingBoxComponent>(poly);
+	return poly;
 }
 
-std::unique_ptr<Component> hiage::PhysicalComponentFactory::createComponent(const ComponentDescriptor&, const ComponentProperties& runtimeProperties) const
+Vector2<double> hiage::PositionComponent::createState(const ComponentProperties& properties)
 {
 	double x = 0, y = 0;
 
-	if (runtimeProperties.find("x") != runtimeProperties.end())
-		x = get<double>(runtimeProperties.at("x"));
+	if (properties.find("x") != properties.end())
+		x = get<double>(properties.at("x"));
 
-	if (runtimeProperties.find("y") != runtimeProperties.end())
-		y = get<double>(runtimeProperties.at("y"));
+	if (properties.find("y") != properties.end())
+		y = get<double>(properties.at("y"));
 
-	return make_unique<PositionComponent>(Vector2<double>(x, y));
+	return Vector2<double>(x, y);
 }
 
 hiage::RenderableComponentFactory::RenderableComponentFactory(const Game& game) : game(game)
@@ -122,21 +103,21 @@ std::unique_ptr<Component> hiage::RenderableComponentFactory::createComponent(co
 	return make_unique<RenderableComponent>(*sprite->resource);
 }
 
-std::unique_ptr<Component> hiage::StateComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties&) const
+State hiage::StateComponent::createState(const ComponentProperties& properties)
 {
-	auto& properties = componentDescriptor.properties;
-	auto& initialState = get<std::string>(properties.at("initial"));
-	
 	State state;
-	state.stateName = initialState;
-	return make_unique<StateComponent>(state);
+
+	if (properties.contains("initial"))
+		state.stateName = get<std::string>(properties.at("initial"));
+
+	return state;
 }
 
-std::unique_ptr<Component> hiage::PhysicsComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties&) const
-{
-	auto& properties = componentDescriptor.properties;
 
+PhysicsProperties hiage::PhysicsComponent::createState(const ComponentProperties& properties)
+{
 	PhysicsProperties props;
+	props.airResistance = props.groundFriction = props.hasGravity = 0;
 
 	if (properties.contains("friction.air"))
 		props.airResistance = get<double>(properties.at("friction.air"));
@@ -147,5 +128,6 @@ std::unique_ptr<Component> hiage::PhysicsComponentFactory::createComponent(const
 	if (properties.contains("gravity"))
 		props.hasGravity = get<double>(properties.at("gravity")) != 0;
 
-	return make_unique<PhysicsComponent>(props);
+	return props;
 }
+

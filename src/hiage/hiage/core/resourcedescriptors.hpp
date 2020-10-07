@@ -14,6 +14,8 @@ namespace hiage
 	{
 	public:
 		ComponentProperties() {}
+
+
 	};
 
 	struct ComponentDescriptor
