@@ -349,8 +349,9 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 
 void hiage::BlockingTileSystem::update(double)
 {
-	unique_ptr<Event> evt;
-	while ((evt = gameState.getEventQueue().dequeue(BuiltinEventTypes::Collision_ObjectTile)) != nullptr)
+	auto& events = gameState.getEventQueue().peekAll(BuiltinEventTypes::Collision_ObjectTile);
+
+	for (auto& evt : events)
 	{
 		auto& myEvt = dynamic_cast<ObjectTileCollisionEvent&>(*evt);
 

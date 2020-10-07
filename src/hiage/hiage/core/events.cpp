@@ -35,6 +35,14 @@ std::vector<std::unique_ptr<Event>> hiage::EventQueue::dequeueAll()
 	return results;
 }
 
+const std::vector<std::unique_ptr<Event>>& hiage::EventQueue::peekAll(int eventType)
+{
+	static std::vector<std::unique_ptr<Event>> empty;
+	if (events.contains(eventType))
+		return events.at(eventType);
+	return empty;
+}
+
 void EventQueue::clear()
 {
 	events.clear();

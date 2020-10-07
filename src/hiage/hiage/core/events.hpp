@@ -78,8 +78,10 @@ namespace hiage
 		void enqueue(std::unique_ptr<Event> theEvent);
 
 		std::unique_ptr<Event> dequeue(int eventType);
-
 		std::vector<std::unique_ptr<Event>> dequeueAll();
+
+		const std::vector<std::unique_ptr<Event>>& peekAll(int eventType);
+
 		void clear();
 	};
 }

@@ -33,7 +33,8 @@ void GameState::update(double frametime)
 
 	for (auto& evt : remainingEvents)
 	{
-		std::clog << "Warning: Unhandled event of type " << evt->getType() << " at end of update cycle." << std::endl;
+		// Uncomment for debugging
+		// std::clog << "Warning: Unhandled event of type " << evt->getType() << " at end of update cycle." << std::endl;
 	}
 }
 
