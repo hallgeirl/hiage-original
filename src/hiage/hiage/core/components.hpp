@@ -5,6 +5,7 @@
 #include "collisions.hpp"
 
 #include <unordered_map>
+#include <unordered_set>
 #include <memory>
 #include <variant>
 #include "resourcedescriptors.hpp"
@@ -37,7 +38,7 @@ namespace hiage
 	private:
 		T data;
 	public:
-		GenericComponent() : Component(TypeID) { }
+		GenericComponent() : Component(TypeID), data() { }
 		GenericComponent(const GenericComponent<T, TypeID>& c) : Component(TypeID) { *this = c; }
 		GenericComponent(const T& data) : Component(TypeID), data(data) { }
 		
@@ -117,6 +118,7 @@ namespace hiage
 	};
 	class TrackingComponent : public GenericComponent<TrackingComponentProperties, 8>
 	{
+	public:
 		using GenericComponent::GenericComponent;
 	};
 
@@ -132,18 +134,22 @@ namespace hiage
 
 	// Used for "object state" when it comes to animations (e.g. "on ground", "standing", "walking", "jumping", "falling") and allowed actions (e.g. jumping is allowed when standing, etc.)
 	// The actual rules are defined by the system that handles this component. This is just the container of the state name and metadata attached to the state.
-
 	struct State
 	{
 		std::string stateName;
 		std::unordered_map<std::string, std::variant<std::string, int, double>> metadata;
 	};
-
 	class StateComponent : public GenericComponent<State, 11>
 	{
 	public:
 		using GenericComponent::GenericComponent;
 		virtual State createState(const ComponentProperties& properties) override;
+	};
+
+	class ControllerStateComponent : public GenericComponent<std::unordered_set<std::string>, 12>
+	{
+	public:
+		using GenericComponent::GenericComponent;
 	};
 
 	/*

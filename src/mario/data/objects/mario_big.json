@@ -29,6 +29,9 @@
       "type": "humancontroller"
     },
     {
+      "type": "controllerstate"
+    },
+    {
       "type": "collidable",
       "properties": {
         "left": 1,

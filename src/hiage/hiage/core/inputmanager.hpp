@@ -5,6 +5,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <unordered_set>
 
 namespace hiage
 {
@@ -18,6 +19,8 @@ namespace hiage
 		KeyBindings();
 		void mapKey(const std::string& keyName, const std::string& actionName);
 		int getKeyCodeFromAction(const std::string& actionName) const;
+
+		const std::unordered_map<std::string, int>& getBindings();
 	};
 
 	//class that handles input (mouse/keyboard/joystick etc.)
@@ -32,6 +35,7 @@ namespace hiage
 		bool initialize();
 
 		bool keyDown(const std::string& action);
+		std::unordered_set<std::string> getControllerActions();
 
 		int mouseButtonDown(Vector2<double> * pos = 0);	//returns 1 for left, 2 for right button etc.
 		bool mouseButtonDown(int button, Vector2<double> * pos = 0);

@@ -49,6 +49,7 @@ void CharacterStateMachineSystem::update(double)
 
 		if (get<int>(metadata["ticks-since-landed"]) > 5)
 		{
+			metadata["onGround"] = 0;
 			if (vel.getY() > 0)
 			{
 				if (abs(vel.getX()) > 150)
@@ -74,6 +75,37 @@ void CharacterStateMachineSystem::update(double)
 			{
 				state.stateName = "stand";
 			}
+		}
+	}
+}
+
+CharacterControllerSystem::CharacterControllerSystem(hiage::Game& game, hiage::GameState& gameState) : System(game, gameState)
+{
+}
+
+void CharacterControllerSystem::update(double frameTime)
+{
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, ControllerStateComponent, StateComponent>();
+
+	double magnitude = 100. * frameTime;
+
+	for (auto& c : componentTuples)
+	{
+		auto& vel = get<1>(c)->getData();
+		auto& controllerState = get<2>(c)->getData();
+		auto& state = get<3>(c)->getData();
+		for (auto& action : controllerState)
+		{
+			if (action == "goRight")
+				vel.add(Vector2<double>(1, 0) * magnitude);
+			else if (action == "goLeft")
+				vel.add(Vector2<double>(-1, 0) * magnitude);
+			else if (action == "crouch")
+				vel.add(Vector2<double>(0, -1) * magnitude);
+			else if (action == "lookUp")
+				vel.add(Vector2<double>(0, 1) * magnitude);
+			else if (action == "jump" && state.metadata.contains("onGround") && get<int>(state.metadata.at("onGround")) != 0)
+				vel.setY(100);
 		}
 	}
 }

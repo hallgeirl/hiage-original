@@ -43,10 +43,10 @@ namespace hiage
 	class PhysicsSystem : public System
 	{
 	private:
-		double gravity = 30;
+		double _gravity = 30;
 
 	public:
-		PhysicsSystem(Game& game, GameState& gameState);
+		PhysicsSystem(Game& game, GameState& gameState, double gravity);
 		virtual void update(double frameTime) override;
 	};
 

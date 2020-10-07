@@ -251,6 +251,11 @@ int KeyBindings::getKeyCodeFromAction(const std::string& actionName) const
 	return -1;
 }
 
+const std::unordered_map<std::string, int>& hiage::KeyBindings::getBindings()
+{
+	return bindings;
+}
+
 InputManager::InputManager(const KeyBindings& keyBindings) : initialized(false), keyBindings(keyBindings)
 {
 }
@@ -273,6 +278,22 @@ bool InputManager::keyDown(const std::string& action)
 	}
 
 	return false;
+}
+
+std::unordered_set<std::string> hiage::InputManager::getControllerActions()
+{
+	std::unordered_set<std::string> actions;
+	
+	const Uint8* keys = SDL_GetKeyboardState(NULL);
+
+	auto& bindings = keyBindings.getBindings();
+	for (auto& b : bindings)
+	{
+		if (keys[b.second])
+			actions.insert(b.first);
+	}
+
+	return actions;
 }
 
 int InputManager::mouseButtonDown(Vector2<double> * pPos)

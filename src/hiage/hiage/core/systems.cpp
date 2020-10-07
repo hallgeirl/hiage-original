@@ -94,7 +94,7 @@ void ObjectRenderingSystem::update(double frameTime)
 	}
 }
 
-hiage::PhysicsSystem::PhysicsSystem(Game& game, GameState& gameState) : System(game, gameState)
+hiage::PhysicsSystem::PhysicsSystem(Game& game, GameState& gameState, double gravity) : System(game, gameState), _gravity(gravity)
 {
 }
 
@@ -110,7 +110,7 @@ void hiage::PhysicsSystem::update(double frameTime)
 
 		auto& physicsProps = physics->getData();
 		if (physicsProps.hasGravity)
-			vel.add(Vector2<double>(0, -1) * gravity * frameTime);
+			vel.add(Vector2<double>(0, -1) * _gravity * frameTime);
 		
 		if (physicsProps.airResistance > 0)
 			vel.subtract(vel.normalized() * physicsProps.airResistance);
@@ -124,34 +124,14 @@ hiage::HumanControllerSystem::HumanControllerSystem(Game& game, GameState& gameS
 
 void hiage::HumanControllerSystem::update(double frameTime)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<HumanControllerComponent, VelocityComponent>();
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<HumanControllerComponent, ControllerStateComponent>();
 	for (auto& t : componentTuples)
 	{
-		auto& movement = std::get<2>(t);
-
-		// TODO: Implement proper key bindings and generally more flexibility here.
-		// Might need a component that defines accelleration magnitude as well. Or perhaps this could go into the movement component?
-		auto& vel = movement->getData();
+		auto& controllerState = std::get<2>(t);
 
 		auto& inputManager = game.getInputManager();
-		double gravity = 100. * frameTime;
-
-		if (inputManager.keyDown("goRight"))
-		{
-			vel.add(Vector2<double>(1, 0) * gravity);
-		}
-		if (inputManager.keyDown("goLeft"))
-		{
-			vel.add(Vector2<double>(-1, 0) * gravity);
-		}
-		if (inputManager.keyDown("crouch"))
-		{
-			vel.add(Vector2<double>(0, -1) * gravity);
-		}
-		if (inputManager.keyDown("lookUp"))
-		{
-			vel.add(Vector2<double>(0, 1) * gravity);
-		}
+		auto actions = inputManager.getControllerActions();
+		controllerState->setData(actions);
 	}
 }
 

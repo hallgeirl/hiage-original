@@ -16,6 +16,7 @@ hiage::ComponentManager::ComponentManager(Game& game) : game(game)
 	addComponentFactory<GenericComponentFactory<VelocityComponent>>("movable");
 	addComponentFactory<GenericComponentFactory<PhysicsComponent>>("physics");
 	addComponentFactory<GenericComponentFactory<HumanControllerComponent>>("humancontroller");
+	addComponentFactory<GenericComponentFactory<ControllerStateComponent>>("controllerstate");
 	addComponentFactory<GenericComponentFactory<CollidableComponent>>("collidable");
 	addComponentFactory<RenderableComponentFactory, const Game&>("renderable", game);
 	addComponentFactory<GenericComponentFactory<StateComponent>>("state");

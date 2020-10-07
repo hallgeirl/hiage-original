@@ -10,3 +10,10 @@ public:
 	virtual void update(double frameTime) override;
 
 };
+
+class CharacterControllerSystem : public hiage::System
+{
+public:
+	CharacterControllerSystem(hiage::Game& game, hiage::GameState& gameState);
+	virtual void update(double frameTime) override;
+};

@@ -20,8 +20,9 @@ MarioState::MarioState(hiage::Game &game) : MapState(game)
 
     // Movement and controllers
     systems.push_back(sysFactory.createSystem<HumanControllerSystem>());
+    systems.push_back(sysFactory.createSystem<CharacterControllerSystem>());
     systems.push_back(sysFactory.createSystem<MovementSystem>());
-    systems.push_back(sysFactory.createSystem<PhysicsSystem>());
+    systems.push_back(sysFactory.createSystem<PhysicsSystem>(150));
 
     // Collision detection
     systems.push_back(sysFactory.createSystem<ObjectObjectCollisionDetectionSystem>());
