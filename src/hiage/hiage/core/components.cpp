@@ -23,6 +23,7 @@ hiage::ComponentManager::ComponentManager(Game& game) : game(game)
 	addComponentFactory<GenericComponentFactory<TrackingComponent>>("objecttracker");
 	addComponentFactory<GenericComponentFactory<TrackableComponent>>("trackable");
 	addComponentFactory<GenericComponentFactory<CameraComponent>>("camera");
+	addComponentFactory<GenericComponentFactory<SpeedLimitComponent>>("speedlimit");
 }
 
 hiage::ComponentManager::~ComponentManager()
@@ -132,3 +133,15 @@ PhysicsProperties hiage::PhysicsComponent::createState(const ComponentProperties
 	return props;
 }
 
+SpeedLimitState hiage::SpeedLimitComponent::createState(const ComponentProperties& properties)
+{
+	SpeedLimitState state;
+	state.speedLimit = Vector2<double>(-1, -1);
+
+	if (properties.contains("speedLimit.x"))
+		state.speedLimit.setX(get<double>(properties.at("speedLimit.x")));
+	if (properties.contains("speedLimit.y"))
+		state.speedLimit.setY(get<double>(properties.at("speedLimit.y")));
+
+	return state;
+}

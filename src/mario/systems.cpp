@@ -85,15 +85,18 @@ CharacterControllerSystem::CharacterControllerSystem(hiage::Game& game, hiage::G
 
 void CharacterControllerSystem::update(double frameTime)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, ControllerStateComponent, StateComponent>();
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, ControllerStateComponent, StateComponent, SpeedLimitComponent>();
 
-	double magnitude = 100. * frameTime;
+	double magnitude = 400. * frameTime;
 
 	for (auto& c : componentTuples)
 	{
 		auto& vel = get<1>(c)->getData();
 		auto& controllerState = get<2>(c)->getData();
 		auto& state = get<3>(c)->getData();
+		auto& speedlimit = get<4>(c)->getData();
+		
+		speedlimit.speedLimit.setX(100);
 		for (auto& action : controllerState)
 		{
 			if (action == "goRight")
@@ -106,6 +109,8 @@ void CharacterControllerSystem::update(double frameTime)
 				vel.add(Vector2<double>(0, 1) * magnitude);
 			else if (action == "jump" && state.metadata.contains("onGround") && get<int>(state.metadata.at("onGround")) != 0)
 				vel.setY(100);
+			else if (action == "run")
+				speedlimit.speedLimit.setX(250);
 		}
 	}
 }

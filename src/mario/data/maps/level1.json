@@ -19,6 +19,9 @@
       "name": "MarioSmall"
     },
     {
+      "name": "Camera"
+    },
+    {
       "components": [
         {
           "runtimeProperties": {

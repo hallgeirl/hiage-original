@@ -9,6 +9,14 @@
       "type": "movable"
     },
     {
+      "type": "speedlimit",
+      "properties": {
+        "speedLimit": {
+          "x": 100.0
+        }
+      }
+    },
+    {
       "type": "renderable",
       "properties": {
         "sprite": "MarioBig"
@@ -23,7 +31,6 @@
         },
         "gravity": 1
       }
-
     },
     {
       "type": "humancontroller"

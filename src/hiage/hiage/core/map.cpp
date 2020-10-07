@@ -107,21 +107,25 @@ void hiage::Map::loadFromJson(std::string path, bool runScripts)
     {
         string objName = o.at("name");
 
-        auto& components = o.at("components");
+
         unordered_map<string, ComponentProperties> componentProps;
-        for (auto& c : components)
+        if (o.contains("components"))
         {
-            
-            auto type = c.at("type");
-            if (c.contains("runtimeProperties"))
+            auto& components = o.at("components");
+            for (auto& c : components)
             {
-                componentProps[type] = ComponentProperties();
-                for (auto& p : c.at("runtimeProperties").items())
+            
+                auto type = c.at("type");
+                if (c.contains("runtimeProperties"))
                 {
-                    if (p.value().is_string())
-                        componentProps[type][p.key()] = (string)p.value();
-                    else if (p.value().is_number())
-                        componentProps[type][p.key()] = (double)p.value();
+                    componentProps[type] = ComponentProperties();
+                    for (auto& p : c.at("runtimeProperties").items())
+                    {
+                        if (p.value().is_string())
+                            componentProps[type][p.key()] = (string)p.value();
+                        else if (p.value().is_number())
+                            componentProps[type][p.key()] = (double)p.value();
+                    }
                 }
             }
         }

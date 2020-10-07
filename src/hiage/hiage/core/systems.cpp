@@ -21,15 +21,41 @@ MovementSystem::MovementSystem(Game& game, GameState& gameState) : System(game, 
 
 void MovementSystem::update(double frametime)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent>();
+	{
+		auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent>();
+		for (auto& t : componentTuples)
+		{
+			auto& physical = std::get<1>(t);
+			auto& movement = std::get<2>(t);
+		
+			auto vel = movement->getData();
+			auto pos = physical->getData();
+			physical->getData().set(pos + vel * frametime);
+		}
+	}
+
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, SpeedLimitComponent>();
 	for (auto& t : componentTuples)
 	{
-		auto& physical = std::get<1>(t);
-		auto& movement = std::get<2>(t);
-		
-		auto vel = movement->getData();
-		auto pos = physical->getData();
-		physical->getData().set(pos + vel * frametime);
+		auto& movement = std::get<1>(t)->getData();
+		auto& limit = std::get<2>(t)->getData();
+
+		auto limitX = limit.speedLimit.getX();
+		auto limitY = limit.speedLimit.getY();
+		if (limitX >= 0 && abs(movement.getX()) > limitX)
+		{
+			if (movement.getX() > 0)
+				movement.setX(limitX);
+			else
+				movement.setX(-limitX);
+		}
+		if (limitY >= 0 && abs(movement.getY()) > limitY)
+		{
+			if (movement.getY() > 0)
+				movement.setY(limitY);
+			else
+				movement.setY(-limitY);
+		}
 	}
 }
 

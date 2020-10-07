@@ -152,6 +152,16 @@ namespace hiage
 		using GenericComponent::GenericComponent;
 	};
 
+	struct SpeedLimitState
+	{
+		Vec2d speedLimit;
+	};
+	class SpeedLimitComponent : public GenericComponent<SpeedLimitState, 13>
+	{
+	public:
+		using GenericComponent::GenericComponent;
+		virtual SpeedLimitState createState(const ComponentProperties& properties) override;
+	};
 	/*
 	ComponentManager
 	*/

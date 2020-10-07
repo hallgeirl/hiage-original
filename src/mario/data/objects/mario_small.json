@@ -9,16 +9,34 @@
       "type": "movable"
     },
     {
+      "type": "speedlimit",
+      "properties": {
+        "speedLimit": {
+          "x": 100.0
+        }
+      }
+    },
+    {
       "type": "renderable",
       "properties": {
         "sprite": "MarioSmall"
       }
     },
     {
-      "type": "physics"
+      "type": "physics",
+      "properties": {
+        "friction": {
+          "air": 0.1,
+          "ground": 1
+        },
+        "gravity": 1
+      }
     },
     {
       "type": "humancontroller"
+    },
+    {
+      "type": "controllerstate"
     },
     {
       "type": "collidable",
@@ -34,6 +52,9 @@
       "properties": {
         "initial": "stand"
       }
+    },
+    {
+      "type": "trackable"
     }
   ],
   "scripts": [
