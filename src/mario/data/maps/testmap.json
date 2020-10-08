@@ -11,12 +11,15 @@
         {
           "runtimeProperties": {
             "x": 132.0,
-            "y": 136.0
+            "y": 60.0
           },
           "type": "physical"
         }
       ],
-      "name": "Goomba"
+      "name": "MarioBig"
+    },
+    {
+      "name": "Camera"
     }
   ],
   "scripts": {

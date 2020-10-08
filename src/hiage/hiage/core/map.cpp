@@ -106,8 +106,7 @@ void hiage::Map::loadFromJson(std::string path, bool runScripts)
     for (auto& o : objects)
     {
         string objName = o.at("name");
-
-
+        
         unordered_map<string, ComponentProperties> componentProps;
         if (o.contains("components"))
         {

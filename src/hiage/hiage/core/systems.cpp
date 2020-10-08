@@ -301,12 +301,11 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 
 		if (((tilerect.right - tilerect.left) > 0) && ((tilerect.top - tilerect.bottom) > 0))
 		{
+			vector<BoundingPolygon> tilePolygons;
 			for (int x = (int)tilerect.left; x <= (int)tilerect.right; x++)
 			{
 				for (int y = (int)tilerect.bottom; y <= (int)tilerect.top; y++)
 				{
-					// todo: should do a single object->multiple polygon test
-					vector<BoundingPolygon> tilePolygons;
 					int blockType = tilemap.getTileset()->getTile(tilemap.getTile(x, y, 0)).block;
 					// block == 1 means fully blocking - i.e. all edges are blocking.
 					if (blockType == 1)
@@ -337,23 +336,22 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 						tilePolygons.push_back(p);
 					}
 
-					auto result = collisionTester.testCollision(objectPolygon, vel * frameTime, tilePolygons, -1);
-					if (result.hasIntersected || result.isIntersecting)
-					{
-						gameState.getEventQueue().enqueue(std::make_unique<ObjectTileCollisionEvent>(ObjectTileCollisionData{
-							.entityId = entityId,
-							.objectPosition = currentPosition,
-							.tilePosition = Vector2<int>(x,y),
-							.normalVector = result.hitNormal
-							}));
-					}
 				}
+			}
+			auto result = collisionTester.testCollision(objectPolygon, vel * frameTime, tilePolygons, -1);
+			if (result.willIntersect || result.isIntersecting)
+			{
+				gameState.getEventQueue().enqueue(std::make_unique<ObjectTileCollisionEvent>(ObjectTileCollisionData{
+					.entityId = entityId,
+					//.tilePosition = Vector2<int>(x,y),
+					.collisionResult = result
+					}));
 			}
 		}
 	}
 }
 
-void hiage::BlockingTileSystem::update(double)
+void hiage::BlockingTileSystem::update(double frameTime)
 {
 	auto& events = gameState.getEventQueue().peekAll(BuiltinEventTypes::Collision_ObjectTile);
 
@@ -366,9 +364,11 @@ void hiage::BlockingTileSystem::update(double)
 		auto& vel = std::get<1>(components)->getData();
 		auto& bb = std::get<2>(components)->getData();
 		
-		// TODO - Make this a proper collision handling, respecting the normal vector of the collision.
-		vel.setY(0);
-		pos.setY(myEvt.getData().tilePosition.getY() * 16. + 16 - bb.getBottom());
+		auto& collisionResult = myEvt.getData().collisionResult;
+
+		pos.add(vel * collisionResult.collisionTime * frameTime - vel * 1.0e-6);
+
+		vel.set(vel - (collisionResult.hitNormal * (1.0 + 0) * vel.dot(myEvt.getData().collisionResult.hitNormal)));
 	}
 }
 

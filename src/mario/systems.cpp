@@ -21,7 +21,7 @@ void CharacterStateMachineSystem::update(double)
 			//auto& state = c->getData();
 
 			// normal vector of 30 degrees or higher => count as solid ground
-			if (myEvt.getData().normalVector.getY() > 0.5) {
+			if (myEvt.getData().collisionResult.hitNormal.getY() > 0.5) {
 				auto& metadata = c->getData().metadata;
 				metadata["onGround"] = 1;
 				metadata["ticks-since-landed"] = 0;
@@ -97,6 +97,8 @@ void CharacterControllerSystem::update(double frameTime)
 		auto& speedlimit = get<4>(c)->getData();
 		
 		speedlimit.speedLimit.setX(100);
+
+		//vel.add(Vector2<double>(-1, 0) * magnitude);
 		for (auto& action : controllerState)
 		{
 			if (action == "goRight")

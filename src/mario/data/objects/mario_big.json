@@ -42,7 +42,7 @@
       "type": "collidable",
       "properties": {
         "left": 1,
-        "bottom": 1,
+        "bottom": 0,
         "width": 10,
         "height": 20
       }

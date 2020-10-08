@@ -85,12 +85,12 @@ void hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projectio
 
 	//Find the "best" guess of HOW the objects collides.
 	//That is, what direction, and what normal was intersected first.
-	if ((!result.isIntersecting && !result.hasIntersected) || //If the result intersection flags are both false, this is the first test.
+	if ((!result.isIntersecting && !result.willIntersect) || //If the result intersection flags are both false, this is the first test.
 		(result.isIntersecting && (hasIntersected || (isIntersecting && result.distance < distance))) || //Previous result was an overlapping one, while the latest result indicate o1 and o2 will collide in the future instead,
-		(result.hasIntersected && hasIntersected && t > result.collisionTime)) //Previous result was that o1 and o2 collides in the future, but this result indicates that they collide later.
+		(result.willIntersect && hasIntersected && t > result.collisionTime)) //Previous result was that o1 and o2 collides in the future, but this result indicates that they collide later.
 	{
 		result.isIntersecting = isIntersecting;
-		result.hasIntersected = hasIntersected;
+		result.willIntersect = hasIntersected;
 		result.collisionTime = t;
 		result.distance = distance;
 		result.hitNormal = axis;
@@ -102,7 +102,7 @@ void hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projectio
 	//No intersection now or in the future.
 	else if (!isIntersecting && !hasIntersected)
 	{
-		result.hasIntersected = false;
+		result.willIntersect = false;
 		result.isIntersecting = false;
 	}
 }
@@ -199,7 +199,7 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 				if (_axis == result.hitNormal)
 					normalOwner = i;
 
-				if (!result.hasIntersected && !result.isIntersecting)
+				if (!result.willIntersect && !result.isIntersecting)
 				{
 					separating = true;
 					break;
@@ -218,14 +218,14 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 		}
 		//Will intersect with p in the future. 
 		//If we're not already overlapping with another polygon, go ahead and update the current minimum collision time.
-		else if (result.hasIntersected)
+		else if (result.willIntersect)
 		{
 			//If the collision time is the smallest so far, 
 			if (result.collisionTime < minimumCollisionTime)
 			{
 				minimumCollisionTime = result.collisionTime;
 				finalResult.collisionTime = result.collisionTime;
-				finalResult.hasIntersected = true;
+				finalResult.willIntersect = true;
 				finalResult.hitNormal = result.hitNormal;
 
 				if (normalOwner == 0)
@@ -235,7 +235,7 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 	}
 
 	//If we have a first collision, call the collision handler
-	if (finalResult.hasIntersected || finalResult.isIntersecting)
+	if (finalResult.willIntersect || finalResult.isIntersecting)
 	{
 #if DEBUG_COLLISION_OBJECT_POLYGON
 		clog << "COLLISION." << " Time: " << finalResult.collisionTime << " Normal: " << finalResult.hitNormal << " Translation vector: " << finalResult.minimumTranslationVector << endl;
@@ -287,7 +287,7 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 			testAxis(projectPolygon(p1, axis), projectPolygon(p2, axis), relativeVelocity, axis, result, 1, i);
 
 			//No intersection (now or in the future)
-			if (!result.isIntersecting && !result.hasIntersected)
+			if (!result.isIntersecting && !result.willIntersect)
 			{
 				separating = true;
 				break;

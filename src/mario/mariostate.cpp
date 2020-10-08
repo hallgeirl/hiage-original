@@ -18,19 +18,21 @@ MarioState::MarioState(hiage::Game &game) : MapState(game)
 {
     auto sysFactory = getSystemsFactory();
 
-    // Movement and controllers
+    // Movement and controllers -- updates velocity
     systems.push_back(sysFactory.createSystem<HumanControllerSystem>());
     systems.push_back(sysFactory.createSystem<CharacterControllerSystem>());
-    systems.push_back(sysFactory.createSystem<MovementSystem>());
     systems.push_back(sysFactory.createSystem<PhysicsSystem>(150));
 
-    // Collision detection
+    // Collision detection -- will we collide in this frame?
     systems.push_back(sysFactory.createSystem<ObjectObjectCollisionDetectionSystem>());
     auto& tilemap = gamemap.getTilemap();
     systems.push_back(sysFactory.createSystem<ObjectTileCollisionDetectionSystem, const Tilemap&>(tilemap));
 
     // Collision handling
     systems.push_back(sysFactory.createSystem<BlockingTileSystem>());
+
+    // Movement
+    systems.push_back(sysFactory.createSystem<MovementSystem>());
 
     systems.push_back(sysFactory.createSystem<CharacterStateMachineSystem>());
 

@@ -38,7 +38,7 @@ namespace hiage
 	struct CollisionResult
 	{
 		// Bounding polygons will intersect at t=(0 <= CollisionTime < 1) into the future
-		bool hasIntersected = false;
+		bool willIntersect = false;
 		double collisionTime;
 
 		// Intersecting right now

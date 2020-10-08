@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../util/vector2.h"
+#include "collisions.hpp"
 #include <unordered_map>
 #include <string>
 #include <memory>
@@ -43,9 +44,7 @@ namespace hiage
 	struct ObjectTileCollisionData
 	{
 		int entityId;
-		Vector2<double> objectPosition;
-		Vector2<int> tilePosition;
-		Vector2<double> normalVector;
+		CollisionResult collisionResult;
 	};
 	class ObjectTileCollisionEvent : public GenericEvent<ObjectTileCollisionData>
 	{
