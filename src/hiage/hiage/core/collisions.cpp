@@ -12,7 +12,7 @@ hiage::SATCollisionTester::SATCollisionTester()
 
 bool hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projection& prj2, const Vector2<double>& relativeVelocity, const Vector2<double>& axis, CollisionResult& result, double remainingFrameFraction, int axisOwner)
 {
-	bool isIntersecting = false, hasIntersected = false;
+	bool isIntersecting = false, willIntersect = false;
 	double t = 0; //Collision time
 
 	//Positive distance means we don't have an overlap. Negative means we have an overlap.
@@ -68,7 +68,7 @@ bool hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projectio
 				t = distance / abs(velAxis);
 
 				if (t < remainingFrameFraction)
-					hasIntersected = true;
+					willIntersect = true;
 
 #if DEBUG_COLLISION_OBJECT_POLYGON || DEBUG_COLLISION_OBJECT_OBJECT
 				clog << "\tCollision time: " << t << endl;
@@ -86,11 +86,11 @@ bool hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projectio
 	//Find the "best" guess of HOW the objects collides.
 	//That is, what direction, and what normal was intersected first.
 	if ((!result.isIntersecting && !result.willIntersect) || //If the result intersection flags are both false, this is the first test.
-		(result.isIntersecting && (hasIntersected || (isIntersecting && result.distance < distance))) || //Previous result was an overlapping one, while the latest result indicate o1 and o2 will collide in the future instead,
-		(result.willIntersect && hasIntersected && t > result.collisionTime)) //Previous result was that o1 and o2 collides in the future, but this result indicates that they collide later.
+		(result.isIntersecting && (willIntersect || (isIntersecting && result.distance < distance))) || //Previous result was an overlapping one, while the latest result indicate o1 and o2 will collide in the future instead,
+		(result.willIntersect && willIntersect && t > result.collisionTime)) //Previous result was that o1 and o2 collides in the future, but this result indicates that they collide later.
 	{
 		result.isIntersecting = isIntersecting;
-		result.willIntersect = hasIntersected;
+		result.willIntersect = willIntersect;
 		result.collisionTime = t;
 		result.distance = distance;
 		result.hitNormal = axis;
@@ -101,7 +101,7 @@ bool hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projectio
 		return true;
 	}
 	//No intersection now or in the future.
-	else if (!isIntersecting && !hasIntersected)
+	else if (!isIntersecting && !willIntersect)
 	{
 		result.willIntersect = false;
 		result.isIntersecting = false;
@@ -130,18 +130,26 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 		return CollisionResult();
 	}
 	CollisionResult finalResult = CollisionResult();
-
 	Vec2d velocityFrame;
 
 	if (axis < 0)
+	{
+		finalResult.axis = Vec2d(0, 0);
 		velocityFrame = vel;
+	}
 	else
 	{
 		velocityFrame = Vec2d(0, 0);
 		if (axis == 0)
+		{
 			velocityFrame.setX(vel.getX());
-		else 
+			finalResult.axis = Vec2d(1, 0);
+		}
+		else
+		{
 			velocityFrame.setY(vel.getY());
+			finalResult.axis = Vec2d(0, 1);
+		}
 	}
 
 

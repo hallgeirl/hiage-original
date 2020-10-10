@@ -365,14 +365,20 @@ void hiage::BlockingTileSystem::update(double frameTime)
 		auto& myEvt = dynamic_cast<ObjectTileCollisionEvent&>(*evt);
 
 		auto components = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>(myEvt.getData().entityId);
+
 		auto& pos = std::get<0>(components)->getData();
 		auto& vel = std::get<1>(components)->getData();
 		auto& bb = std::get<2>(components)->getData();
 		
 		auto& collisionResult = myEvt.getData().collisionResult;
 
-		pos.add(vel * collisionResult.collisionTime * frameTime - vel * 1.0e-6);
+		// collisionTimeFactor is the fraction of the velocity that should be applied to move the object to the position of the collision
+		auto collisionTimeFactor = frameTime * collisionResult.collisionTime;
+		// Calculate the per-axis velocity
+		Vec2d deltaPos(vel.getX() * collisionTimeFactor * collisionResult.axis.getX(), vel.getY() * collisionTimeFactor * collisionResult.axis.getY());
+		pos.add(deltaPos - vel * 1.0e-6);
 
+		// Adjust the velocity according to the hit normal
 		vel.set(vel - (collisionResult.hitNormal * (1.0 + 0) * vel.dot(myEvt.getData().collisionResult.hitNormal)));
 	}
 }

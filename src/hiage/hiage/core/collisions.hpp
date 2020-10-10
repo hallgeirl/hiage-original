@@ -48,9 +48,12 @@ namespace hiage
 		Vector2<double> minimumTranslationVector;
 		Vector2<double> minimumTranslationNormal;
 
-		//Normal for hit surface, and its owner
+		// Normal for hit surface as seen from the first object in the collision test. That is, the normal for the surface the first object hits.
 		Vector2<double> hitNormal;
-		int hitNormalOwner;
+		
+		// If doing a per-axis collision test, this is the axis the hit occured on. Will be either (1, 0) or (0, 1).
+		// If NOT doing a per-axis test, then this vector will be (1, 1).
+		Vector2<double> axis;
 
 		//Used internally to determine MTD
 		double distance;

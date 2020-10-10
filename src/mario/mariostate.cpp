@@ -21,7 +21,7 @@ MarioState::MarioState(hiage::Game &game) : MapState(game)
     // Movement and controllers -- updates velocity
     systems.push_back(sysFactory.createSystem<HumanControllerSystem>());
     systems.push_back(sysFactory.createSystem<CharacterControllerSystem>());
-    systems.push_back(sysFactory.createSystem<PhysicsSystem>(150));
+    systems.push_back(sysFactory.createSystem<PhysicsSystem>(1000));
 
     // Collision detection -- will we collide in this frame?
     systems.push_back(sysFactory.createSystem<ObjectObjectCollisionDetectionSystem>());

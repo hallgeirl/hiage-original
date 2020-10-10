@@ -98,7 +98,7 @@ void CharacterControllerSystem::update(double frameTime)
 		
 		speedlimit.speedLimit.setX(100);
 
-		//vel.add(Vector2<double>(-1, 0) * magnitude);
+		//vel.add(Vector2<double>(1, 0) * magnitude*2);
 		for (auto& action : controllerState)
 		{
 			if (action == "goRight")
@@ -110,7 +110,7 @@ void CharacterControllerSystem::update(double frameTime)
 			else if (action == "lookUp")
 				vel.add(Vector2<double>(0, 1) * magnitude);
 			else if (action == "jump" && state.metadata.contains("onGround") && get<int>(state.metadata.at("onGround")) != 0)
-				vel.setY(100);
+				vel.setY(300);
 			else if (action == "run")
 				speedlimit.speedLimit.setX(250);
 		}
