@@ -10,7 +10,7 @@ hiage::SATCollisionTester::SATCollisionTester()
 }
 
 
-void hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projection& prj2, const Vector2<double>& relativeVelocity, const Vector2<double>& axis, CollisionResult& result, double remainingFrameFraction, int axisOwner)
+bool hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projection& prj2, const Vector2<double>& relativeVelocity, const Vector2<double>& axis, CollisionResult& result, double remainingFrameFraction, int axisOwner)
 {
 	bool isIntersecting = false, hasIntersected = false;
 	double t = 0; //Collision time
@@ -98,6 +98,7 @@ void hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projectio
 #if DEBUG_COLLISION_OBJECT_POLYGON || DEBUG_COLLISION_OBJECT_OBJECT
 		clog << "\tNew best axis" << endl;
 #endif
+		return true;
 	}
 	//No intersection now or in the future.
 	else if (!isIntersecting && !hasIntersected)
@@ -105,6 +106,7 @@ void hiage::SATCollisionTester::testAxis(const Projection& prj1, const Projectio
 		result.willIntersect = false;
 		result.isIntersecting = false;
 	}
+	return false;
 }
 
 Projection hiage::SATCollisionTester::projectPolygon(const BoundingPolygon& p, const Vector2<double>& axis)
@@ -165,7 +167,7 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 	//finalResult.frameTime = frameTime;
 //			int finalNormalOwner = -1;
 
-			//Check each edge
+	//Check each edge
 	for (const auto& p2 : polygons)
 	{
 		if (p2.getVertices().size() == 2 && p2.getEdgeNormals()[0].dot(velocityFrame) >= 0)
@@ -187,7 +189,7 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 		edges[1] = p2.getEdgeNormals();
 
 		bool separating = false;
-		int normalOwner = -1;
+		int hitNormalOwner = -1;
 
 		for (int i = 0; i < 2; i++)
 		{
@@ -195,9 +197,8 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 			for (Vec2d _axis : polygonEdges)
 			{
 				// Do the collision test on the polygons
-				testAxis(projectPolygon(p, _axis), projectPolygon(p2, _axis), velocityFrame, _axis, result, 1, i);
-				if (_axis == result.hitNormal)
-					normalOwner = i;
+				if (testAxis(projectPolygon(p, _axis), projectPolygon(p2, _axis), velocityFrame, _axis, result, 1, i))
+					hitNormalOwner = i;
 
 				if (!result.willIntersect && !result.isIntersecting)
 				{
@@ -214,7 +215,7 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 		{
 			finalResult.isIntersecting = true;
 			finalResult.minimumTranslationVector = result.minimumTranslationVector;
-			finalResult.minimumTranslationNormal = result.hitNormal * (normalOwner == 0 ? -1 : 1) * abs(result.distance);
+			finalResult.minimumTranslationNormal = result.hitNormal * (hitNormalOwner == 0 ? -1 : 1) * abs(result.distance);
 		}
 		//Will intersect with p in the future. 
 		//If we're not already overlapping with another polygon, go ahead and update the current minimum collision time.
@@ -228,7 +229,7 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 				finalResult.willIntersect = true;
 				finalResult.hitNormal = result.hitNormal;
 
-				if (normalOwner == 0)
+				if (hitNormalOwner == 0)
 					finalResult.hitNormal = finalResult.hitNormal * -1;
 			}
 		}

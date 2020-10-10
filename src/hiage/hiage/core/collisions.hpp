@@ -50,6 +50,7 @@ namespace hiage
 
 		//Normal for hit surface, and its owner
 		Vector2<double> hitNormal;
+		int hitNormalOwner;
 
 		//Used internally to determine MTD
 		double distance;
@@ -63,7 +64,8 @@ namespace hiage
 	private:
 		// Test one axis with SAT (separating axes theorem).
 		// Updates result if there is a "better" hit.
-		void testAxis(const Projection& prj1, const Projection& prj2, const Vector2<double>& relativeVelocity, const Vector2<double>& axis, CollisionResult& result, double remainingFrameFraction, int axisOwner);
+		// Returns true if a better hit is found, false otherwise.
+		bool testAxis(const Projection& prj1, const Projection& prj2, const Vector2<double>& relativeVelocity, const Vector2<double>& axis, CollisionResult& result, double remainingFrameFraction, int axisOwner);
 
 		// Project a convex polygon onto a vector
 		Projection projectPolygon(const BoundingPolygon& p, const Vector2<double>& axis);

@@ -145,3 +145,13 @@ SpeedLimitState hiage::SpeedLimitComponent::createState(const ComponentPropertie
 
 	return state;
 }
+
+TrackingComponentProperties hiage::TrackingComponent::createState(const ComponentProperties& properties)
+{
+	TrackingComponentProperties props;
+	props.mode = "fixed";
+	if (properties.contains("mode"))
+		props.mode = get<string>(properties.at("mode"));
+
+	return props;
+}

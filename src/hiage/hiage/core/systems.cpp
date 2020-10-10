@@ -274,8 +274,10 @@ SystemsFactory::SystemsFactory(Game& game, GameState& gameState) : game(game), g
 {
 }
 
+static int frameCounter = 0;
 void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 {
+	frameCounter++;
 	if (!tilemap.isLoaded())
 		return;
 
@@ -338,14 +340,17 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 
 				}
 			}
-			auto result = collisionTester.testCollision(objectPolygon, vel * frameTime, tilePolygons, -1);
-			if (result.willIntersect || result.isIntersecting)
+			
+			for (int axis = 0; axis <= 1; axis++)
 			{
-				gameState.getEventQueue().enqueue(std::make_unique<ObjectTileCollisionEvent>(ObjectTileCollisionData{
-					.entityId = entityId,
-					//.tilePosition = Vector2<int>(x,y),
-					.collisionResult = result
-					}));
+				auto result = collisionTester.testCollision(objectPolygon, vel * frameTime, tilePolygons, axis);
+				if (result.willIntersect || result.isIntersecting)
+				{
+					gameState.getEventQueue().enqueue(std::make_unique<ObjectTileCollisionEvent>(ObjectTileCollisionData{
+						.entityId = entityId,
+						.collisionResult = result
+						}));
+				}
 			}
 		}
 	}

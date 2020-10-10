@@ -120,6 +120,7 @@ namespace hiage
 	{
 	public:
 		using GenericComponent::GenericComponent;
+		virtual TrackingComponentProperties createState(const ComponentProperties& properties) override;
 	};
 
 	class TrackableComponent : public DatalessComponent<9>
