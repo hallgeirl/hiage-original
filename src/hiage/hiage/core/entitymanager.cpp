@@ -24,27 +24,6 @@ EntityManager::~EntityManager()
 {
 }
 
-void EntityManager::createEntity(std::string objectName, const ComponentProperties& runtimeProperties)
-{
-	std::clog << "Creating object " << objectName << "..." << std::endl;
-	auto& objectManager = _game.getObjectManager();
-	auto& objectDescResource = objectManager.requestResourcePtr(objectName);
-
-	vector<shared_ptr<Component>> componentList;
-	auto& componentFactory = _gameState.getComponentManager();
-
-	for (auto& c : objectDescResource->resource->components)
-	{
-		shared_ptr<Component> cShared = componentFactory.createComponent(c, runtimeProperties);
-		componentList.push_back(cShared);
-	}
-
-	auto ent = make_unique<Entity>(objectName);
-	_components[ent->getEntityId()] = componentList;
-
-	_entities.push_back(std::move(ent));
-}
-
 void EntityManager::createEntity(std::string objectName, const std::unordered_map<std::string, ComponentProperties>& componentRuntimeProperties)
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
@@ -68,6 +47,7 @@ void EntityManager::createEntity(std::string objectName, const std::unordered_ma
 	_components[ent->getEntityId()] = componentList;
 
 	_entities.push_back(std::move(ent));
+	_cacheVersion++;
 }
 const std::vector<std::unique_ptr<Entity>>& hiage::EntityManager::getEntities()
 {

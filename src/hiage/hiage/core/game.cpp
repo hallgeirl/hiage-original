@@ -251,8 +251,11 @@ void Game::run(bool doEvents)
 			std::this_thread::sleep_for(std::chrono::microseconds(microsecondsToSleep));
 		}
 	}
-	lastFrameTime = std::min(frameTimer.getTime(), 0.02) * timeFactor;
 
+	static int fc = 0;
+	if (fc++ % 10 == 0)
+		cout << "FPS: " << (1 / frameTimer.getTime()) << endl;
+	lastFrameTime = std::min(frameTimer.getTime(), 0.02) * timeFactor;
 	scriptVM.executeLine(string("frametime=") + lastFrameTime);
 }
 

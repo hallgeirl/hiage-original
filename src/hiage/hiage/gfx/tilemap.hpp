@@ -7,6 +7,7 @@
 
 #include "../core/typedefs.h"
 #include "../util/vector2.h"
+#include "../core/boundingpolygon.hpp"
 
 #include <cstdint>
 
@@ -25,9 +26,12 @@ namespace hiage
 
 		// Tiles stored in row major order
 		std::vector<uint32_t> _tilemap;
+		std::vector<BoundingPolygon> _boundingPolygons;
 
 		//texture list
 		Tileset * _tileset;
+
+		void buildBoundingPolygons();
 
 	public:
 		Tilemap();
@@ -42,7 +46,8 @@ namespace hiage
 		void render(Renderer &renderer, double camx, double camy, double zoom, double aspect, ObjectZ depth, int layer);
 		void importMap(const std::vector<uint32_t>& data);
 
-		BoundingBox<double>	getTilesInRect(double left, double top, double right, double bottom) const;
+		BoundingBox<double>	getTileBoundingBoxInRect(double left, double top, double right, double bottom) const;
+		std::vector<BoundingPolygon> getBoundingPolygonsInRect(double left, double top, double right, double bottom) const;
 		Vector2<double> getTileCoordinates(double x, double y, int layer) const;
 		unsigned int 	getTile(uint x, uint y, uint z) const;
 		const std::vector<uint32_t>& getTilemapRaw();

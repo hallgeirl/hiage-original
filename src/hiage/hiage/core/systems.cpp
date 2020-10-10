@@ -200,10 +200,10 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 
 			//check the distance between them
 			//TODO: Put in a better distance check based on relative velocities.
-			double distance = (get<1>(c1)->getData() - get<1>(c2)->getData()).length();
+			double distance = (pos1 - pos2).length();
 			if (distance > 50)
 			{
-				continue;
+				break;
 			}
 
 			// Store the current position and speed for both objects
@@ -299,58 +299,17 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 		int tileSize = tilemap.getTileSize();
 
 		// Get bounding box for tiles within the sprite's overlap
-		BoundingBox<double> tilerect = tilemap.getTilesInRect(objectPolygon.getLeft() - tileSize, objectPolygon.getTop() + tileSize, objectPolygon.getRight() + tileSize, objectPolygon.getBottom() - tileSize);
 
-		if (((tilerect.right - tilerect.left) > 0) && ((tilerect.top - tilerect.bottom) > 0))
+		vector<BoundingPolygon> tilePolygons = tilemap.getBoundingPolygonsInRect(objectPolygon.getLeft() - tileSize, objectPolygon.getTop() + tileSize, objectPolygon.getRight() + tileSize, objectPolygon.getBottom() - tileSize);
+		for (int axis = 0; axis <= 1; axis++)
 		{
-			vector<BoundingPolygon> tilePolygons;
-			for (int x = (int)tilerect.left; x <= (int)tilerect.right; x++)
+			auto result = collisionTester.testCollision(objectPolygon, vel * frameTime, tilePolygons, axis);
+			if (result.willIntersect || result.isIntersecting)
 			{
-				for (int y = (int)tilerect.bottom; y <= (int)tilerect.top; y++)
-				{
-					int blockType = tilemap.getTileset()->getTile(tilemap.getTile(x, y, 0)).block;
-					// block == 1 means fully blocking - i.e. all edges are blocking.
-					if (blockType == 1)
-					{
-						BoundingPolygon p;
-						
-						// lower left
-						p.addVertex((double)x * tileSize, (double)y * tileSize);
-						// upper left
-						p.addVertex((double)x * tileSize, (double)y * tileSize +  tileSize);
-						// upper right
-						p.addVertex((double)x * tileSize + tileSize, (double)y * tileSize + tileSize);
-						// lower right
-						p.addVertex((double)x * tileSize + tileSize, (double)y * tileSize);
-						p.buildNormals();
-						tilePolygons.push_back(p);
-					}
-					// block == 2 means blocking from above, but not from below
-					else if (blockType == 2)
-					{
-						BoundingPolygon p;
-
-						// upper left
- 						p.addVertex((double)x * tileSize, (double)y * tileSize + tileSize);
-						// upper right
-						p.addVertex((double)x * tileSize + tileSize, (double)y * tileSize + tileSize);
-						p.buildNormals();
-						tilePolygons.push_back(p);
-					}
-
-				}
-			}
-			
-			for (int axis = 0; axis <= 1; axis++)
-			{
-				auto result = collisionTester.testCollision(objectPolygon, vel * frameTime, tilePolygons, axis);
-				if (result.willIntersect || result.isIntersecting)
-				{
-					gameState.getEventQueue().enqueue(std::make_unique<ObjectTileCollisionEvent>(ObjectTileCollisionData{
-						.entityId = entityId,
-						.collisionResult = result
-						}));
-				}
+				gameState.getEventQueue().enqueue(std::make_unique<ObjectTileCollisionEvent>(ObjectTileCollisionData{
+					.entityId = entityId,
+					.collisionResult = result
+					}));
 			}
 		}
 	}

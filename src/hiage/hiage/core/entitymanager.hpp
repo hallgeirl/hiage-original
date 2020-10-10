@@ -30,6 +30,7 @@ namespace hiage
 		const Game& _game;
 		const GameState& _gameState;
 
+		int _cacheVersion;
 		/*
 			Component query helpers.
 		*/
@@ -107,6 +108,11 @@ namespace hiage
 		template <typename T>
 		std::vector<std::tuple<int, std::shared_ptr<T>>> queryComponentGroup()
 		{
+			static std::tuple<int, std::vector<std::tuple<int, std::shared_ptr<T>>>> cache(-1, std::vector<std::tuple<int, std::shared_ptr<T>>>());
+
+			if (std::get<0>(cache) == _cacheVersion)
+				return std::get<1>(cache);
+
 			// TODO - Use archetypes here later - for now, just use this naive implementation
 
 			std::vector<std::tuple<int, std::shared_ptr<T>>> results;
@@ -117,6 +123,9 @@ namespace hiage
 					results.push_back(std::make_tuple(e->getEntityId(), res));
 			}
 			
+			std::get<1>(cache) = results;
+			std::get<0>(cache) = _cacheVersion;
+
 			return results;
 		}
 
@@ -141,6 +150,11 @@ namespace hiage
 			// TODO - Use archetypes here later - for now, just use this naive implementation
 			// This is quite ugly - but will have to do for now
 
+			static std::tuple<int, std::vector<std::tuple<int, std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>>> cache(-1, std::vector<std::tuple<int, std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>>());
+
+			if (std::get<0>(cache) == _cacheVersion)
+				return std::get<1>(cache);
+
 			std::vector<std::tuple<int, std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>> results;
 			for (auto& e : _entities)
 			{
@@ -150,6 +164,9 @@ namespace hiage
 					results.push_back(std::tuple_cat(std::make_tuple(e->getEntityId()), res));
 			}
 
+			std::get<1>(cache) = results;
+			std::get<0>(cache) = _cacheVersion;
+
 			return results;
 		}
 
@@ -157,7 +174,6 @@ namespace hiage
 		/*!
 		Create entity
 		*/
-		void createEntity(std::string objectName, const ComponentProperties& runtimeProperties);
 		void createEntity(std::string objectName, const std::unordered_map<std::string, ComponentProperties>& componentRuntimeProperties);
 		const std::vector<std::unique_ptr<Entity>>& getEntities();
 		void destroyAll();
