@@ -196,8 +196,10 @@ void Game::setGameState(GameState * state)
 
 void Game::run(bool doEvents)
 {
-	Timer frameTimer(true);		 //!< Used for frame limiting.
+	static Timer frameTimer(true);		 //!< Used for frame limiting.
 	
+	frameTimer.reset();
+
 	display.beginRender();
 
     SDL_Event event;
@@ -244,7 +246,7 @@ void Game::run(bool doEvents)
 	if (framerateLimit > 0)
 	{
 		double frameTimeMicroseconds = frameTimer.getTime() * 1000000;
-		long microsecondsToSleep = (long)(frameTimeLimitMicroseconds - frameTimeMicroseconds / 100.);
+		long microsecondsToSleep = (long)(frameTimeLimitMicroseconds - frameTimeMicroseconds) - 1000;
 
 		if (microsecondsToSleep > 1)
 		{
@@ -254,7 +256,7 @@ void Game::run(bool doEvents)
 
 	static int fc = 0;
 	if (fc++ % 10 == 0)
-		cout << "FPS: " << (1 / frameTimer.getTime()) << endl;
+		cout << "FPS: " << (1 / frameTimer.getTime()) << " frametime " << frameTimer.getTime() << endl;
 	lastFrameTime = std::min(frameTimer.getTime(), 0.02) * timeFactor;
 	scriptVM.executeLine(string("frametime=") + lastFrameTime);
 }

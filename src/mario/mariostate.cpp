@@ -30,6 +30,7 @@ MarioState::MarioState(hiage::Game &game) : MapState(game)
 
     // Collision handling
     systems.push_back(sysFactory.createSystem<BlockingTileSystem>());
+    systems.push_back(sysFactory.createSystem<MarioCollisionResponseSystem>());
 
     // Movement
     systems.push_back(sysFactory.createSystem<MovementSystem>());

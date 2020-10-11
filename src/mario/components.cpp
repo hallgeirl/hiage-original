@@ -1,4 +1,2 @@
-#pragma once
-
-#include <hiage/core/components.hpp>
+#include "components.hpp"
 

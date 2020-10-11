@@ -163,7 +163,7 @@ void hiage::HumanControllerSystem::update(double)
 
 void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>();
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, PositionComponent, VelocityComponent>();
 
 	// Sort by x coordinate
 	gameState.getEntityManager().sortEntitiesByPosition();
@@ -174,9 +174,9 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 	{
 		auto& c1 = componentTuples[i];
 		auto entityId1 = get<0>(c1);
-		const auto& pos1 = get<1>(c1)->getData();
-		const auto& vel1 = get<2>(c1)->getData();
-		polygon1 = get<3>(c1)->getData();
+		const auto& pos1 = get<2>(c1)->getData();
+		const auto& vel1 = get<3>(c1)->getData();
+		polygon1 = get<1>(c1)->getData();
 
 		polygon1.translate(pos1);
 
@@ -184,15 +184,14 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 		{
 			auto& c2 = componentTuples[j];
 			auto entityId2 = get<0>(c2);
-			const auto& pos2 = get<1>(c2)->getData();
-			auto relativeFrameVelocity = (vel1 - get<2>(c2)->getData()) * frameTime;
-			polygon2 = get<3>(c2)->getData();
+			const auto& pos2 = get<2>(c2)->getData();
+			auto relativeFrameVelocity = (vel1 - get<3>(c2)->getData()) * frameTime;
+			polygon2 = get<1>(c2)->getData();
 
 			polygon2.translate(pos2);
 
 			// Distance check: If object 2 is further to the right than it's possible to move in one frame, we can skip this check.
 			// For subsequent objects, they will be even more to the right, so we can break out early here.
-			// TODO: This may fail due to the fact that we sort by X coordinate only, not bounding polygon edges. May need to sort by bounding polygon's left edge.
 			auto xDistance = polygon2.getLeft() - polygon1.getRight();
 			if (xDistance > relativeFrameVelocity.getX())
 				break;

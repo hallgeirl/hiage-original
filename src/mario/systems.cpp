@@ -116,3 +116,19 @@ void CharacterControllerSystem::update(double frameTime)
 		}
 	}
 }
+
+MarioCollisionResponseSystem::MarioCollisionResponseSystem(hiage::Game& game, hiage::GameState& gameState) : System(game, gameState)
+{
+}
+
+void MarioCollisionResponseSystem::update(double frameTime)
+{
+	auto& events = gameState.getEventQueue().peekAll(BuiltinEventTypes::Collision_ObjectObject);
+
+	for (auto& evt : events)
+	{
+		auto& myEvt = dynamic_cast<ObjectObjectCollisionEvent&>(*evt);
+
+		cout << myEvt.getData().entityId1 << " collided with " << myEvt.getData().entityId2 << endl;
+	}
+}

@@ -59,14 +59,23 @@ struct PositionComponentComparator {
 	bool operator()(const unique_ptr<Entity>& a,
 		const unique_ptr<Entity>& b) const
 	{
-		auto pos1 = _em.queryComponentGroup<PositionComponent>(a->getEntityId());
-		auto pos2 = _em.queryComponentGroup<PositionComponent>(b->getEntityId());
-		if (pos1 == nullptr)
+		auto o1 = _em.queryComponentGroup<CollidableComponent, PositionComponent>(a->getEntityId());
+		auto o2 = _em.queryComponentGroup<CollidableComponent, PositionComponent>(b->getEntityId());
+
+		auto& bb1 = get<0>(o1);
+		auto& bb2 = get<0>(o2);
+		
+		if (bb1 == nullptr && bb2 == nullptr)
+			return false;
+		if (bb1 == nullptr)
 			return true;
-		if (pos2 == nullptr)
+		if (bb2 == nullptr)
 			return false;
 
-		return pos1->getData().getX() < pos2->getData().getX();
+		auto& pos1 = get<1>(o1);
+		auto& pos2 = get<1>(o2);
+
+		return pos1->getData().getX() + bb1->getData().getLeft() < pos2->getData().getX() + bb2->getData().getLeft();
 	}
 };
 
@@ -78,6 +87,7 @@ void hiage::EntityManager::sortEntitiesByPosition()
 		return;
 
 	std::sort(_entities.begin(), _entities.end(), comp);
+	_cacheVersion++;
 }
 const std::vector<std::unique_ptr<Entity>>& hiage::EntityManager::getEntities()
 {

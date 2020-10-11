@@ -17,3 +17,10 @@ public:
 	CharacterControllerSystem(hiage::Game& game, hiage::GameState& gameState);
 	virtual void update(double frameTime) override;
 };
+
+class MarioCollisionResponseSystem : public hiage::System
+{
+public:
+	MarioCollisionResponseSystem(hiage::Game& game, hiage::GameState& gameState);
+	virtual void update(double frameTime) override;
+};
