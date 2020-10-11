@@ -300,7 +300,7 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 
 		// Get bounding box for tiles within the sprite's overlap
 
-		vector<BoundingPolygon> tilePolygons = tilemap.getBoundingPolygonsInRect(objectPolygon.getLeft() - tileSize, objectPolygon.getTop() + tileSize, objectPolygon.getRight() + tileSize, objectPolygon.getBottom() - tileSize);
+		vector<BoundingPolygon> tilePolygons = tilemap.getBoundingPolygonsInRect(objectPolygon.getLeft() + vel.getX() * frameTime, objectPolygon.getTop() + vel.getY() * frameTime, objectPolygon.getRight() + vel.getX() * frameTime, objectPolygon.getBottom() + vel.getY() * frameTime);
 		for (int axis = 0; axis <= 1; axis++)
 		{
 			auto result = collisionTester.testCollision(objectPolygon, vel * frameTime, tilePolygons, axis);

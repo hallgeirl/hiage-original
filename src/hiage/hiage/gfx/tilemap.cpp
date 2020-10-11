@@ -126,35 +126,24 @@ BoundingBox<double> Tilemap::getTileBoundingBoxInRect(double left, double top, d
 	tilemap_top = (float)(_tilesize * _height);
 	tilemap_bottom = 0;
 
-	if ((right > tilemap_left) && (left < tilemap_right) && (top > tilemap_bottom) && (bottom < tilemap_top))
-	{
-		if (left < tilemap_left)
-		{
-			left = tilemap_left;
-		}
-		if (top > tilemap_top)
-		{
-			top = tilemap_top;
-		}
-		if (bottom < tilemap_bottom)
-		{
-			bottom = tilemap_bottom;
-		}
-		if (right > tilemap_right)
-		{
-			right = tilemap_right;
-		}
+	left /= _tilesize;
+	right /= _tilesize;
+	top /= _tilesize;
+	bottom /= _tilesize;
 
-		left /= _tilesize;
-		right /= _tilesize;
-		top /= _tilesize;
-		bottom /= _tilesize;
+	rect.left = (int)floor(left);
+	rect.right = (int)ceil(right);
+	rect.top = (int)ceil(top);
+	rect.bottom = (int)floor(bottom);
 
-		rect.left = (int)floor(left);
-		rect.right = (int)ceil(right);
-		rect.top = (int)ceil(top);
-		rect.bottom = (int)floor(bottom);
-	}
+	if (rect.left < 0)
+		rect.left = 0;
+	if (rect.right > _width - 1)
+		rect.right = _width - 1;
+	if (rect.bottom < 0)
+		rect.bottom = 0;
+	if (rect.top > _height - 1)
+		rect.top = _height - 1;
 
 	return rect;
 }
