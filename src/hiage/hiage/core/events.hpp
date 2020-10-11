@@ -55,8 +55,7 @@ namespace hiage
 	struct ObjectObjectCollisionData
 	{
 		int entityId1, entityId2;
-		Vector2<double> objectPosition1, objectPosition2;
-		Vector2<double> normalVector;
+		CollisionResult collisionResult;
 	};
 	class ObjectObjectCollisionEvent : public GenericEvent<ObjectObjectCollisionData>
 	{

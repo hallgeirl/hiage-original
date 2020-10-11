@@ -79,6 +79,6 @@ namespace hiage
 		CollisionResult testCollision(const BoundingPolygon& p, const Vector2<double>& vel, const std::vector<BoundingPolygon>& polygons, int axis);
 		
 		// Test collision against two moving polygons (usually two objects).
-		CollisionResult testCollision(const BoundingPolygon& p1, const Vector2<double>& vel1, const BoundingPolygon& p2, const Vector2<double>& vel2);
+		CollisionResult testCollision(const BoundingPolygon& p1, const BoundingPolygon& p2, const Vector2<double>& relativeVelocity);
 	};
 }

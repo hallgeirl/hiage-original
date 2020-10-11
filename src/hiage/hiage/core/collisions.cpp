@@ -157,8 +157,6 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 	//First find all the axis. They are the union of the object's edge normals, and the polygon's edge normals.
 	//The polygon's edge normals will be retrieved for each polygon that is checked.
 
-	vector<Vector2<double>> edges[2] = { p.getEdgeNormals(), vector<Vector2<double>>() };
-
 #if DEBUG_COLLISION_OBJECT_POLYGON
 	int collCount = 0;
 	clog << "Testing collision object vs polygon, polygon count: " + polygons.size() << endl;
@@ -194,14 +192,13 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 		//Collision results for the current polygon
 		CollisionResult result;
 		result.minimumTranslationVector = velocityFrame;
-		edges[1] = p2.getEdgeNormals();
 
 		bool separating = false;
 		int hitNormalOwner = -1;
 
 		for (int i = 0; i < 2; i++)
 		{
-			auto polygonEdges = edges[i];
+			const auto& polygonEdges = (i == 0 ? p.getEdgeNormals() : p2.getEdgeNormals());
 			for (Vec2d _axis : polygonEdges)
 			{
 				// Do the collision test on the polygons
@@ -265,7 +262,7 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 	return finalResult;
 }
 
-CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& p1, const Vector2<double>& vel1, const BoundingPolygon& p2, const Vector2<double>& vel2)
+CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& p1, const BoundingPolygon& p2, const Vector2<double>& relativeVelocity)
 {
 #if DEBUG_COLLISION_OBJECT_OBJECT
 	clog << "Begin collision test object vs object" << endl
@@ -273,21 +270,17 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 	clog << "Bounding box 2: " + o2.BoundingPolygon.ToString() << endl;
 #endif
 
-	//Calculate relative velocity between o1 and o2, as seen from o1
-	Vec2d relativeVelocity = (vel1 - vel2);
 #if DEBUG_COLLISION_OBJECT_OBJECT
 	clog << "Velocity 1 " + o1.Velocity + " Velocity 2 " + o2.Velocity << endl;
 #endif
 	CollisionResult result;
 	bool separating = false;
 
-	vector<Vec2d> polygons[2] = { p1.getEdgeNormals(), p2.getEdgeNormals() };
-
 	// Find each edge normal in the bounding polygons, which is used as axes.
 	//foreach (var poly in polygons)
 	for (int i = 0; i < 2; i++)
 	{
-		auto& poly = polygons[i];
+		const auto& poly = (i == 0 ? p1.getEdgeNormals() : p2.getEdgeNormals());
 
 		// If the result is ever null, we have a separating axis, and we can cancel the search.
 		for (auto& axis : poly)

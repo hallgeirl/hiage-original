@@ -15,7 +15,7 @@
 using namespace hiage;
 using namespace std;
 
-EntityManager::EntityManager(const Game& game, const GameState& gameState) : _game(game), _gameState(gameState)
+EntityManager::EntityManager(const Game& game, const GameState& gameState) : _game(game), _gameState(gameState), _cacheVersion(0)
 {
 
 }
@@ -48,6 +48,36 @@ void EntityManager::createEntity(std::string objectName, const std::unordered_ma
 
 	_entities.push_back(std::move(ent));
 	_cacheVersion++;
+}
+
+struct PositionComponentComparator {
+	EntityManager& _em;
+	PositionComponentComparator(EntityManager& em) : _em(em)
+	{
+	}
+
+	bool operator()(const unique_ptr<Entity>& a,
+		const unique_ptr<Entity>& b) const
+	{
+		auto pos1 = _em.queryComponentGroup<PositionComponent>(a->getEntityId());
+		auto pos2 = _em.queryComponentGroup<PositionComponent>(b->getEntityId());
+		if (pos1 == nullptr)
+			return true;
+		if (pos2 == nullptr)
+			return false;
+
+		return pos1->getData().getX() < pos2->getData().getX();
+	}
+};
+
+void hiage::EntityManager::sortEntitiesByPosition()
+{
+	PositionComponentComparator comp(*this);
+	// Sort by x coordinate
+	if (std::is_sorted(_entities.begin(), _entities.end(), comp))
+		return;
+
+	std::sort(_entities.begin(), _entities.end(), comp);
 }
 const std::vector<std::unique_ptr<Entity>>& hiage::EntityManager::getEntities()
 {

@@ -155,7 +155,6 @@ std::vector<BoundingPolygon> hiage::Tilemap::getBoundingPolygonsInRect(double le
 	vector<BoundingPolygon> tilePolygons;
 	tilePolygons.reserve(10);
 
-	int n = 0;
 	for (int x = (int)tilerect.left; x <= (int)tilerect.right; x++)
 	{
 		for (int y = (int)tilerect.bottom; y <= (int)tilerect.top; y++)

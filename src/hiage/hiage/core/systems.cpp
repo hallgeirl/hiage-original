@@ -148,7 +148,7 @@ hiage::HumanControllerSystem::HumanControllerSystem(Game& game, GameState& gameS
 {
 }
 
-void hiage::HumanControllerSystem::update(double frameTime)
+void hiage::HumanControllerSystem::update(double)
 {
 	auto componentTuples = gameState.getEntityManager().queryComponentGroup<HumanControllerComponent, ControllerStateComponent>();
 	for (auto& t : componentTuples)
@@ -161,24 +161,14 @@ void hiage::HumanControllerSystem::update(double frameTime)
 	}
 }
 
-// Used for sorting based on the x coordinate of objects
-template<typename ...TAll>
-struct PositionComponentComparator {
-	bool operator()(std::tuple<int, std::shared_ptr<TAll>...> a,
-		std::tuple<int, std::shared_ptr<TAll>...> b) const
-	{
-		return get<1>(a)->getData().getX() < get<1>(b)->getData().getX();
-	}
-};
-
 void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 {
 	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>();
-	PositionComponentComparator<PositionComponent, VelocityComponent, CollidableComponent> comp;
 
 	// Sort by x coordinate
-	std::sort(componentTuples.begin(), componentTuples.end(), comp);
-	
+	gameState.getEntityManager().sortEntitiesByPosition();
+
+	BoundingPolygon polygon1, polygon2;
 	// Check for collisions
 	for (int i = 0; i < componentTuples.size(); i++)
 	{
@@ -186,83 +176,35 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 		auto entityId1 = get<0>(c1);
 		const auto& pos1 = get<1>(c1)->getData();
 		const auto& vel1 = get<2>(c1)->getData();
+		polygon1 = get<3>(c1)->getData();
+
+		polygon1.translate(pos1);
 
 		for (int j = i + 1; j < componentTuples.size(); j++)
 		{
 			auto& c2 = componentTuples[j];
 			auto entityId2 = get<0>(c2);
 			const auto& pos2 = get<1>(c2)->getData();
-			const auto& vel2 = get<2>(c2)->getData();
-			
-			
-			// Position of both objects at the time of collision
-			Vector2<double> colPos1, colPos2;
+			auto relativeFrameVelocity = (vel1 - get<2>(c2)->getData()) * frameTime;
+			polygon2 = get<3>(c2)->getData();
 
-			//check the distance between them
-			//TODO: Put in a better distance check based on relative velocities.
-			double distance = (pos1 - pos2).length();
-			if (distance > 50)
-			{
+			polygon2.translate(pos2);
+
+			// Distance check: If object 2 is further to the right than it's possible to move in one frame, we can skip this check.
+			// For subsequent objects, they will be even more to the right, so we can break out early here.
+			// TODO: This may fail due to the fact that we sort by X coordinate only, not bounding polygon edges. May need to sort by bounding polygon's left edge.
+			auto xDistance = polygon2.getLeft() - polygon1.getRight();
+			if (xDistance > relativeFrameVelocity.getX())
 				break;
-			}
 
-			// Store the current position and speed for both objects
-			double dspeed1 = vel1.length() * frameTime;
-			double dspeed2 = vel2.length() * frameTime;
+			auto result = collisionTester.testCollision(polygon1, polygon2, relativeFrameVelocity);
 
-			//get the speed of the fastest object (the one that will move furthest during the next frame)
-			int dspeed;
-			if (dspeed1 > dspeed2)
-			{
-				dspeed = (int)ceil(dspeed1);
-			}
-			else
-			{
-				dspeed = (int)ceil(dspeed2);
-			}
-
-			//find the delta velocity vector (largest increments should have length 1)
-			Vector2<double> dvelocity1 = vel1 * frameTime / dspeed;
-			Vector2<double> dvelocity2 = vel2 * frameTime / dspeed;
-		    //TODO: Optimization
-			bool collided = false;
-			auto currentPosition1 = Vector2<double>(pos1),
-				 currentPosition2 = Vector2<double>(pos2);
-
-			//check for collisions during the next frame
-			for (int k = 0; k < dspeed; k++)
-			{
-				auto colRect1 = get<3>(c1)->getData();
-				auto colRect2 = get<3>(c2)->getData();
-
-				//get the collision rect for both objects
-				colRect1.translate(pos1);
-
-				colRect2.translate(pos2);
-
-				//do the rects intersect?
-				if (colRect1.getLeft() < colRect2.getRight() && colRect1.getRight() > colRect2.getLeft() && colRect1.getTop() > colRect2.getBottom() && colRect1.getBottom() < colRect2.getTop())
-				{
-					collided = true;
-
-					colPos1 = currentPosition1;
-					colPos2 = currentPosition2;
-					break;
-				}
-
-				//increment the position for a new check
-				currentPosition1 -= dvelocity1;
-				currentPosition2 -= dvelocity2;
-			}
-
-			if (collided)
+			if (result.willIntersect || result.isIntersecting)
 			{
 				gameState.getEventQueue().enqueue(std::make_unique<ObjectObjectCollisionEvent>(ObjectObjectCollisionData{
-									.entityId1 = entityId1,
-									.entityId2 = entityId2,
-									.objectPosition1 = currentPosition1,
-									.objectPosition2 = currentPosition2
-									/*, .normalVector = Vector2<double>(0,1) todo - implement collision detection that actually finds the normal vector for the collision (see my C# hiage)*/
+					.entityId1 = entityId1,
+					.entityId2 = entityId2,
+					.collisionResult = result
 					}));
 			}
 		}
@@ -296,10 +238,7 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 		BoundingPolygon objectPolygon = get<3>(c)->getData();
 		objectPolygon.translate(currentPosition);
 
-		int tileSize = tilemap.getTileSize();
-
-		// Get bounding box for tiles within the sprite's overlap
-
+		// Get bounding polygons for tiles within the sprite's overlap
 		vector<BoundingPolygon> tilePolygons = tilemap.getBoundingPolygonsInRect(objectPolygon.getLeft() + vel.getX() * frameTime, objectPolygon.getTop() + vel.getY() * frameTime, objectPolygon.getRight() + vel.getX() * frameTime, objectPolygon.getBottom() + vel.getY() * frameTime);
 		for (int axis = 0; axis <= 1; axis++)
 		{
@@ -327,7 +266,6 @@ void hiage::BlockingTileSystem::update(double frameTime)
 
 		auto& pos = std::get<0>(components)->getData();
 		auto& vel = std::get<1>(components)->getData();
-		auto& bb = std::get<2>(components)->getData();
 		
 		auto& collisionResult = myEvt.getData().collisionResult;
 
