@@ -200,9 +200,16 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 
 			if (result.willIntersect || result.isIntersecting)
 			{
+				// Add two collision events - object 1 colliding with object 2, and the other way around.
 				gameState.getEventQueue().enqueue(std::make_unique<ObjectObjectCollisionEvent>(ObjectObjectCollisionData{
 					.entityId1 = entityId1,
 					.entityId2 = entityId2,
+					.collisionResult = result
+					}));
+
+				gameState.getEventQueue().enqueue(std::make_unique<ObjectObjectCollisionEvent>(ObjectObjectCollisionData{
+					.entityId1 = entityId2,
+					.entityId2 = entityId1,
 					.collisionResult = result
 					}));
 			}

@@ -134,7 +134,7 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 
 	if (axis < 0)
 	{
-		finalResult.axis = Vec2d(0, 0);
+		finalResult.axis = Vec2d(1, 1);
 		velocityFrame = vel;
 	}
 	else
@@ -276,6 +276,7 @@ CollisionResult hiage::SATCollisionTester::testCollision(const BoundingPolygon& 
 	CollisionResult result;
 	bool separating = false;
 
+	result.axis = Vector2<double>(1, 1);
 	// Find each edge normal in the bounding polygons, which is used as axes.
 	//foreach (var poly in polygons)
 	for (int i = 0; i < 2; i++)

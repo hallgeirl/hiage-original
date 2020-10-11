@@ -11,7 +11,7 @@
         {
           "runtimeProperties": {
             "x": 132.0,
-            "y": 60.0
+            "y": 300.0
           },
           "type": "physical"
         }
@@ -20,6 +20,30 @@
     },
     {
       "name": "Camera"
+    },
+    {
+      "components": [
+        {
+          "runtimeProperties": {
+            "x": 250.0,
+            "y": 300.0
+          },
+          "type": "physical"
+        }
+      ],
+      "name": "Goomba"
+    },
+    {
+      "components": [
+        {
+          "runtimeProperties": {
+            "x": 200.0,
+            "y": 300.0
+          },
+          "type": "physical"
+        }
+      ],
+      "name": "Goomba"
     }
   ],
   "scripts": {

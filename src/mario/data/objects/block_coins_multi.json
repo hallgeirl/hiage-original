@@ -15,15 +15,18 @@
 
         }
      },
-     {
-        "type": "collidable",
-        "properties": {
-          "left": 0,
-          "bottom": 0,
-          "width": 16,
-          "height": 16
-        }
-     }
+    {
+      "type": "collidable",
+      "properties": {
+        "left": 0,
+        "bottom": 0,
+        "width": 16,
+        "height": 16
+      }
+    },
+    {
+      "type": "blocking"
+    }
   ],
   "scripts": [
      {

@@ -1,4 +1,5 @@
 #include "systems.hpp"
+#include "components.hpp"
 
 using namespace std;
 using namespace hiage;
@@ -129,6 +130,35 @@ void MarioCollisionResponseSystem::update(double frameTime)
 	{
 		auto& myEvt = dynamic_cast<ObjectObjectCollisionEvent&>(*evt);
 
-		cout << myEvt.getData().entityId1 << " collided with " << myEvt.getData().entityId2 << endl;
+		// Handle moving object colliding with blocking object
+		auto c1 = gameState.getEntityManager().queryComponentGroup<CollidableComponent, PositionComponent, VelocityComponent>(myEvt.getData().entityId1);
+		auto c2 = gameState.getEntityManager().queryComponentGroup<CollidableComponent, BlockingComponent>(myEvt.getData().entityId2);
+	
+		auto& pos = get<1>(c1)->getData();
+		auto& vel = get<2>(c1)->getData();
+
+		if (get<0>(c2) != nullptr)
+		{
+			auto& collisionResult = myEvt.getData().collisionResult;
+
+			// collisionTimeFactor is the fraction of the velocity that should be applied to move the object to the position of the collision
+			auto collisionTimeFactor = frameTime * collisionResult.collisionTime;
+			// Calculate the per-axis velocity
+			Vec2d deltaPos(vel.getX() * collisionTimeFactor * collisionResult.axis.getX(), vel.getY() * collisionTimeFactor * collisionResult.axis.getY());
+			pos.add(deltaPos - vel * 1.0e-6);
+
+			// Adjust the velocity according to the hit normal
+			vel.set(vel - (collisionResult.hitNormal * (1.0 + 0) * vel.dot(myEvt.getData().collisionResult.hitNormal)));
+
+			auto state = gameState.getEntityManager().queryComponentGroup<StateComponent>(myEvt.getData().entityId1);
+
+			// normal vector of 30 degrees or higher => count as solid ground
+			if (myEvt.getData().collisionResult.hitNormal.getY() > 0.5 && state != nullptr) {
+				auto& metadata = state->getData().metadata;
+				metadata["onGround"] = 1;
+				metadata["ticks-since-landed"] = 0;
+			}
+		}
 	}
 }
+

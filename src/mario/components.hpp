@@ -11,3 +11,8 @@ class StomperComponent : public hiage::DatalessComponent<1001>
 {
 	using DatalessComponent::DatalessComponent;
 };
+
+class BlockingComponent : public hiage::DatalessComponent<1002>
+{
+	using DatalessComponent::DatalessComponent;
+};

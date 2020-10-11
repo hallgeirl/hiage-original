@@ -9,6 +9,7 @@
 
 #include <hiage/core/entitymanager.hpp>
 #include <hiage/core/script_lua.h>
+#include "components.hpp"
 
 using namespace hiage;
 using namespace std;
@@ -42,6 +43,12 @@ MarioState::MarioState(hiage::Game &game) : MapState(game)
     systems.push_back(sysFactory.createSystem<ObjectTrackingSystem>());
     systems.push_back(sysFactory.createSystem<AnimationSystem>());
     systems.push_back(sysFactory.createSystem<ObjectRenderingSystem>());
+
+
+    /*
+    Component factories
+    */
+    componentManager.addComponentFactory<GenericComponentFactory<BlockingComponent>>("blocking");
 }
 
 
