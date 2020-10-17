@@ -33,7 +33,10 @@
       }
     },
     {
-      "type": "humancontroller"
+      "type": "controller",
+      "properties": {
+        "controllerType": "human"
+      }
     },
     {
       "type": "controllerstate"

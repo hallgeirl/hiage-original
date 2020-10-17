@@ -20,7 +20,7 @@ MarioState::MarioState(hiage::Game &game) : MapState(game)
     auto sysFactory = getSystemsFactory();
 
     // Movement and controllers -- updates velocity
-    systems.push_back(sysFactory.createSystem<HumanControllerSystem>());
+    systems.push_back(sysFactory.createSystem<ControllerSystem>());
     systems.push_back(sysFactory.createSystem<CharacterControllerSystem>());
     systems.push_back(sysFactory.createSystem<PhysicsSystem>(1000));
 
@@ -48,7 +48,7 @@ MarioState::MarioState(hiage::Game &game) : MapState(game)
     /*
     Component factories
     */
-    componentManager.addComponentFactory<GenericComponentFactory<BlockingComponent>>("blocking");
+    componentManager.addGenericComponentFactory<BlockingComponent>("blocking");
 }
 
 

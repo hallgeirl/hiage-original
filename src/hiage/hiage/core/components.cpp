@@ -12,18 +12,18 @@ using namespace std;
 
 hiage::ComponentManager::ComponentManager(Game& game) : game(game)
 {
-	addComponentFactory<GenericComponentFactory<PositionComponent>>("physical");
-	addComponentFactory<GenericComponentFactory<VelocityComponent>>("movable");
-	addComponentFactory<GenericComponentFactory<PhysicsComponent>>("physics");
-	addComponentFactory<GenericComponentFactory<HumanControllerComponent>>("humancontroller");
-	addComponentFactory<GenericComponentFactory<ControllerStateComponent>>("controllerstate");
-	addComponentFactory<GenericComponentFactory<CollidableComponent>>("collidable");
-	addComponentFactory<RenderableComponentFactory, const Game&>("renderable", game);
-	addComponentFactory<GenericComponentFactory<StateComponent>>("state");
-	addComponentFactory<GenericComponentFactory<TrackingComponent>>("objecttracker");
-	addComponentFactory<GenericComponentFactory<TrackableComponent>>("trackable");
-	addComponentFactory<GenericComponentFactory<CameraComponent>>("camera");
-	addComponentFactory<GenericComponentFactory<SpeedLimitComponent>>("speedlimit");
+	addGenericComponentFactory<PositionComponent>("physical");
+	addGenericComponentFactory<VelocityComponent>("movable");
+	addGenericComponentFactory<PhysicsComponent>("physics");
+	addGenericComponentFactory<ControllerComponent>("controller");
+	addGenericComponentFactory<ControllerStateComponent>("controllerstate");
+	addGenericComponentFactory<CollidableComponent>("collidable");
+	addComponentFactory<RenderableComponentFactory, RenderableComponent, const Game&>("renderable", game);
+	addGenericComponentFactory<StateComponent>("state");
+	addGenericComponentFactory<TrackingComponent>("objecttracker");
+	addGenericComponentFactory<TrackableComponent>("trackable");
+	addGenericComponentFactory<CameraComponent>("camera");
+	addGenericComponentFactory<SpeedLimitComponent>("speedlimit");
 }
 
 hiage::ComponentManager::~ComponentManager()
@@ -34,13 +34,30 @@ unique_ptr<Component> ComponentManager::createComponent(const ComponentDescripto
 {
 	auto& type = componentDescriptor.type;
 
-	if (componentFactories.contains(type))
+	if (_componentFactories.contains(type))
 	{
-		auto& factory = componentFactories.at(componentDescriptor.type);
+		auto& factory = _componentFactories.at(componentDescriptor.type);
 		return factory->createComponent(componentDescriptor, runtimeProperties);
 	}
 
 	throw runtime_error("Component type not found: " + type);
+}
+
+
+unique_ptr<Component> ComponentManager::createComponent(const std::string& type, const ComponentProperties& properties) const
+{
+	if (_componentFactories.contains(type))
+	{
+		auto& factory = _componentFactories.at(type);
+		return factory->createComponent(properties);
+	}
+
+	throw runtime_error("Component type not found: " + type);
+}
+
+int hiage::ComponentManager::getTypeIdForComponentType(const std::string& componentType) const
+{
+	return _componentNameToTypeId.at(componentType);
 }
 
 
@@ -91,6 +108,11 @@ std::unique_ptr<Component> hiage::RenderableComponentFactory::createComponent(co
 {
 	auto& properties = componentDescriptor.properties;
 
+	return createComponent(properties);
+}
+
+std::unique_ptr<Component> hiage::RenderableComponentFactory::createComponent(const ComponentProperties& properties) const
+{
 	const auto& spriteName = get<std::string>(properties.at(std::string("sprite")));
 
 	auto sprite = game.getSpriteManager().requestResourceCopy(spriteName);
@@ -152,6 +174,21 @@ TrackingComponentProperties hiage::TrackingComponent::createState(const Componen
 	props.mode = "fixed";
 	if (properties.contains("mode"))
 		props.mode = get<string>(properties.at("mode"));
+
+	return props;
+}
+
+ControllerProperties hiage::ControllerComponent::createState(const ComponentProperties& properties)
+{
+	ControllerProperties props;
+	props.controllerType = "none";
+	if (properties.contains("controllerType"))
+		props.controllerType = get<string>(properties.at("controllerType"));
+	
+	if (props.controllerType == "constant" && properties.contains("constantActions"))
+	{
+		props.constantActions = std::get<std::vector<std::string>>(properties.at("constantActions"));
+	}
 
 	return props;
 }

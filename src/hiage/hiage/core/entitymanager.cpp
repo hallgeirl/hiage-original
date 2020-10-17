@@ -24,7 +24,7 @@ EntityManager::~EntityManager()
 {
 }
 
-void EntityManager::createEntity(std::string objectName, const std::unordered_map<std::string, ComponentProperties>& componentRuntimeProperties)
+const std::unique_ptr<Entity>& EntityManager::createEntity(std::string objectName, const std::unordered_map<std::string, ComponentProperties>& componentRuntimeProperties)
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
 	auto& objectManager = _game.getObjectManager();
@@ -48,6 +48,50 @@ void EntityManager::createEntity(std::string objectName, const std::unordered_ma
 
 	_entities.push_back(std::move(ent));
 	_cacheVersion++;
+
+	return _entities.back();
+}
+
+void hiage::EntityManager::addComponentToEntity(int entityId, const std::string& componentType, ComponentProperties& componentProperties)
+{
+	if (_components.contains(entityId))
+	{
+		auto& componentManager = _gameState.getComponentManager();
+
+		shared_ptr<Component> cShared = componentManager.createComponent(componentType, componentProperties);
+		_components[entityId].push_back(cShared);
+		
+		_cacheVersion++;
+	}
+	else
+	{
+		throw runtime_error(string("Entity with ID ") + entityId + " does not exist.");
+	}
+}
+
+void hiage::EntityManager::removeComponentFromEntity(int entityId, const std::string& componentType)
+{
+	if (_components.contains(entityId))
+	{
+		auto& componentManager = _gameState.getComponentManager();
+		int typeId = componentManager.getTypeIdForComponentType(componentType);
+
+		auto& componentList = _components.at(entityId);
+
+		for (size_t i = 0; i < componentList.size(); i++)
+		{
+			if (componentList[i]->getTypeId() == typeId)
+			{
+				componentList.erase(componentList.begin() + i);
+				_cacheVersion++;
+				break;
+			}
+		}
+	}
+	else
+	{
+		throw runtime_error(string("Entity with ID ") + entityId + " does not exist.");
+	}
 }
 
 struct PositionComponentComparator {

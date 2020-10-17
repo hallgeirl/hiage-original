@@ -9,6 +9,7 @@
 #include "map.hpp"
 #include "entitymanager.hpp"
 #include "../lua-includes.h"
+#include "../util/jsonhelpers.hpp"
 
 #include <base64/base64.hpp>
 #include <json/json.hpp>
@@ -115,20 +116,47 @@ void hiage::Map::loadFromJson(std::string path, bool runScripts)
             {
             
                 auto type = c.at("type");
-                if (c.contains("runtimeProperties"))
+                if (c.contains("properties"))
                 {
                     componentProps[type] = ComponentProperties();
-                    for (auto& p : c.at("runtimeProperties").items())
+                    for (auto& p : c.at("properties").items())
                     {
                         if (p.value().is_string())
                             componentProps[type][p.key()] = (string)p.value();
                         else if (p.value().is_number())
                             componentProps[type][p.key()] = (double)p.value();
+                        else if (p.value().is_array() && p.value()[0].is_number())
+                            componentProps[type][p.key()] = JsonHelpers::parseNumberArray(p.value());
+                        else if (p.value().is_array() && p.value()[0].is_string())
+                            componentProps[type][p.key()] = JsonHelpers::parseStringArray(p.value());
+
                     }
                 }
             }
         }
-        em.createEntity(objName, componentProps);
+        auto& entity = em.createEntity(objName, componentProps);
+
+        if (o.contains("removeComponents"))
+        {
+            auto& componentsToRemove = o.at("removeComponents");
+            for (auto& c : componentsToRemove)
+            {
+                em.removeComponentFromEntity(entity->getEntityId(), c);
+            }
+        }
+        if (o.contains("additionalComponents"))
+        {
+            auto& componentsToAdd = o.at("additionalComponents");
+            for (auto& c : componentsToAdd)
+            {
+                ComponentProperties p;
+                if (componentProps.contains(c))
+                {
+                    p = componentProps[c];
+                }
+                em.addComponentToEntity(entity->getEntityId(), c, p);
+            }
+        }
     }
 
 	//include the script files

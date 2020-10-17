@@ -100,9 +100,17 @@ namespace hiage
 		virtual PhysicsProperties createState(const ComponentProperties& properties) override;
 	};
 
-	class HumanControllerComponent : public DatalessComponent<5>
+	struct ControllerProperties
 	{
-		using DatalessComponent::DatalessComponent;
+		std::string controllerType;
+		std::vector<std::string> constantActions;
+
+	};
+	class ControllerComponent : public GenericComponent<ControllerProperties, 5>
+	{
+	public:
+		using GenericComponent::GenericComponent;
+		virtual ControllerProperties createState(const ComponentProperties& properties) override;
 	};
 
 	class CollidableComponent : public GenericComponent<BoundingPolygon, 7>
@@ -172,12 +180,20 @@ namespace hiage
 	public:
 		virtual ~ComponentFactory() {};
 		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const = 0;
+		virtual std::unique_ptr<Component> createComponent(const ComponentProperties& properties) const = 0;
 	};
 
 	template<typename T>
 	class GenericComponentFactory : public ComponentFactory
 	{
 	public:
+		/// <summary>
+		/// Creates the component using a component descriptor (basically a "blueprint" from the object definition), 
+		/// as well as runtime properties, that are typically set at runtime when creating the object, like position etc.
+		/// </summary>
+		/// <param name="componentDescriptor"></param>
+		/// <param name="runtimeProperties"></param>
+		/// <returns></returns>
 		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override
 		{
 			ComponentProperties mergedProperties;
@@ -185,6 +201,20 @@ namespace hiage
 			mergedProperties.insert(componentDescriptor.properties.begin(), componentDescriptor.properties.end());
 			auto component = std::make_unique<T>();
 			auto state = component->createState(mergedProperties);
+			component->setData(state);
+
+			return std::move(component);
+		}
+
+		/// <summary>
+		/// Creates the new component from properties only. Useful for adding components to an object that isn't part of the object definition.
+		/// </summary>
+		/// <param name="properties"></param>
+		/// <returns></returns>
+		virtual std::unique_ptr<Component> createComponent(const ComponentProperties& properties) const override
+		{
+			auto component = std::make_unique<T>();
+			auto state = component->createState(properties);
 			component->setData(state);
 
 			return std::move(component);
@@ -198,23 +228,35 @@ namespace hiage
 	public:
 		RenderableComponentFactory(const Game& game);
 		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
+		virtual std::unique_ptr<Component> createComponent(const ComponentProperties& runtimeProperties) const override;
 	};
 
 	class ComponentManager
 	{
 	private: 
-		std::unordered_map<std::string, std::unique_ptr<ComponentFactory>> componentFactories;
+		std::unordered_map<std::string, std::unique_ptr<ComponentFactory>> _componentFactories;
+		std::unordered_map<std::string, int> _componentNameToTypeId;
 		Game& game;
 	public:
 		ComponentManager(Game& game);
 		~ComponentManager();
 
-		template<typename T, typename ...TRest>
+		template<typename T, typename TComponent, typename ...TRest>
 		void addComponentFactory(const std::string& componentType, TRest... args)
 		{
-			componentFactories[componentType] = std::make_unique<T>(args...);
+			_componentFactories[componentType] = std::make_unique<T>(args...);
+			_componentNameToTypeId[componentType] = TComponent::TYPEID;
+		}
+
+		template<typename TComponent, typename ...TRest>
+		void addGenericComponentFactory(const std::string& componentType, TRest... args)
+		{
+			_componentFactories[componentType] = std::make_unique<GenericComponentFactory<TComponent>>(args...);
+			_componentNameToTypeId[componentType] = TComponent::TYPEID;
 		}
 
 		std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const;
+		std::unique_ptr<Component> ComponentManager::createComponent(const std::string& type, const ComponentProperties& properties) const;
+		int getTypeIdForComponentType(const std::string& componentType) const;
 	};
 }

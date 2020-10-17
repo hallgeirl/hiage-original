@@ -174,7 +174,10 @@ namespace hiage
 		/*!
 		Create entity
 		*/
-		void createEntity(std::string objectName, const std::unordered_map<std::string, ComponentProperties>& componentRuntimeProperties);
+		const std::unique_ptr<Entity>& createEntity(std::string objectName, const std::unordered_map<std::string, ComponentProperties>& componentRuntimeProperties);
+
+		void addComponentToEntity(int entityId, const std::string& componentType, ComponentProperties& componentProperties);
+		void removeComponentFromEntity(int entityId, const std::string& componentType);
 
 		void sortEntitiesByPosition();
 		const std::vector<std::unique_ptr<Entity>>& getEntities();

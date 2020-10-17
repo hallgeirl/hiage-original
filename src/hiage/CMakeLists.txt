@@ -32,7 +32,7 @@ add_library(hiage STATIC
 	"hiage/ui/windows.cpp"
 	"hiage/util/exceptions.cpp"
 	"hiage/util/timer.cpp"
-)
+ "hiage/util/jsonhelpers.hpp")
 
 target_include_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/include ${PROJECT_SOURCE_DIR}/third_party/src/tinyxml)
 

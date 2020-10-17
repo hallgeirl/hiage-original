@@ -24,3 +24,4 @@ public:
 	MarioCollisionResponseSystem(hiage::Game& game, hiage::GameState& gameState);
 	virtual void update(double frameTime) override;
 };
+

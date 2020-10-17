@@ -9,7 +9,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 96.0,
             "y": 96.0
           },
@@ -21,7 +21,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 112.0,
             "y": 96.0
           },
@@ -33,7 +33,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 112.0,
             "y": 80.0
           },
@@ -45,7 +45,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 96.0,
             "y": 64.0
           },
@@ -57,7 +57,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 80.0,
             "y": 64.0
           },
@@ -69,7 +69,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 64.0,
             "y": 64.0
           },
@@ -81,7 +81,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 48.0,
             "y": 80.0
           },
@@ -93,7 +93,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 48.0,
             "y": 96.0
           },
@@ -105,7 +105,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 48.0,
             "y": 112.0
           },
@@ -117,7 +117,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 48.0,
             "y": 128.0
           },
@@ -129,7 +129,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 64.0,
             "y": 144.0
           },
@@ -141,7 +141,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 80.0,
             "y": 144.0
           },
@@ -153,7 +153,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 96.0,
             "y": 144.0
           },
@@ -165,7 +165,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 144.0,
             "y": 64.0
           },
@@ -177,7 +177,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 160.0,
             "y": 80.0
           },
@@ -189,7 +189,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 160.0,
             "y": 96.0
           },
@@ -201,7 +201,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 176.0,
             "y": 112.0
           },
@@ -213,7 +213,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 176.0,
             "y": 128.0
           },
@@ -225,7 +225,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 192.0,
             "y": 144.0
           },
@@ -237,7 +237,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 208.0,
             "y": 128.0
           },
@@ -249,7 +249,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 208.0,
             "y": 112.0
           },
@@ -261,7 +261,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 224.0,
             "y": 96.0
           },
@@ -273,7 +273,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 224.0,
             "y": 80.0
           },
@@ -285,7 +285,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 240.0,
             "y": 64.0
           },
@@ -297,7 +297,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 176.0,
             "y": 96.0
           },
@@ -309,7 +309,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 192.0,
             "y": 96.0
           },
@@ -321,7 +321,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 208.0,
             "y": 96.0
           },
@@ -333,7 +333,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 272.0,
             "y": 64.0
           },
@@ -345,7 +345,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 272.0,
             "y": 80.0
           },
@@ -357,7 +357,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 288.0,
             "y": 96.0
           },
@@ -369,7 +369,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 288.0,
             "y": 112.0
           },
@@ -381,7 +381,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 304.0,
             "y": 128.0
           },
@@ -393,7 +393,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 304.0,
             "y": 144.0
           },
@@ -405,7 +405,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 320.0,
             "y": 112.0
           },
@@ -417,7 +417,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 320.0,
             "y": 96.0
           },
@@ -429,7 +429,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 336.0,
             "y": 80.0
           },
@@ -441,7 +441,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 336.0,
             "y": 64.0
           },
@@ -453,7 +453,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 352.0,
             "y": 96.0
           },
@@ -465,7 +465,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 352.0,
             "y": 112.0
           },
@@ -477,7 +477,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 368.0,
             "y": 128.0
           },
@@ -489,7 +489,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 368.0,
             "y": 144.0
           },
@@ -501,7 +501,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 384.0,
             "y": 112.0
           },
@@ -513,7 +513,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 384.0,
             "y": 96.0
           },
@@ -525,7 +525,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 400.0,
             "y": 80.0
           },
@@ -537,7 +537,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 400.0,
             "y": 64.0
           },
@@ -549,7 +549,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 432.0,
             "y": 144.0
           },
@@ -561,7 +561,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 432.0,
             "y": 128.0
           },
@@ -573,7 +573,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 432.0,
             "y": 112.0
           },
@@ -585,7 +585,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 432.0,
             "y": 96.0
           },
@@ -597,7 +597,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 432.0,
             "y": 80.0
           },
@@ -609,7 +609,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 432.0,
             "y": 64.0
           },
@@ -621,7 +621,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 464.0,
             "y": 144.0
           },
@@ -633,7 +633,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 448.0,
             "y": 144.0
           },
@@ -645,7 +645,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 480.0,
             "y": 144.0
           },
@@ -657,7 +657,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 448.0,
             "y": 64.0
           },
@@ -669,7 +669,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 464.0,
             "y": 64.0
           },
@@ -681,7 +681,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 480.0,
             "y": 64.0
           },
@@ -693,7 +693,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 448.0,
             "y": 104.0
           },
@@ -705,7 +705,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 464.0,
             "y": 104.0
           },
@@ -717,7 +717,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 480.0,
             "y": 104.0
           },
@@ -729,7 +729,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 624.0,
             "y": 144.0
           },
@@ -741,7 +741,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 640.0,
             "y": 144.0
           },
@@ -753,7 +753,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 608.0,
             "y": 128.0
           },
@@ -765,7 +765,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 592.0,
             "y": 112.0
           },
@@ -777,7 +777,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 592.0,
             "y": 96.0
           },
@@ -789,7 +789,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 608.0,
             "y": 80.0
           },
@@ -801,7 +801,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 624.0,
             "y": 64.0
           },
@@ -813,7 +813,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 640.0,
             "y": 64.0
           },
@@ -825,7 +825,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 656.0,
             "y": 80.0
           },
@@ -837,7 +837,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 672.0,
             "y": 96.0
           },
@@ -849,7 +849,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 672.0,
             "y": 112.0
           },
@@ -861,7 +861,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 656.0,
             "y": 128.0
           },
@@ -873,7 +873,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 704.0,
             "y": 144.0
           },
@@ -885,7 +885,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 720.0,
             "y": 112.0
           },
@@ -897,7 +897,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 752.0,
             "y": 64.0
           },
@@ -909,7 +909,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 784.0,
             "y": 112.0
           },
@@ -921,7 +921,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 800.0,
             "y": 144.0
           },
@@ -933,7 +933,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 704.0,
             "y": 128.0
           },
@@ -945,7 +945,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 720.0,
             "y": 96.0
           },
@@ -957,7 +957,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 736.0,
             "y": 80.0
           },
@@ -969,7 +969,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 800.0,
             "y": 128.0
           },
@@ -981,7 +981,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 784.0,
             "y": 96.0
           },
@@ -993,7 +993,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 768.0,
             "y": 80.0
           },
@@ -1005,7 +1005,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 832.0,
             "y": 144.0
           },
@@ -1017,7 +1017,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 832.0,
             "y": 128.0
           },
@@ -1029,7 +1029,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 832.0,
             "y": 112.0
           },
@@ -1041,7 +1041,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 832.0,
             "y": 96.0
           },
@@ -1053,7 +1053,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 832.0,
             "y": 80.0
           },
@@ -1065,7 +1065,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 832.0,
             "y": 64.0
           },
@@ -1077,7 +1077,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 848.0,
             "y": 64.0
           },
@@ -1089,7 +1089,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 864.0,
             "y": 64.0
           },
@@ -1101,7 +1101,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 880.0,
             "y": 64.0
           },
@@ -1113,7 +1113,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 848.0,
             "y": 144.0
           },
@@ -1125,7 +1125,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 864.0,
             "y": 144.0
           },
@@ -1137,7 +1137,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 880.0,
             "y": 144.0
           },
@@ -1149,7 +1149,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 848.0,
             "y": 104.0
           },
@@ -1161,7 +1161,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 848.0,
             "y": 104.0
           },
@@ -1173,7 +1173,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 864.0,
             "y": 104.0
           },
@@ -1185,7 +1185,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 880.0,
             "y": 104.0
           },
@@ -1197,7 +1197,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 912.0,
             "y": 64.0
           },
@@ -1209,7 +1209,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 912.0,
             "y": 80.0
           },
@@ -1221,7 +1221,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 912.0,
             "y": 96.0
           },
@@ -1233,7 +1233,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 912.0,
             "y": 112.0
           },
@@ -1245,7 +1245,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 912.0,
             "y": 128.0
           },
@@ -1257,7 +1257,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 912.0,
             "y": 144.0
           },
@@ -1269,7 +1269,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 928.0,
             "y": 144.0
           },
@@ -1281,7 +1281,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 944.0,
             "y": 144.0
           },
@@ -1293,7 +1293,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 944.0,
             "y": 96.0
           },
@@ -1305,7 +1305,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 928.0,
             "y": 96.0
           },
@@ -1317,7 +1317,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 944.0,
             "y": 80.0
           },
@@ -1329,7 +1329,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 960.0,
             "y": 64.0
           },
@@ -1341,7 +1341,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 960.0,
             "y": 128.0
           },
@@ -1353,7 +1353,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 960.0,
             "y": 128.0
           },
@@ -1365,7 +1365,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 960.0,
             "y": 112.0
           },
@@ -1377,7 +1377,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 624.0,
             "y": 96.0
           },
@@ -1389,7 +1389,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 80.0,
             "y": 80.0
           },
@@ -1401,7 +1401,7 @@
     {
       "components": [
         {
-          "runtimeProperties": {
+          "properties": {
             "x": 936.0,
             "y": 120.0
           },

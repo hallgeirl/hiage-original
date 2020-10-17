@@ -50,10 +50,10 @@ namespace hiage
 		virtual void update(double frameTime) override;
 	};
 
-	class HumanControllerSystem : public System
+	class ControllerSystem : public System
 	{
 	public:
-		HumanControllerSystem(Game& game, GameState& gameState);
+		ControllerSystem(Game& game, GameState& gameState);
 		virtual void update(double frameTime) override;
 	};
 

@@ -161,4 +161,3 @@ void MarioCollisionResponseSystem::update(double frameTime)
 		}
 	}
 }
-

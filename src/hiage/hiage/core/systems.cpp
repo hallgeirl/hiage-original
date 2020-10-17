@@ -144,20 +144,32 @@ void hiage::PhysicsSystem::update(double frameTime)
 }
 
 
-hiage::HumanControllerSystem::HumanControllerSystem(Game& game, GameState& gameState) : System(game, gameState)
+hiage::ControllerSystem::ControllerSystem(Game& game, GameState& gameState) : System(game, gameState)
 {
 }
 
-void hiage::HumanControllerSystem::update(double)
+void hiage::ControllerSystem::update(double)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<HumanControllerComponent, ControllerStateComponent>();
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<ControllerComponent, ControllerStateComponent>();
 	for (auto& t : componentTuples)
 	{
+		auto& controllerData = std::get<1>(t)->getData();
 		auto& controllerState = std::get<2>(t);
 
-		auto& inputManager = game.getInputManager();
-		auto actions = inputManager.getControllerActions();
-		controllerState->setData(actions);
+		if (controllerData.controllerType == "human")
+		{
+			auto& inputManager = game.getInputManager();
+			auto actions = inputManager.getControllerActions();
+			controllerState->setData(actions);
+		}
+		else if (controllerData.controllerType == "constant")
+		{
+			std::unordered_set<std::string> actions;
+			for (auto& a : controllerData.constantActions)
+				actions.insert(a);
+
+			controllerState->setData(actions);
+		}
 	}
 }
 

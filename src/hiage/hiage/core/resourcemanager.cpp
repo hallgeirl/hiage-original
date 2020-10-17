@@ -421,7 +421,7 @@ void getPropertiesRecursively(json& j, ComponentProperties& properties, const st
 {
 	for (auto& prop : j.items())
 	{
-		if (prop.value().is_array() || prop.value().is_object())
+		if (prop.value().is_object())
 		{
 			getPropertiesRecursively(prop.value(), properties, getPropertyName(propertyNameRoot, prop.key()));
 		}
@@ -432,6 +432,32 @@ void getPropertiesRecursively(json& j, ComponentProperties& properties, const st
 		else if (prop.value().is_number())
 		{
 			properties[getPropertyName(propertyNameRoot, prop.key())] = static_cast<double>(prop.value());
+		}
+		else if (prop.value().is_array())
+		{
+			if (prop.value().size() > 0)
+			{
+				if (prop.value()[0].is_number())
+				{
+					std::vector<double> values;
+					for (auto& v : prop.value())
+					{
+						values.push_back(static_cast<double>(v));
+					}
+
+					properties[getPropertyName(propertyNameRoot, prop.key())] = values;
+				}
+				else
+				{
+					std::vector<std::string> values;
+					for (auto& v : prop.value())
+					{
+						values.push_back(v);
+					}
+
+					properties[getPropertyName(propertyNameRoot, prop.key())] = values;
+				}
+			}
 		}
 	}
 }

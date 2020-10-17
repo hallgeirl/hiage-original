@@ -16,3 +16,4 @@ class BlockingComponent : public hiage::DatalessComponent<1002>
 {
 	using DatalessComponent::DatalessComponent;
 };
+
