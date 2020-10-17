@@ -95,43 +95,65 @@ void hiage::EntityManager::removeComponentFromEntity(int entityId, const std::st
 }
 
 struct PositionComponentComparator {
+private:
 	EntityManager& _em;
+	unordered_map<int, tuple<int, shared_ptr<CollidableComponent>, shared_ptr<PositionComponent>>> componentCache;
+public:
 	PositionComponentComparator(EntityManager& em) : _em(em)
 	{
+		auto components = _em.queryComponentGroup<CollidableComponent, PositionComponent>();
+		for (auto& c : components)
+		{
+			componentCache[std::get<0>(c)] = c;
+		}
 	}
 
 	bool operator()(const unique_ptr<Entity>& a,
 		const unique_ptr<Entity>& b) const
 	{
-		auto o1 = _em.queryComponentGroup<CollidableComponent, PositionComponent>(a->getEntityId());
-		auto o2 = _em.queryComponentGroup<CollidableComponent, PositionComponent>(b->getEntityId());
-
-		auto& bb1 = get<0>(o1);
-		auto& bb2 = get<0>(o2);
-		
-		if (bb1 == nullptr && bb2 == nullptr)
+		auto id1 = a->getEntityId(), id2 = b->getEntityId();
+		if (!componentCache.contains(id1) && !componentCache.contains(id2))
 			return false;
-		if (bb1 == nullptr)
+		if (!componentCache.contains(id1))
 			return true;
-		if (bb2 == nullptr)
+		if (!componentCache.contains(id2))
 			return false;
 
-		auto& pos1 = get<1>(o1);
-		auto& pos2 = get<1>(o2);
+		auto& o1 = componentCache.at(a->getEntityId());
+		auto& o2 = componentCache.at(b->getEntityId());
+
+		auto& bb1 = get<1>(o1);
+		auto& bb2 = get<1>(o2);
+		
+		auto& pos1 = get<2>(o1);
+		auto& pos2 = get<2>(o2);
 
 		return pos1->getData().getX() + bb1->getData().getLeft() < pos2->getData().getX() + bb2->getData().getLeft();
 	}
 };
 
+
 void hiage::EntityManager::sortEntitiesByPosition()
 {
 	PositionComponentComparator comp(*this);
-	// Sort by x coordinate
-	if (std::is_sorted(_entities.begin(), _entities.end(), comp))
-		return;
+	int  didSwap = 0;
 
-	std::sort(_entities.begin(), _entities.end(), comp);
-	_cacheVersion++;
+	size_t i = 1;
+	// Insertion sort - because we will almost always have a near-sorted array, and then the sorting time is near linear.
+	while (i < _entities.size())
+	{
+		size_t j = i;
+		while (j > 0 && comp(_entities[j], _entities[j - 1]))
+		{
+			std::swap(_entities[j], _entities[j-1]);
+			didSwap++;
+			j--;
+		}
+		i++;
+	}
+
+	if (didSwap > 0)
+		_cacheVersion++;
 }
 const std::vector<std::unique_ptr<Entity>>& hiage::EntityManager::getEntities()
 {

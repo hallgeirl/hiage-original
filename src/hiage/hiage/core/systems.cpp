@@ -181,6 +181,9 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 	gameState.getEntityManager().sortEntitiesByPosition();
 
 	BoundingPolygon polygon1, polygon2;
+
+	vector<BoundingPolygon> tempVec;
+	tempVec.resize(1);
 	// Check for collisions
 	for (int i = 0; i < componentTuples.size(); i++)
 	{
@@ -208,22 +211,28 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 			if (xDistance > relativeFrameVelocity.getX())
 				break;
 
-			auto result = collisionTester.testCollision(polygon1, polygon2, relativeFrameVelocity);
-
-			if (result.willIntersect || result.isIntersecting)
+			tempVec[0] = polygon2;
+			for (int axis = 0; axis <= 1; axis++)
 			{
-				// Add two collision events - object 1 colliding with object 2, and the other way around.
-				gameState.getEventQueue().enqueue(std::make_unique<ObjectObjectCollisionEvent>(ObjectObjectCollisionData{
-					.entityId1 = entityId1,
-					.entityId2 = entityId2,
-					.collisionResult = result
-					}));
+				auto result = collisionTester.testCollision(polygon1, relativeFrameVelocity, tempVec, axis);
 
-				gameState.getEventQueue().enqueue(std::make_unique<ObjectObjectCollisionEvent>(ObjectObjectCollisionData{
-					.entityId1 = entityId2,
-					.entityId2 = entityId1,
-					.collisionResult = result
-					}));
+				if (result.willIntersect || result.isIntersecting)
+				{
+					// Add two collision events - object 1 colliding with object 2, and the other way around.
+					gameState.getEventQueue().enqueue(std::make_unique<ObjectObjectCollisionEvent>(ObjectObjectCollisionData{
+						.entityId1 = entityId1,
+						.entityId2 = entityId2,
+						.collisionResult = result
+						}));
+
+					auto result2 = result;
+					result2.hitNormal *= -1;
+					gameState.getEventQueue().enqueue(std::make_unique<ObjectObjectCollisionEvent>(ObjectObjectCollisionData{
+						.entityId1 = entityId2,
+						.entityId2 = entityId1,
+						.collisionResult = result2
+						}));
+				}
 			}
 		}
 	}

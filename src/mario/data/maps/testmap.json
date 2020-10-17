@@ -11,19 +11,19 @@
         {
           "type": "physical",
           "properties": {
-            "x": 144.0,
-            "y": 216.0
+            "x": 80.0,
+            "y": 48.0
           }
         },
         {
           "type": "controller",
           "properties": {
-            "controllerType": "constant",
-            "constantActions": [ "goLeft" ]
+            "controllerType": "human",
+            "constantActions": [ "goRight", "run", "jump" ]
           }
         }
       ],
-      "name": "MarioBig"
+      "name": "MarioSmall"
     },
     {
       "name": "Camera"
@@ -31,11 +31,11 @@
     {
       "components": [
         {
+          "type": "physical",
           "properties": {
-            "x": 128.0,
-            "y": 200.0
-          },
-          "type": "physical"
+            "x": 128,
+            "y": 48
+          }
         }
       ],
       "name": "BlockInactive"
@@ -43,11 +43,35 @@
     {
       "components": [
         {
+          "type": "physical",
           "properties": {
-            "x": 144.0,
-            "y": 200.0
-          },
-          "type": "physical"
+            "x": 144,
+            "y": 48
+          }
+        }
+      ],
+      "name": "BlockInactive"
+    },
+    {
+      "components": [
+        {
+          "type": "physical",
+          "properties": {
+            "x": 160,
+            "y": 48
+          }
+        }
+      ],
+      "name": "BlockInactive"
+    },
+    {
+      "components": [
+        {
+          "type": "physical",
+          "properties": {
+            "x": 176,
+            "y": 48
+          }
         }
       ],
       "name": "BlockInactive"

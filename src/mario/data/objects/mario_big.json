@@ -44,10 +44,10 @@
     {
       "type": "collidable",
       "properties": {
-        "left": 1,
-        "bottom": 0,
-        "width": 10,
-        "height": 20
+        "left": 3,
+        "bottom": 1,
+        "width": 13,
+        "height": 24
       }
     },
     {
