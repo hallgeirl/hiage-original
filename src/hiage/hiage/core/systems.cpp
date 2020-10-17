@@ -180,10 +180,10 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 	// Sort by x coordinate
 	gameState.getEntityManager().sortEntitiesByPosition();
 
-	BoundingPolygon polygon1, polygon2;
+	BoundingPolygon polygon1;
 
-	vector<BoundingPolygon> tempVec;
-	tempVec.resize(1);
+	vector<BoundingPolygon> tempVecPolygon2;
+	tempVecPolygon2.resize(1);
 	// Check for collisions
 	for (int i = 0; i < componentTuples.size(); i++)
 	{
@@ -201,20 +201,19 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 			auto entityId2 = get<0>(c2);
 			const auto& pos2 = get<2>(c2)->getData();
 			auto relativeFrameVelocity = (vel1 - get<3>(c2)->getData()) * frameTime;
-			polygon2 = get<1>(c2)->getData();
+			tempVecPolygon2[0] = get<1>(c2)->getData();
 
-			polygon2.translate(pos2);
+			tempVecPolygon2[0].translate(pos2);
 
 			// Distance check: If object 2 is further to the right than it's possible to move in one frame, we can skip this check.
 			// For subsequent objects, they will be even more to the right, so we can break out early here.
-			auto xDistance = polygon2.getLeft() - polygon1.getRight();
+			auto xDistance = tempVecPolygon2[0].getLeft() - polygon1.getRight();
 			if (xDistance > relativeFrameVelocity.getX())
 				break;
 
-			tempVec[0] = polygon2;
 			for (int axis = 0; axis <= 1; axis++)
 			{
-				auto result = collisionTester.testCollision(polygon1, relativeFrameVelocity, tempVec, axis);
+				auto result = collisionTester.testCollision(polygon1, relativeFrameVelocity, tempVecPolygon2, axis);
 
 				if (result.willIntersect || result.isIntersecting)
 				{

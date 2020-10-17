@@ -135,13 +135,30 @@ namespace hiage
 			// TODO - Use archetypes here later - for now, just use this naive implementation
 			// This is quite ugly - but will have to do for now
 
+			static std::tuple<int, std::unordered_map<int, std::tuple<std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>>> 
+				cache(-1, std::unordered_map<int, std::tuple<std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>>());
+			if (std::get<0>(cache) == _cacheVersion)
+			{
+				if (std::get<1>(cache).contains(entityId))
+					return std::get<1>(cache).at(entityId);
+			}
+			else
+			{
+				// Clear cache if it's invalidated
+				std::get<1>(cache).clear();
+			}
 			auto& componentList = _components[entityId];
 			auto it = componentList.begin();
 			auto res = queryComponentGroupCore<T, TNext, TRest...>(it, componentList);
-			if (it != componentList.end()) // If we haven't iterated to end(), we found one component of each type.
-				return res;
+			if (it == componentList.end()) // If we haven't iterated to end(), we found one component of each type.
+			{
+				res = std::tuple<std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>();
+			}
 
-			return std::tuple<std::shared_ptr<T>, std::shared_ptr<TNext>, std::shared_ptr<TRest>...>();
+			std::get<0>(cache) = _cacheVersion;
+			std::get<1>(cache)[entityId] = res;
+			
+			return res;
 		}
 		
 		template <class T, class TNext, class...TRest>
