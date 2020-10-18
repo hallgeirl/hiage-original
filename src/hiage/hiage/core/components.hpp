@@ -136,9 +136,15 @@ namespace hiage
 		using DatalessComponent::DatalessComponent;
 	};
 
-	class CameraComponent : public DatalessComponent<10>
+	struct CameraProperties
 	{
-		using DatalessComponent::DatalessComponent;
+		double zoom;
+	};
+	class CameraComponent : public GenericComponent<CameraProperties, 10>
+	{
+	public:
+		using GenericComponent::GenericComponent;
+		virtual CameraProperties createState(const ComponentProperties& properties) override;
 	};
 
 	// Used for "object state" when it comes to animations (e.g. "on ground", "standing", "walking", "jumping", "falling") and allowed actions (e.g. jumping is allowed when standing, etc.)

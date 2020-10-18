@@ -211,6 +211,7 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 			if (xDistance > relativeFrameVelocity.getX())
 				break;
 
+			bool gotCollision = false;
 			for (int axis = 0; axis <= 1; axis++)
 			{
 				auto result = collisionTester.testCollision(polygon1, relativeFrameVelocity, tempVecPolygon2, axis);
@@ -231,6 +232,7 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 						.entityId2 = entityId1,
 						.collisionResult = result2
 						}));
+					gotCollision = true;
 				}
 			}
 		}
@@ -363,8 +365,11 @@ void hiage::CameraSystem::update(double)
 	for (auto& c : componentTuples)
 	{
 		auto& pos = get<1>(c)->getData();
+		auto& camProps = get<2>(c)->getData();
 
 		// TODO - Make boundaries configurable.
+		game.getDisplay().setZoom(camProps.zoom);
+
 		auto zoom = game.getDisplay().getZoom();
 		auto aspect = game.getDisplay().getAspectRatio();
 		auto leftBoundary = zoom * aspect;

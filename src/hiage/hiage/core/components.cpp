@@ -192,3 +192,14 @@ ControllerProperties hiage::ControllerComponent::createState(const ComponentProp
 
 	return props;
 }
+
+CameraProperties hiage::CameraComponent::createState(const ComponentProperties& properties)
+{
+	CameraProperties props;
+	props.zoom = 400;
+
+	if (properties.contains("zoom"))
+		props.zoom = get<double>(properties.at("zoom"));
+
+	return props;
+}

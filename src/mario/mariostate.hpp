@@ -3,6 +3,8 @@
 
 class MarioState : public hiage::MapState
 {
+private:
+
 public:
 	MarioState(hiage::Game &game);
 	virtual ~MarioState();
