@@ -19,12 +19,12 @@ namespace hiage
 	class __IMPORTEXPORT GameState
 	{
 	protected:
-		ComponentManager	componentManager;
-		SystemsFactory		systemsFactory;
-		EntityManager		entityManager;
-		EventQueue			eventQueue;
+		ComponentManager	_componentManager;
+		SystemsFactory		_systemsFactory;
+		EntityManager		_entityManager;
+		EventQueue			_eventQueue;
 
-		Game& gameInstance;
+		Game& _game;
 		std::vector<std::unique_ptr<System>> systems;
 
 	public:
@@ -41,6 +41,8 @@ namespace hiage
 		virtual void handleEvents(double frametime) = 0;
 		virtual void update(double frametime);
 		virtual void render() = 0;
+
+		virtual void cleanupFrame();
 
 		void changeState(Game* game, GameState* state);
 

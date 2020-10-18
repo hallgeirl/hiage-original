@@ -233,7 +233,7 @@ void KeyBindings::mapKey(const string& keyName, const string& actionName)
 	{
 		auto scanCode = keyNameToScancodeMappings.at(keyName);
 
-		bindings[actionName] = scanCode;
+		bindings[actionName].insert(scanCode);
 	}
 	else
 	{
@@ -241,17 +241,19 @@ void KeyBindings::mapKey(const string& keyName, const string& actionName)
 	}
 }
 
-int KeyBindings::getKeyCodeFromAction(const std::string& actionName) const
+const std::unordered_set<int>& KeyBindings::getKeyCodesFromAction(const std::string& actionName) const
 {
+	static unordered_set<int> empty;
+
 	if (bindings.contains(actionName))
 		return bindings.at(actionName);
 
 	clog << "WARNING: Key action name " + actionName + " was not found." << endl;
 
-	return -1;
+	return empty;
 }
 
-const std::unordered_map<std::string, int>& hiage::KeyBindings::getBindings()
+const std::unordered_map<std::string, std::unordered_set<int>>& hiage::KeyBindings::getBindings()
 {
 	return bindings;
 }
@@ -268,13 +270,16 @@ bool InputManager::initialize()
 
 bool InputManager::keyDown(const std::string& action)
 {
-	auto keyCode = keyBindings.getKeyCodeFromAction(action);
+	auto keyCodes = keyBindings.getKeyCodesFromAction(action);
 
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
-	if (keys[keyCode])
+	for (auto& bb : keyCodes)
 	{
-		return true;
+		if (keys[bb])
+		{
+			return true;
+		}
 	}
 
 	return false;
@@ -289,8 +294,14 @@ std::unordered_set<std::string> hiage::InputManager::getControllerActions()
 	auto& bindings = keyBindings.getBindings();
 	for (auto& b : bindings)
 	{
-		if (keys[b.second])
-			actions.insert(b.first);
+		for (auto& bb : b.second)
+		{
+			if (keys[bb])
+			{
+				actions.insert(b.first);
+				break;
+			}
+		}
 	}
 
 	return actions;

@@ -103,7 +103,9 @@ namespace hiage
 		void stop();
 
 		Font &createFont(std::string font);
-		void printText(Font & font, std::string text, double x, double y, double scale = 1, double spacing = 0);
+		void printText(Font & font, const std::string& text, double x, double y, double scale = 1, double spacing = 0);
+		void printTextFixed(Font& font, const std::string& text, double x, double y, ScreenHorizontalPosition horizontalPos, ScreenVerticalPosition verticalPos, double scale = 1, double spacing = 0);
+
 
         void drawTexture(std::string texname, double x, double y);
 

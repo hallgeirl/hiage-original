@@ -47,12 +47,4 @@ function updateMap()
   if maptimer:reached(4.6) and not maptimer:reached(6) then
     screen:zoom(200*(2.72^(4.5-maptimer:get())))
   end
-
-  if screen:camerax() < (screen:zoom() * screen:aspect()) then
-    screen:camera(screen:zoom() * screen:aspect(), screen:cameray())
-  end
-
-  if screen:cameray() < screen:zoom() then
-    screen:camera(screen:camerax(), screen:zoom())
-  end
 end

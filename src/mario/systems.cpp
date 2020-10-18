@@ -1,5 +1,6 @@
 #include "systems.hpp"
 #include "components.hpp"
+#include "events.hpp"
 
 using namespace std;
 using namespace hiage;
@@ -86,9 +87,9 @@ CharacterControllerSystem::CharacterControllerSystem(hiage::Game& game, hiage::G
 
 void CharacterControllerSystem::update(double frameTime)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, ControllerStateComponent, StateComponent, SpeedLimitComponent>();
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, ControllerStateComponent, StateComponent, SpeedLimitComponent, PositionComponent>();
 
-	double magnitude = 400. * frameTime;
+	double magnitude = 800. * frameTime;
 
 	for (auto& c : componentTuples)
 	{
@@ -96,24 +97,43 @@ void CharacterControllerSystem::update(double frameTime)
 		auto& controllerState = get<2>(c)->getData();
 		auto& state = get<3>(c)->getData();
 		auto& speedlimit = get<4>(c)->getData();
-		
-		speedlimit.speedLimit.setX(100);
+		auto& pos = get<5>(c)->getData();
 
-		//vel.add(Vector2<double>(1, 0) * magnitude*2);
-		for (auto& action : controllerState)
+		cout << "pos = " << pos.getX() << "," << pos.getY() << endl;
+		
+		speedlimit.speedLimit.setX(110);
+
+		// apply slowdown
+		if (abs(vel.getX()) > 400 * frameTime && state.metadata.contains("onGround"))
 		{
-			if (action == "goRight")
-				vel.add(Vector2<double>(1, 0) * magnitude);
-			else if (action == "goLeft")
-				vel.add(Vector2<double>(-1, 0) * magnitude);
-			else if (action == "crouch")
-				vel.add(Vector2<double>(0, -1) * magnitude);
-			else if (action == "lookUp")
-				vel.add(Vector2<double>(0, 1) * magnitude);
-			else if (action == "jump" && state.metadata.contains("onGround") && get<int>(state.metadata.at("onGround")) != 0)
-				vel.setY(300);
-			else if (action == "run")
-				speedlimit.speedLimit.setX(250);
+			if (vel.getX() > 0)
+				vel.add(Vector2<double>(-400. * frameTime, 0));
+			if (vel.getX() < 0)
+				vel.add(Vector2<double>(400. * frameTime, 0));
+		}
+		else
+		{
+			vel.setX(0);
+		}
+
+		if (controllerState.contains("run"))
+			speedlimit.speedLimit.setX(220);
+
+		if (controllerState.contains("goRight") && abs(vel.getX()) < speedlimit.speedLimit.getX())
+			vel.add(Vector2<double>(1, 0) * magnitude);
+		else if (controllerState.contains("goLeft") && abs(vel.getX()) < speedlimit.speedLimit.getX())
+			vel.add(Vector2<double>(-1, 0) * magnitude);
+		else if (controllerState.contains("crouch"))
+			vel.add(Vector2<double>(0, -1) * magnitude);
+		else if (controllerState.contains("lookUp"))
+			vel.add(Vector2<double>(0, 1) * magnitude);
+
+		if (controllerState.contains("jump") && state.metadata.contains("onGround") && get<int>(state.metadata.at("onGround")) != 0)
+		{
+			game.getAudioManager().playWav("NormalJump");
+			state.metadata["onGround"] = 0;
+			vel.setY(300);
+
 		}
 	}
 }

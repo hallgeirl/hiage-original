@@ -78,13 +78,4 @@ function updateMap()
       end
     end
   end
-  
-
-  -- Keep the camera inside the map bounds
-  if screen:camerax() < (screen:zoom() * screen:aspect()) then
-    screen:camera(screen:zoom() * screen:aspect(), screen:cameray())
-  end
-  if screen:cameray() < screen:zoom() then
-    screen:camera(screen:camerax(), screen:zoom())
-  end
 end

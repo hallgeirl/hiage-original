@@ -221,6 +221,7 @@ void Game::run(bool doEvents)
 		states.back()->handleEvents(lastFrameTime);
 		states.back()->update(lastFrameTime);
 		states.back()->render();
+		states.back()->cleanupFrame();
 	}
 	display.render();
 
@@ -311,9 +312,38 @@ Font & Game::createFont(std::string font)
     return *f;
 }
 
-void Game::printText(Font & font, std::string text, double x, double y, double scale , double spacing)
+void Game::printText(Font & font, const std::string& text, double x, double y, double scale , double spacing)
 {
     font.renderText(display.getRenderer(), text, Vector2<double>(x,y), scale, spacing);
+}
+
+void hiage::Game::printTextFixed(Font& font, const std::string& text, double x, double y, ScreenHorizontalPosition horizontalPos, ScreenVerticalPosition verticalPos, double scale, double spacing)
+{
+	auto& disp = getDisplay();
+	double xPos = disp.getCamX() + x;// - disp.getZoom() * disp.getAspectRatio();
+	double yPos = disp.getCamY() + y;// - disp.getZoom();
+
+	switch (horizontalPos)
+	{
+	case ScreenHorizontalPosition::Left:
+		xPos -= disp.getZoom() * disp.getAspectRatio();
+		break;
+	case ScreenHorizontalPosition::Right:
+		xPos += disp.getZoom() * disp.getAspectRatio();
+		break;
+	}
+
+	switch (verticalPos)
+	{
+	case ScreenVerticalPosition::Bottom:
+		yPos -= disp.getZoom();
+		break;
+	case ScreenVerticalPosition::Top:
+		yPos += disp.getZoom() - font.getCharacterHeight() * scale;
+		break;
+	}
+
+	font.renderText(display.getRenderer(), text, Vector2<double>(xPos, yPos), scale, spacing);
 }
 
 void Game::drawTexture(std::string texname, double x, double y)

@@ -8,7 +8,7 @@
 
 #include "entity.hpp"
 #include "../util/exceptions.h"
-#include "../gfx/fonts.h"
+#include "../gfx/fonts.hpp"
 
 #include <string>
 #include <map>

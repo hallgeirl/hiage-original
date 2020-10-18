@@ -6,7 +6,7 @@ add_executable (mario
 	"mariogame.cpp"
 	"mariostate.cpp"
     "systems.cpp"
-)
+ "events.hpp")
 
 target_include_directories(mario PUBLIC ../hiage)
 

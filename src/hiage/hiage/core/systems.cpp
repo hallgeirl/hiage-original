@@ -34,7 +34,7 @@ void MovementSystem::update(double frametime)
 		}
 	}
 
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, SpeedLimitComponent>();
+	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, SpeedLimitComponent>();
 	for (auto& t : componentTuples)
 	{
 		auto& movement = std::get<1>(t)->getData();
@@ -56,7 +56,7 @@ void MovementSystem::update(double frametime)
 			else
 				movement.setY(-limitY);
 		}
-	}
+	}*/
 }
 
 ObjectRenderingSystem::ObjectRenderingSystem(Game& game, GameState& gameState) : System(game, gameState)
@@ -138,7 +138,7 @@ void hiage::PhysicsSystem::update(double frameTime)
 		if (physicsProps.hasGravity)
 			vel.add(Vector2<double>(0, -1) * _gravity * frameTime);
 		
-		if (physicsProps.airResistance > 0)
+		if (physicsProps.airResistance > 0 && vel.length() > 0)
 			vel.subtract(vel.normalized() * physicsProps.airResistance);
 	}
 }

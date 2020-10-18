@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include "../gfx/fonts.h"
+#include "../gfx/fonts.hpp"
 #include "../gfx/texture.h"
 #include "../core/typedefs.h"
 

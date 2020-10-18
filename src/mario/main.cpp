@@ -19,6 +19,7 @@ int main(int, char*)
     keyBindings.mapKey("down", "crouch");
     keyBindings.mapKey("space", "jump");
     keyBindings.mapKey("lshift", "run");
+    keyBindings.mapKey("rshift", "run");
 
 	MarioGame game(keyBindings);
 	game.initialize(1024, 768, false);

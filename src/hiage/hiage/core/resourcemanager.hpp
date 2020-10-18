@@ -6,7 +6,7 @@
 #include "../gfx/texture.h"
 #include "../gfx/sprite.h"
 #include "../gfx/tileset.h"
-#include "../gfx/fonts.h"
+#include "../gfx/fonts.hpp"
 
 #include "../util/exceptions.h"
 

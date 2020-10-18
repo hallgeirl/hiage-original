@@ -773,12 +773,12 @@ MapState::MapState(Game &game) : GameState(game), gamemap(game, *this)
 MapState::~MapState()
 {
     //make the global "map" invalid in the script
-	gameInstance.scriptVM.executeLine("map=nil");
+	_game.scriptVM.executeLine("map=nil");
 }
 
 //Initialize scripts for map state
 void MapState::initScript()
 {
-	luabind::globals(gameInstance.scriptVM.getVm())["map"] = &gamemap;
-	gameInstance.scriptVM.executeLine("map[\"objects\"]={}");
+	luabind::globals(_game.scriptVM.getVm())["map"] = &gamemap;
+	_game.scriptVM.executeLine("map[\"objects\"]={}");
 }

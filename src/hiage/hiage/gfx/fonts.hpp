@@ -31,6 +31,8 @@ namespace hiage
         int getTableRows();
         int getTableCols();
 
+        int getCharacterHeight();
+
         void renderText(Renderer &renderer, std::string text, Vector2<double> position, double scale = 1, double spacing = 0);
     };
 }

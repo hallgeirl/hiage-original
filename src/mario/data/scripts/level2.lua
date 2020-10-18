@@ -8,8 +8,6 @@ function initMap()
 end
 
 function updateMap()
-  screen:camera(map.player:x(), map.player:y())
-  
   if map.player.goal then
     -- When entering the goal
     map.player.goal = false
@@ -26,13 +24,6 @@ function updateMap()
   
 --  screen:camera(4500-4500*math.cos(map.maptimer:get()), map.player:y())
 
-  if screen:camerax() < (screen:zoom() * screen:aspect()) then
-    screen:camera(screen:zoom() * screen:aspect(), screen:cameray())
-  end
-
-  if screen:cameray() < screen:zoom() then
-    screen:camera(screen:camerax(), screen:zoom())
-  end
 
   if map.fpstimer:reached(0.5) then
     map.fps = 1/frametime
@@ -42,9 +33,4 @@ function updateMap()
   if input:keydown(97) then
     game:stop()
   end
-
-  printLives(-200,130)
-  printScore(-30,130)
-  printCoins(130,130)
-  game:print(mainfont, "FPS: " .. map.fps , screen:camerax() - 200, screen:cameray() + 115, 0.2, -0.2)
 end

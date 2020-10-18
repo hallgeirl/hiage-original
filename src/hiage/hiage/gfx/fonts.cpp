@@ -1,6 +1,7 @@
+#include "fonts.hpp"
+
 #include <iostream>
 #include <string>
-#include "fonts.h"
 #include "../util/exceptions.h"
 
 using namespace std;
@@ -101,6 +102,11 @@ int Font::getTableCols()
     return _tableCols;
 }
 
+int hiage::Font::getCharacterHeight()
+{
+    return _characterHeight;
+}
+
 int Font::getTableRows()
 {
     return _tableRows;
@@ -132,15 +138,15 @@ void Font::renderText(Renderer &renderer, string text, Vector2<double> position,
 
     int x,y;
 
-    for (unsigned int c = 0; c < text.length(); c++)
+    for (int c = 0; c < text.length(); c++)
     {
         getIndexOfCharacter(text.at(c), x,y);
         //texture->select();
-        double xpos = (1 + spacing)*(c * _characterWidth*scale) + position.getX();
+        double xpos = (1 + spacing)*((int)c * _characterWidth*scale) + position.getX();
         double ypos = position.getY();
 
-        double charwidth = (1.0f/_texture->getWidth()) * _characterWidth;
-        double charheight = (1.0f/_texture->getHeight()) * _characterHeight;
+        double charwidth = (1.0/_texture->getWidth()) * _characterWidth;
+        double charheight = (1.0/_texture->getHeight()) * _characterHeight;
 
         double xoffset = charwidth * x;
 

@@ -13,14 +13,14 @@ namespace hiage
 	{
 	private:
 		static std::unordered_map<std::string, int> keyNameToScancodeMappings;  // key name => scancode
-		std::unordered_map<std::string, int> bindings;							// scan code => action
+		std::unordered_map<std::string, std::unordered_set<int>> bindings;							// scan code => action
 
 	public:
 		KeyBindings();
 		void mapKey(const std::string& keyName, const std::string& actionName);
-		int getKeyCodeFromAction(const std::string& actionName) const;
+		const std::unordered_set<int>& getKeyCodesFromAction(const std::string& actionName) const;
 
-		const std::unordered_map<std::string, int>& getBindings();
+		const std::unordered_map<std::string, std::unordered_set<int>>& getBindings();
 	};
 
 	//class that handles input (mouse/keyboard/joystick etc.)

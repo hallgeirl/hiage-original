@@ -12,6 +12,17 @@ typedef struct SDL_Window SDL_Window;
 
 namespace hiage
 {
+	enum class ScreenHorizontalPosition
+	{
+		Center, Left, Right
+	};
+
+	enum class ScreenVerticalPosition
+	{
+		Center, Bottom, Top
+	};
+
+
 	enum DisplayState
 	{
 		DS_STRETCH_SCENE = 1,

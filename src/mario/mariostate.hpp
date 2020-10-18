@@ -1,9 +1,14 @@
+#include <hiage/gfx/fonts.hpp>
+
 #include <hiage/core/game.hpp>
 #include <hiage/core/map.hpp>
 
 class MarioState : public hiage::MapState
 {
 private:
+	int _score, _lives, _coins;
+	hiage::Font _mainfont;
+	int _fps;
 
 public:
 	MarioState(hiage::Game &game);

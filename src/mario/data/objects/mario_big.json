@@ -27,7 +27,7 @@
       "properties": {
         "friction": {
           "air": 0.1,
-          "ground": 1
+          "ground": 400
         },
         "gravity": 1
       }
