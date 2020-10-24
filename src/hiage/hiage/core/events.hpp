@@ -38,30 +38,7 @@ namespace hiage
 		const T& getData() const { return data; };
 	};
 
-	/*
-	Collision events
-	*/
-	struct ObjectTileCollisionData
-	{
-		int entityId;
-		CollisionResult collisionResult;
-	};
-	class ObjectTileCollisionEvent : public GenericEvent<ObjectTileCollisionData>
-	{
-	public:
-		ObjectTileCollisionEvent(const ObjectTileCollisionData& theData) : GenericEvent(BuiltinEventTypes::Collision_ObjectTile, theData) {}
-	};
-
-	struct ObjectObjectCollisionData
-	{
-		int entityId1, entityId2;
-		CollisionResult collisionResult;
-	};
-	class ObjectObjectCollisionEvent : public GenericEvent<ObjectObjectCollisionData>
-	{
-	public:
-		ObjectObjectCollisionEvent(const ObjectObjectCollisionData& theData) : GenericEvent(BuiltinEventTypes::Collision_ObjectObject, theData) {}
-	};
+	
 
 	/*
 	Event queue

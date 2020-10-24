@@ -17,3 +17,13 @@ class BlockingComponent : public hiage::DatalessComponent<1002>
 	using DatalessComponent::DatalessComponent;
 };
 
+struct GroundMonsterControllerProperties
+{
+	std::string direction;
+};
+class GroundMonsterControllerComponent : public hiage::GenericComponent<GroundMonsterControllerProperties, 1003>
+{
+public:
+	using GenericComponent::GenericComponent;
+	virtual GroundMonsterControllerProperties createState(const hiage::ComponentProperties& properties) override;
+};

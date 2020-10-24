@@ -5,8 +5,8 @@
 */
 
 #include "mariostate.hpp"
-#include "systems.hpp"
-#include "components.hpp"
+#include "mariosystems.hpp"
+#include "mariocomponents.hpp"
 
 #include "events.hpp"
 
@@ -31,11 +31,14 @@ MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0)
     auto& tilemap = gamemap.getTilemap();
     systems.push_back(sysFactory.createSystem<ObjectTileCollisionDetectionSystem, const Tilemap&>(tilemap));
 
+    // AI is dependent on collision detection - so we need to update AI after this.
+    systems.push_back(sysFactory.createSystem<AISystem>());
+
     // Collision handling
     systems.push_back(sysFactory.createSystem<BlockingTileSystem>());
     systems.push_back(sysFactory.createSystem<MarioCollisionResponseSystem>());
 
-    // Movement
+    // Movement -- updates position
     systems.push_back(sysFactory.createSystem<MovementSystem>());
 
     systems.push_back(sysFactory.createSystem<CharacterStateMachineSystem>());
@@ -51,6 +54,7 @@ MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0)
     Component factories
     */
     _componentManager.addGenericComponentFactory<BlockingComponent>("blocking");
+    _componentManager.addGenericComponentFactory<GroundMonsterControllerComponent>("groundmonstercontroller");
 
     _mainfont = game.createFont("SmallFont");
     game.getAudioManager().playOgg("Overworld1", true);

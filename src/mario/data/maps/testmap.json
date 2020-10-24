@@ -33,48 +33,12 @@
         {
           "type": "physical",
           "properties": {
-            "x": 128,
+            "x": 100,
             "y": 48
           }
         }
       ],
-      "name": "BlockInactive"
-    },
-    {
-      "components": [
-        {
-          "type": "physical",
-          "properties": {
-            "x": 144,
-            "y": 48
-          }
-        }
-      ],
-      "name": "BlockInactive"
-    },
-    {
-      "components": [
-        {
-          "type": "physical",
-          "properties": {
-            "x": 160,
-            "y": 48
-          }
-        }
-      ],
-      "name": "BlockInactive"
-    },
-    {
-      "components": [
-        {
-          "type": "physical",
-          "properties": {
-            "x": 176,
-            "y": 48
-          }
-        }
-      ],
-      "name": "BlockInactive"
+      "name": "Goomba"
     }
   ],
   "scripts": {

@@ -177,6 +177,10 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 {
 	auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, PositionComponent, VelocityComponent>();
 
+	// Clear previous collisions
+	for (auto& c : componentTuples)
+		get<1>(c)->getData().objectCollisions.clear();
+
 	// Sort by x coordinate
 	gameState.getEntityManager().sortEntitiesByPosition();
 
@@ -189,9 +193,11 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 	{
 		auto& c1 = componentTuples[i];
 		auto entityId1 = get<0>(c1);
+		auto& col1 = get<1>(c1)->getData();
 		const auto& pos1 = get<2>(c1)->getData();
 		const auto& vel1 = get<3>(c1)->getData();
-		polygon1 = get<1>(c1)->getData();
+
+		polygon1 = col1.boundingPolygon;
 
 		polygon1.translate(pos1);
 
@@ -199,9 +205,10 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 		{
 			auto& c2 = componentTuples[j];
 			auto entityId2 = get<0>(c2);
+			auto& col2 = get<1>(c2)->getData();
 			const auto& pos2 = get<2>(c2)->getData();
 			auto relativeFrameVelocity = (vel1 - get<3>(c2)->getData()) * frameTime;
-			tempVecPolygon2[0] = get<1>(c2)->getData();
+			tempVecPolygon2[0] = get<1>(c2)->getData().boundingPolygon;
 
 			tempVecPolygon2[0].translate(pos2);
 
@@ -211,7 +218,6 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 			if (xDistance > relativeFrameVelocity.getX())
 				break;
 
-			bool gotCollision = false;
 			for (int axis = 0; axis <= 1; axis++)
 			{
 				auto result = collisionTester.testCollision(polygon1, relativeFrameVelocity, tempVecPolygon2, axis);
@@ -219,20 +225,19 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 				if (result.willIntersect || result.isIntersecting)
 				{
 					// Add two collision events - object 1 colliding with object 2, and the other way around.
-					gameState.getEventQueue().enqueue(std::make_unique<ObjectObjectCollisionEvent>(ObjectObjectCollisionData{
+					col1.objectCollisions.push_back(ObjectObjectCollisionData{
 						.entityId1 = entityId1,
 						.entityId2 = entityId2,
 						.collisionResult = result
-						}));
+						});
 
 					auto result2 = result;
 					result2.hitNormal *= -1;
-					gameState.getEventQueue().enqueue(std::make_unique<ObjectObjectCollisionEvent>(ObjectObjectCollisionData{
+					col2.objectCollisions.push_back(ObjectObjectCollisionData{
 						.entityId1 = entityId2,
 						.entityId2 = entityId1,
 						.collisionResult = result2
-						}));
-					gotCollision = true;
+						});
 				}
 			}
 		}
@@ -258,12 +263,14 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 		const auto entityId = get<0>(c);
 		const auto& pos = get<1>(c)->getData();
 		const auto& vel = get<2>(c)->getData();
+		auto& col = get<3>(c)->getData();
+		col.tileCollisions.clear();
 
 		Vector2<double> dvelocity = vel * frameTime;
 		Vector2<double> currentPosition = pos;
 
 		//get the collision box of the object
-		BoundingPolygon objectPolygon = get<3>(c)->getData();
+		BoundingPolygon objectPolygon = get<3>(c)->getData().boundingPolygon;
 		objectPolygon.translate(currentPosition);
 
 		// Get bounding polygons for tiles within the sprite's overlap
@@ -273,10 +280,10 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 			auto result = collisionTester.testCollision(objectPolygon, vel * frameTime, tilePolygons, axis);
 			if (result.willIntersect || result.isIntersecting)
 			{
-				gameState.getEventQueue().enqueue(std::make_unique<ObjectTileCollisionEvent>(ObjectTileCollisionData{
+				col.tileCollisions.push_back(ObjectTileCollisionData{
 					.entityId = entityId,
 					.collisionResult = result
-					}));
+					});
 			}
 		}
 	}
@@ -284,27 +291,26 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 
 void hiage::BlockingTileSystem::update(double frameTime)
 {
-	auto& events = gameState.getEventQueue().peekAll(BuiltinEventTypes::Collision_ObjectTile);
-
-	for (auto& evt : events)
+	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>();
+	for (auto& c : componentTuples)
 	{
-		auto& myEvt = dynamic_cast<ObjectTileCollisionEvent&>(*evt);
-
-		auto components = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>(myEvt.getData().entityId);
-
-		auto& pos = std::get<0>(components)->getData();
-		auto& vel = std::get<1>(components)->getData();
+		auto& pos = std::get<1>(c)->getData();
+		auto& vel = std::get<2>(c)->getData();
+		auto& col = std::get<3>(c)->getData();
 		
-		auto& collisionResult = myEvt.getData().collisionResult;
+		for (auto& tc : col.tileCollisions)
+		{
+			auto& collisionResult = tc.collisionResult;
 
-		// collisionTimeFactor is the fraction of the velocity that should be applied to move the object to the position of the collision
-		auto collisionTimeFactor = frameTime * collisionResult.collisionTime;
-		// Calculate the per-axis velocity
-		Vec2d deltaPos(vel.getX() * collisionTimeFactor * collisionResult.axis.getX(), vel.getY() * collisionTimeFactor * collisionResult.axis.getY());
-		pos.add(deltaPos - vel * 1.0e-6);
+			// collisionTimeFactor is the fraction of the velocity that should be applied to move the object to the position of the collision
+			auto collisionTimeFactor = frameTime * collisionResult.collisionTime;
+			// Calculate the per-axis velocity
+			Vec2d deltaPos(vel.getX() * collisionTimeFactor * collisionResult.axis.getX(), vel.getY() * collisionTimeFactor * collisionResult.axis.getY());
+			pos.add(deltaPos - vel * 1.0e-6);
 
-		// Adjust the velocity according to the hit normal
-		vel.set(vel - (collisionResult.hitNormal * (1.0 + 0) * vel.dot(myEvt.getData().collisionResult.hitNormal)));
+			// Adjust the velocity according to the hit normal
+			vel.set(vel - (collisionResult.hitNormal * (1.0 + 0) * vel.dot(collisionResult.hitNormal)));
+		}
 	}
 }
 

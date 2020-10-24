@@ -61,7 +61,7 @@ int hiage::ComponentManager::getTypeIdForComponentType(const std::string& compon
 }
 
 
-BoundingPolygon hiage::CollidableComponent::createState(const ComponentProperties& properties)
+CollidableProperties hiage::CollidableComponent::createState(const ComponentProperties& properties)
 {
 	double x = 0, y = 0, width = 16, height = 16;
 
@@ -84,7 +84,10 @@ BoundingPolygon hiage::CollidableComponent::createState(const ComponentPropertie
 	poly.addVertex((double)x + width, y);
 	poly.buildNormals();
 
-	return poly;
+	CollidableProperties props;
+	props.boundingPolygon = poly;
+
+	return props;
 }
 
 Vector2<double> hiage::PositionComponent::createState(const ComponentProperties& properties)

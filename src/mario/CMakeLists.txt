@@ -1,11 +1,11 @@
 ﻿cmake_minimum_required (VERSION 3.15)
 
 add_executable (mario 
-    "components.cpp"
+    "mariocomponents.cpp"
 	"main.cpp" 
 	"mariogame.cpp"
 	"mariostate.cpp"
-    "systems.cpp"
+    "mariosystems.cpp"
  "events.hpp")
 
 target_include_directories(mario PUBLIC ../hiage)

@@ -128,7 +128,7 @@ public:
 		auto& pos1 = get<2>(o1);
 		auto& pos2 = get<2>(o2);
 
-		return pos1->getData().getX() + bb1->getData().getLeft() < pos2->getData().getX() + bb2->getData().getLeft();
+		return pos1->getData().getX() + bb1->getData().boundingPolygon.getLeft() < pos2->getData().getX() + bb2->getData().boundingPolygon.getLeft();
 	}
 };
 

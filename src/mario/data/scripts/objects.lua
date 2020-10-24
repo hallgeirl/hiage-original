@@ -8,14 +8,6 @@ key_shift = 225
 key_a = 4
 
 
--- Generic functions
-function findObject( name )
-  for i, _ in map.objects do
-    if map.objects[i]:name() == name then 
-      return map.objects[i]
-    end
-  end
-end
 
 timedTexts = {}
 
@@ -75,12 +67,6 @@ function updateAnimations( o )
   if o.dying then
     return
   end
-end
-
--- Jump
-function jump(o, mag, sound)
-  o:vely(mag)
-  o.inair = true
 end
 
 -- Monsters

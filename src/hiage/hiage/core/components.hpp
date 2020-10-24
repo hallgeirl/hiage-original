@@ -113,11 +113,33 @@ namespace hiage
 		virtual ControllerProperties createState(const ComponentProperties& properties) override;
 	};
 
-	class CollidableComponent : public GenericComponent<BoundingPolygon, 7>
+	/*
+	Collision events
+	*/
+	struct ObjectTileCollisionData
+	{
+		int entityId;
+		CollisionResult collisionResult;
+	};
+	
+	struct ObjectObjectCollisionData
+	{
+		int entityId1, entityId2;
+		CollisionResult collisionResult;
+	};
+
+	struct CollidableProperties
+	{
+		BoundingPolygon boundingPolygon;
+		std::vector<ObjectObjectCollisionData> objectCollisions;
+		std::vector<ObjectTileCollisionData> tileCollisions;
+	};
+
+	class CollidableComponent : public GenericComponent<CollidableProperties, 7>
 	{
 	public:
 		using GenericComponent::GenericComponent;
-		virtual BoundingPolygon createState(const ComponentProperties& properties) override;
+		virtual CollidableProperties createState(const ComponentProperties& properties) override;
 	};
 
 	struct TrackingComponentProperties
