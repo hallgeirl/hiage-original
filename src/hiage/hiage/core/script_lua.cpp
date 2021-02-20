@@ -44,12 +44,17 @@ void LuaVM::initialize()
 	lua_mathlibopen(vm);
 	lua_tablibopen(vm);
 	
-	luabind::open(vm);
+
+	/*
+	Keeping the code commented out for now, for reference
+	*/
+
+	//luabind::open(vm);
 
 	//register engine classes with LUA
 	//game class
 	
-	luabind::module(vm)
+	/*luabind::module(vm)
 	[
 		luabind::class_<Game>("Game")
 			.def("stop", &Game::stop)
@@ -103,7 +108,7 @@ void LuaVM::initialize()
             .def("width", &Map::getWidth)
             .def("height", &Map::getHeight)
             .def("setflag", &Map::setFlag)
-	];
+	];*/
 
     //entity class
 /*	luabind::module(vm)
@@ -145,7 +150,7 @@ void LuaVM::initialize()
 	*/
 
     //timer class
-    luabind::module(vm)
+    /*luabind::module(vm)
     [
         luabind::class_<Timer>("Timer")
             .def(luabind::constructor< >())
@@ -176,7 +181,7 @@ void LuaVM::initialize()
     [
         luabind::class_<Font>("Font")
             //.def("print", &Font::renderText)
-    ];
+    ];*/
 }
 
 void LuaVM::loadScript(std::string name, std::string path)

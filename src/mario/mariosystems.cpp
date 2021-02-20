@@ -193,7 +193,7 @@ AISystem::AISystem(hiage::Game& game, hiage::GameState& gameState) : System(game
 }
 
 
-void AISystem::update(double frameTime)
+void AISystem::update(double)
 {
 	auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, GroundMonsterControllerComponent, ControllerStateComponent, VelocityComponent>();
 

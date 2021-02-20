@@ -8,8 +8,4 @@ extern "C"
 	#include <lua50/lauxlib.h>
 }
 
-#define BOOST_BIND_GLOBAL_PLACEHOLDERS
-#include <luabind/luabind.hpp>
-#include <luabind/function.hpp>
-#include <luabind/class.hpp>
 #pragma warning(pop)

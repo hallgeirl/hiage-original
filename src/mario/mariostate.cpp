@@ -58,6 +58,8 @@ MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0)
 
     _mainfont = game.createFont("SmallFont");
     game.getAudioManager().playOgg("Overworld1", true);
+
+    gamemap.loadFromJson("maps/level1.json", false);
 }
 
 

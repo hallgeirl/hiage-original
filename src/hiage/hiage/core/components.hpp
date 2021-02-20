@@ -61,7 +61,7 @@ namespace hiage
 	class DatalessComponent : public GenericComponent<int, TypeID>
 	{
 	public:
-		DatalessComponent() : GenericComponent() { }
+		DatalessComponent() : GenericComponent<int, TypeID>() { }
 		DatalessComponent(const DatalessComponent<TypeID>& c) : GenericComponent() { *this = c; }
 	};
 
@@ -284,7 +284,7 @@ namespace hiage
 		}
 
 		std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const;
-		std::unique_ptr<Component> ComponentManager::createComponent(const std::string& type, const ComponentProperties& properties) const;
+		std::unique_ptr<Component> createComponent(const std::string& type, const ComponentProperties& properties) const;
 		int getTypeIdForComponentType(const std::string& componentType) const;
 	};
 }

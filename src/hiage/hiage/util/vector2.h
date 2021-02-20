@@ -76,7 +76,7 @@ namespace hiage
 		{
 			double vlength = length();
 
-			return Vector2(x / vlength, y / vlength);
+			return Vector2<T>(x / vlength, y / vlength);
 		}
 
 
@@ -99,7 +99,7 @@ namespace hiage
 			\param v Vector to add to this.
 			\return A copy of the results.
 		*/
-		Vector2 add(const Vector2& v)
+		Vector2<T> add(const Vector2<T>& v)
 		{
 			x += v.x;
 			y += v.y;
@@ -112,7 +112,7 @@ namespace hiage
 			\param v Vector to subtract from this.
 			\return A copy of the results.
 		*/
-		Vector2 subtract(const Vector2& v)
+		Vector2<T> subtract(const Vector2<T>& v)
 		{
 			x -= v.x;
 			y -= v.y;
@@ -125,7 +125,7 @@ namespace hiage
 			\param v The second vector.
 			\return A copy of the results.
 		*/
-		T dot(const Vector2& v) const
+		T dot(const Vector2<T>& v) const
 		{
 			return ((x * v.x) + (y * v.y));
 		}
@@ -190,9 +190,9 @@ namespace hiage
 			\note This does not change this vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator +(const Vector2 &v) const
+		Vector2<T> operator +(const Vector2<T>& v) const
 		{
-			Vector2 v2;
+			Vector2<T> v2;
 			v2 = *this;
 			v2.add(v);
 
@@ -205,9 +205,9 @@ namespace hiage
 			\note This does not change this vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator -(const Vector2 &v) const
+		Vector2<T> operator -(const Vector2<T>& v) const
 		{
-			Vector2 v2;
+			Vector2<T> v2;
 			v2 = *this;
 			v2.subtract(v);
 
@@ -216,15 +216,12 @@ namespace hiage
 
 		/*!
 			Performs vector inversion / unary - and returns the results.
-			\param v The second vector.
 			\note This does not change this vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator -() const
+		Vector2<T> operator -() const
 		{
-			Vector2 v2;
-			v2 = *this;
-			v2.subtract(v);
+			Vector2<T> v2(-1 * this->getX(), -1 * this->getY());
 
 			return v2;
 		}
@@ -235,9 +232,9 @@ namespace hiage
 			\note This does not change this vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator *(double f) const
+		Vector2<T> operator *(double f) const
 		{
-			Vector2 v;
+			Vector2<T> v;
 			v = *this;
 			v.scale(f);
 
@@ -250,9 +247,9 @@ namespace hiage
 			\note This does not change this vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator /(double f) const
+		Vector2<T> operator /(double f) const
 		{
-			Vector2 v;
+			Vector2<T> v;
 			v = *this;
 			v.scale(1/f);
 
@@ -264,7 +261,7 @@ namespace hiage
 			\param v The second vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator +=(const Vector2 &v)
+		Vector2<T> operator +=(const Vector2<T>& v)
 		{
 			add(v);
 
@@ -276,7 +273,7 @@ namespace hiage
 			\param v The second vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator -=(const Vector2 &v)
+		Vector2<T> operator -=(const Vector2<T>& v)
 		{
 			subtract(v);
 
@@ -288,7 +285,7 @@ namespace hiage
 			\param f The scale factor.
 			\return The resulting vector.
 		*/
-		Vector2 operator *=(const double f)
+		Vector2<T> operator *=(const double f)
 		{
 			scale(f);
 
@@ -300,7 +297,7 @@ namespace hiage
 			\param f The scale factor.
 			\return The resulting vector.
 		*/
-		Vector2 operator /=(const double f)
+		Vector2<T> operator /=(const double f)
 		{
 			scale(1/f);
 
@@ -312,7 +309,7 @@ namespace hiage
 			\param v The second vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator =(const Vector2 &vec)
+		Vector2<T> operator =(const Vector2<T>& vec)
 		{
 			set(vec);
 
@@ -324,7 +321,7 @@ namespace hiage
 			\param v The second vector.
 			\return The resulting vector.
 		*/
-		bool operator ==(const Vector2 &vec)
+		bool operator ==(const Vector2<T>& vec)
 		{
 			if (x == vec.x && y == vec.y)
 			{

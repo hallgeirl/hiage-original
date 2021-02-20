@@ -291,7 +291,6 @@ void Map::destroy()
 
     //reset scripting
     _game.scriptVM.executeLine("map=nil");
-    luabind::globals(_game.scriptVM.getVm())["map"] = this;
 	_game.scriptVM.executeLine("map[\"objects\"]={}");
 	_background = 0;
 }
@@ -779,6 +778,6 @@ MapState::~MapState()
 //Initialize scripts for map state
 void MapState::initScript()
 {
-	luabind::globals(_game.scriptVM.getVm())["map"] = &gamemap;
-	_game.scriptVM.executeLine("map[\"objects\"]={}");
+	//luabind::globals(_game.scriptVM.getVm())["map"] = &gamemap;
+	//_game.scriptVM.executeLine("map[\"objects\"]={}");
 }

@@ -38,7 +38,7 @@ target_include_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/includ
 
 target_link_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/lib/win-x64/SDL ${PROJECT_SOURCE_DIR}/third_party/lib/win-x64/SDL_Mixer)
 
-target_link_libraries(hiage PUBLIC SDL2.lib OpenGL32.dll SDL2_Mixer.lib SDL2main lua_static luabind tinyxml)
+target_link_libraries(hiage PUBLIC SDL2.lib OpenGL32.dll SDL2_Mixer.lib SDL2main lua_static tinyxml)
 target_compile_features(hiage PUBLIC cxx_std_20)
 
 target_compile_options(hiage

@@ -138,13 +138,6 @@ void Game::initialize(int width, int height, bool fullscreen)
 
 	clog << "OK: Game engine initialized properly.\n" << flush;
 
-
-	luabind::globals(scriptVM.getVm())["game"] = this;
-	luabind::globals(scriptVM.getVm())["screen"] = &display;
-	luabind::globals(scriptVM.getVm())["gametimer"] = &gameTimer;
-	luabind::globals(scriptVM.getVm())["input"] = &input;
-	luabind::globals(scriptVM.getVm())["audio"] = &audio;
-
 	running = true;
 	onInit();
 }

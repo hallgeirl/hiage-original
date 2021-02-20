@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <memory>
+#include <filesystem>
 
 namespace hiage
 {
@@ -113,7 +114,7 @@ namespace hiage
 				return resources[index];
 			}
 
-			throw Exception(string("ERROR: Could not find resource ") + name);
+			throw Exception(std::string("ERROR: Could not find resource ") + name);
 		}
 
 		const std::unique_ptr<Resource<T>>& requestResourcePtr(unsigned int index) const
@@ -123,7 +124,7 @@ namespace hiage
 				return resources[index];
 			}
 
-			throw Exception(string("ERROR: Could not find resource with index ") + index);
+			throw Exception(std::string("ERROR: Could not find resource with index ") + index);
 		}
 
 		//returns a copy of a resource object
@@ -140,7 +141,7 @@ namespace hiage
 				return std::unique_ptr<Resource<T>>(copy);
 			}
 
-			throw Exception(string("ERROR: Could not find resource ") + name);
+			throw Exception(std::string("ERROR: Could not find resource ") + name);
 		}
 		
 		int getResourceCount()

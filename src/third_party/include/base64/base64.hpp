@@ -26,6 +26,7 @@
  */
 
 #include <string>
+#include <exception>
 
 namespace macaron {
 
@@ -151,7 +152,7 @@ namespace macaron {
 
             std::vector<T> out;
             size_t in_len = input.size();
-            if (in_len % 4 != 0) throw runtime_error("Input data size is not a multiple of 4");
+            if (in_len % 4 != 0) throw std::runtime_error("Input data size is not a multiple of 4");
 
             size_t out_len = in_len / 4 * 3;
             if (input[in_len - 1] == '=') out_len--;
