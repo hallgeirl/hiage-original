@@ -104,13 +104,13 @@ namespace hiage
 			Texture *texture;				//pointer to the texture used to render this object
 			ObjectZ zposition;	//
 			std::vector<Vertex> vertices;	//list of vertices (with texture coordinates) to render
-			int activeVertices = 0;
+			unsigned int activeVertices = 0;
 		};
 
 		//buffer of renderable objects (in seperate arrays so sorting shouldn't be neccesary)
 		//std::vector<std::vector<RenderObject> > renderObjects;
 		std::vector<RenderObject> renderObjects[LAYERCOUNT];
-		int activeRenderObjects[LAYERCOUNT];
+		unsigned int activeRenderObjects[LAYERCOUNT];
 
 		int currentRenderObject;
 		ObjectZ currentZ;
