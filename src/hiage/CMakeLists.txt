@@ -32,13 +32,13 @@ add_library(hiage STATIC
 	"hiage/ui/windows.cpp"
 	"hiage/util/exceptions.cpp"
 	"hiage/util/timer.cpp"
- "hiage/util/jsonhelpers.hpp")
+ )
 
-target_include_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/include ${PROJECT_SOURCE_DIR}/third_party/src/tinyxml)
+target_include_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/include ${PROJECT_SOURCE_DIR}/third_party/src/tinyxml ${PROJECT_SOURCE_DIR}/third_party/src/flecs)
 
 target_link_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/lib/win-x64/SDL ${PROJECT_SOURCE_DIR}/third_party/lib/win-x64/SDL_Mixer)
 
-target_link_libraries(hiage PUBLIC SDL2.lib OpenGL32.dll SDL2_Mixer.lib SDL2main lua_static tinyxml)
+target_link_libraries(hiage PUBLIC SDL2.lib OpenGL32.dll SDL2_Mixer.lib SDL2main lua_static tinyxml flecs)
 target_compile_features(hiage PUBLIC cxx_std_20)
 
 target_compile_options(hiage
