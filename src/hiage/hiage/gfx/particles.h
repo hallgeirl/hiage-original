@@ -39,7 +39,6 @@ namespace hiage
 	class __IMPORTEXPORT ParticleSystem
 	{
 	private:
-		//todo: really use boost::shared_ptr?
 		typedef std::shared_ptr<Particle> ParticlePtr;
 		typedef std::list<ParticlePtr> ParticleArray;
 
