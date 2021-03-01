@@ -20,18 +20,18 @@ void Texture::createTexture(const unsigned char * imageData, short width, short 
 {
 	clog << "- Creating texture... Width: " << width << " Height: " << height << " Bits per pixel: " << (int)bits << endl << flush;
 
-	if (loaded)
+	if (_loaded)
 	{
-		glDeleteTextures(1,&this->textureID);
-		loaded = false;
+		glDeleteTextures(1,&this->_textureID);
+		_loaded = false;
 	}
 
-	this->width = width;
-	this->height = height;
-	this->bits = bits;
+	this->_width = width;
+	this->_height = height;
+	this->_bits = bits;
 
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_2D, textureID);
+	glGenTextures(1, &_textureID);
+	glBindTexture(GL_TEXTURE_2D, _textureID);
 
 	//glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
 	//glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
@@ -69,7 +69,7 @@ void Texture::createTexture(const unsigned char * imageData, short width, short 
 
 	clog << "OK: Texture was created successfully.\n" << flush;
 
-	loaded = true;
+	_loaded = true;
 }
 
 //load a texture from a TGA bitmap
@@ -107,11 +107,11 @@ void Texture::loadTexture(const char * path)
 	fStream.seekg(9,ios::cur);
 
 	//read width, height and pixel depth
-	fStream.read((char *)&width,2);
-	fStream.read((char *)&height,2);
-	fStream.read(&bits,1);
-	clog << "- Dimensions:\n" << "  - Width: " << width << " Height: " << height << " Bit depth: " << (int)bits << endl << flush;
-	if (bits != 32)
+	fStream.read((char *)&_width,2);
+	fStream.read((char *)&_height,2);
+	fStream.read(&_bits,1);
+	clog << "- Dimensions:\n" << "  - Width: " << _width << " Height: " << _height << " Bit depth: " << (int)_bits << endl << flush;
+	if (_bits != 32)
 	{
 		throw Exception("ERROR: Only 32 bit targas are supported.");
 	}
@@ -132,9 +132,9 @@ void Texture::loadTexture(const char * path)
 	*/
 
 	int x,y;	//counters
-	int chans = bits / 8;
-	int rowlength = width * chans;
-	bitmapData = new unsigned char[rowlength * height];
+	int chans = _bits / 8;
+	int rowlength = _width * chans;
+	bitmapData = new unsigned char[rowlength * _height];
 	//imageData = bitmapData;
 
 	//image data
@@ -144,7 +144,7 @@ void Texture::loadTexture(const char * path)
 		if (leftToRight)
 		{
 			//read the pixels in the row from left to right
-			for (y = height - 1; y >= 0; y--)
+			for (y = _height - 1; y >= 0; y--)
 			{
 				fStream.read((char *)bitmapData + (y * rowlength), rowlength);
 			}
@@ -152,7 +152,7 @@ void Texture::loadTexture(const char * path)
 		else
 		{
 			//read the pixels in the row from right to left
-			for (y = height - 1; y >= 0; y--)
+			for (y = _height - 1; y >= 0; y--)
 			{
 				for (x = rowlength - chans - 1; x >= 0; x -= chans)
 				{
@@ -167,12 +167,12 @@ void Texture::loadTexture(const char * path)
 		if (leftToRight)
 		{
 			//read the pixels in the row from left to right
-			fStream.read((char *)bitmapData, height * rowlength);
+			fStream.read((char *)bitmapData, _height * rowlength);
 		}
 		else
 		{
 			//read the pixels in the row from right to left
-			for (y = 0; y < height; y++)
+			for (y = 0; y < _height; y++)
 			{
 				for (x = rowlength - chans - 1; x >= 0; x -= chans)
 				{
@@ -185,7 +185,7 @@ void Texture::loadTexture(const char * path)
 	fStream.close();
 
 	//swap Red and Blue bits
-	for (x = 0; x < rowlength * height; x+=chans)
+	for (x = 0; x < rowlength * _height; x+=chans)
 	{
 		//store the red bits
 		char red = bitmapData[x];
@@ -195,7 +195,7 @@ void Texture::loadTexture(const char * path)
 
 	try
 	{
-		createTexture(bitmapData, width, height, bits);
+		createTexture(bitmapData, _width, _height, _bits);
 	}
 	catch (...)
 	{
@@ -210,12 +210,12 @@ void Texture::loadTexture(const char * path)
 //select the texture for rendering
 void Texture::select()
 {
-	glBindTexture(GL_TEXTURE_2D, textureID);
+	glBindTexture(GL_TEXTURE_2D, _textureID);
 }
 
 int Texture::getTextureID()
 {
-	return textureID;
+	return _textureID;
 }
 
 

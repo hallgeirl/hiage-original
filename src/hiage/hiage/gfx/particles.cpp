@@ -52,31 +52,31 @@ void Particle::render(Renderer &renderer, ObjectZ z, Texture * texture)
 
 ParticleSystem::ParticleSystem()
 {
-	texture = 0;
+	_texture = 0;
 }
 
 ParticleSystem::ParticleSystem(Texture * texture)
 {
-	this->texture = texture;
+	this->_texture = texture;
 }
 
 void ParticleSystem::addParticle(ParticleCreateData &particleData)
 {
 	ParticlePtr particle(new Particle(particleData));
 
-	particles.push_back(particle);
+	_particles.push_back(particle);
 }
 
 void ParticleSystem::update(double timefactor)
 {
-	ParticleArray::iterator itr = particles.begin();
+	ParticleArray::iterator itr = _particles.begin();
 
-	while (itr != particles.end())
+	while (itr != _particles.end())
 	{
 		(*itr)->update(timefactor);
 
 		if (!(*itr)->isAlive())
-			itr = particles.erase(itr);
+			itr = _particles.erase(itr);
 		else
 			++itr;
 	}
@@ -84,11 +84,11 @@ void ParticleSystem::update(double timefactor)
 
 void ParticleSystem::render(Renderer &renderer, ObjectZ z)
 {
-	ParticleArray::iterator itr = particles.begin();
+	ParticleArray::iterator itr = _particles.begin();
 
-	while (itr != particles.end())
+	while (itr != _particles.end())
 	{
-		(*itr)->render(renderer, z, texture);
+		(*itr)->render(renderer, z, _texture);
 
 		++itr;
 	}
@@ -96,5 +96,5 @@ void ParticleSystem::render(Renderer &renderer, ObjectZ z)
 
 void ParticleSystem::setTexture(Texture * texture)
 {
-	this->texture = texture;
+	this->_texture = texture;
 }

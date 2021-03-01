@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include "../core/typedefs.h"
 
@@ -21,7 +21,6 @@ namespace hiage
 	{
 	private:
 		T x, y;
-
 	public:
 		/*!
 			Initializes the vector to (0, 0).
@@ -45,7 +44,7 @@ namespace hiage
 			Returns the length of the vector (sqrt(x^2 + y^2)).
 			\return The length of the vector.
 		*/
-		double length()
+		const double length() const
 		{
 			return sqrt((x * x) + (y * y));
 		}
@@ -55,7 +54,7 @@ namespace hiage
 			\note Use this carefully when using vectors of integer type because rounding errors are as good as guaranteed.
 			\return A copy of the normalized vector.
 		*/
-		Vector2 normalize()
+		Vector2<T> normalize()
 		{
 			double vlength = length();
 
@@ -73,6 +72,13 @@ namespace hiage
 			return *this;
 		}
 
+		Vector2<T> normalized() const
+		{
+			double vlength = length();
+
+			return Vector2<T>(x / vlength, y / vlength);
+		}
+
 
 
 		/*!
@@ -80,7 +86,7 @@ namespace hiage
 			\param f The factor to scale the vector by.
 			\return A copy of the scaled vector.
 		*/
-		Vector2 scale(double f)
+		Vector2<T> scale(double f)
 		{
 			x *= f;
 			y *= f;
@@ -93,7 +99,7 @@ namespace hiage
 			\param v Vector to add to this.
 			\return A copy of the results.
 		*/
-		Vector2 add(Vector2 v)
+		Vector2<T> add(const Vector2<T>& v)
 		{
 			x += v.x;
 			y += v.y;
@@ -106,7 +112,7 @@ namespace hiage
 			\param v Vector to subtract from this.
 			\return A copy of the results.
 		*/
-		Vector2 subtract(Vector2 v)
+		Vector2<T> subtract(const Vector2<T>& v)
 		{
 			x -= v.x;
 			y -= v.y;
@@ -119,7 +125,7 @@ namespace hiage
 			\param v The second vector.
 			\return A copy of the results.
 		*/
-		T dot(Vector2 v) const
+		T dot(const Vector2<T>& v) const
 		{
 			return ((x * v.x) + (y * v.y));
 		}
@@ -147,10 +153,10 @@ namespace hiage
 			\param x The new x-component.
 			\param y The new y-component.
 		*/
-		void set(T x, T y)
+		void set(T x_, T y_)
 		{
-			this->x = x;
-			this->y = y;
+			this->x = x_;
+			this->y = y_;
 		}
 
 		void set(const Vector2<T> &v)
@@ -163,18 +169,18 @@ namespace hiage
 			Set the x-component of this vector individually.
 			\param x The new x-component.
 		*/
-		void setX(T x)
+		void setX(T x_)
 		{
-			this->x = x;
+			this->x = x_;
 		}
 
 		/*!
 			Set the y-component of this vector individually.
 			\param y The new y-component.
 		*/
-		void setY(T y)
+		void setY(T y_)
 		{
-			this->y = y;
+			this->y = y_;
 		}
 
 		//operator overloads
@@ -184,9 +190,9 @@ namespace hiage
 			\note This does not change this vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator +(const Vector2 &v) const
+		Vector2<T> operator +(const Vector2<T>& v) const
 		{
-			Vector2 v2;
+			Vector2<T> v2;
 			v2 = *this;
 			v2.add(v);
 
@@ -199,11 +205,23 @@ namespace hiage
 			\note This does not change this vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator -(const Vector2 &v) const
+		Vector2<T> operator -(const Vector2<T>& v) const
 		{
-			Vector2 v2;
+			Vector2<T> v2;
 			v2 = *this;
 			v2.subtract(v);
+
+			return v2;
+		}
+
+		/*!
+			Performs vector inversion / unary - and returns the results.
+			\note This does not change this vector.
+			\return The resulting vector.
+		*/
+		Vector2<T> operator -() const
+		{
+			Vector2<T> v2(-1 * this->getX(), -1 * this->getY());
 
 			return v2;
 		}
@@ -214,9 +232,9 @@ namespace hiage
 			\note This does not change this vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator *(double f) const
+		Vector2<T> operator *(double f) const
 		{
-			Vector2 v;
+			Vector2<T> v;
 			v = *this;
 			v.scale(f);
 
@@ -229,9 +247,9 @@ namespace hiage
 			\note This does not change this vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator /(double f) const
+		Vector2<T> operator /(double f) const
 		{
-			Vector2 v;
+			Vector2<T> v;
 			v = *this;
 			v.scale(1/f);
 
@@ -243,7 +261,7 @@ namespace hiage
 			\param v The second vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator +=(const Vector2 &v)
+		Vector2<T> operator +=(const Vector2<T>& v)
 		{
 			add(v);
 
@@ -255,7 +273,7 @@ namespace hiage
 			\param v The second vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator -=(const Vector2 &v)
+		Vector2<T> operator -=(const Vector2<T>& v)
 		{
 			subtract(v);
 
@@ -267,7 +285,7 @@ namespace hiage
 			\param f The scale factor.
 			\return The resulting vector.
 		*/
-		Vector2 operator *=(const double f)
+		Vector2<T> operator *=(const double f)
 		{
 			scale(f);
 
@@ -279,7 +297,7 @@ namespace hiage
 			\param f The scale factor.
 			\return The resulting vector.
 		*/
-		Vector2 operator /=(const double f)
+		Vector2<T> operator /=(const double f)
 		{
 			scale(1/f);
 
@@ -291,7 +309,7 @@ namespace hiage
 			\param v The second vector.
 			\return The resulting vector.
 		*/
-		Vector2 operator =(const Vector2 &vec)
+		Vector2<T> operator =(const Vector2<T>& vec)
 		{
 			set(vec);
 
@@ -303,7 +321,7 @@ namespace hiage
 			\param v The second vector.
 			\return The resulting vector.
 		*/
-		bool operator ==(const Vector2 &vec)
+		bool operator ==(const Vector2<T>& vec)
 		{
 			if (x == vec.x && y == vec.y)
 			{
@@ -329,6 +347,7 @@ namespace hiage
 			return true;
 		}
 	};
+	typedef Vector2<double> Vec2d;
 
 	inline std::ostream & operator <<(std::ostream &stream, const Vector2<double> &v)
 	{

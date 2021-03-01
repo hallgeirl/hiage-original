@@ -12,6 +12,17 @@ typedef struct SDL_Window SDL_Window;
 
 namespace hiage
 {
+	enum class ScreenHorizontalPosition
+	{
+		Center, Left, Right
+	};
+
+	enum class ScreenVerticalPosition
+	{
+		Center, Bottom, Top
+	};
+
+
 	enum DisplayState
 	{
 		DS_STRETCH_SCENE = 1,
@@ -27,16 +38,16 @@ namespace hiage
 	private:
 
 		//zoom value (base clip range)
-		double zoom;
-		float camX, camY;
-		float aspect;
-		int width, height;
+		double _zoom;
+		double _camX, _camY;
+		double _aspect;
+		int _width, _height;
 
 		//bitmask containing the display states
-		unsigned long displayState;
-		Renderer renderer;
+		unsigned long _displayState;
+		Renderer _renderer;
 
-		SDL_Window* window;
+		SDL_Window* _window;
 
 	public:
 		Display();	//constructor
@@ -52,20 +63,20 @@ namespace hiage
 		//set the display states
 		void setState(DisplayState state, bool value);
 		void setZoom(double value);
-		double getZoom() { return zoom; }
+		double getZoom() { return _zoom; }
 
-		void setCamPosition(float x, float y);
-		float getCamX() { return camX; }
-		float getCamY() { return camY; }
-		float getAspectRatio() { return aspect; }
+		void setCamPosition(double x, double y);
+		double getCamX() { return _camX; }
+		double getCamY() { return _camY; }
+		double getAspectRatio() { return _aspect; }
 
 		//window dimensions
-		int getWidth() { return width; }
-		int getHeight() { return height; }
-		float getViewWidth();
-		float getViewHeight();
+		int getWidth() { return _width; }
+		int getHeight() { return _height; }
+		double getViewWidth();
+		double getViewHeight();
 
-		Renderer& getRenderer() { return renderer; }
+		Renderer& getRenderer() { return _renderer; }
 
 		//coordinate conversion functions
 		Vector2<double> windowToViewport(Vector2<double> Coord);

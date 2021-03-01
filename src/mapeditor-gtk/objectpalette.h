@@ -5,7 +5,7 @@
 
 #include <engine/com_game.h>
 #include <engine/util_fonts.h>
-#include <engine/game_entity.h>
+#include <engine/game_entity.hpp>
 
 
 class ObjectPalette

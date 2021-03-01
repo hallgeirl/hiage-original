@@ -1,0 +1,40 @@
+{
+  "name": "BlockSingleCoin",
+  "type": "Block",
+  "components": [
+    {
+      "type": "physical"
+    },
+    {
+      "type": "movable"
+    },
+    {
+      "type": "renderable",
+      "properties": {
+        "sprite": "BlockQuestion"
+      }
+    },
+    {
+      "type": "collidable",
+      "properties": {
+        "left": 0,
+        "bottom": 0,
+        "width": 16,
+        "height": 16
+      }
+    },
+    {
+      "type": "blocking"
+    }
+  ],
+  "scripts": [
+     {
+        "type": "init",
+        "function": "initCoinBlock"
+     },
+     {
+        "type": "objcollision",
+        "function": "blockCollide"
+     }
+  ]
+}

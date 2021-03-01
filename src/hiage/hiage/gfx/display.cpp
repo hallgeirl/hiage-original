@@ -8,10 +8,10 @@
 using namespace hiage;
 using namespace std;
 
-Display::Display() : zoom(200.0), camX(0.0f), camY(0.0f), aspect(1), height(768), width(1024), window(nullptr)
+Display::Display() : _zoom(200.0), _camX(0.0f), _camY(0.0f), _aspect(1), _height(768), _width(1024), _window(nullptr)
 {
 	//set states
-	displayState = 0;
+	_displayState = 0;
 }
 
 //initialize opengl
@@ -32,8 +32,8 @@ void Display::initialize(int width, int height, bool fullscreen)
 	if (fullscreen)
 	{
 		clog << "- Setting video mode - fullscreen...\n" << flush;
-		this->window = SDL_CreateWindow("hiage", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
-		if (!window)
+		this->_window = SDL_CreateWindow("hiage", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
+		if (!_window)
 		{
 			throw FatalException("ERROR: Setting video mode failed.");
 		}
@@ -41,17 +41,17 @@ void Display::initialize(int width, int height, bool fullscreen)
 	else
 	{
 		clog << "- Setting video mode - windowed...\n" << flush;
-		this->window = SDL_CreateWindow("hiage", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
-		if (!window)
+		this->_window = SDL_CreateWindow("hiage", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
+		if (!_window)
 		{
 			throw FatalException("ERROR: Display initialization failed.");
 		}
 	}
 
-	SDL_GL_CreateContext(this->window);
+	SDL_GL_CreateContext(this->_window);
 
-	aspect = (float)width / (float)height;
-	clog << "- Aspect ratio: " << aspect << endl << flush;
+	_aspect = (double)width / (double)height;
+	clog << "- Aspect ratio: " << _aspect << endl << flush;
 
 	//enable opengl states
 	glEnable(GL_DEPTH_TEST);	//enable depth testing
@@ -86,53 +86,53 @@ void Display::resize(int width, int height)
 		width = 1;
 	}
 
-	this->width = width;
-	this->height = height;
+	this->_width = width;
+	this->_height = height;
 
 	glViewport(0,0,width,height);
 	glPushMatrix();
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	if (displayState & DisplayState::DS_STRETCH_SCENE)
+	if (_displayState & DisplayState::DS_STRETCH_SCENE)
 	{
-		glOrtho(-zoom,zoom,-zoom,zoom,-1.0, 1000.0);
+		glOrtho(-_zoom,_zoom,-_zoom,_zoom,-1.0, 1000.0);
 	}
 	else
 	{
-		aspect = (float)width / (float)height;
+		_aspect = (double)width / (double)height;
 
 		if (width > height)
 		{
-			glOrtho(-zoom * aspect, zoom * aspect, -zoom, zoom, -1.0, 1000.0);
+			glOrtho(-_zoom * _aspect, _zoom * _aspect, -_zoom, _zoom, -1.0, 1000.0);
 		}
 		else
 		{
-			glOrtho(-zoom, zoom, -zoom / aspect, zoom / aspect, -1.0, 1000.0);
+			glOrtho(-_zoom, _zoom, -_zoom / _aspect, _zoom / _aspect, -1.0, 1000.0);
 		}
 	}
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 }
 
-void Display::setCamPosition(float x, float y)
+void Display::setCamPosition(double x, double y)
 {
-	camX = x;
-	camY = y;
+	_camX = x;
+	_camY = y;
 
 	glLoadIdentity();
-	glTranslatef(-camX,-camY,0);
+	glTranslated(-_camX,-_camY,0);
 }
 
 void Display::setZoom(double value)
 {
-	zoom = value;
-	if (zoom < 1.0)
+	_zoom = value;
+	if (_zoom < 1.0)
 	{
-		zoom = 1.0;
+		_zoom = 1.0;
 	}
 
-	resize(width, height);
+	resize(_width, _height);
 }
 
 void Display::beginRender()
@@ -142,15 +142,15 @@ void Display::beginRender()
 	glClearColor(0.0f,0.0f,0.0f,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glTranslatef(-camX,-camY,0);
+	glTranslated(-_camX,-_camY,0);
 
-	renderer.clearBuffer();
+	_renderer.clearBuffer();
 }
 
 void Display::render()
 {
-	renderer.renderBuffer();
-	SDL_GL_SwapWindow(this->window);
+	_renderer.renderBuffer();
+	SDL_GL_SwapWindow(this->_window);
 }
 
 void Display::setState(DisplayState state, bool value)
@@ -158,37 +158,37 @@ void Display::setState(DisplayState state, bool value)
 	//enable state
 	if (value)
 	{
-		displayState |= state;
+		_displayState |= state;
 		clog << "OK: Display state " << state << " enabled.\n" << flush;
 	}
 	//disable state
 	else
 	{
-		displayState ^= displayState & state;
+		_displayState ^= _displayState & state;
 		clog << "OK: Display state " << state << " disabled.\n" << flush;
 	}
 }
 
 //viewport width
-float Display::getViewWidth()
+double Display::getViewWidth()
 {
-	if (width > height)
+	if (_width > _height)
 	{
-		return ((float)zoom * aspect * 2);
+		return (_zoom * _aspect * 2);
 	}
 
-	return ((float)zoom * 2);
+	return (_zoom * 2);
 }
 
 //viewport height
-float Display::getViewHeight()
+double Display::getViewHeight()
 {
-	if (height > width)
+	if (_height > _width)
 	{
-		return ((float)zoom / aspect * 2);
+		return (_zoom / _aspect * 2);
 	}
 
-	return ((float)zoom * 2);
+	return (_zoom * 2);
 }
 
 //converts window coordinates to viewport coodinates (moves the origin to the center, and inverts the y-axis)
@@ -197,18 +197,18 @@ Vector2<double> Display::windowToViewport(Vector2<double> coord)
 	Vector2<double> newcoord;
 
 	//find the ratio between the viewport and window dimensions
-	float xRatio = width / getViewWidth();
-	float yRatio = height / getViewHeight();
+	double xRatio = _width / getViewWidth();
+	double yRatio = _height / getViewHeight();
 
-	if (width > height)
+	if (_width > _height)
 	{
-		newcoord.setX((coord.getX() / xRatio) - (zoom * aspect));
-		newcoord.setY(-((coord.getY() / yRatio) - zoom));
+		newcoord.setX((coord.getX() / xRatio) - (_zoom * _aspect));
+		newcoord.setY(-((coord.getY() / yRatio) - _zoom));
 	}
 	else
 	{
-		newcoord.setX((coord.getX() / xRatio) - zoom);
-		newcoord.setY(-((coord.getY() / yRatio) - (zoom * aspect)));
+		newcoord.setX((coord.getX() / xRatio) - _zoom);
+		newcoord.setY(-((coord.getY() / yRatio) - (_zoom * _aspect)));
 	}
 
 	return newcoord;
@@ -217,27 +217,27 @@ Vector2<double> Display::windowToViewport(Vector2<double> coord)
 //converts from window coordinates to coordinates in the environment. Same as window to viewport, except it takes the camera position into account.
 Vector2<double> Display::windowToEnvironment(Vector2<double> coord)
 {
-	return (windowToViewport(coord) + Vector2<double>(camX, camY));
+	return (windowToViewport(coord) + Vector2<double>(_camX, _camY));
 }
 
 
 Vector2<double> Display::environmentToWindow(Vector2<double> coord)
 {
-	float xRatio = width / getViewWidth();
-	float yRatio = height / getViewHeight();
+	double xRatio = _width / getViewWidth();
+	double yRatio = _height / getViewHeight();
 
 	Vector2<double> newcoord;
 
 	newcoord = coord;
-	if (width > height)
+	if (_width > _height)
 	{
-		newcoord.setX((coord.getX() / xRatio) + camX - (zoom * aspect));
-		newcoord.setY((-coord.getY() / yRatio) + camY + zoom);
+		newcoord.setX((coord.getX() / xRatio) + _camX - (_zoom * _aspect));
+		newcoord.setY((-coord.getY() / yRatio) + _camY + _zoom);
 	}
 	else
 	{
-		newcoord.setX((coord.getX() / xRatio) + camX - zoom);
-		newcoord.setY((-coord.getY() / yRatio) + camY + (zoom * aspect));
+		newcoord.setX((coord.getX() / xRatio) + _camX - _zoom);
+		newcoord.setY((-coord.getY() / yRatio) + _camY + (_zoom * _aspect));
 	}
 
 	return newcoord;

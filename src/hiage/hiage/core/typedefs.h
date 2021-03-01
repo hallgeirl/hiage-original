@@ -28,23 +28,33 @@
 */
 namespace hiage
 {
-	struct Rect
+	template<typename T>
+	struct BoundingBox
 	{
-		double left, right, top, bottom;
-		Rect(double l, double r, double t, double b)
+		T left, right, top, bottom;
+		BoundingBox(T left, T right, T top, T bottom)
 		{
-			left = l;
-			right = r;
-			top = t;
-			bottom = b;
+			this->left = left;
+			this->right = right;
+			this->top = top;
+			this->bottom = bottom;
 		}
-		Rect()
+		BoundingBox()
 		{
 			left = right = top = bottom = 0;
 		}
+
+		// From int->double/float/whatever is fine. Make this an explicitly allowed conversion.
+		BoundingBox(const BoundingBox<int>& other)
+		{
+			left = other.left;
+			right = other.right;
+			top = other.top;
+			bottom = other.bottom;
+		}
 	};
 
-	inline std::ostream & operator <<(std::ostream &stream, const Rect &r)
+	inline std::ostream & operator <<(std::ostream &stream, const BoundingBox<double> &r)
 	{
 		stream << "Left: " << r.left << " Top: " << r.top << " Right: " << r.right << " Bottom: " << r.bottom;
 		return stream;

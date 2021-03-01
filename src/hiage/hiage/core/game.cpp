@@ -1,5 +1,5 @@
 /*!
-	\file com_game.cpp
+	\file game.cpp
 
 	\author Hallgeir Lien
 
@@ -8,11 +8,13 @@
 
 #include <iostream>
 
-#include "game.h"
+#include "game.hpp"
+#include "entitymanager.hpp"
 #include "../util/exceptions.h"
-#include "objectfactory.h"
 #include "../sdl-includes.h"
 #include <filesystem>
+#include <thread>
+#include <chrono>
 
 #pragma warning(push, 0)
 #include <tinyxml.h>
@@ -21,9 +23,12 @@
 
 
 using namespace hiage;
+using namespace std;
 using namespace std::filesystem;
 
-Game::Game() : gameTimer(true)
+Game::Game(double framerateLimit, const KeyBindings& keyBindings, const std::string& dataRoot) 
+	: gameTimer(true), lastFrameTime(0.05), framerateLimit(framerateLimit), dataRoot(dataRoot),
+	scriptVM(dataRoot), input(keyBindings), audio(dataRoot), textureManager(dataRoot), spriteManager(dataRoot), objectManager(dataRoot), tilesetManager(dataRoot), fontManager(dataRoot)
 {
 	running = false;
 	timeFactor = 1;
@@ -40,12 +45,13 @@ Game::~Game()
 	states.clear();
 }
 
-
-
-//using namespace boost::filesystem;
-
 //traverse a specified directory and load the resources in it
 void Game::loadResources(std::string dir, ResourceTypeEnum resType)
+{
+	loadResourcesRecursive(getResourcePath(dir), resType);
+}
+
+void Game::loadResourcesRecursive(std::string dir, ResourceTypeEnum resType)
 {
 	directory_iterator end_itr;
 
@@ -54,7 +60,6 @@ void Game::loadResources(std::string dir, ResourceTypeEnum resType)
 	try
 	{
 		for (const auto& itr : recursive_directory_iterator(dir))
-		//for (directory_iterator itr(dir); itr != end_itr; itr++)
 		{
 			if (itr.is_directory())
 			{
@@ -66,53 +71,26 @@ void Game::loadResources(std::string dir, ResourceTypeEnum resType)
 				{
                     case ResourceTypeEnum::SPRITE:
                     {
-                        spriteManager.load(itr.path().string().c_str());
+                        spriteManager.load(itr.path().string(), "");
                         break;
                     }
 
                         //case Object:
                     case ResourceTypeEnum::TEXTURE:
                     {
-                        textureManager.load(itr.path().string().c_str());
+                        textureManager.load(itr.path().string(), "");
                         break;
                     }
 
                     case ResourceTypeEnum::TILESET:
                     {
-                        tilesetManager.load(itr.path().string().c_str());
+                        tilesetManager.load(itr.path().string(), "");
                         break;
                     }
 
                     case ResourceTypeEnum::FONT:
                     {
-                        fontManager.load(itr.path().string().c_str());
-                        break;
-                    }
-
-                    case ResourceTypeEnum::OBJECT:
-                    {
-                        //load the xml file
-
-                        string temp = itr.path().string();
-                        TiXmlDocument xmlDoc;
-                        xmlDoc.LoadFile(temp.c_str());
-
-                        if (!xmlDoc.LoadFile())
-                        {
-                            continue;
-                        }
-
-                        TiXmlElement * objectElement = 0;
-
-                        objectElement = xmlDoc.FirstChildElement("object");
-                        if (objectElement)
-                        {
-                            std::string tempName = objectElement->Attribute("name");
-                            if (tempName.length())
-                            {
-                                objectList[tempName] = itr.path().string();
-                            }
-                        }
+                        fontManager.load(itr.path().string(), "");
                         break;
                     }
 
@@ -120,6 +98,11 @@ void Game::loadResources(std::string dir, ResourceTypeEnum resType)
                     {
                         break;
                     }
+					case ResourceTypeEnum::OBJECT:
+					{
+						objectManager.load(itr.path().string(), "");
+						break;
+					}
 				}
 			}
 		}
@@ -154,13 +137,6 @@ void Game::initialize(int width, int height, bool fullscreen)
 	}
 
 	clog << "OK: Game engine initialized properly.\n" << flush;
-
-
-	luabind::globals(scriptVM.getVm())["game"] = this;
-	luabind::globals(scriptVM.getVm())["screen"] = &display;
-	luabind::globals(scriptVM.getVm())["gametimer"] = &gameTimer;
-	luabind::globals(scriptVM.getVm())["input"] = &input;
-	luabind::globals(scriptVM.getVm())["audio"] = &audio;
 
 	running = true;
 	onInit();
@@ -210,11 +186,14 @@ void Game::setGameState(GameState * state)
 	states.back()->init();
 }
 
-void Game::run(double frametime, bool doEvents)
-{
-	display.beginRender();
 
-	frametime *= timeFactor;
+void Game::run(bool doEvents)
+{
+	static Timer frameTimer(true);		 //!< Used for frame limiting.
+	
+	frameTimer.reset();
+
+	display.beginRender();
 
     SDL_Event event;
 
@@ -232,9 +211,10 @@ void Game::run(double frametime, bool doEvents)
 
 	if (!states.empty())
 	{
-		states.back()->handleEvents(frametime);
-		states.back()->update(frametime);
-		states.back()->render(frametime);
+		states.back()->handleEvents(lastFrameTime);
+		states.back()->update(lastFrameTime);
+		states.back()->render();
+		states.back()->cleanupFrame();
 	}
 	display.render();
 
@@ -253,7 +233,26 @@ void Game::run(double frametime, bool doEvents)
 
 	glEnable(GL_TEXTURE_2D);
 
-	scriptVM.executeLine(string("frametime=") + frametime);
+	/*
+	* Limit framerate
+	*/
+	double frameTimeLimitMicroseconds = 1000000. / framerateLimit;
+	if (framerateLimit > 0)
+	{
+		double frameTimeMicroseconds = frameTimer.getTime() * 1000000;
+		long microsecondsToSleep = (long)(frameTimeLimitMicroseconds - frameTimeMicroseconds) - 1000;
+
+		if (microsecondsToSleep > 1)
+		{
+			std::this_thread::sleep_for(std::chrono::microseconds(microsecondsToSleep));
+		}
+	}
+
+	static int fc = 0;
+	if (fc++ % 10 == 0)
+		cout << "FPS: " << (1 / frameTimer.getTime()) << " frametime " << frameTimer.getTime() << endl;
+	lastFrameTime = std::min(frameTimer.getTime(), 0.02) * timeFactor;
+	scriptVM.executeLine(string("frametime=") + lastFrameTime);
 }
 
 double Game::getTimeFactor()
@@ -306,9 +305,38 @@ Font & Game::createFont(std::string font)
     return *f;
 }
 
-void Game::printText(Font & font, std::string text, double x, double y, double scale , double spacing)
+void Game::printText(Font & font, const std::string& text, double x, double y, double scale , double spacing)
 {
     font.renderText(display.getRenderer(), text, Vector2<double>(x,y), scale, spacing);
+}
+
+void hiage::Game::printTextFixed(Font& font, const std::string& text, double x, double y, ScreenHorizontalPosition horizontalPos, ScreenVerticalPosition verticalPos, double scale, double spacing)
+{
+	auto& disp = getDisplay();
+	double xPos = disp.getCamX() + x;// - disp.getZoom() * disp.getAspectRatio();
+	double yPos = disp.getCamY() + y;// - disp.getZoom();
+
+	switch (horizontalPos)
+	{
+	case ScreenHorizontalPosition::Left:
+		xPos -= disp.getZoom() * disp.getAspectRatio();
+		break;
+	case ScreenHorizontalPosition::Right:
+		xPos += disp.getZoom() * disp.getAspectRatio();
+		break;
+	}
+
+	switch (verticalPos)
+	{
+	case ScreenVerticalPosition::Bottom:
+		yPos -= disp.getZoom();
+		break;
+	case ScreenVerticalPosition::Top:
+		yPos += disp.getZoom() - font.getCharacterHeight() * scale;
+		break;
+	}
+
+	font.renderText(display.getRenderer(), text, Vector2<double>(xPos, yPos), scale, spacing);
 }
 
 void Game::drawTexture(std::string texname, double x, double y)
@@ -326,36 +354,6 @@ void Game::drawTexture(std::string texname, double x, double y)
     renderer.endRender();
 }
 
-
-std::string Game::getObjectSprite(std::string name)
-{
-	std::string sprite = "";
-
-	//load the xml file
-	TiXmlDocument xmlDoc(objectList[name].c_str());
-	if (!xmlDoc.LoadFile())
-	{
-		return sprite;
-	}
-
-	TiXmlElement *	objectElement = 0;
-	TiXmlElement *	spriteElement = 0;
-
-	objectElement = xmlDoc.FirstChildElement("object");
-
-	//check if it's an object file
-	if (!objectElement)
-	{
-		return sprite;
-	}
-
-	//store the sprite name
-	spriteElement = objectElement->FirstChildElement("sprite");
-	sprite = spriteElement->Attribute("name");
-
-	return sprite;
-}
-
 Display & Game::getDisplay()
 {
     return display;
@@ -371,11 +369,11 @@ AudioManager & Game::getAudioManager()
     return audio;
 }
 
-TextureManager & Game::getTextureManager()
+const TextureManager& Game::getTextureManager() const
 {
     return textureManager;
 }
-SpriteManager & Game::getSpriteManager()
+const SpriteManager& Game::getSpriteManager() const
 {
     return spriteManager;
 }
@@ -390,31 +388,15 @@ FontManager & Game::getFontManager()
     return fontManager;
 }
 
-ObjectList & Game::getObjectList()
+const ObjectManager& hiage::Game::getObjectManager() const
 {
-    return objectList;
+	return objectManager;
 }
 
-std::string Game::getObjectFile(std::string name)
+std::string hiage::Game::getResourcePath(const std::string& relativePath) const
 {
-    return objectList[name];
-}
+	std::filesystem::path root = dataRoot;
+	auto fullPath = root / relativePath;
 
-/*
-    Gamestate class
-*/
-
-GameState::GameState(Game &game) : gameInstance(game)
-{
-
-}
-
-GameState::~GameState()
-{
-}
-
-void GameState::changeState(Game * game, GameState * state)
-{
-	std::clog << "Game state: Changed state.\n" << std::flush;
-	game->setGameState(state);
+	return fullPath.string();
 }

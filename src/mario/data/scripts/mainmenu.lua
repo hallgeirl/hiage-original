@@ -44,7 +44,7 @@ function updateMap()
 
   if map.newgameshell:x() > 650 then map.selected = "NewGame" elseif map.quitshell:x() > 650 then map.selected = "Quit" end
   if map.selected == "NewGame" and map.mario:x() > 650 then
-    game.currentlevel = "data/maps/level2.map"
+    game.currentlevel = "data/maps/level2.json"
     map:load(game.currentlevel)
   end
 
@@ -77,14 +77,5 @@ function updateMap()
         map.mario:accel(600, 1, 0)
       end
     end
-  end
-  
-
-  -- Keep the camera inside the map bounds
-  if screen:camerax() < (screen:zoom() * screen:aspect()) then
-    screen:camera(screen:zoom() * screen:aspect(), screen:cameray())
-  end
-  if screen:cameray() < screen:zoom() then
-    screen:camera(screen:camerax(), screen:zoom())
   end
 end

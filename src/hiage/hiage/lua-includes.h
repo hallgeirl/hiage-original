@@ -8,7 +8,4 @@ extern "C"
 	#include <lua50/lauxlib.h>
 }
 
-#include <luabind/luabind.hpp>
-#include <luabind/function.hpp>
-#include <luabind/class.hpp>
 #pragma warning(pop)

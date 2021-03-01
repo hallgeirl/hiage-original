@@ -27,6 +27,7 @@ namespace hiage
 	{
 	private:
 		//Typedefs for storing scripts
+		std::string dataRoot;
 		typedef std::string LuaProgram;
 		typedef std::pair<std::string, LuaProgram> LuaPair;
 		typedef std::map<std::string, LuaProgram> LuaScriptContainer;
@@ -41,8 +42,8 @@ namespace hiage
 		/*!
 			Constructs a LuaVM object and initializes it (loads all libraries, etc.)
 		*/
-		LuaVM();
-		LuaVM(LuaVM &obj);
+		LuaVM(const std::string& dataRoot);
+		LuaVM(LuaVM &) = delete;
 		~LuaVM();
 
 		/*!

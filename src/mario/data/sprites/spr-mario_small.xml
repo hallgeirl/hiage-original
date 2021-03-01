@@ -6,12 +6,12 @@
     <frame x="0" y="0" delay="1" nextframe="0" colbox="1 1 15 20" />
   </animation>
 
-  <animation name="walk">
+  <animation name="walk" velocitySpeedupFactor="0.1">
     <frame x="0" y="0" delay="0.5" nextframe="1" colbox="1 1 15 20" />
     <frame x="16" y="0" delay="0.5" nextframe="0" colbox="1 1 15 20" />
   </animation>
 
-  <animation name="run">
+  <animation name="run" velocitySpeedupFactor="0.1">
     <frame x="112" y="0" delay="0.7" nextframe="1" colbox="1 1 15 20" />
     <frame x="128" y="0" delay="0.7" nextframe="0" colbox="1 1 15 20" />
   </animation>

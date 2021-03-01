@@ -1,16 +1,17 @@
+#include "fonts.hpp"
+
 #include <iostream>
 #include <string>
-#include "fonts.h"
 #include "../util/exceptions.h"
 
 using namespace std;
 using namespace hiage;
 
-Font::Font() : texture(nullptr), tableRows(0), tableCols(0), characterWidth(0), characterHeight(0)
+Font::Font() : _texture(nullptr), _tableRows(0), _tableCols(0), _characterWidth(0), _characterHeight(0)
 {
-    loaded = false;
+    _loaded = false;
 
-    characterTable = 0;
+    _characterTable = 0;
 }
 
 Font::~Font()
@@ -22,16 +23,16 @@ void Font::create(Texture * tex, int characterWidth, int characterHeight)
 {
     clog << "Creating font from texture with character width " << characterWidth << " and character height " << characterHeight << "...\n" << flush;
 
-    texture = tex;
-    this->characterWidth = characterWidth;
-    this->characterHeight = characterHeight;
+    _texture = tex;
+    this->_characterWidth = characterWidth;
+    this->_characterHeight = characterHeight;
 
-    if (!texture)
+    if (!_texture)
     {
         throw IOException("ERROR: No texture specified for font.");
     }
 
-    loaded = true;
+    _loaded = true;
     clog << "OK: Font created successfully.\n" << flush;
 }
 
@@ -40,16 +41,16 @@ void Font::getIndexOfCharacter(char c, int &x, int &y)
     x = -1;
     y = -1;
 
-    if (!characterTable)
+    if (!_characterTable)
     {
         return;
     }
 
-    for (int i = 0; i < tableCols; i++)
+    for (int i = 0; i < _tableCols; i++)
     {
-        for (int j = 0; j < tableRows; j++)
+        for (int j = 0; j < _tableRows; j++)
         {
-            if (characterTable[i][j] == c)
+            if (_characterTable[i][j] == c)
             {
                 x = i;
                 y = j;
@@ -61,7 +62,7 @@ void Font::getIndexOfCharacter(char c, int &x, int &y)
 
 void Font::setCharacterTable(char ** table, int cols, int rows)
 {
-    if (characterTable)
+    if (_characterTable)
     {
         destroyTable();
     }
@@ -72,89 +73,94 @@ void Font::setCharacterTable(char ** table, int cols, int rows)
     }
 
     //allocate memory for new table
-    characterTable = new char*[cols];
+    _characterTable = new char*[cols];
     for (int i = 0; i < cols; i++)
     {
-        characterTable[i] = new char[rows];
+        _characterTable[i] = new char[rows];
     }
 
     for (int i = 0; i < cols; i++)
     {
         for (int j = 0; j < rows; j++)
         {
-            characterTable[i][j] = table[i][j];
+            _characterTable[i][j] = table[i][j];
         }
     }
 
-    tableRows = rows;
-    tableCols = cols;
+    _tableRows = rows;
+    _tableCols = cols;
 
 }
 
 char ** Font::getCharacterTable()
 {
-    return characterTable;
+    return _characterTable;
 }
 
 int Font::getTableCols()
 {
-    return tableCols;
+    return _tableCols;
+}
+
+int hiage::Font::getCharacterHeight()
+{
+    return _characterHeight;
 }
 
 int Font::getTableRows()
 {
-    return tableRows;
+    return _tableRows;
 }
 
 void Font::destroyTable()
 {
-    if (!characterTable)
+    if (!_characterTable)
     {
         return;
     }
 
-    for (int i = 0; i < tableCols; i++)
+    for (int i = 0; i < _tableCols; i++)
     {
-        delete [] characterTable[i];
+        delete [] _characterTable[i];
     }
 
-    delete [] characterTable;
+    delete [] _characterTable;
 
-    characterTable = 0;
+    _characterTable = 0;
 }
 
-void Font::renderText(Renderer &renderer, string text, Vector2<double> position, float scale, float spacing)
+void Font::renderText(Renderer &renderer, string text, Vector2<double> position, double scale, double spacing)
 {
-    if (!loaded)
+    if (!_loaded)
     {
         return;
     }
 
     int x,y;
 
-    for (unsigned int c = 0; c < text.length(); c++)
+    for (int c = 0; c < text.length(); c++)
     {
         getIndexOfCharacter(text.at(c), x,y);
         //texture->select();
-        float xpos = (1 + spacing)*(c * characterWidth*scale) + position.getX();
-        float ypos = position.getY();
+        double xpos = (1 + spacing)*((int)c * _characterWidth*scale) + position.getX();
+        double ypos = position.getY();
 
-        float charwidth = (1.0f/texture->getWidth()) * characterWidth;
-        float charheight = (1.0f/texture->getHeight()) * characterHeight;
+        double charwidth = (1.0/_texture->getWidth()) * _characterWidth;
+        double charheight = (1.0/_texture->getHeight()) * _characterHeight;
 
-        float xoffset = charwidth * x;
+        double xoffset = charwidth * x;
 
-        float yoffset = charheight * y;
+        double yoffset = charheight * y;
 
-        renderer.beginRender(ObjectZ::CLOSEST, texture);
+        renderer.beginRender(ObjectZ::CLOSEST, _texture);
 
         if (x >= 0 || y >= 0)
          {
 
          	renderer.addVertex(xpos, ypos, xoffset, (double)yoffset + charheight);
-         	renderer.addVertex((double)xpos + (double)characterWidth * scale, ypos, (double)xoffset + charwidth, (double)yoffset + charheight);
-         	renderer.addVertex((double)xpos + (double)characterWidth * scale, (double)ypos + (double)characterHeight * scale, (double)xoffset + charwidth, yoffset);
-         	renderer.addVertex(xpos, (double)ypos + (double)characterHeight * scale, xoffset, yoffset);
+         	renderer.addVertex((double)xpos + (double)_characterWidth * scale, ypos, (double)xoffset + charwidth, (double)yoffset + charheight);
+         	renderer.addVertex((double)xpos + (double)_characterWidth * scale, (double)ypos + (double)_characterHeight * scale, (double)xoffset + charwidth, yoffset);
+         	renderer.addVertex(xpos, (double)ypos + (double)_characterHeight * scale, xoffset, yoffset);
         }
 
         renderer.endRender();

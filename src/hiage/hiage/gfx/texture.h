@@ -18,7 +18,7 @@ namespace hiage
 	{
 		friend class CTilemap;
 	public:
-		Texture() : textureID(-1), loaded(false), height(0), width(0), bits(0), filename(nullptr) {}
+		Texture() : _textureID(0), _loaded(false), _height(0), _width(0), _bits(0), _filename(nullptr) {}
 		~Texture();
 
 		//create a texture out of pre-loaded image data, width and height, to add support for other filetypes
@@ -30,18 +30,16 @@ namespace hiage
 		int getTextureID();
 		void select();
 
-		short getWidth() { return width; }
-		short getHeight() { return height; }
-
-//		const unsigned char * getTextureData() {return imageData;}
+		short getWidth() { return _width; }
+		short getHeight() { return _height; }
 
 	private:
-		unsigned int textureID;
-		short width;
-		short height;
-		char bits;
-		char * filename;	//for checking for double textures
-		bool loaded;
+		unsigned int _textureID;
+		short _width;
+		short _height;
+		char _bits;
+		char * _filename;	//for checking for double textures
+		bool _loaded;
 		//unsigned char * imageData;	//image data (stored in case it is needed for stuff like collision detection)
 	};
 }

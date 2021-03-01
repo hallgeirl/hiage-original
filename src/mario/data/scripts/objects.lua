@@ -8,30 +8,6 @@ key_shift = 225
 key_a = 4
 
 
--- Generic functions
-function findObject( name )
-  for i, _ in map.objects do
-    if map.objects[i]:name() == name then 
-      return map.objects[i]
-    end
-  end
-end
-
-function gainLife( amount )
-  game.lives = game.lives + 1
-  audio:play("ExtraLife")
-end
-
-
-function gainCoin( amount )
-  game.coins = game.coins + amount
-  audio:play("Coin")
-  local coindiff = game.coins - 100
-  if game.coins >= 100 then
-    game.coins = coindiff
-    gainLife(1)
-  end
-end
 
 timedTexts = {}
 
@@ -50,7 +26,6 @@ function TimedText ( text, lifetime, x, y, vx, vy )
 end
 
 function updateTimedTexts ()
-
   for i, _ in timedTexts do
     game:print(mainfont, timedTexts[i].text, timedTexts[i].x, timedTexts[i].y, 0.2, -0.2)
     timedTexts[i].x = timedTexts[i].x + timedTexts[i].vx * frametime
@@ -65,22 +40,6 @@ end
 
 -- Apply physics to the object
 function applyPhysics( o )
-  -- Gravity
-  if (o:vely() > -1000) then
-    o:accel(600,0,-1)
-  end
-
-  -- Apply "friction" (well, not really friction but it slows you down)
-  if math.abs(o:velx()) > 1 then
-    if o:velx() > 0 then
-      o:accel(400,-1,0)
-    else
-      o:accel(400,1,0)
-    end
-  else
-    o:velx(0)
-  end
-
   -- Destroy monsters that has falled down
   if o:y() < -250 and o:type() ~= "Mario" then
     map:destroy(o.id)
@@ -89,12 +48,6 @@ end
 
 -- Limit the speed to the maximum speed
 function limitSpeed ( o )
-  if o:velx() > o.maxspeed then
-    o:velx(o.maxspeed)
-  elseif o:velx() < -o.maxspeed then
-    o:velx(-o.maxspeed)
-  end
-  
   if o:x() < screen:camerax() - (screen:zoom() * screen:aspect()) - 32 then
     if o:type() == "Shell" and o.moving then
       map:destroy(o.id)
@@ -114,57 +67,6 @@ function updateAnimations( o )
   if o.dying then
     return
   end
-
-  local xspeed = 0
-
-  if o:velx() > 10 then 
-    xspeed = o:velx() 
-    o:flipx(false)
-  elseif o:velx() < -10 then 
-    xspeed = -1*o:velx() 
-    o:flipx(true)
-  end
-
-  local animspeed = xspeed * 0.05
-  local standanimspeed = 1
-
-  -- Play running/stand animation
-  if not o.inair then
-    if xspeed > 0 then
-        -- Running animation
-        if xspeed > 210 then
-          if not o:playanimation("run", false, animspeed) then
-            if not o:playanimation("walk", false, animspeed) then o:playanimation("stand", false, standanimspeed) end
-          end
-        -- Walk animation
-        else
-          if not o:playanimation("walk", false, animspeed) then o:playanimation("stand", false, standanimspeed) end
-        end
-    else
-      o:playanimation("stand", false, standanimspeed)
-    end
-  -- Play jumping/fall animations
-  else
-    -- Long jump animation
-    if xspeed > 250 then
-      if not o:playanimation("longjump", false, animspeed) then
-        if not o:playanimation("jump", false, animspeed) then o:playanimation("stand", false, standanimspeed) end
-      end
-    -- Fall/normal jump animation
-    else
-      if o:vely() > 0 then
-        if not o:playanimation("jump", false, animspeed) then o:playanimation("stand", false, standanimspeed) end
-      else
-        if not o:playanimation("fall", false, animspeed) then o:playanimation("stand", false, standanimspeed) end
-      end
-    end
-  end
-end
-
--- Jump
-function jump(o, mag, sound)
-  o:vely(mag)
-  o.inair = true
 end
 
 -- Monsters
@@ -354,9 +256,9 @@ function updatePlayer ( o )
   if o.deathtimer:reached(4) then
     game.lives = game.lives - 1
     if game.lives == 0 then
-      map:load("data/maps/gameover.map")
+      map:load("data/maps/gameover.json")
     else
-      map:load("data/maps/deathmenu.map")
+      map:load("data/maps/deathmenu.json")
     end
   end
 
@@ -372,21 +274,6 @@ function updatePlayer ( o )
     end
 
     updateTimedTexts()
-    -- space button
-    if input:keydown(key_space) and not (o.inair) and not o.jumped then
-      jump(o,300)
-      o.inair = true
-      audio:play("NormalJump")
-      o.jumped = true
-    elseif not input:keydown(key_space) then
-      o.jumped = false
-    end
-
-    if input:keydown(key_a) then
-      for i=1,100 do
-        print(i .. " - " .. map.objects[i]:x())
-      end
-    end
 
     if input:keydown(key_shift) then
       o.maxspeed = 220

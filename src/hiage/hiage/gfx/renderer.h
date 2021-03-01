@@ -66,36 +66,51 @@ namespace hiage
 				texY = texy;
 			}
 
+			void init(double xpos, double ypos, double texx, double texy)
+			{
+				x = xpos;
+				y = ypos;
+				texX = texx;
+				texY = texy;
+			}
+
 			double x;
 			double y;
 
 			double texX;
 			double texY;
+
+			
 		};
 
 
 		struct RenderObject
 		{
-			RenderObject()
+			RenderObject() : texture(0), zposition(ObjectZ::CLOSEST), activeVertices(0)
 			{
-				texture = 0;
-				zposition = ObjectZ::CLOSEST;
 			}
 
-			RenderObject(ObjectZ objz, Texture *tex)
+			RenderObject(ObjectZ objz, Texture *tex) : texture(tex), zposition(objz), activeVertices(0)
 			{
-				texture = tex;
+			}
+
+			void init(ObjectZ objz, Texture* tex) 
+			{ 
+				texture = tex; 
 				zposition = objz;
+				activeVertices = 0;
 			}
 
 			Texture *texture;				//pointer to the texture used to render this object
 			ObjectZ zposition;	//
 			std::vector<Vertex> vertices;	//list of vertices (with texture coordinates) to render
+			unsigned int activeVertices = 0;
 		};
 
 		//buffer of renderable objects (in seperate arrays so sorting shouldn't be neccesary)
 		//std::vector<std::vector<RenderObject> > renderObjects;
 		std::vector<RenderObject> renderObjects[LAYERCOUNT];
+		unsigned int activeRenderObjects[LAYERCOUNT];
 
 		int currentRenderObject;
 		ObjectZ currentZ;

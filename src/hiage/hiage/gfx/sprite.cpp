@@ -2,16 +2,17 @@
 
 #include "sprite.h"
 #include "../util/exceptions.h"
+#include "../util/vector2.h"
 
 using namespace std;
 using namespace hiage;
 
-SpriteAnimation::SpriteAnimation() : currentFrame(0), frameTimer(0)
+SpriteAnimation::SpriteAnimation() : _currentFrame(0), _frameTimer(0), _velocitySpeedupFactor(0)
 {
 }
 
 //add a new frame to the animation
-void SpriteAnimation::addFrame(int x, int y, double delay, uint nextFrame, Rect colBox)
+void SpriteAnimation::addFrame(int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox)
 {
 	Frame *fr = new Frame;
 	fr->x = x;
@@ -20,9 +21,9 @@ void SpriteAnimation::addFrame(int x, int y, double delay, uint nextFrame, Rect 
 	fr->nextFrame = nextFrame;
 
 	//set the frame time to the delay of the first frame
-	if (frames.size() == 0)
+	if (_frames.size() == 0)
 	{
-		frameTimer = delay;
+		_frameTimer = delay;
 	}
 
 	if (((colBox.right - colBox.left) > 0) && ((colBox.top - colBox.bottom) > 0))
@@ -31,37 +32,37 @@ void SpriteAnimation::addFrame(int x, int y, double delay, uint nextFrame, Rect 
 	}
 	else
 	{
-		memset(&fr->collisionBox, 0, sizeof(Rect));
+		memset(&fr->collisionBox, 0, sizeof(BoundingBox<double>));
 	}
 
-	frames.push_back(fr);
+	_frames.push_back(fr);
 }
 
 SpriteAnimation::~SpriteAnimation()
 {
-	for (uint i = 0; i < frames.size(); i++)
+	for (uint i = 0; i < _frames.size(); i++)
 	{
-		delete frames[i];
+		delete _frames[i];
 	}
 }
 
-void SpriteAnimation::runAnimation(double timefactor)
+void SpriteAnimation::runAnimation(double timefactor, double velocity)
 {
-	if (frames.size() > 0)
+	if (_frames.size() > 0)
 	{
-		frameTimer -= timefactor;
-		if (frameTimer <= 0)
+		_frameTimer -= (timefactor + abs(_velocitySpeedupFactor * velocity * timefactor));
+		if (_frameTimer <= 0)
 		{
-			if (currentFrame != frames[currentFrame]->nextFrame)
+			if (_currentFrame != _frames[_currentFrame]->nextFrame)
 			{
-				currentFrame = frames[currentFrame]->nextFrame;
-				frameTimer = frames[currentFrame]->delay;
+				_currentFrame = _frames[_currentFrame]->nextFrame;
+				_frameTimer = _frames[_currentFrame]->delay;
 			}
 		}
 	}
 }
 
-Sprite::Sprite() : animationSpeed(1), currentAnimation(0), x(0), y(0), frameWidth(0), frameHeight(0), texture(nullptr)
+Sprite::Sprite() : _animationSpeed(1), _currentAnimation(0), _frameWidth(0), _frameHeight(0), _texture(nullptr)
 {
 }
 
@@ -77,48 +78,46 @@ void Sprite::create(Texture * texture, int frameWidth, int frameHeight)
 		throw Exception("ERROR: Sprite::create(): Invalid frame dimensions.");
 	}
 
-	this->texture = texture;
-	this->frameWidth = frameWidth;
-	this->frameHeight = frameHeight;
-
-	setPosition(0,0);
+	this->_texture = texture;
+	this->_frameWidth = frameWidth;
+	this->_frameHeight = frameHeight;
 }
 
-void Sprite::render(Renderer &renderer, ObjectZ z, float rotation, bool hFlip, bool vFlip, float maxSize)
+void Sprite::render(Renderer &renderer, const Vector2<double>& position, ObjectZ z, float, bool hFlip, bool vFlip, float maxSize)
 {
 	//current sprite's position and dimensions
-	float x = this->x;
-	float y = this->y;
+	double x = position.getX();
+	double y = position.getY();
 
-	uint texwidth = texture->getWidth();
-	uint texheight = texture->getHeight();
+	uint texwidth = _texture->getWidth();
+	uint texheight = _texture->getHeight();
 
-    float spriteWidth, spriteHeight;
+	double spriteWidth, spriteHeight;
 
-    if (maxSize > 0 && (frameWidth > maxSize || frameHeight > maxSize))
+    if (maxSize > 0 && (_frameWidth > maxSize || _frameHeight > maxSize))
     {
-        if (frameWidth > frameHeight)
+        if (_frameWidth > _frameHeight)
         {
             spriteWidth = maxSize;
-            spriteHeight = maxSize * ((double)frameHeight / (double)frameWidth);
+            spriteHeight = maxSize * ((double)_frameHeight / (double)_frameWidth);
         }
         else
         {
             spriteHeight = maxSize;
-            spriteWidth = maxSize * ((double)frameWidth / (double)frameHeight);
+            spriteWidth = maxSize * ((double)_frameWidth / (double)_frameHeight);
         }
     }
     else
     {
-        spriteWidth = frameWidth;
-        spriteHeight = frameHeight;
+        spriteWidth = _frameWidth;
+        spriteHeight = _frameHeight;
     }
 
-	if ((currentAnimation >= 0) && (animations.size()) && (currentAnimation <= animations.size() - 1) && (animations[currentAnimation]->currentFrame >= 0))
+	if ((_currentAnimation >= 0) && (_animations.size()) && (_currentAnimation <= _animations.size() - 1) && (_animations[_currentAnimation]->_currentFrame >= 0))
 	{
 		//just a "shortcut" instead of using animations[currentAnimation]->frames[animations[currentAnimation]->currentFrame].stuff for every little thing
 		SpriteAnimation::Frame * frame =
-			animations[currentAnimation]->frames[animations[currentAnimation]->currentFrame];
+			_animations[_currentAnimation]->_frames[_animations[_currentAnimation]->_currentFrame];
 
 		//TODO: Implement rotation in renderer
 		//glRotatef(rotation, 0.0f,0.0f,1.0f);
@@ -128,28 +127,28 @@ void Sprite::render(Renderer &renderer, ObjectZ z, float rotation, bool hFlip, b
 		if (!hFlip)
 		{
 			texLeft = 1.0 / (double)texwidth * (double)frame->x;
-			texRight = 1.0 / (double)texwidth * ((double)frame->x + (double)frameWidth);
+			texRight = 1.0 / (double)texwidth * ((double)frame->x + (double)_frameWidth);
 		}
 		else
 		{
-			texLeft = 1.0 / (double)texwidth * ((double)frame->x + (double)frameWidth);
+			texLeft = 1.0 / (double)texwidth * ((double)frame->x + (double)_frameWidth);
 			texRight = 1.0 / (double)texwidth * (double)frame->x;
 		}
 
 		if (!vFlip)
 		{
 			texTop = 1.0 / texheight * frame->y;
-			texBottom = 1.0 / texheight * ((double)frame->y + frameHeight);
+			texBottom = 1.0 / texheight * ((double)frame->y + _frameHeight);
 
 		}
 		else
 		{
-			texTop = 1.0 / texheight * ((double)frame->y + frameHeight);
+			texTop = 1.0 / texheight * ((double)frame->y + _frameHeight);
 			texBottom = 1.0 / texheight * frame->y;
 		}
 
 		//render the sprite
-		renderer.beginRender(z, texture);
+		renderer.beginRender(z, _texture);
 		renderer.addVertex(x, (double)y + spriteHeight, texLeft, texTop);
 		renderer.addVertex((double)x + spriteWidth, (double)y + spriteHeight, texRight, texTop);
 		renderer.addVertex((double)x + spriteWidth, y, texRight, texBottom);
@@ -159,7 +158,7 @@ void Sprite::render(Renderer &renderer, ObjectZ z, float rotation, bool hFlip, b
 	else
 	{
 		//render all frames if no animation is selected.
-		renderer.beginRender(z, texture);
+		renderer.beginRender(z, _texture);
 		renderer.addVertex((double)x - (spriteWidth / 2), (double)y + (spriteHeight / 2), 0, 0);
 		renderer.addVertex((double)x + (spriteWidth / 2), (double)y + (spriteHeight / 2), 0, 1);
 		renderer.addVertex((double)x + (spriteWidth / 2), (double)y - (spriteHeight / 2), 1, 0);
@@ -169,65 +168,66 @@ void Sprite::render(Renderer &renderer, ObjectZ z, float rotation, bool hFlip, b
 }
 
 //add an animation to the sprite
-unsigned int Sprite::addAnimation(const char * name)
+unsigned int Sprite::addAnimation(const std::string& name, double velocitySpeedupFactor)
 {
 	clog << "Adding animation " << name << " to sprite...\n" << flush;
 	SpriteAnimation * animation = new SpriteAnimation;
-	animations.push_back(animation);
+	_animations.push_back(animation);
 
-	animations[animations.size()-1]->setName(name);
-
-	if (animations.size() == 1)
+	_animations[_animations.size()-1]->setName(name);
+	_animations[_animations.size()-1]->setVelocitySpeedupFactor(velocitySpeedupFactor);
+	if (_animations.size() == 1)
 	{
-		currentAnimation = 0;
+		_currentAnimation = 0;
 	}
 
-	return (uint)animations.size() - 1;
+	return (uint)_animations.size() - 1;
 }
 
 //add a frame to the animation
-void Sprite::addFrame(uint animID, int x, int y, double delay, uint nextFrame, Rect colBox)
+void Sprite::addFrame(uint animID, int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox)
 {
 	//check for boundaries
-	if (animID <= animations.size()-1)
+	if (animID <= _animations.size()-1)
 	{
 		//add the frame
-		animations[animID]->addFrame(x,y, delay, nextFrame, colBox);
+		_animations[animID]->addFrame(x,y, delay, nextFrame, colBox);
 	}
 }
 
-const std::string Sprite::getAnimationName(uint animID)
+const std::string& Sprite::getCurrentAnimationName() const
 {
+	static const string empty = "";
 	//check for boundaries
-	if (animID <= animations.size()-1)
+	if (_currentAnimation >= 0 && _currentAnimation <= _animations.size()-1)
 	{
 		//return the name
-		return animations[animID]->getName();
+		return _animations.at(_currentAnimation)->getName();
 	}
 	else
 	{
-		clog << "Warning: Sprite::getAnimationName(int) returns an empty string due to nonexistant id " << animID << endl << flush;
+		clog << "Warning: Sprite::getAnimationName(int) returns an empty string due to nonexistant id " << _currentAnimation << endl << flush;
 
-		return "";
+		return empty;
 	}
 }
 
-bool Sprite::playAnimation(const char * anim, bool resetIfRunning, double speed)
+bool Sprite::playAnimation(const std::string& anim, bool resetIfRunning, double speed)
 {
-	for (uint i = 0; i < animations.size(); i++)
+	for (uint i = 0; i < _animations.size(); i++)
 	{
-		if (!animations[i]->getName().compare(anim))
+		if (!_animations[i]->getName().compare(anim))
 		{
 			if (resetIfRunning)
 			{
-				if (currentAnimation == i)
+				if (_currentAnimation == i)
 				{
-					animations[i]->reset();
+					_animations[i]->reset();
 				}
 			}
 
-			currentAnimation = i;
-			animationSpeed = speed;
+			_currentAnimation = i;
+			_animationSpeed = speed;;
 
 			return true;
 		}
@@ -236,47 +236,34 @@ bool Sprite::playAnimation(const char * anim, bool resetIfRunning, double speed)
 	return false;
 }
 
-void Sprite::updateAnimation(double timefactor)
+void Sprite::updateAnimation(double timefactor, double velocity)
 {
-	if ((currentAnimation >= 0) && (currentAnimation <= animations.size()-1))
+	if ((_currentAnimation >= 0) && (_currentAnimation <= _animations.size()-1))
 	{
-		animations[currentAnimation]->runAnimation(timefactor * animationSpeed);
+		_animations[_currentAnimation]->runAnimation(timefactor * _animationSpeed, velocity);
 	}
 }
 
 Sprite & Sprite::operator=(Sprite sprite)
 {
 	//clear any previous animations
-	for (uint i = 0; i < animations.size(); i++)
+	for (uint i = 0; i < _animations.size(); i++)
 	{
 
-		delete animations[i];
-		animations.erase(animations.begin()+i);
+		delete _animations[i];
+		_animations.erase(_animations.begin()+i);
 		if (i > 0)
 		{
 			i--;
 		}
 	}
 
-	for (uint i = 0; i < sprite.animations.size(); i++)
+	for (uint i = 0; i < sprite._animations.size(); i++)
 	{
 		SpriteAnimation * anim = new SpriteAnimation;
-		*anim = *sprite.animations[i];
-		animations.push_back(anim);
+		*anim = *sprite._animations[i];
+		_animations.push_back(anim);
 	}
 
 	return *this;
-}
-
-Rect Sprite::getCollisionBox() const
-{
-	if ((currentAnimation >= 0) && (currentAnimation < animations.size()))
-	{
-		return animations[currentAnimation]->getCurrentFrame()->collisionBox;
-	}
-	else
-	{
-		Rect r(0,0,0,0);
-		return r;
-	}
 }

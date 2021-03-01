@@ -1,0 +1,87 @@
+{
+  "name": "Goomba",
+  "type": "Goomba",
+  "components": [
+    {
+      "type": "physical"
+    },
+    {
+      "type": "movable"
+    },
+    {
+      "type": "renderable",
+      "properties": {
+        "sprite": "Goomba"
+      }
+    },
+    {
+      "type": "physics",
+      "properties": {
+        "friction": {
+          "air": 0.1,
+          "ground": 1
+        },
+        "gravity": 1
+      }
+    },
+    {
+      "type": "collidable",
+      "properties": {
+        "left": 5,
+        "bottom": 1,
+        "width": 20,
+        "height": 20
+      }
+    },
+    {
+      "type": "state",
+      "properties": {
+        "initial": "stand"
+      }
+    },
+    {
+      "type": "speedlimit",
+      "properties": {
+        "speedLimit": {
+          "x": 100.0
+        }
+      }
+    },
+    {
+      "type": "controllerstate"
+    },
+    {
+      "type": "groundmonstercontroller"
+    }
+  ],
+  "scripts": [
+     {
+        "type": "init",
+        "function": "initGoomba"
+     },
+     {
+        "type": "update",
+        "function": "applyPhysics"
+     },
+     {
+        "type": "update",
+        "function": "updateGroundAI"
+     },
+     {
+        "type": "update",
+        "function": "updateAnimations"
+     },
+     {
+        "type": "update",
+        "function": "updateGoomba"
+     },
+     {
+        "type": "collision",
+        "function": "landcreatureCollide"
+     },
+     {
+        "type": "objcollision",
+        "function": "groundMonsterCollide"
+     }
+  ]
+}

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object name="BlockSingleCoin" type="Block">
-  <sprite name="BlockQuestion" />
-
-  <scripts>
-    <script type="init" function="initCoinBlock" />
-    <script type="objcollision" function="blockCollide" />
-  </scripts>
-</object>

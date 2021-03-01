@@ -1,0 +1,89 @@
+{
+  "name": "MarioSmall",
+  "type": "Mario",
+  "components": [
+    {
+      "type": "physical"
+    },
+    {
+      "type": "movable"
+    },
+    {
+      "type": "speedlimit",
+      "properties": {
+        "speedLimit": {
+          "x": 100.0
+        }
+      }
+    },
+    {
+      "type": "renderable",
+      "properties": {
+        "sprite": "MarioSmall"
+      }
+    },
+    {
+      "type": "physics",
+      "properties": {
+        "friction": {
+          "air": 0.1,
+          "ground": 400
+        },
+        "gravity": 1
+      }
+    },
+    {
+      "type": "controller",
+      "properties": {
+        "controllerType": "human"
+      }
+    },
+    {
+      "type": "controllerstate"
+    },
+    {
+      "type": "collidable",
+      "properties": {
+        "left": 1,
+        "bottom": 1,
+        "width": 10,
+        "height": 20
+      }
+    },
+    {
+      "type": "state",
+      "properties": {
+        "initial": "stand"
+      }
+    },
+    {
+      "type": "trackable"
+    }
+  ],
+  "scripts": [
+     {
+        "type": "init",
+        "function": "initPlayer"
+     },
+     {
+        "type": "update",
+        "function": "updatePlayer"
+     },
+     {
+        "type": "update",
+        "function": "applyPhysics"
+     },
+     {
+        "type": "collision",
+        "function": "landcreatureCollide"
+     },
+     {
+        "type": "objcollision",
+        "function": "playerCollide"
+     },
+     {
+        "type": "update",
+        "function": "updateAnimations"
+     }
+  ]
+}

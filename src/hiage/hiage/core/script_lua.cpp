@@ -11,22 +11,19 @@
 #include "../util/exceptions.h"
 
 //includes used to register the classes
-#include "map.h"
-#include "entity.h"
-#include "game.h"
+#include "map.hpp"
+#include "entity.hpp"
+#include "game.hpp"
 #include "../util/timer.h"
 
 #include "../lua-includes.h"
 
+#include <filesystem>
+
 using namespace std;
 using namespace hiage;
 
-LuaVM::LuaVM()
-{
-	initialize();
-}
-
-LuaVM::LuaVM(LuaVM &obj)
+LuaVM::LuaVM(const std::string& dataRoot) : dataRoot(dataRoot)
 {
 	initialize();
 }
@@ -47,12 +44,17 @@ void LuaVM::initialize()
 	lua_mathlibopen(vm);
 	lua_tablibopen(vm);
 	
-	luabind::open(vm);
+
+	/*
+	Keeping the code commented out for now, for reference
+	*/
+
+	//luabind::open(vm);
 
 	//register engine classes with LUA
 	//game class
 	
-	luabind::module(vm)
+	/*luabind::module(vm)
 	[
 		luabind::class_<Game>("Game")
 			.def("stop", &Game::stop)
@@ -95,9 +97,10 @@ void LuaVM::initialize()
  	luabind::module(vm)
 	[
 		luabind::class_<Map>("Map")
-			.def("spawn", (PhysicalEntity & (Map::*)(string,double,double))&Map::createObject)
-			.def("destroy", &Map::deleteObject)
-            .def("getobject", &Map::getObject)
+			//.def("spawn", (PhysicalEntity & (Map::*)(string,double,double))&Map::createObject)
+			//.def("destroy", &Map::deleteObject)
+            //.def("getobject", &Map::getObject)
+
             //.def("load", (void (Map::*)(string))&Map::createFromFile)
             .def("load", &Map::queueCreateMap)
             //.def("unload", &Map::destroy)
@@ -105,10 +108,10 @@ void LuaVM::initialize()
             .def("width", &Map::getWidth)
             .def("height", &Map::getHeight)
             .def("setflag", &Map::setFlag)
-	];
+	];*/
 
     //entity class
-	luabind::module(vm)
+/*	luabind::module(vm)
 	[
 		luabind::class_<PhysicalEntity>("Entity")
 			//get/set position
@@ -144,9 +147,10 @@ void LuaVM::initialize()
             .def("name", &PhysicalEntity::getName)
 
     ];
+	*/
 
     //timer class
-    luabind::module(vm)
+    /*luabind::module(vm)
     [
         luabind::class_<Timer>("Timer")
             .def(luabind::constructor< >())
@@ -177,7 +181,7 @@ void LuaVM::initialize()
     [
         luabind::class_<Font>("Font")
             //.def("print", &Font::renderText)
-    ];
+    ];*/
 }
 
 void LuaVM::loadScript(std::string name, std::string path)
@@ -225,7 +229,9 @@ void LuaVM::runScript(std::string name)
 
 void LuaVM::runFile(std::string path)
 {
-    lua_dofile(vm, path.c_str());
+	std::filesystem::path root = dataRoot;
+	auto scriptPath = root / path;
+    lua_dofile(vm, scriptPath.string().c_str());
 }
 
 

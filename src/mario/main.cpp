@@ -2,44 +2,35 @@
 #include <string>
 #include <iostream>
 #include <hiage/util/timer.h>
-#include "mariogame.h"
+#include "mariogame.hpp"
+#include <chrono>
+#include <thread>
+
 
 using namespace hiage;
 using namespace std;
 
-int main(int argc, char* argv[])
+int main(int, char*)
 {
-	MarioGame game;
-	Timer timer;
-	timer.start();
+    KeyBindings keyBindings;
+    keyBindings.mapKey("left", "goLeft");
+    keyBindings.mapKey("right", "goRight");
+    keyBindings.mapKey("up", "lookUp");
+    keyBindings.mapKey("down", "crouch");
+    keyBindings.mapKey("space", "jump");
+    keyBindings.mapKey("lshift", "run");
+    keyBindings.mapKey("rshift", "run");
 
+	MarioGame game(keyBindings);
 	game.initialize(1024, 768, false);
-	double frameTime = 0.005;
 
-    game.scriptVM.runFile("data/scripts/objects.lua");
-    game.scriptVM.runFile("data/scripts/ui.lua");
-    game.scriptVM.runFile("data/scripts/initgame.lua");
+    game.scriptVM.runFile("scripts/objects.lua");
+    game.scriptVM.runFile("scripts/ui.lua");
+    game.scriptVM.runFile("scripts/initgame.lua");
 
 	while (game.isRunning())
 	{
-        timer.reset();
-
-        game.run(frameTime, true);
-        timer.update();
-
-        //cout << timer.getTime() << endl;
-        frameTime = timer.getTime();
-
-        //cap at 500 FPS
-        while (frameTime < 0.002)
-        {
-            frameTime = timer.getTime();
-        }
-
-        if (frameTime > 0.020)
-        {
-            frameTime = 0.020;
-        }
+        game.run(true);
  	}
     
 	return 0;

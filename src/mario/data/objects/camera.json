@@ -1,0 +1,24 @@
+{
+  "name": "Camera",
+  "type": "Mario",
+  "components": [
+    {
+      "type": "physical"
+    },
+    {
+      "type": "movable"
+    },
+    {
+      "type": "objecttracker",
+      "properties": {
+        "mode": "fixed"
+      }
+    },
+    {
+      "type": "camera",
+      "properties": {
+        "zoom": 200
+      }
+    }
+  ]
+}

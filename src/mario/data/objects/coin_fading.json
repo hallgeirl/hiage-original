@@ -1,0 +1,25 @@
+{
+  "name": "CoinFading",
+  "type": "Decoration",
+  "components": [
+     {
+        "type": "physical"
+     },
+     {
+        "type": "renderable",
+        "properties":{
+          "sprite": "Coin"
+        }
+     }
+  ],
+  "scripts": [
+     {
+        "type": "init",
+        "function": "initFadingCoin"
+     },
+     {
+        "type": "update",
+        "function": "updateFadingCoin"
+     }
+  ]
+}

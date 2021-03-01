@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <texture name="Title">
-  <bitmap path="data/gfx/title.tga" />
+  <bitmap path="gfx/title.tga" />
 </texture>
