@@ -6,3 +6,4 @@ src/.vs
 src/out
 /src/hiage/.objs
 /src/hiage/obj
+build

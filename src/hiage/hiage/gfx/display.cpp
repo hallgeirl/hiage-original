@@ -14,6 +14,7 @@ Display::Display() : _zoom(200.0), _camX(0.0f), _camY(0.0f), _aspect(1), _height
 	_displayState = 0;
 }
 
+
 //initialize opengl
 void Display::initialize(int width, int height, bool fullscreen)
 {

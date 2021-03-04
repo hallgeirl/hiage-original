@@ -135,15 +135,17 @@ void hiage::Map::loadFromJson(std::string path, bool runScripts)
             }
         }
         auto& entity = em.createEntity(objName, componentProps);
-
+        /*
+        * TODO - flecs
         if (o.contains("removeComponents"))
         {
             auto& componentsToRemove = o.at("removeComponents");
             for (auto& c : componentsToRemove)
             {
+
                 em.removeComponentFromEntity(entity->getEntityId(), c);
             }
-        }
+        }*/
         if (o.contains("additionalComponents"))
         {
             auto& componentsToAdd = o.at("additionalComponents");
@@ -154,7 +156,7 @@ void hiage::Map::loadFromJson(std::string path, bool runScripts)
                 {
                     p = componentProps[c];
                 }
-                em.addComponentToEntity(entity->getEntityId(), c, p);
+                em.addComponentToEntity(entity, c, p);
             }
         }
     }
@@ -212,6 +214,8 @@ void Map::saveAsJson(string path)
     auto& em = _gameState.getEntityManager();
 
     vector<json> objectsToSave;
+    /*
+    TODO flecs
     for (auto& e : em.getEntities())
     {
         auto comp = em.queryComponentGroup<PositionComponent>(e->getEntityId());
@@ -237,7 +241,7 @@ void Map::saveAsJson(string path)
         };
 
         objectsToSave.push_back(obj);
-    }
+    }*/
 
     json j = {
         { "version", MAPVERSION },

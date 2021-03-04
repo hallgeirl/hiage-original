@@ -1,4 +1,4 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     #include "systems.hpp"
+#include "systems.hpp"
 #include "game.hpp"
 #include <SDL/SDL.h>
 #include <algorithm>
@@ -6,6 +6,8 @@
 using namespace std;
 using namespace hiage;
 
+
+// TODO flecs
 
 System::System(Game& game, GameState& gameState) : game(game), gameState(gameState)
 {
@@ -21,7 +23,8 @@ MovementSystem::MovementSystem(Game& game, GameState& gameState) : System(game, 
 
 void MovementSystem::update(double frametime)
 {
-	{
+	/*
+	TODO flecs{
 		auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent>();
 		for (auto& t : componentTuples)
 		{
@@ -33,7 +36,7 @@ void MovementSystem::update(double frametime)
 			physical->getData().set(pos + vel * frametime);
 		}
 	}
-
+*/
 	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, SpeedLimitComponent>();
 	for (auto& t : componentTuples)
 	{
@@ -65,6 +68,7 @@ ObjectRenderingSystem::ObjectRenderingSystem(Game& game, GameState& gameState) :
 
 void ObjectRenderingSystem::update(double frameTime)
 {
+	/*
 	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, RenderableComponent>();
 
 	Display& disp = game.getDisplay();
@@ -118,6 +122,7 @@ void ObjectRenderingSystem::update(double frameTime)
 			}
 		}
 	}
+	*/
 }
 
 hiage::PhysicsSystem::PhysicsSystem(Game& game, GameState& gameState, double gravity) : System(game, gameState), _gravity(gravity)
@@ -126,7 +131,7 @@ hiage::PhysicsSystem::PhysicsSystem(Game& game, GameState& gameState, double gra
 
 void hiage::PhysicsSystem::update(double frameTime)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicsComponent, VelocityComponent>();
+	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicsComponent, VelocityComponent>();
 
 	for (auto& t : componentTuples)
 	{
@@ -140,7 +145,7 @@ void hiage::PhysicsSystem::update(double frameTime)
 		
 		if (physicsProps.airResistance > 0 && vel.length() > 0)
 			vel.subtract(vel.normalized() * physicsProps.airResistance);
-	}
+	}*/
 }
 
 
@@ -150,7 +155,7 @@ hiage::ControllerSystem::ControllerSystem(Game& game, GameState& gameState) : Sy
 
 void hiage::ControllerSystem::update(double)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<ControllerComponent, ControllerStateComponent>();
+	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<ControllerComponent, ControllerStateComponent>();
 	for (auto& t : componentTuples)
 	{
 		auto& controllerData = std::get<1>(t)->getData();
@@ -170,12 +175,12 @@ void hiage::ControllerSystem::update(double)
 
 			controllerState->setData(actions);
 		}
-	}
+	}*/
 }
 
 void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, PositionComponent, VelocityComponent>();
+	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, PositionComponent, VelocityComponent>();
 
 	// Clear previous collisions
 	for (auto& c : componentTuples)
@@ -241,7 +246,7 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 				}
 			}
 		}
-	}
+	}*/
 }
 
 
@@ -252,7 +257,7 @@ SystemsFactory::SystemsFactory(Game& game, GameState& gameState) : game(game), g
 static int frameCounter = 0;
 void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 {
-	frameCounter++;
+	/*frameCounter++;
 	if (!tilemap.isLoaded())
 		return;
 
@@ -286,12 +291,12 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 					});
 			}
 		}
-	}
+	}*/
 }
 
 void hiage::BlockingTileSystem::update(double frameTime)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>();
+	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>();
 	for (auto& c : componentTuples)
 	{
 		auto& pos = std::get<1>(c)->getData();
@@ -311,12 +316,12 @@ void hiage::BlockingTileSystem::update(double frameTime)
 			// Adjust the velocity according to the hit normal
 			vel.set(vel - (collisionResult.hitNormal * (1.0 + 0) * vel.dot(collisionResult.hitNormal)));
 		}
-	}
+	}*/
 }
 
 void hiage::AnimationSystem::update(double)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<RenderableComponent, StateComponent>();
+	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<RenderableComponent, StateComponent>();
 
 	for (auto& t : componentTuples)
 	{
@@ -325,12 +330,12 @@ void hiage::AnimationSystem::update(double)
 		auto& sprite = renderable->getData();
 
 		sprite.playAnimation(state.stateName, false);
-	}
+	}*/
 }
 
 void hiage::ObjectTrackingSystem::update(double frameTime)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, TrackableComponent>();
+	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, TrackableComponent>();
 
 	if (componentTuples.size() == 0)
 		return;
@@ -361,12 +366,12 @@ void hiage::ObjectTrackingSystem::update(double frameTime)
 			auto accelVector = diff * 100. + trackingVel;
 			vel.add(accelVector * frameTime);
 		}
-	}
+	}*/
 }
 
 void hiage::CameraSystem::update(double)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, CameraComponent>();
+	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, CameraComponent>();
 
 	for (auto& c : componentTuples)
 	{
@@ -383,5 +388,5 @@ void hiage::CameraSystem::update(double)
 
 
 		game.getDisplay().setCamPosition(std::max(pos.getX(), leftBoundary), std::max(pos.getY(), bottomBoundary));
-	}
+	}*/
 }

@@ -38,7 +38,7 @@ namespace hiage
                 initialized = true;
             }
 
-            iterator(Tile * data)
+            iterator(Tile * data) : initialized(false)
             {
                 this->data = data;
             }

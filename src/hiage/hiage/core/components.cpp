@@ -30,26 +30,26 @@ hiage::ComponentManager::~ComponentManager()
 {
 }
 
-unique_ptr<Component> ComponentManager::createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const
-{
+const flecs::entity& ComponentManager::createComponent(flecs::entity& entity, const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const
+ {
 	auto& type = componentDescriptor.type;
 
 	if (_componentFactories.contains(type))
 	{
 		auto& factory = _componentFactories.at(componentDescriptor.type);
-		return factory->createComponent(componentDescriptor, runtimeProperties);
+		return factory->createComponent(entity, componentDescriptor, runtimeProperties);
 	}
 
 	throw runtime_error("Component type not found: " + type);
 }
 
 
-unique_ptr<Component> ComponentManager::createComponent(const std::string& type, const ComponentProperties& properties) const
+const flecs::entity& ComponentManager::createComponent(flecs::entity& entity, const std::string& type, const ComponentProperties& properties) const
 {
 	if (_componentFactories.contains(type))
 	{
 		auto& factory = _componentFactories.at(type);
-		return factory->createComponent(properties);
+		return factory->createComponent(entity,  properties);
 	}
 
 	throw runtime_error("Component type not found: " + type);
@@ -107,14 +107,14 @@ hiage::RenderableComponentFactory::RenderableComponentFactory(const Game& game) 
 {
 }
 
-std::unique_ptr<Component> hiage::RenderableComponentFactory::createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties&) const
+const flecs::entity& hiage::RenderableComponentFactory::createComponent(flecs::entity& entity, const ComponentDescriptor& componentDescriptor, const ComponentProperties&) const
 {
 	auto& properties = componentDescriptor.properties;
 
-	return createComponent(properties);
+	return createComponent(entity, properties);
 }
 
-std::unique_ptr<Component> hiage::RenderableComponentFactory::createComponent(const ComponentProperties& properties) const
+const flecs::entity& hiage::RenderableComponentFactory::createComponent(flecs::entity& entity, const ComponentProperties& properties) const
 {
 	const auto& spriteName = get<std::string>(properties.at(std::string("sprite")));
 
@@ -127,7 +127,7 @@ std::unique_ptr<Component> hiage::RenderableComponentFactory::createComponent(co
 	}
 	sprite->resource->create(texture->resource, sprite->intData1, sprite->intData2);
 
-	return make_unique<RenderableComponent>(*sprite->resource);
+	return entity.set<RenderableComponent>(*sprite->resource);
 }
 
 State hiage::StateComponent::createState(const ComponentProperties& properties)

@@ -7,7 +7,7 @@ using namespace hiage;
 
 void CharacterStateMachineSystem::handleCollisions()
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, StateComponent>();
+	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, StateComponent>();
 
 	for (auto& c : componentTuples)
 	{
@@ -22,12 +22,12 @@ void CharacterStateMachineSystem::handleCollisions()
 				metadata["ticks-since-landed"] = 0;
 			}
 		}
-	}
+	}*/
 }
 
 void CharacterStateMachineSystem::updateState()
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, StateComponent>();
+	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, StateComponent>();
 
 	for (auto& c : componentTuples)
 	{
@@ -74,7 +74,7 @@ void CharacterStateMachineSystem::updateState()
 				state.stateName = "stand";
 			}
 		}
-	}
+	}*/
 }
 
 CharacterStateMachineSystem::CharacterStateMachineSystem(Game& game, GameState& gameState) : System(game, gameState)
@@ -94,7 +94,8 @@ CharacterControllerSystem::CharacterControllerSystem(hiage::Game& game, hiage::G
 
 void CharacterControllerSystem::update(double frameTime)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, ControllerStateComponent, StateComponent, SpeedLimitComponent>();
+	
+	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, ControllerStateComponent, StateComponent, SpeedLimitComponent>();
 
 	double magnitude = 800. * frameTime;
 
@@ -139,7 +140,7 @@ void CharacterControllerSystem::update(double frameTime)
 			vel.setY(300);
 
 		}
-	}
+	}*/
 }
 
 MarioCollisionResponseSystem::MarioCollisionResponseSystem(hiage::Game& game, hiage::GameState& gameState) : System(game, gameState)
@@ -148,7 +149,7 @@ MarioCollisionResponseSystem::MarioCollisionResponseSystem(hiage::Game& game, hi
 
 void MarioCollisionResponseSystem::update(double frameTime)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, PositionComponent, VelocityComponent>();
+/*	auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, PositionComponent, VelocityComponent>();
 
 	for (auto& c1 : componentTuples)
 	{
@@ -185,7 +186,7 @@ void MarioCollisionResponseSystem::update(double frameTime)
 			}
 
 		}
-	}
+	}*/
 }
 
 AISystem::AISystem(hiage::Game& game, hiage::GameState& gameState) : System(game, gameState)
@@ -195,7 +196,7 @@ AISystem::AISystem(hiage::Game& game, hiage::GameState& gameState) : System(game
 
 void AISystem::update(double)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, GroundMonsterControllerComponent, ControllerStateComponent, VelocityComponent>();
+	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, GroundMonsterControllerComponent, ControllerStateComponent, VelocityComponent>();
 
 	for (auto& c : componentTuples)
 	{
@@ -234,5 +235,5 @@ void AISystem::update(double)
 			actions.insert("goRight");
 
 		controllerState->setData(actions);
-	}
+	}*/
 }

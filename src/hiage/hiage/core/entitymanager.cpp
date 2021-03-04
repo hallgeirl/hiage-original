@@ -15,7 +15,7 @@
 using namespace hiage;
 using namespace std;
 
-EntityManager::EntityManager(const Game& game, const GameState& gameState) : _game(game), _gameState(gameState), _cacheVersion(0)
+EntityManager::EntityManager(const hiage::Game& game, const GameState& gameState) : _game(game), _gameState(gameState), _cacheVersion(0)
 {
 
 }
@@ -24,7 +24,7 @@ EntityManager::~EntityManager()
 {
 }
 
-const std::unique_ptr<Entity>& EntityManager::createEntity(std::string objectName, const std::unordered_map<std::string, ComponentProperties>& componentRuntimeProperties)
+flecs::entity& EntityManager::createEntity(std::string objectName, const std::unordered_map<std::string, ComponentProperties>& componentRuntimeProperties)
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
 	auto& objectManager = _game.getObjectManager();
@@ -32,6 +32,7 @@ const std::unique_ptr<Entity>& EntityManager::createEntity(std::string objectNam
 
 	vector<shared_ptr<Component>> componentList;
 	auto& componentFactory = _gameState.getComponentManager();
+	auto e = _ecs.entity();
 
 	for (auto& c : objectDescResource->resource->components)
 	{
@@ -39,61 +40,42 @@ const std::unique_ptr<Entity>& EntityManager::createEntity(std::string objectNam
 		if (componentRuntimeProperties.contains(c.type))
 			runtimeProperties = componentRuntimeProperties.at(c.type);
 		
-		shared_ptr<Component> cShared = componentFactory.createComponent(c, runtimeProperties);
-		componentList.push_back(cShared);
+		componentFactory.createComponent(e, c, runtimeProperties);
 	}
-
-	auto ent = make_unique<Entity>(objectName);
-	_components[ent->getEntityId()] = componentList;
-
-	_entities.push_back(std::move(ent));
+	
+	_entities.push_back(e);
 	_cacheVersion++;
 
 	return _entities.back();
 }
 
-void hiage::EntityManager::addComponentToEntity(int entityId, const std::string& componentType, ComponentProperties& componentProperties)
+void hiage::EntityManager::addComponentToEntity(flecs::entity& entity, const std::string& componentType, ComponentProperties& componentProperties)
 {
-	if (_components.contains(entityId))
-	{
-		auto& componentManager = _gameState.getComponentManager();
-
-		shared_ptr<Component> cShared = componentManager.createComponent(componentType, componentProperties);
-		_components[entityId].push_back(cShared);
+	auto& componentManager = _gameState.getComponentManager();
 		
-		_cacheVersion++;
-	}
-	else
-	{
-		throw runtime_error(string("Entity with ID ") + entityId + " does not exist.");
-	}
+	componentManager.createComponent(entity, componentType, componentProperties);
 }
 
 void hiage::EntityManager::removeComponentFromEntity(int entityId, const std::string& componentType)
 {
-	if (_components.contains(entityId))
+/*	TODO flecs
+	auto& componentManager = _gameState.getComponentManager();
+	int typeId = componentManager.getTypeIdForComponentType(componentType);
+
+	auto& componentList = _components.at(entityId);
+
+	for (size_t i = 0; i < componentList.size(); i++)
 	{
-		auto& componentManager = _gameState.getComponentManager();
-		int typeId = componentManager.getTypeIdForComponentType(componentType);
-
-		auto& componentList = _components.at(entityId);
-
-		for (size_t i = 0; i < componentList.size(); i++)
+		if (componentList[i]->getTypeId() == typeId)
 		{
-			if (componentList[i]->getTypeId() == typeId)
-			{
-				componentList.erase(componentList.begin() + i);
-				_cacheVersion++;
-				break;
-			}
+			componentList.erase(componentList.begin() + i);
+			_cacheVersion++;
+			break;
 		}
-	}
-	else
-	{
-		throw runtime_error(string("Entity with ID ") + entityId + " does not exist.");
-	}
+	}*/
 }
-
+/*
+* TODO flecs
 struct PositionComponentComparator {
 private:
 	EntityManager& _em;
@@ -132,33 +114,7 @@ public:
 	}
 };
 
-
-void hiage::EntityManager::sortEntitiesByPosition()
-{
-	PositionComponentComparator comp(*this);
-	int  didSwap = 0;
-
-	size_t i = 1;
-	// Insertion sort - because we will almost always have a near-sorted array, and then the sorting time is near linear.
-	while (i < _entities.size())
-	{
-		size_t j = i;
-		while (j > 0 && comp(_entities[j], _entities[j - 1]))
-		{
-			std::swap(_entities[j], _entities[j-1]);
-			didSwap++;
-			j--;
-		}
-		i++;
-	}
-
-	if (didSwap > 0)
-		_cacheVersion++;
-}
-const std::vector<std::unique_ptr<Entity>>& hiage::EntityManager::getEntities()
-{
-	return _entities;
-}
+*/
 
 void hiage::EntityManager::destroyAll()
 {

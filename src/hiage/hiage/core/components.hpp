@@ -4,6 +4,8 @@
 #include "../gfx/sprite.h"
 #include "collisions.hpp"
 
+#include <flecs.h>
+
 #include <unordered_map>
 #include <unordered_set>
 #include <memory>
@@ -207,8 +209,8 @@ namespace hiage
 	{
 	public:
 		virtual ~ComponentFactory() {};
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const = 0;
-		virtual std::unique_ptr<Component> createComponent(const ComponentProperties& properties) const = 0;
+		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const = 0;
+		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentProperties& properties) const = 0;
 	};
 
 	template<typename T>
@@ -222,16 +224,18 @@ namespace hiage
 		/// <param name="componentDescriptor"></param>
 		/// <param name="runtimeProperties"></param>
 		/// <returns></returns>
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override
+		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override
 		{
 			ComponentProperties mergedProperties;
 			mergedProperties.insert(runtimeProperties.begin(), runtimeProperties.end());
 			mergedProperties.insert(componentDescriptor.properties.begin(), componentDescriptor.properties.end());
-			auto component = std::make_unique<T>();
-			auto state = component->createState(mergedProperties);
-			component->setData(state);
+			entity.set<T>(T());
 
-			return std::move(component);
+			auto component = T();
+			auto state = component.createState(mergedProperties);
+			component.setData(state);
+
+			return entity.set<T>(component);
 		}
 
 		/// <summary>
@@ -239,13 +243,12 @@ namespace hiage
 		/// </summary>
 		/// <param name="properties"></param>
 		/// <returns></returns>
-		virtual std::unique_ptr<Component> createComponent(const ComponentProperties& properties) const override
+		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentProperties& properties) const override
 		{
-			auto component = std::make_unique<T>();
-			auto state = component->createState(properties);
-			component->setData(state);
-
-			return std::move(component);
+			auto component = T();
+			auto state = component.createState(properties);
+			component.setData(state);
+			return entity.set<T>(component);
 		}
 	};
 
@@ -255,8 +258,8 @@ namespace hiage
 		const Game& game;
 	public:
 		RenderableComponentFactory(const Game& game);
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
-		virtual std::unique_ptr<Component> createComponent(const ComponentProperties& runtimeProperties) const override;
+		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
+		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentProperties& runtimeProperties) const override;
 	};
 
 	class ComponentManager
@@ -283,8 +286,8 @@ namespace hiage
 			_componentNameToTypeId[componentType] = TComponent::TYPEID;
 		}
 
-		std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const;
-		std::unique_ptr<Component> createComponent(const std::string& type, const ComponentProperties& properties) const;
+		const flecs::entity& createComponent(flecs::entity& entity, const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const;
+		const flecs::entity& createComponent(flecs::entity& entity, const std::string& type, const ComponentProperties& properties) const;
 		int getTypeIdForComponentType(const std::string& componentType) const;
 	};
 }
