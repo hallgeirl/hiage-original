@@ -29,7 +29,7 @@ namespace hiage
 	class EntityManager
 	{
 	private:
-		flecs::world _ecs;
+		flecs::world& _ecs;
 		std::vector<flecs::entity> _entities;
 		std::map<int, std::vector<std::shared_ptr<Component>>> _components; // Entity ID -> component list
 		const Game& _game;
@@ -38,7 +38,7 @@ namespace hiage
 		int _cacheVersion;
 
 	public:
-		EntityManager(const Game& game, const GameState& gameState);
+		EntityManager(const Game& game, const GameState& gameState, flecs::world& ecs);
 
 
 		EntityManager(EntityManager&) = delete; // Doesn't make sense to copy

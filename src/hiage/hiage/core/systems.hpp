@@ -2,8 +2,10 @@
 
 #include "collisions.hpp"
 
+#include <flecs.h>
 #include <string>
 #include <memory>
+#include <vector>
 
 namespace hiage
 {
@@ -16,28 +18,26 @@ namespace hiage
 	*/
 	class System
 	{
-	protected:
-		Game& game;
-		GameState& gameState;
-
 	public:
-		System(Game& game, GameState& gameState);
+		System();
 		virtual ~System();
-		virtual void update(double frameTime) = 0;
+		virtual void registerSystem(flecs::world& world) = 0;
 	};
 
 	class MovementSystem : public System
 	{
 	public:
-		MovementSystem(Game& game, GameState& gameState);
-		virtual void update(double frametime) override;
+		MovementSystem();
+		virtual void registerSystem(flecs::world& world) override;
 	};
 
 	class ObjectRenderingSystem : public System
 	{
+	private:
+		Game& _game;
 	public:
-		ObjectRenderingSystem(Game& game, GameState& gameState);
-		virtual void update(double frameTime) override;
+		ObjectRenderingSystem(Game& game);
+		virtual void registerSystem(flecs::world& world) override;
 	};
 
 	class PhysicsSystem : public System
@@ -46,15 +46,15 @@ namespace hiage
 		double _gravity = 30;
 
 	public:
-		PhysicsSystem(Game& game, GameState& gameState, double gravity);
-		virtual void update(double frameTime) override;
+		PhysicsSystem(double gravity);
+		virtual void registerSystem(flecs::world& world) override;
 	};
 
 	class ControllerSystem : public System
 	{
 	public:
-		ControllerSystem(Game& game, GameState& gameState);
-		virtual void update(double frameTime) override;
+		ControllerSystem();
+		virtual void registerSystem(flecs::world& world) override;
 	};
 
 	/// <summary>
@@ -67,8 +67,8 @@ namespace hiage
 		SATCollisionTester collisionTester;
 
 	public:
-		ObjectObjectCollisionDetectionSystem(Game& game, GameState& gameState) : System(game, gameState) {}
-		virtual void update(double frameTime) override;
+		ObjectObjectCollisionDetectionSystem() : System() {}
+		virtual void registerSystem(flecs::world& world) override;
 	};
 
 	/// <summary>
@@ -82,8 +82,8 @@ namespace hiage
 		SATCollisionTester collisionTester;
 
 	public:
-		ObjectTileCollisionDetectionSystem(Game& game, GameState& gameState, const Tilemap& tilemap) : System(game, gameState), tilemap(tilemap) {}
-		virtual void update(double frameTime) override;
+		ObjectTileCollisionDetectionSystem(const Tilemap& tilemap) : System(), tilemap(tilemap) {}
+		virtual void registerSystem(flecs::world& world) override;
 	};
 
 
@@ -94,31 +94,33 @@ namespace hiage
 	class BlockingTileSystem : public System
 	{
 	public:
-		BlockingTileSystem(Game& game, GameState& gameState) : System(game, gameState) {}
-		virtual void update(double frameTime) override;
+		BlockingTileSystem() : System() {}
+		virtual void registerSystem(flecs::world& world) override;
 	};
 
 	class AnimationSystem : public System
 	{
 	public:
-		AnimationSystem(Game& game, GameState& gameState) : System(game, gameState) {}
-		virtual void update(double frameTime) override;
+		AnimationSystem() : System() {}
+		virtual void registerSystem(flecs::world& world) override;
 	};
 
 	// Used for e.g. camera tracking
 	class ObjectTrackingSystem : public System
 	{
 	public:
-		ObjectTrackingSystem(Game& game, GameState& gameState) : System(game, gameState) {}
-		virtual void update(double frameTime) override;
+		ObjectTrackingSystem() : System() {}
+		virtual void registerSystem(flecs::world& world) override;
 	};
 
 	// Used for e.g. camera tracking
 	class CameraSystem : public System
 	{
+	private:
+		Game& _game;
 	public:
-		CameraSystem(Game& game, GameState& gameState) : System(game, gameState) {}
-		virtual void update(double frameTime) override;
+		CameraSystem(Game& game) : System(), _game(game) {}
+		virtual void registerSystem(flecs::world& world) override;
 	};
 
 
@@ -130,18 +132,20 @@ namespace hiage
 	/*
 		SystemsFactory
 	*/
-	class SystemsFactory
+	class SystemsManager
 	{
 	private:
-		Game& game;
-		GameState& gameState;
+		flecs::world& _ecs;
+		std::vector<std::unique_ptr<System>> _systems; // We need to hold on to the instances of the registered systems because they may have references to objects like e.g. Game and GameState.
 	public:
-		SystemsFactory(Game& game, GameState& gameState);
+		SystemsManager(flecs::world&);
 		
 		template<typename T, typename ...TRest>
-		std::unique_ptr<System> createSystem(TRest... args)
+		void registerSystem(TRest... args)
 		{ 
-			return make_unique<T>(game, gameState, args...);
+			std::unique_ptr<T> sys = std::make_unique<T>(args...);
+			sys->registerSystem(_ecs);
+			_systems.push_back(std::move(sys)); // Store the system pointer
 		};
 	};
 }

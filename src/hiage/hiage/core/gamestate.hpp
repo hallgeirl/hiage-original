@@ -6,6 +6,8 @@
 #include "components.hpp"
 #include "events.hpp"
 
+#include <flecs.h>
+
 namespace hiage
 {
 	/*!
@@ -20,10 +22,11 @@ namespace hiage
 	{
 	protected:
 		ComponentManager	_componentManager;
-		SystemsFactory		_systemsFactory;
+		SystemsManager		_systemsManager;
 		EntityManager		_entityManager;
 		EventQueue			_eventQueue;
 
+		flecs::world		_ecs;
 		Game& _game;
 		std::vector<std::unique_ptr<System>> systems;
 
@@ -47,7 +50,7 @@ namespace hiage
 		void changeState(Game* game, GameState* state);
 
 		const ComponentManager& getComponentManager() const;
-		const SystemsFactory& getSystemsFactory() const;
+		SystemsManager& getSystemsFactory();
 
 		EntityManager& getEntityManager();
 		EventQueue& getEventQueue();

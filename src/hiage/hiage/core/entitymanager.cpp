@@ -15,7 +15,7 @@
 using namespace hiage;
 using namespace std;
 
-EntityManager::EntityManager(const hiage::Game& game, const GameState& gameState) : _game(game), _gameState(gameState), _cacheVersion(0)
+EntityManager::EntityManager(const hiage::Game& game, const GameState& gameState, flecs::world& ecs) : _game(game), _gameState(gameState), _cacheVersion(0), _ecs(ecs)
 {
 
 }

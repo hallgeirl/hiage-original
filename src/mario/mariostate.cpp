@@ -10,6 +10,7 @@
 
 #include "events.hpp"
 
+#include <hiage/core/systems.hpp>
 #include <hiage/core/entitymanager.hpp>
 #include <hiage/core/script_lua.h>
 
@@ -19,35 +20,35 @@ using namespace std;
 
 MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0), _coins(0), _fps(0)
 {
-    auto sysFactory = getSystemsFactory();
+    auto& sysFactory = getSystemsFactory();
 
     // Movement and controllers -- updates velocity
-    systems.push_back(sysFactory.createSystem<ControllerSystem>());
-    systems.push_back(sysFactory.createSystem<CharacterControllerSystem>());
-    systems.push_back(sysFactory.createSystem<PhysicsSystem>(800));
+    sysFactory.registerSystem<ControllerSystem>();
+    sysFactory.registerSystem<CharacterControllerSystem>();
+    sysFactory.registerSystem<PhysicsSystem>(800);
 
     // Collision detection -- will we collide in this frame?
-    systems.push_back(sysFactory.createSystem<ObjectObjectCollisionDetectionSystem>());
+    sysFactory.registerSystem<ObjectObjectCollisionDetectionSystem>();
     auto& tilemap = gamemap.getTilemap();
-    systems.push_back(sysFactory.createSystem<ObjectTileCollisionDetectionSystem, const Tilemap&>(tilemap));
+    sysFactory.registerSystem<ObjectTileCollisionDetectionSystem, const Tilemap&>(tilemap);
 
     // AI is dependent on collision detection - so we need to update AI after this.
-    systems.push_back(sysFactory.createSystem<AISystem>());
+    sysFactory.registerSystem<AISystem>();
 
     // Collision handling
-    systems.push_back(sysFactory.createSystem<BlockingTileSystem>());
-    systems.push_back(sysFactory.createSystem<MarioCollisionResponseSystem>());
+    sysFactory.registerSystem<BlockingTileSystem>();
+    sysFactory.registerSystem<MarioCollisionResponseSystem>();
 
     // Movement -- updates position
-    systems.push_back(sysFactory.createSystem<MovementSystem>());
+    sysFactory.registerSystem<MovementSystem>();
 
-    systems.push_back(sysFactory.createSystem<CharacterStateMachineSystem>());
+    sysFactory.registerSystem<CharacterStateMachineSystem>();
 
     // Rendering
-    systems.push_back(sysFactory.createSystem<CameraSystem>());
-    systems.push_back(sysFactory.createSystem<ObjectTrackingSystem>());
-    systems.push_back(sysFactory.createSystem<AnimationSystem>());
-    systems.push_back(sysFactory.createSystem<ObjectRenderingSystem>());
+    sysFactory.registerSystem<CameraSystem, Game&>(game);
+    sysFactory.registerSystem<ObjectTrackingSystem>();
+    sysFactory.registerSystem<AnimationSystem>();
+    sysFactory.registerSystem<ObjectRenderingSystem, Game&>(game);
 
 
     /*

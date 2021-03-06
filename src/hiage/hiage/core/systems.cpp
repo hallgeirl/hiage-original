@@ -9,7 +9,7 @@ using namespace hiage;
 
 // TODO flecs
 
-System::System(Game& game, GameState& gameState) : game(game), gameState(gameState)
+System::System()
 {
 }
 
@@ -17,26 +17,21 @@ System::~System()
 {
 }
 
-MovementSystem::MovementSystem(Game& game, GameState& gameState) : System(game, gameState)
+MovementSystem::MovementSystem() : System()
 {
 }
 
-void MovementSystem::update(double frametime)
+void MovementSystem::registerSystem(flecs::world& world)
 {
-	/*
-	TODO flecs{
-		auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent>();
-		for (auto& t : componentTuples)
+	world.system<PositionComponent, VelocityComponent>()
+		.each([](flecs::entity e, PositionComponent& position, VelocityComponent& velocity)
 		{
-			auto& physical = std::get<1>(t);
-			auto& movement = std::get<2>(t);
-		
-			auto vel = movement->getData();
-			auto pos = physical->getData();
-			physical->getData().set(pos + vel * frametime);
-		}
-	}
-*/
+			auto vel = velocity.getData();
+			auto pos = position.getData();
+			position.getData().set(pos + vel * e.delta_time());
+		});
+	
+
 	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, SpeedLimitComponent>();
 	for (auto& t : componentTuples)
 	{
@@ -62,74 +57,64 @@ void MovementSystem::update(double frametime)
 	}*/
 }
 
-ObjectRenderingSystem::ObjectRenderingSystem(Game& game, GameState& gameState) : System(game, gameState)
+ObjectRenderingSystem::ObjectRenderingSystem(Game& game) : System(), _game(game)
 {
 }
 
-void ObjectRenderingSystem::update(double frameTime)
+void ObjectRenderingSystem::registerSystem(flecs::world& world)
 {
-	/*
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, RenderableComponent>();
-
-	Display& disp = game.getDisplay();
-	Renderer& renderer = disp.getRenderer();
-	double aspect = disp.getAspectRatio();
-	double zoom = disp.getZoom();
-	double camX = disp.getCamX();
-	double camY = disp.getCamY();
-
-	double viewLeft = camX - (zoom * aspect);
-	double viewRight = camX + (zoom * aspect);
-	double viewTop = camY + zoom;
-	double viewBottom = camY - zoom;
-
-	for (auto& t : componentTuples)
-	{
-		auto entityId = std::get<0>(t);
-		auto& phyiscal = std::get<1>(t);
-		auto& renderable = std::get<2>(t);
-
-		auto& pos = phyiscal->getData();
-		auto& sprite = renderable->getData();
-		
-		//check if the object is inside the viewport
-		if ((pos.getX() + sprite.getWidth() >= viewLeft) && (pos.getX() <= viewRight))
+	world.system<PositionComponent, RenderableComponent, VelocityComponent*, StateComponent*>()
+		.each([&](flecs::entity e, PositionComponent& phyiscal, RenderableComponent& renderable, VelocityComponent* vel, StateComponent* state)
 		{
-			if ((pos.getY() + sprite.getHeight() >= viewBottom) && (pos.getY() <= viewTop))
+			Display& disp = _game.getDisplay();
+			Renderer& renderer = disp.getRenderer();
+			double aspect = disp.getAspectRatio();
+			double zoom = disp.getZoom();
+			double camX = disp.getCamX();
+			double camY = disp.getCamY();
+
+			double viewLeft = camX - (zoom * aspect);
+			double viewRight = camX + (zoom * aspect);
+			double viewTop = camY + zoom;
+			double viewBottom = camY - zoom;
+
+			auto& pos = phyiscal.getData();
+			auto& sprite = renderable.getData();
+			
+			//check if the object is inside the viewport
+			if ((pos.getX() + sprite.getWidth() >= viewLeft) && (pos.getX() <= viewRight))
 			{
-				auto vel = gameState.getEntityManager().queryComponentGroup<VelocityComponent>(entityId);
-				double velocity = 0;
-				if (vel != nullptr)
-					velocity = vel->getData().getX();
-
-				auto state = gameState.getEntityManager().queryComponentGroup<StateComponent>(entityId);
-				
-				bool hflip = false, vflip = false;
-				if (state != nullptr)
+				if ((pos.getY() + sprite.getHeight() >= viewBottom) && (pos.getY() <= viewTop))
 				{
-					auto& metadata = state->getData().metadata;
-					if (metadata.contains("x-flip") && get<int>(metadata.at("x-flip")) != 0)
-						hflip = true;
-					if (metadata.contains("y-flip") && get<int>(metadata.at("y-flip")) != 0)
-						vflip = true;
+					double velocity = 0;
+					if (vel != nullptr)
+						velocity = vel->getData().getX();
+
+					bool hflip = false, vflip = false;
+					if (state != nullptr)
+					{
+						auto& metadata = state->getData().metadata;
+						if (metadata.contains("x-flip") && get<int>(metadata.at("x-flip")) != 0)
+							hflip = true;
+						if (metadata.contains("y-flip") && get<int>(metadata.at("y-flip")) != 0)
+							vflip = true;
+					}
+
+					// Render sprite
+					sprite.render(renderer, pos, ObjectZ::MIDDLE, 0.f, hflip, vflip);
+
+					// Update animations
+					sprite.updateAnimation(e.delta_time(), velocity);
 				}
-
-				// Render sprite
-				sprite.render(renderer, pos, ObjectZ::MIDDLE, 0.f, hflip, vflip);
-
-				// Update animations
-				sprite.updateAnimation(frameTime, velocity);
 			}
-		}
-	}
-	*/
+		});
 }
 
-hiage::PhysicsSystem::PhysicsSystem(Game& game, GameState& gameState, double gravity) : System(game, gameState), _gravity(gravity)
+hiage::PhysicsSystem::PhysicsSystem(double gravity) : System(), _gravity(gravity)
 {
 }
 
-void hiage::PhysicsSystem::update(double frameTime)
+void hiage::PhysicsSystem::registerSystem(flecs::world& world)
 {
 	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicsComponent, VelocityComponent>();
 
@@ -149,11 +134,11 @@ void hiage::PhysicsSystem::update(double frameTime)
 }
 
 
-hiage::ControllerSystem::ControllerSystem(Game& game, GameState& gameState) : System(game, gameState)
+hiage::ControllerSystem::ControllerSystem() : System()
 {
 }
 
-void hiage::ControllerSystem::update(double)
+void hiage::ControllerSystem::registerSystem(flecs::world& world)
 {
 	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<ControllerComponent, ControllerStateComponent>();
 	for (auto& t : componentTuples)
@@ -178,7 +163,7 @@ void hiage::ControllerSystem::update(double)
 	}*/
 }
 
-void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
+void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& world)
 {
 	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, PositionComponent, VelocityComponent>();
 
@@ -250,12 +235,12 @@ void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
 }
 
 
-SystemsFactory::SystemsFactory(Game& game, GameState& gameState) : game(game), gameState(gameState)
+SystemsManager::SystemsManager(flecs::world& ecs) : _ecs(ecs)
 {
 }
 
 static int frameCounter = 0;
-void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
+void hiage::ObjectTileCollisionDetectionSystem::registerSystem(flecs::world& world)
 {
 	/*frameCounter++;
 	if (!tilemap.isLoaded())
@@ -294,7 +279,7 @@ void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
 	}*/
 }
 
-void hiage::BlockingTileSystem::update(double frameTime)
+void hiage::BlockingTileSystem::registerSystem(flecs::world& world)
 {
 	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>();
 	for (auto& c : componentTuples)
@@ -319,7 +304,7 @@ void hiage::BlockingTileSystem::update(double frameTime)
 	}*/
 }
 
-void hiage::AnimationSystem::update(double)
+void hiage::AnimationSystem::registerSystem(flecs::world& world)
 {
 	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<RenderableComponent, StateComponent>();
 
@@ -333,7 +318,7 @@ void hiage::AnimationSystem::update(double)
 	}*/
 }
 
-void hiage::ObjectTrackingSystem::update(double frameTime)
+void hiage::ObjectTrackingSystem::registerSystem(flecs::world& world)
 {
 	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, TrackableComponent>();
 
@@ -369,24 +354,25 @@ void hiage::ObjectTrackingSystem::update(double frameTime)
 	}*/
 }
 
-void hiage::CameraSystem::update(double)
+void hiage::CameraSystem::registerSystem(flecs::world& world)
 {
-	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, CameraComponent>();
+	world.system<PositionComponent, CameraComponent>()
+		.each([&](flecs::entity e, PositionComponent& physical, CameraComponent& camera)
+		{
+			
+			auto& display = _game.getDisplay();
+			auto& pos = physical.getData();
+			auto& camProps = camera.getData();
 
-	for (auto& c : componentTuples)
-	{
-		auto& pos = get<1>(c)->getData();
-		auto& camProps = get<2>(c)->getData();
+			// TODO - Make boundaries configurable.
+			display.setZoom(camProps.zoom);
 
-		// TODO - Make boundaries configurable.
-		game.getDisplay().setZoom(camProps.zoom);
-
-		auto zoom = game.getDisplay().getZoom();
-		auto aspect = game.getDisplay().getAspectRatio();
-		auto leftBoundary = zoom * aspect;
-		auto bottomBoundary = zoom;
+			auto zoom = display.getZoom();
+			auto aspect = display.getAspectRatio();
+			auto leftBoundary = zoom * aspect;
+			auto bottomBoundary = zoom;
 
 
-		game.getDisplay().setCamPosition(std::max(pos.getX(), leftBoundary), std::max(pos.getY(), bottomBoundary));
-	}*/
+			display.setCamPosition(std::max(pos.getX(), leftBoundary), std::max(pos.getY(), bottomBoundary));
+	});
 }

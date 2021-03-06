@@ -9,29 +9,29 @@ private:
 	void handleCollisions();
 	void updateState();
 public:
-	CharacterStateMachineSystem(hiage::Game& game, hiage::GameState& gameState);
-	virtual void update(double frameTime) override;
+	CharacterStateMachineSystem();
+	virtual void registerSystem(flecs::world& world) override;
 
 };
 
 class CharacterControllerSystem : public hiage::System
 {
 public:
-	CharacterControllerSystem(hiage::Game& game, hiage::GameState& gameState);
-	virtual void update(double frameTime) override;
+	CharacterControllerSystem();
+	virtual void registerSystem(flecs::world& world) override;
 };
 
 class MarioCollisionResponseSystem : public hiage::System
 {
 public:
-	MarioCollisionResponseSystem(hiage::Game& game, hiage::GameState& gameState);
-	virtual void update(double frameTime) override;
+	MarioCollisionResponseSystem();
+	virtual void registerSystem(flecs::world& world) override;
 };
 
 class AISystem : public hiage::System
 {
 public:
-	AISystem(hiage::Game& game, hiage::GameState& gameState);
-	virtual void update(double frameTime) override;
+	AISystem();
+	virtual void registerSystem(flecs::world& world) override;
 };
 

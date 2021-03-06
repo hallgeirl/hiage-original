@@ -7,7 +7,7 @@ using namespace hiage;
 	Gamestate class
 */
 
-GameState::GameState(Game& game) : _game(game), _systemsFactory(game, *this), _entityManager(game, *this), _componentManager(game)
+GameState::GameState(Game& game) : _game(game), _systemsManager(_ecs), _entityManager(game, *this, _ecs), _componentManager(game)
 {
 
 }
@@ -16,18 +16,15 @@ GameState::~GameState()
 {
 }
 
-const SystemsFactory& hiage::GameState::getSystemsFactory() const
+SystemsManager& hiage::GameState::getSystemsFactory()
 {
-	return _systemsFactory;
+	return _systemsManager;
 }
 
 
 void GameState::update(double frametime)
 {
-	for (auto const& sys : systems)
-	{
-		sys->update(frametime);
-	}
+	_ecs.progress((float)frametime);
 }
 
 void hiage::GameState::cleanupFrame()
