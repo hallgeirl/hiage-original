@@ -62,7 +62,7 @@ void SpriteAnimation::runAnimation(double timefactor, double velocity)
 	}
 }
 
-Sprite::Sprite() : _animationSpeed(1), _currentAnimation(0), _frameWidth(0), _frameHeight(0), _texture(nullptr)
+Sprite::Sprite() : _animationSpeed(1), _currentAnimation(0), _frameWidth(0), _frameHeight(0)
 {
 }
 
@@ -71,9 +71,9 @@ Sprite::~Sprite()
 }
 
 //create the sprite
-void Sprite::create(Texture * texture, int frameWidth, int frameHeight)
+void Sprite::create(const Texture& texture, int frameWidth, int frameHeight)
 {
-	if (!texture || frameWidth <= 0 || frameHeight <= 0)
+	if (frameWidth <= 0 || frameHeight <= 0)
 	{
 		throw Exception("ERROR: Sprite::create(): Invalid frame dimensions.");
 	}
@@ -89,8 +89,8 @@ void Sprite::render(Renderer &renderer, const Vector2<double>& position, ObjectZ
 	double x = position.getX();
 	double y = position.getY();
 
-	uint texwidth = _texture->getWidth();
-	uint texheight = _texture->getHeight();
+	uint texwidth = _texture.getWidth();
+	uint texheight = _texture.getHeight();
 
 	double spriteWidth, spriteHeight;
 
@@ -148,7 +148,7 @@ void Sprite::render(Renderer &renderer, const Vector2<double>& position, ObjectZ
 		}
 
 		//render the sprite
-		renderer.beginRender(z, _texture);
+		renderer.beginRender(z, &_texture);
 		renderer.addVertex(x, (double)y + spriteHeight, texLeft, texTop);
 		renderer.addVertex((double)x + spriteWidth, (double)y + spriteHeight, texRight, texTop);
 		renderer.addVertex((double)x + spriteWidth, y, texRight, texBottom);
@@ -158,7 +158,7 @@ void Sprite::render(Renderer &renderer, const Vector2<double>& position, ObjectZ
 	else
 	{
 		//render all frames if no animation is selected.
-		renderer.beginRender(z, _texture);
+		renderer.beginRender(z, &_texture);
 		renderer.addVertex((double)x - (spriteWidth / 2), (double)y + (spriteHeight / 2), 0, 0);
 		renderer.addVertex((double)x + (spriteWidth / 2), (double)y + (spriteHeight / 2), 0, 1);
 		renderer.addVertex((double)x + (spriteWidth / 2), (double)y - (spriteHeight / 2), 1, 0);

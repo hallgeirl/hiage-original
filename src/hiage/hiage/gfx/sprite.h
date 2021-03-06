@@ -60,7 +60,7 @@ namespace hiage
 	{
 	private:
 		//pointer to the texture that is used
-		Texture * _texture;
+		Texture _texture;
 
 		//frame dimensions
 		int _frameWidth;
@@ -75,7 +75,7 @@ namespace hiage
 		Sprite();
 		~Sprite();
 
-		void create(Texture * texture, int frameWidth, int frameHeight);
+		void create(const Texture& texture, int frameWidth, int frameHeight);
 
 		void render(Renderer &renderer, const Vector2<double>& position, ObjectZ z, float rotation = 0, bool hFlip = false, bool vFlip = false, float maxSize = 0);
 

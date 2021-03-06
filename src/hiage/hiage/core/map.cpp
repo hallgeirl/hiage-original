@@ -75,8 +75,8 @@ void hiage::Map::loadFromJson(std::string path, bool runScripts)
     auto& visual = j.at("visual");
     string tilesetName = visual.at("tilesetName");
     string backgroundName = visual.at("backgroundName");
-
-    _tilemap.setTileset(_game.getTilesetManager().requestResourcePtr(tilesetName)->resource);
+    const auto& tileset = _game.getTilesetManager().requestResourceRef(tilesetName).resource;
+    _tilemap.setTileset(&tileset);
     setBackground(backgroundName);
 
     // Load scripts
@@ -673,7 +673,8 @@ void Map::setBackground(std::string textureName)
     {
         try
         {
-            _background = _game.getTextureManager().requestResourcePtr(textureName.c_str())->resource;
+            const auto& bgTexture = _game.getTextureManager().requestResourceRef(textureName.c_str()).resource;
+            _background = &bgTexture;
         }
         catch (Exception &e)
         {
@@ -689,13 +690,14 @@ void Map::setBackground(std::string textureName)
 }
 
 //set a new tileset
-void Map::setTileset(string ts)
+void Map::setTileset(std::string ts)
 {
     if (ts.length() > 0)
     {
         try
         {
-            _tilemap.setTileset(_game.getTilesetManager().requestResourcePtr(ts.c_str())->resource);
+            const auto& tileset = _game.getTilesetManager().requestResourceRef(ts.c_str()).resource;
+            _tilemap.setTileset(&tileset);
             _tilesetName = ts;
         }
         catch (Exception &e)

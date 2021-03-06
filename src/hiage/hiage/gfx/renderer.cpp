@@ -47,7 +47,7 @@ Renderer::~Renderer() throw ()
 }
 
 //start the rendering process
-void Renderer::beginRender(ObjectZ zposition, Texture *texture)
+void Renderer::beginRender(ObjectZ zposition, const Texture* texture)
 {
 	if (recordingVertices)
 	{

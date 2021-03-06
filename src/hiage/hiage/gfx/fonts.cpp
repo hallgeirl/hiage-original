@@ -7,7 +7,7 @@
 using namespace std;
 using namespace hiage;
 
-Font::Font() : _texture(nullptr), _tableRows(0), _tableCols(0), _characterWidth(0), _characterHeight(0)
+Font::Font() : _tableRows(0), _tableCols(0), _characterWidth(0), _characterHeight(0)
 {
     _loaded = false;
 
@@ -19,18 +19,13 @@ Font::~Font()
 }
 
 //Create the font from a texture
-void Font::create(Texture * tex, int characterWidth, int characterHeight)
+void Font::create(const Texture& tex, int characterWidth, int characterHeight)
 {
     clog << "Creating font from texture with character width " << characterWidth << " and character height " << characterHeight << "...\n" << flush;
 
     _texture = tex;
     this->_characterWidth = characterWidth;
     this->_characterHeight = characterHeight;
-
-    if (!_texture)
-    {
-        throw IOException("ERROR: No texture specified for font.");
-    }
 
     _loaded = true;
     clog << "OK: Font created successfully.\n" << flush;
@@ -92,22 +87,22 @@ void Font::setCharacterTable(char ** table, int cols, int rows)
 
 }
 
-char ** Font::getCharacterTable()
+char ** Font::getCharacterTable() const
 {
     return _characterTable;
 }
 
-int Font::getTableCols()
+int Font::getTableCols() const
 {
     return _tableCols;
 }
 
-int hiage::Font::getCharacterHeight()
+int hiage::Font::getCharacterHeight() const
 {
     return _characterHeight;
 }
 
-int Font::getTableRows()
+int Font::getTableRows() const
 {
     return _tableRows;
 }
@@ -145,14 +140,14 @@ void Font::renderText(Renderer &renderer, string text, Vector2<double> position,
         double xpos = (1 + spacing)*((int)c * _characterWidth*scale) + position.getX();
         double ypos = position.getY();
 
-        double charwidth = (1.0/_texture->getWidth()) * _characterWidth;
-        double charheight = (1.0/_texture->getHeight()) * _characterHeight;
+        double charwidth = (1.0/_texture.getWidth()) * _characterWidth;
+        double charheight = (1.0/_texture.getHeight()) * _characterHeight;
 
         double xoffset = charwidth * x;
 
         double yoffset = charheight * y;
 
-        renderer.beginRender(ObjectZ::CLOSEST, _texture);
+        renderer.beginRender(ObjectZ::CLOSEST, &_texture);
 
         if (x >= 0 || y >= 0)
          {

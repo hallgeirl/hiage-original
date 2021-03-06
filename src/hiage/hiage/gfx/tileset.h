@@ -16,7 +16,7 @@ namespace hiage
 		{
 		    int id;
 			int block;
-			Texture * texture;
+			const Texture * texture;
 			int delay, nextTile, counter;
 		};
 
@@ -125,7 +125,7 @@ namespace hiage
 		iterator begin();
 		iterator end();
 
-		bool addTile(Texture * texture, int block, int nextTile, int delay, std::string textureFileName, int id = -1);
+		bool addTile(const Texture * texture, int block, int nextTile, int delay, std::string textureFileName, int id = -1);
 
 		void selectTile(int tileID) { tiles[tileID].texture->select(); }
 		uint getTileCount() const { return tileCount; }

@@ -18,13 +18,9 @@ using namespace std;
 using json = nlohmann::json;
 
 
-std::unique_ptr<Resource<Texture>> TextureManager::loadResource(const std::string& path)
+void TextureManager::loadResource(const std::string& path)
 {
 	clog << "Loading texture: " << path << endl << flush;
-	Texture * texture = new Texture();
-	Resource<Texture> * resource = new Resource<Texture>;
-
-	resource->resource = texture;
 
 	//load the xml file
 	TiXmlDocument xmlDoc(path.c_str());
@@ -45,29 +41,32 @@ std::unique_ptr<Resource<Texture>> TextureManager::loadResource(const std::strin
 		throw IOException("ERROR: Could not find XML element <texture>.");
 	}
 
-
-	resource->name = textureElement->Attribute("name");
-	clog << "- Name: " << resource->name << endl << flush;
-
+	auto resourceName = std::string(textureElement->Attribute("name"));
 	bitmapElement = textureElement->FirstChildElement("bitmap");
 	bitmap = bitmapElement->Attribute("path");
 
-	texture->loadTexture(getResourcePath(bitmap).c_str());
-
-	resource->strData1 = bitmap;
+	loadTextureResource(bitmap, resourceName);
 
 	clog << "OK: Texture loaded successfully.\n" << flush;
-
-	return std::unique_ptr<Resource<Texture>>(resource);
 }
 
-std::unique_ptr<Resource<Sprite>> SpriteManager::loadResource(const std::string& path)
+void TextureManager::loadTextureResource(const std::string& path, const std::string& name)
+{
+	clog << "Loading texture bitmap: " << path << endl << flush;
+
+	auto& resource = initResource(name);
+	resource.resource = Texture();
+
+	clog << "- Name: " << resource.name << endl << flush;
+
+	resource.resource.loadTexture(getResourcePath(path).c_str());
+
+	resource.strData1 = path;
+}
+
+void SpriteManager::loadResource(const std::string& path)
 {
 	clog << "Loading sprite: " << path << endl << flush;
-	Sprite * sprite = new Sprite();
-	Resource<Sprite> * resource = new Resource<Sprite>;
-
-	resource->resource = sprite;
 
 	//load a xml file
 	TiXmlDocument xmlDoc(path.c_str());
@@ -90,16 +89,20 @@ std::unique_ptr<Resource<Sprite>> SpriteManager::loadResource(const std::string&
 	}
 
 	//load the name attribute
-	resource->name = spriteElement->Attribute("name");
-	clog << "- Name: " << resource->name << endl << flush;
+	auto spriteName = spriteElement->Attribute("name");
+	auto& resource = initResource(spriteName);
+	resource.resource = Sprite();
+	auto& sprite = resource.resource;
+	
+	clog << "- Name: " << resource.name << endl << flush;
 
 	//load frame dimensions
-	spriteElement->Attribute("framewidth", &resource->intData1);
-	spriteElement->Attribute("frameheight", &resource->intData2);
-	clog << "- Frame width: " << resource->intData1 << endl << "- Frame height: " << resource->intData2 << endl << flush;
+	spriteElement->Attribute("framewidth", &resource.intData1);
+	spriteElement->Attribute("frameheight", &resource.intData2);
+	clog << "- Frame width: " << resource.intData1 << endl << "- Frame height: " << resource.intData2 << endl << flush;
 
 	//check for valid frame dimensions
-	if ((resource->intData1 <= 0) || (resource->intData2 <= 0))
+	if ((resource.intData1 <= 0) || (resource.intData2 <= 0))
 	{
 		throw IOException("ERROR: Invalid frame dimensions.");
 	}
@@ -110,8 +113,8 @@ std::unique_ptr<Resource<Sprite>> SpriteManager::loadResource(const std::string&
 	{
 		throw IOException("ERROR: Could not find XML element <texture>.");
 	}
-	resource->strData1 = textureElement->Attribute("name");
-	clog << "- Texture name: " << resource->strData1 << endl << flush;
+	resource.strData1 = textureElement->Attribute("name");
+	clog << "- Texture name: " << resource.strData1 << endl << flush;
 
 	//load animations
 	animationElement = spriteElement->FirstChildElement("animation");
@@ -137,7 +140,7 @@ std::unique_ptr<Resource<Sprite>> SpriteManager::loadResource(const std::string&
 			animationElement->Attribute("velocitySpeedupFactor", &velocitySpeedupFactor);
 		}
 
-		i = sprite->addAnimation(animationElement->Attribute("name"), velocitySpeedupFactor);
+		i = sprite.addAnimation(animationElement->Attribute("name"), velocitySpeedupFactor);
 		
 
 		while (frameElement)
@@ -169,14 +172,14 @@ std::unique_ptr<Resource<Sprite>> SpriteManager::loadResource(const std::string&
 			{
 				colBox.left = 0;
 				colBox.bottom = 0;
-				colBox.right = resource->intData1;
-				colBox.top = resource->intData2;
+				colBox.right = resource.intData1;
+				colBox.top = resource.intData2;
 			}
 			clog << "  - Collision box: " << colBox << endl << flush;
 
 			if ((x >= 0) && (y >= 0) && (nextFrame >= 0) && (delay > 0))
 			{
-				sprite->addFrame(i, x, y, delay, nextFrame, colBox);
+				sprite.addFrame(i, x, y, delay, nextFrame, colBox);
 				clog << "OK: Added frame to animation.\n" << flush;
 			}
 			else
@@ -191,17 +194,11 @@ std::unique_ptr<Resource<Sprite>> SpriteManager::loadResource(const std::string&
 	}
 
 	clog << "OK: Sprite loaded successfully.\n" << flush;
-
-	return std::unique_ptr<Resource<Sprite>>(resource);
 }
 
-std::unique_ptr<Resource<Tileset>> TilesetManager::loadResource(const std::string& path)
+void TilesetManager::loadResource(const std::string& path)
 {
 	clog << "Loading tile set: " << path << endl << flush;
-	Tileset * tileset = new Tileset();
-	Resource<Tileset> * resource = new Resource<Tileset>;
-
-	resource->resource = tileset;
 
 	//load a xml file
 	TiXmlDocument xmlDoc(path.c_str());
@@ -220,10 +217,10 @@ std::unique_ptr<Resource<Tileset>> TilesetManager::loadResource(const std::strin
 		throw IOException("ERROR: Could not find XML element <tileset>.");
 	}
 
-	resource->name = tilesetElement->Attribute("name");
-	clog << "- Tile set name: " << resource->name << endl << flush;
+	auto& resource = initResource(tilesetElement->Attribute("name"));
+	clog << "- Tile set name: " << resource.name << endl << flush;
+	auto& tileset = resource.resource;
 
-	Texture * texture;
 	std::string texPath;
 	int id, delay = 0, block, nextTile, counter = 0;
 
@@ -232,7 +229,7 @@ std::unique_ptr<Resource<Tileset>> TilesetManager::loadResource(const std::strin
 	while (tileElement)
 	{
 		++counter;
-		texture = 0;
+
 		texPath = tileElement->Attribute("texture");
 		tileElement->Attribute("id", &id);
 		tileElement->Attribute("nexttile",&nextTile);
@@ -249,18 +246,16 @@ std::unique_ptr<Resource<Tileset>> TilesetManager::loadResource(const std::strin
         }
         clog << endl;
 
-		//TODO: Debug message? And is the Texture deleted?
-		texture = new Texture;
-		
-		texture->loadTexture(getResourcePath(texPath).c_str());
+		_textureManager.loadTextureResource(texPath, texPath);
+		auto& texture = _textureManager.requestResourceRef(texPath);
 
         if (nextTile != -1)
         {
-            tileset->addTile(texture, block, nextTile, delay, texPath, id);
+            tileset.addTile(&texture.resource, block, nextTile, delay, texPath, id);
         }
         else
         {
-            tileset->addTile(texture, block, -1, 0, texPath, id);
+            tileset.addTile(&texture.resource, block, -1, 0, texPath, id);
         }
 		tileElement = tileElement->NextSiblingElement("tile");
 	}
@@ -269,17 +264,11 @@ std::unique_ptr<Resource<Tileset>> TilesetManager::loadResource(const std::strin
 	{
 		clog << "Warning: Tile set is empty.\n" << flush;
 	}
-
-	return std::unique_ptr<Resource<Tileset>>(resource);
 }
 
-std::unique_ptr<Resource<Font>> FontManager::loadResource(const std::string& path)
+void FontManager::loadResource(const std::string& path)
 {
 	clog << "Loading font: " << path << endl << flush;
-	Font * font = new Font();
-	Resource<Font> * resource = new Resource<Font>;
-
-	resource->resource = font;
 
 	//load a xml file
 	TiXmlDocument xmlDoc(path.c_str());
@@ -299,15 +288,15 @@ std::unique_ptr<Resource<Font>> FontManager::loadResource(const std::string& pat
 	{
 		throw IOException("ERROR: Could not find XML element <font>.");
 	}
-
-	resource->name = fontElement->Attribute("name");
-	fontElement->Attribute("charwidth", &resource->intData1);
-	fontElement->Attribute("charheight", &resource->intData2);
-	clog << "- Font name: " << resource->name << endl << flush;
-	clog << "- Character width: " << resource->intData1 << ", character height: " << resource->intData2 << endl << flush;
+	auto& resource = initResource(fontElement->Attribute("name"));
+	auto& font = resource.resource;
+	fontElement->Attribute("charwidth", &resource.intData1);
+	fontElement->Attribute("charheight", &resource.intData2);
+	clog << "- Font name: " << resource.name << endl << flush;
+	clog << "- Character width: " << resource.intData1 << ", character height: " << resource.intData2 << endl << flush;
 
 	//check for valid character dimensions
-	if ((resource->intData1 <= 0) || (resource->intData2 <= 0))
+	if ((resource.intData1 <= 0) || (resource.intData2 <= 0))
 	{
 		throw IOException("ERROR: Invalid character dimensions.");
 	}
@@ -318,8 +307,8 @@ std::unique_ptr<Resource<Font>> FontManager::loadResource(const std::string& pat
 	{
 		throw IOException("ERROR: Could not find XML element <texture>.");
 	}
-    resource->strData1 = textureElement->Attribute("name");
-    clog << "- Texture name: " << resource->strData1 << endl << flush;
+    resource.strData1 = textureElement->Attribute("name");
+    clog << "- Texture name: " << resource.strData1 << endl << flush;
 
 
 	tableElement = fontElement->FirstChildElement("chartable");
@@ -394,7 +383,7 @@ std::unique_ptr<Resource<Font>> FontManager::loadResource(const std::string& pat
         }
     }
     clog << "- Character table done.\n" << flush;
-    font->setCharacterTable(charTable, (int)charsPerRow, (int)rowCount);
+    font.setCharacterTable(charTable, (int)charsPerRow, (int)rowCount);
 
     for (unsigned int i = 0; i < charsPerRow; i++)
     {
@@ -404,8 +393,6 @@ std::unique_ptr<Resource<Font>> FontManager::loadResource(const std::string& pat
     delete [] charTable;
 
     clog << "OK: Font loaded successfully.\n" << flush;
-
-	return std::unique_ptr<Resource<Font>>(resource);
 }
 
 
@@ -467,7 +454,7 @@ void getPropertiesRecursively(json& j, ComponentProperties& properties)
 	getPropertiesRecursively(j, properties, "");
 }
 
-std::unique_ptr<Resource<ObjectDescriptor>> ObjectManager::loadResource(const std::string& path)
+void ObjectManager::loadResource(const std::string& path)
 {
 	std::ifstream t(path);
 	std::string str((std::istreambuf_iterator<char>(t)),
@@ -478,9 +465,10 @@ std::unique_ptr<Resource<ObjectDescriptor>> ObjectManager::loadResource(const st
 	auto& name = j.at("name");
 	auto& type = j.at("type");
 
-	ObjectDescriptor* objectDesc = new ObjectDescriptor();
-	objectDesc->name = name;
-	objectDesc->type = type;
+	auto& resource = initResource(name);
+	auto& objectDesc = resource.resource;
+	objectDesc.name = name;
+	objectDesc.type = type;
 	
 
 	auto& components = j.at("components");
@@ -497,12 +485,6 @@ std::unique_ptr<Resource<ObjectDescriptor>> ObjectManager::loadResource(const st
 		}
 		
 		compDesc.type = componentType;
-		objectDesc->components.push_back(compDesc);
+		objectDesc.components.push_back(compDesc);
 	}
-
-	Resource<ObjectDescriptor> res;
-	res.name = objectDesc->name;
-	res.resource = objectDesc;
-	
-	return std::make_unique<Resource<ObjectDescriptor>>(res);
 }

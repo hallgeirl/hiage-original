@@ -28,13 +28,13 @@ flecs::entity& EntityManager::createEntity(std::string objectName, const std::un
 {
 	std::clog << "Creating object " << objectName << "..." << std::endl;
 	auto& objectManager = _game.getObjectManager();
-	auto& objectDescResource = objectManager.requestResourcePtr(objectName);
+	auto& objectDescResource = objectManager.requestResourceRef(objectName);
 
 	vector<shared_ptr<Component>> componentList;
 	auto& componentFactory = _gameState.getComponentManager();
 	auto e = _ecs.entity();
 
-	for (auto& c : objectDescResource->resource->components)
+	for (const auto& c : objectDescResource.resource.components)
 	{
 		ComponentProperties runtimeProperties;
 		if (componentRuntimeProperties.contains(c.type))
@@ -139,20 +139,12 @@ Font * FontFactory::createFont(const string& fontName, Game * game)
 {
     Font * font = new Font();
     //attempt to load the main font
-	auto& fontResource = game->getFontManager().requestResourcePtr(fontName.c_str());
-	if (!fontResource)
-	{
-	    throw Exception("ERROR: Could not retrieve font.");
-	}
+	auto& fontResource = game->getFontManager().requestResourceRef(fontName.c_str());
 
-	auto& textureResource = game->getTextureManager().requestResourcePtr(fontResource->strData1.c_str());
-	if (!textureResource)
-	{
-	    throw Exception("ERROR: Could not retrieve texture for font.");
-	}
+	auto& textureResource = game->getTextureManager().requestResourceRef(fontResource.strData1.c_str());
 
-	font->create(textureResource->resource, fontResource->intData1, fontResource->intData2);
-	font->setCharacterTable(fontResource->resource->getCharacterTable(), fontResource->resource->getTableCols(), fontResource->resource->getTableRows());
+	font->create(textureResource.resource, fontResource.intData1, fontResource.intData2);
+	font->setCharacterTable(fontResource.resource.getCharacterTable(), fontResource.resource.getTableCols(), fontResource.resource.getTableRows());
 
 	return font;
 }

@@ -25,7 +25,7 @@ namespace hiage
 		Game &                          _game;	//reference to the game instance
 		GameState&						_gameState;
 		Tilemap                         _tilemap;
-		Texture *                       _background;
+		const Texture*                  _background;
 
 		std::string                     _tilesetName;
 		std::string                     _backgroundName;

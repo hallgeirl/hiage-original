@@ -29,7 +29,7 @@ namespace hiage
 		std::vector<BoundingPolygon> _boundingPolygons;
 
 		//texture list
-		Tileset * _tileset;
+		const Tileset* _tileset;
 
 		void buildBoundingPolygons();
 
@@ -40,7 +40,7 @@ namespace hiage
 		~Tilemap();
 
 		void createMap(int width, int height, int layers, int tilesize);
-		void setTileset(Tileset * tileset);
+		void setTileset(const Tileset* tileset);
 		void destroy();
 
 		void render(Renderer &renderer, double camx, double camy, double zoom, double aspect, ObjectZ depth, int layer);
@@ -52,7 +52,7 @@ namespace hiage
 		unsigned int 	getTile(uint x, uint y, uint z) const;
 		const std::vector<uint32_t>& getTilemapRaw();
 		void 			setTile(uint x, uint y, uint ulayer, uint tile);
-		Tileset * 		getTileset() const { return _tileset; }
+		const Tileset*	getTileset() const { return _tileset; }
 		int 			getTileSize() const { return _tilesize; }
 		int 			getWidth();
 		int 			getHeight();

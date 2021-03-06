@@ -27,11 +27,11 @@ namespace hiage
 		//load a Targa (.TGA) bitmap and use it as a texture
 		void loadTexture(const char * path);
 
-		int getTextureID();
-		void select();
+		int getTextureID() const;
+		void select() const;
 
-		short getWidth() { return _width; }
-		short getHeight() { return _height; }
+		short getWidth() const { return _width; }
+		short getHeight() const { return _height; }
 
 	private:
 		unsigned int _textureID;

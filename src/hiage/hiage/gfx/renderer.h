@@ -90,18 +90,18 @@ namespace hiage
 			{
 			}
 
-			RenderObject(ObjectZ objz, Texture *tex) : texture(tex), zposition(objz), activeVertices(0)
+			RenderObject(ObjectZ objz, const Texture* tex) : texture(tex), zposition(objz), activeVertices(0)
 			{
 			}
 
-			void init(ObjectZ objz, Texture* tex) 
+			void init(ObjectZ objz, const Texture* tex) 
 			{ 
 				texture = tex; 
 				zposition = objz;
 				activeVertices = 0;
 			}
 
-			Texture *texture;				//pointer to the texture used to render this object
+			const Texture* texture;				//pointer to the texture used to render this object
 			ObjectZ zposition;	//
 			std::vector<Vertex> vertices;	//list of vertices (with texture coordinates) to render
 			unsigned int activeVertices = 0;
@@ -125,7 +125,7 @@ namespace hiage
 			\param zposition The z-position to render the object in. Must be one of the constants defined in the enum ObjectZ.
 			\param texture Pointer to a texture to use for rendering. Pass a null-pointer for no texture.
 		*/
-		void beginRender(ObjectZ zposition, Texture *texture);
+		void beginRender(ObjectZ zposition, const Texture* texture);
 		/*!
 			Add a vertex to render. A multiple of 4 vertices must be added.
 			\param x x-position of the vertex to be drawn.

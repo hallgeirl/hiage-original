@@ -281,7 +281,7 @@ void Tilemap::render(Renderer &renderer, double camx, double camy, double zoom, 
 //	tileset->updateTiles();
 }
 
-void Tilemap::setTileset(Tileset * tileset)
+void Tilemap::setTileset(const Tileset* tileset)
 {
 	if (!tileset)
 	{

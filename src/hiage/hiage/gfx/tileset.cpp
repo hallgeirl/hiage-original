@@ -41,7 +41,7 @@ Tileset::iterator Tileset::end()
 }
 
 //load a texture from a file to add to the tileset
-bool Tileset::addTile(Texture * texture, int block, int nextTile, int delay, string textureFile, int id)
+bool Tileset::addTile(const Texture* texture, int block, int nextTile, int delay, string textureFile, int id)
 {
     //if no ID is specified, find the first free slot
     if (id == -1)

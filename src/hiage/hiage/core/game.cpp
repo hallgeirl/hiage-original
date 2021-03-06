@@ -28,7 +28,7 @@ using namespace std::filesystem;
 
 Game::Game(double framerateLimit, const KeyBindings& keyBindings, const std::string& dataRoot) 
 	: gameTimer(true), lastFrameTime(0.05), framerateLimit(framerateLimit), dataRoot(dataRoot),
-	scriptVM(dataRoot), input(keyBindings), audio(dataRoot), textureManager(dataRoot), spriteManager(dataRoot), objectManager(dataRoot), tilesetManager(dataRoot), fontManager(dataRoot)
+	scriptVM(dataRoot), input(keyBindings), audio(dataRoot), textureManager(dataRoot), spriteManager(dataRoot), objectManager(dataRoot), tilesetManager(textureManager, dataRoot), fontManager(dataRoot)
 {
 	running = false;
 	timeFactor = 1;
@@ -342,14 +342,14 @@ void hiage::Game::printTextFixed(Font& font, const std::string& text, double x, 
 void Game::drawTexture(std::string texname, double x, double y)
 {
     Renderer & renderer = display.getRenderer();
-    Texture * tex = textureManager.requestResourcePtr(texname.c_str())->resource;
+    const Texture& tex = textureManager.requestResourceRef(texname.c_str()).resource;
 
-    renderer.beginRender(ObjectZ::CLOSEST, tex);
+    renderer.beginRender(ObjectZ::CLOSEST, &tex);
 
     renderer.addVertex(x, y, 0, 1);
-    renderer.addVertex(x + tex->getWidth(), y, 1, 1);
-    renderer.addVertex(x + tex->getWidth(), y + tex->getHeight(), 1, 0);
-    renderer.addVertex(x, y + tex->getHeight(), 0, 0);
+    renderer.addVertex(x + tex.getWidth(), y, 1, 1);
+    renderer.addVertex(x + tex.getWidth(), y + tex.getHeight(), 1, 0);
+    renderer.addVertex(x, y + tex.getHeight(), 0, 0);
 
     renderer.endRender();
 }

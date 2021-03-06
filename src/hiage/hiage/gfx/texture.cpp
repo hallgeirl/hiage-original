@@ -208,12 +208,12 @@ void Texture::loadTexture(const char * path)
 
 
 //select the texture for rendering
-void Texture::select()
+void Texture::select() const
 {
 	glBindTexture(GL_TEXTURE_2D, _textureID);
 }
 
-int Texture::getTextureID()
+int Texture::getTextureID() const
 {
 	return _textureID;
 }
