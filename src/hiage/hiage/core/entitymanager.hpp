@@ -31,7 +31,6 @@ namespace hiage
 	private:
 		flecs::world& _ecs;
 		std::vector<flecs::entity> _entities;
-		std::map<int, std::vector<std::shared_ptr<Component>>> _components; // Entity ID -> component list
 		const Game& _game;
 		const GameState& _gameState;
 

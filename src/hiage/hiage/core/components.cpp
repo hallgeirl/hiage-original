@@ -6,7 +6,7 @@ using namespace hiage;
 using namespace std;
 
 
-CollidableProperties hiage::CollidableComponent::createState(const ComponentProperties& properties)
+hiage::CollidableComponent::CollidableComponent(const ComponentProperties& properties)
 {
 	double x = 0, y = 0, width = 16, height = 16;
 
@@ -29,10 +29,7 @@ CollidableProperties hiage::CollidableComponent::createState(const ComponentProp
 	poly.addVertex((double)x + width, y);
 	poly.buildNormals();
 
-	CollidableProperties props;
-	props.boundingPolygon = poly;
-
-	return props;
+	boundingPolygon = poly;
 }
 
 hiage::PositionComponent::PositionComponent(const ComponentProperties& properties) : pos(0, 0)
@@ -45,80 +42,67 @@ hiage::PositionComponent::PositionComponent(const ComponentProperties& propertie
 		pos.y = get<double>(properties.at("y"));
 }
 
-
-State hiage::StateComponent::createState(const ComponentProperties& properties)
+hiage::VelocityComponent::VelocityComponent(const ComponentProperties& properties) : vel(0, 0)
 {
-	State state;
 
-	if (properties.contains("initial"))
-		state.stateName = get<std::string>(properties.at("initial"));
+	if (properties.find("x") != properties.end())
+		vel.x = get<double>(properties.at("x"));
 
-	return state;
+	if (properties.find("y") != properties.end())
+		vel.y = get<double>(properties.at("y"));
 }
 
 
-PhysicsProperties hiage::PhysicsComponent::createState(const ComponentProperties& properties)
+hiage::StateComponent::StateComponent(const ComponentProperties& properties)
 {
-	PhysicsProperties props;
-	props.airResistance = props.groundFriction = props.hasGravity = 0;
+	if (properties.contains("initial"))
+		stateName = get<std::string>(properties.at("initial"));
+}
 
+
+hiage::PhysicsComponent::PhysicsComponent(const ComponentProperties& properties)
+{
 	if (properties.contains("friction.air"))
-		props.airResistance = get<double>(properties.at("friction.air"));
+		airResistance = get<double>(properties.at("friction.air"));
 
 	if (properties.contains("friction.ground"))
-		props.groundFriction = get<double>(properties.at("friction.ground"));
+		groundFriction = get<double>(properties.at("friction.ground"));
 
 	if (properties.contains("gravity"))
-		props.hasGravity = get<double>(properties.at("gravity")) != 0;
-
-	return props;
+		hasGravity = get<double>(properties.at("gravity")) != 0;
 }
 
-SpeedLimitState hiage::SpeedLimitComponent::createState(const ComponentProperties& properties)
+hiage::SpeedLimitComponent::SpeedLimitComponent(const ComponentProperties& properties)
 {
-	SpeedLimitState state;
-	state.speedLimit = Vector2<double>(-1, -1);
+	speedLimit = Vector2<double>(-1, -1);
 
 	if (properties.contains("speedLimit.x"))
-		state.speedLimit.setX(get<double>(properties.at("speedLimit.x")));
+		speedLimit.setX(get<double>(properties.at("speedLimit.x")));
 	if (properties.contains("speedLimit.y"))
-		state.speedLimit.setY(get<double>(properties.at("speedLimit.y")));
-
-	return state;
+		speedLimit.setY(get<double>(properties.at("speedLimit.y")));
 }
 
-TrackingComponentProperties hiage::TrackingComponent::createState(const ComponentProperties& properties)
+hiage::TrackingComponent::TrackingComponent(const ComponentProperties& properties)
 {
-	TrackingComponentProperties props;
-	props.mode = "fixed";
+	mode = "fixed";
 	if (properties.contains("mode"))
-		props.mode = get<string>(properties.at("mode"));
-
-	return props;
+		mode = get<string>(properties.at("mode"));
 }
 
-ControllerProperties hiage::ControllerComponent::createState(const ComponentProperties& properties)
+hiage::ControllerComponent::ControllerComponent(const ComponentProperties& properties)
 {
-	ControllerProperties props;
-	props.controllerType = "none";
+	controllerType = "none";
 	if (properties.contains("controllerType"))
-		props.controllerType = get<string>(properties.at("controllerType"));
+		controllerType = get<string>(properties.at("controllerType"));
 	
-	if (props.controllerType == "constant" && properties.contains("constantActions"))
+	if (controllerType == "constant" && properties.contains("constantActions"))
 	{
-		props.constantActions = std::get<std::vector<std::string>>(properties.at("constantActions"));
+		constantActions = std::get<std::vector<std::string>>(properties.at("constantActions"));
 	}
-
-	return props;
 }
 
-CameraProperties hiage::CameraComponent::createState(const ComponentProperties& properties)
+hiage::CameraComponent::CameraComponent(const ComponentProperties& properties)
 {
-	CameraProperties props;
-	props.zoom = 400;
-
 	if (properties.contains("zoom"))
-		props.zoom = get<double>(properties.at("zoom"));
-
-	return props;
+		zoom = get<double>(properties.at("zoom"));
 }

@@ -54,7 +54,7 @@ MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0)
     /*
     Component factories
     */
-    _componentManager.addGenericComponentFactory<BlockingComponent>("blocking");
+    _componentManager.addTagComponentFactory<BlockingComponent>("blocking");
     _componentManager.addGenericComponentFactory<GroundMonsterControllerComponent>("groundmonstercontroller");
 
     _mainfont = game.createFont("SmallFont");

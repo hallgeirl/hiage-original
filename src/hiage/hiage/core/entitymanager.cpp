@@ -30,7 +30,6 @@ flecs::entity& EntityManager::createEntity(std::string objectName, const std::un
 	auto& objectManager = _game.getObjectManager();
 	auto& objectDescResource = objectManager.requestResourceRef(objectName);
 
-	vector<shared_ptr<Component>> componentList;
 	auto& componentFactory = _gameState.getComponentManager();
 	auto e = _ecs.entity();
 
@@ -119,7 +118,6 @@ public:
 void hiage::EntityManager::destroyAll()
 {
 	_entities.clear();
-	_components.clear();
 }
 
 

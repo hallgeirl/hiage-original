@@ -12,16 +12,16 @@ using namespace hiage;
 
 hiage::ComponentManager::ComponentManager(Game& game) : game(game)
 {
-	addGenericComponentFactory_2<PositionComponent>("physical");
+	addGenericComponentFactory<PositionComponent>("physical");
 	addGenericComponentFactory<VelocityComponent>("movable");
 	addGenericComponentFactory<PhysicsComponent>("physics");
 	addGenericComponentFactory<ControllerComponent>("controller");
-	addGenericComponentFactory<ControllerStateComponent>("controllerstate");
+	addTagComponentFactory<ControllerStateComponent>("controllerstate");
 	addGenericComponentFactory<CollidableComponent>("collidable");
 	addComponentFactory<RenderableComponentFactory, RenderableComponent, const Game&>("renderable", game);
 	addGenericComponentFactory<StateComponent>("state");
 	addGenericComponentFactory<TrackingComponent>("objecttracker");
-	addGenericComponentFactory<TrackableComponent>("trackable");
+	addTagComponentFactory<TrackableComponent>("trackable");
 	addGenericComponentFactory<CameraComponent>("camera");
 	addGenericComponentFactory<SpeedLimitComponent>("speedlimit");
 }

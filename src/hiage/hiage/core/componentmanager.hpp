@@ -31,15 +31,12 @@ namespace hiage
 		/// <returns></returns>
 		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentProperties& properties) const override
 		{
-			auto component = T();
-			auto state = component.createState(properties);
-			component.setData(state);
-			return entity.set<T>(component);
+			return entity.set<T>({ properties });
 		}
 	};
 
 	template<typename T>
-	class GenericComponentFactory_2 : public ComponentFactory
+	class TagComponentFactory : public ComponentFactory
 	{
 	public:
 		/// <summary>
@@ -49,7 +46,7 @@ namespace hiage
 		/// <returns></returns>
 		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentProperties& properties) const override
 		{
-			return entity.set<T>({ properties });
+			return entity.add<T>();
 		}
 	};
 
@@ -88,10 +85,11 @@ namespace hiage
 		}
 
 		template<typename TComponent, typename ...TRest>
-		void addGenericComponentFactory_2(const std::string& componentType, TRest... args)
+		void addTagComponentFactory(const std::string& componentType, TRest... args)
 		{
-			_componentFactories[componentType] = std::make_unique<GenericComponentFactory_2<TComponent>>(args...);
+			_componentFactories[componentType] = std::make_unique<TagComponentFactory<TComponent>>(args...);
 		}
+
 
 		const flecs::entity& createComponent(flecs::entity& entity, const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const;
 		const flecs::entity& createComponent(flecs::entity& entity, const std::string& type, const ComponentProperties& properties) const;

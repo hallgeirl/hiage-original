@@ -26,7 +26,7 @@ void MovementSystem::registerSystem(flecs::world& world)
 	world.system<PositionComponent, VelocityComponent>()
 		.each([](flecs::entity e, PositionComponent& position, VelocityComponent& velocity)
 		{
-			auto vel = velocity.getData();
+			auto vel = velocity.vel;
 			
 			position.pos.set(position.pos + vel * e.delta_time());
 		});
@@ -89,12 +89,12 @@ void ObjectRenderingSystem::registerSystem(flecs::world& world)
 				{
 					double velocity = 0;
 					if (vel != nullptr)
-						velocity = vel->getData().getX();
+						velocity = vel->vel.x;
 
 					bool hflip = false, vflip = false;
 					if (state != nullptr)
 					{
-						auto& metadata = state->getData().metadata;
+						auto& metadata = state->metadata;
 						if (metadata.contains("x-flip") && get<int>(metadata.at("x-flip")) != 0)
 							hflip = true;
 						if (metadata.contains("y-flip") && get<int>(metadata.at("y-flip")) != 0)
@@ -363,10 +363,9 @@ void hiage::CameraSystem::registerSystem(flecs::world& world)
 			
 			auto& display = _game.getDisplay();
 			auto& pos = physical.pos;
-			auto& camProps = camera.getData();
 
 			// TODO - Make boundaries configurable.
-			display.setZoom(camProps.zoom);
+			display.setZoom(camera.zoom);
 
 			auto zoom = display.getZoom();
 			auto aspect = display.getAspectRatio();

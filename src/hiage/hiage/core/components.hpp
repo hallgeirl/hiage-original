@@ -15,53 +15,10 @@
 namespace hiage 
 {
 	/*
-	Components
+		Components.
+		All component types must have a registered factory using ComponentManager::addGenericComponentFactory.
 	*/
 
-	class Component
-	{
-	protected:
-		Component() { }
-	public:
-		virtual ~Component() { }
-	};
-
-	/*
-	* A simple component containing a set of data. 
-	*/
-	template<typename T>
-	class GenericComponent : public Component
-	{
-	private:
-		T data;
-	public:
-		GenericComponent() : Component(), data() { }
-		GenericComponent(const GenericComponent<T>& c) : Component() { *this = c; }
-		GenericComponent(const T& data) : Component(), data(data) { }
-		
-		T& getData() { return data; }
-		void setData(const T& newValue) { data = newValue; }
-
-		// Override this to define how the component's state is created from properties.
-		virtual T createState(const ComponentProperties&) 
-		{ 
-			return T();
-		}
-	};
-
-	/*
-	* A templated component that can be used for defining components that doesn't own any data, i.e. "tag" type components.
-	*/
-	class DatalessComponent : public GenericComponent<int>
-	{
-	public:
-		DatalessComponent() : GenericComponent<int>() { }
-		DatalessComponent(const DatalessComponent& c) : GenericComponent() { *this = c; }
-	};
-
-	/*
-	* Concrete component definitions
-	*/
 	struct PositionComponent
 	{
 		Vec2d pos;
@@ -70,9 +27,12 @@ namespace hiage
 		PositionComponent(const ComponentProperties& properties);
 	};
 
-	class VelocityComponent : public GenericComponent<Vector2<double>>
+	struct VelocityComponent
 	{
-		using GenericComponent::GenericComponent;
+		Vec2d vel;
+
+		VelocityComponent() : vel(0, 0) { }
+		VelocityComponent(const ComponentProperties& properties);
 	};
 
 	struct RenderableComponent
@@ -80,32 +40,22 @@ namespace hiage
 		Sprite sprite;
 	};
 
-
-	struct PhysicsProperties
+	struct PhysicsComponent
 	{
 		double airResistance, groundFriction;
-		
 		bool hasGravity;
+
+		PhysicsComponent() : airResistance(0), groundFriction(0), hasGravity(false) {}
+		PhysicsComponent(const ComponentProperties& properties);
 	};
 
-	class PhysicsComponent : public GenericComponent<PhysicsProperties>
-	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual PhysicsProperties createState(const ComponentProperties& properties) override;
-	};
-
-	struct ControllerProperties
+	struct ControllerComponent
 	{
 		std::string controllerType;
 		std::vector<std::string> constantActions;
-
-	};
-	class ControllerComponent : public GenericComponent<ControllerProperties>
-	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual ControllerProperties createState(const ComponentProperties& properties) override;
+		
+		ControllerComponent() {}
+		ControllerComponent(const ComponentProperties& properties);
 	};
 
 	/*
@@ -123,75 +73,59 @@ namespace hiage
 		CollisionResult collisionResult;
 	};
 
-	struct CollidableProperties
+	struct CollidableComponent
 	{
 		BoundingPolygon boundingPolygon;
 		std::vector<ObjectObjectCollisionData> objectCollisions;
 		std::vector<ObjectTileCollisionData> tileCollisions;
+
+		CollidableComponent() {}
+		CollidableComponent(const ComponentProperties& properties);
 	};
 
-	class CollidableComponent : public GenericComponent<CollidableProperties>
+	struct TrackingComponent
 	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual CollidableProperties createState(const ComponentProperties& properties) override;
+		std::string mode = "fixed";
+
+		TrackingComponent() {}
+		TrackingComponent(const ComponentProperties& properties);
 	};
 
-	struct TrackingComponentProperties
+	struct CameraComponent
 	{
-		std::string mode;
-	};
-	class TrackingComponent : public GenericComponent<TrackingComponentProperties>
-	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual TrackingComponentProperties createState(const ComponentProperties& properties) override;
-	};
-
-	class TrackableComponent : public DatalessComponent
-	{
-		using DatalessComponent::DatalessComponent;
-	};
-
-	struct CameraProperties
-	{
-		double zoom;
-	};
-	class CameraComponent : public GenericComponent<CameraProperties>
-	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual CameraProperties createState(const ComponentProperties& properties) override;
+		double zoom = 400;
+		CameraComponent() : zoom(400) {}
+		CameraComponent(const ComponentProperties& properties);
 	};
 
 	// Used for "object state" when it comes to animations (e.g. "on ground", "standing", "walking", "jumping", "falling") and allowed actions (e.g. jumping is allowed when standing, etc.)
 	// The actual rules are defined by the system that handles this component. This is just the container of the state name and metadata attached to the state.
-	struct State
+	struct StateComponent
 	{
 		std::string stateName;
 		std::unordered_map<std::string, std::variant<std::string, int, double>> metadata;
-	};
-	class StateComponent : public GenericComponent<State>
-	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual State createState(const ComponentProperties& properties) override;
+
+		StateComponent() {}
+		StateComponent(const ComponentProperties& properties);
 	};
 
-	class ControllerStateComponent : public GenericComponent<std::unordered_set<std::string>>
+	struct ControllerStateComponent
 	{
-	public:
-		using GenericComponent::GenericComponent;
+		std::unordered_set<std::string> controllerState;
 	};
 
-	struct SpeedLimitState
+	struct SpeedLimitComponent
 	{
 		Vec2d speedLimit;
+
+		SpeedLimitComponent() {}
+		SpeedLimitComponent(const ComponentProperties& properties);
 	};
-	class SpeedLimitComponent : public GenericComponent<SpeedLimitState>
+
+	/*
+		Tags. These are basically components without any data. 
+	*/
+	struct TrackableComponent
 	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual SpeedLimitState createState(const ComponentProperties& properties) override;
 	};
 }
