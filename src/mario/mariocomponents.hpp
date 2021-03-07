@@ -2,17 +2,17 @@
 
 #include <hiage/core/components.hpp>
 
-class StompableComponent : public hiage::DatalessComponent<1000>
+class StompableComponent : public hiage::DatalessComponent
 {
 	using DatalessComponent::DatalessComponent;
 };
 
-class StomperComponent : public hiage::DatalessComponent<1001>
+class StomperComponent : public hiage::DatalessComponent
 {
 	using DatalessComponent::DatalessComponent;
 };
 
-class BlockingComponent : public hiage::DatalessComponent<1002>
+class BlockingComponent : public hiage::DatalessComponent
 {
 	using DatalessComponent::DatalessComponent;
 };
@@ -21,7 +21,7 @@ struct GroundMonsterControllerProperties
 {
 	std::string direction;
 };
-class GroundMonsterControllerComponent : public hiage::GenericComponent<GroundMonsterControllerProperties, 1003>
+class GroundMonsterControllerComponent : public hiage::GenericComponent<GroundMonsterControllerProperties>
 {
 public:
 	using GenericComponent::GenericComponent;

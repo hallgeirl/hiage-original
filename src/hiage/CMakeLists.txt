@@ -7,6 +7,7 @@ add_library(hiage STATIC
 	"hiage/core/audio.cpp"
 	"hiage/core/boundingpolygon.cpp" 
 	"hiage/core/collisions.cpp" 
+	"hiage/core/componentmanager.cpp" 
 	"hiage/core/components.cpp" 
 	"hiage/core/entity.cpp"
 	"hiage/core/entitymanager.cpp"

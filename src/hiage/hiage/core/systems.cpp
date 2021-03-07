@@ -27,8 +27,8 @@ void MovementSystem::registerSystem(flecs::world& world)
 		.each([](flecs::entity e, PositionComponent& position, VelocityComponent& velocity)
 		{
 			auto vel = velocity.getData();
-			auto pos = position.getData();
-			position.getData().set(pos + vel * e.delta_time());
+			
+			position.pos.set(position.pos + vel * e.delta_time());
 		});
 	
 
@@ -78,8 +78,8 @@ void ObjectRenderingSystem::registerSystem(flecs::world& world)
 			double viewTop = camY + zoom;
 			double viewBottom = camY - zoom;
 
-			auto& pos = phyiscal.getData();
-			auto& sprite = renderable.getData();
+			auto& pos = phyiscal.pos;
+			auto& sprite = renderable.sprite;
 			
 			//check if the object is inside the viewport
 			if ((pos.getX() + sprite.getWidth() >= viewLeft) && (pos.getX() <= viewRight))
@@ -101,7 +101,7 @@ void ObjectRenderingSystem::registerSystem(flecs::world& world)
 					}
 
 					// Render sprite
-					sprite.render(renderer, pos, ObjectZ::MIDDLE, 0.f, hflip, vflip);
+					sprite.render(_game.getTextureManager(), renderer, pos, ObjectZ::MIDDLE, 0.f, hflip, vflip);
 
 					// Update animations
 					sprite.updateAnimation(e.delta_time(), velocity);
@@ -361,7 +361,7 @@ void hiage::CameraSystem::registerSystem(flecs::world& world)
 		{
 			
 			auto& display = _game.getDisplay();
-			auto& pos = physical.getData();
+			auto& pos = physical.pos;
 			auto& camProps = camera.getData();
 
 			// TODO - Make boundaries configurable.
@@ -373,6 +373,6 @@ void hiage::CameraSystem::registerSystem(flecs::world& world)
 			auto bottomBoundary = zoom;
 
 
-			display.setCamPosition(std::max(pos.getX(), leftBoundary), std::max(pos.getY(), bottomBoundary));
+			display.setCamPosition(std::max(pos.x, leftBoundary), std::max(pos.y, bottomBoundary));
 	});
 }

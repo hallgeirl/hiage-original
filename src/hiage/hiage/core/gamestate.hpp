@@ -3,7 +3,7 @@
 #include "typedefs.h"
 #include "entitymanager.hpp"
 #include "systems.hpp"
-#include "components.hpp"
+#include "componentmanager.hpp"
 #include "events.hpp"
 
 #include <flecs.h>

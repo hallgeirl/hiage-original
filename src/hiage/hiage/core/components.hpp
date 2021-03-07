@@ -14,35 +14,30 @@
 
 namespace hiage 
 {
-	class Game;
-
 	/*
 	Components
 	*/
 
 	class Component
 	{
-	private:
-		int typeId; // Component type
 	protected:
-		Component(int typeId) : typeId(typeId) { }
+		Component() { }
 	public:
 		virtual ~Component() { }
-		int getTypeId() { return typeId; }
 	};
 
 	/*
 	* A simple component containing a set of data. 
 	*/
-	template<typename T, int TypeID>
+	template<typename T>
 	class GenericComponent : public Component
 	{
 	private:
 		T data;
 	public:
-		GenericComponent() : Component(TypeID), data() { }
-		GenericComponent(const GenericComponent<T, TypeID>& c) : Component(TypeID) { *this = c; }
-		GenericComponent(const T& data) : Component(TypeID), data(data) { }
+		GenericComponent() : Component(), data() { }
+		GenericComponent(const GenericComponent<T>& c) : Component() { *this = c; }
+		GenericComponent(const T& data) : Component(), data(data) { }
 		
 		T& getData() { return data; }
 		void setData(const T& newValue) { data = newValue; }
@@ -52,39 +47,37 @@ namespace hiage
 		{ 
 			return T();
 		}
-
-		static const int TYPEID = TypeID;
 	};
 
 	/*
 	* A templated component that can be used for defining components that doesn't own any data, i.e. "tag" type components.
 	*/
-	template<int TypeID>
-	class DatalessComponent : public GenericComponent<int, TypeID>
+	class DatalessComponent : public GenericComponent<int>
 	{
 	public:
-		DatalessComponent() : GenericComponent<int, TypeID>() { }
-		DatalessComponent(const DatalessComponent<TypeID>& c) : GenericComponent() { *this = c; }
+		DatalessComponent() : GenericComponent<int>() { }
+		DatalessComponent(const DatalessComponent& c) : GenericComponent() { *this = c; }
 	};
 
 	/*
 	* Concrete component definitions
 	*/
-	class PositionComponent : public GenericComponent<Vector2<double>, 1>
+	struct PositionComponent
 	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual Vector2<double> createState(const ComponentProperties& properties) override;
+		Vec2d pos;
+
+		PositionComponent() : pos(0, 0) { }
+		PositionComponent(const ComponentProperties& properties);
 	};
 
-	class VelocityComponent : public GenericComponent<Vector2<double>, 2>
+	class VelocityComponent : public GenericComponent<Vector2<double>>
 	{
 		using GenericComponent::GenericComponent;
 	};
 
-	class RenderableComponent : public GenericComponent<Sprite, 3>
+	struct RenderableComponent
 	{
-		using GenericComponent::GenericComponent;
+		Sprite sprite;
 	};
 
 
@@ -95,7 +88,7 @@ namespace hiage
 		bool hasGravity;
 	};
 
-	class PhysicsComponent : public GenericComponent<PhysicsProperties, 4>
+	class PhysicsComponent : public GenericComponent<PhysicsProperties>
 	{
 	public:
 		using GenericComponent::GenericComponent;
@@ -108,7 +101,7 @@ namespace hiage
 		std::vector<std::string> constantActions;
 
 	};
-	class ControllerComponent : public GenericComponent<ControllerProperties, 5>
+	class ControllerComponent : public GenericComponent<ControllerProperties>
 	{
 	public:
 		using GenericComponent::GenericComponent;
@@ -137,7 +130,7 @@ namespace hiage
 		std::vector<ObjectTileCollisionData> tileCollisions;
 	};
 
-	class CollidableComponent : public GenericComponent<CollidableProperties, 7>
+	class CollidableComponent : public GenericComponent<CollidableProperties>
 	{
 	public:
 		using GenericComponent::GenericComponent;
@@ -148,14 +141,14 @@ namespace hiage
 	{
 		std::string mode;
 	};
-	class TrackingComponent : public GenericComponent<TrackingComponentProperties, 8>
+	class TrackingComponent : public GenericComponent<TrackingComponentProperties>
 	{
 	public:
 		using GenericComponent::GenericComponent;
 		virtual TrackingComponentProperties createState(const ComponentProperties& properties) override;
 	};
 
-	class TrackableComponent : public DatalessComponent<9>
+	class TrackableComponent : public DatalessComponent
 	{
 		using DatalessComponent::DatalessComponent;
 	};
@@ -164,7 +157,7 @@ namespace hiage
 	{
 		double zoom;
 	};
-	class CameraComponent : public GenericComponent<CameraProperties, 10>
+	class CameraComponent : public GenericComponent<CameraProperties>
 	{
 	public:
 		using GenericComponent::GenericComponent;
@@ -178,14 +171,14 @@ namespace hiage
 		std::string stateName;
 		std::unordered_map<std::string, std::variant<std::string, int, double>> metadata;
 	};
-	class StateComponent : public GenericComponent<State, 11>
+	class StateComponent : public GenericComponent<State>
 	{
 	public:
 		using GenericComponent::GenericComponent;
 		virtual State createState(const ComponentProperties& properties) override;
 	};
 
-	class ControllerStateComponent : public GenericComponent<std::unordered_set<std::string>, 12>
+	class ControllerStateComponent : public GenericComponent<std::unordered_set<std::string>>
 	{
 	public:
 		using GenericComponent::GenericComponent;
@@ -195,99 +188,10 @@ namespace hiage
 	{
 		Vec2d speedLimit;
 	};
-	class SpeedLimitComponent : public GenericComponent<SpeedLimitState, 13>
+	class SpeedLimitComponent : public GenericComponent<SpeedLimitState>
 	{
 	public:
 		using GenericComponent::GenericComponent;
 		virtual SpeedLimitState createState(const ComponentProperties& properties) override;
-	};
-	/*
-	ComponentManager
-	*/
-
-	class ComponentFactory
-	{
-	public:
-		virtual ~ComponentFactory() {};
-		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const = 0;
-		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentProperties& properties) const = 0;
-	};
-
-	template<typename T>
-	class GenericComponentFactory : public ComponentFactory
-	{
-	public:
-		/// <summary>
-		/// Creates the component using a component descriptor (basically a "blueprint" from the object definition), 
-		/// as well as runtime properties, that are typically set at runtime when creating the object, like position etc.
-		/// </summary>
-		/// <param name="componentDescriptor"></param>
-		/// <param name="runtimeProperties"></param>
-		/// <returns></returns>
-		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override
-		{
-			ComponentProperties mergedProperties;
-			mergedProperties.insert(runtimeProperties.begin(), runtimeProperties.end());
-			mergedProperties.insert(componentDescriptor.properties.begin(), componentDescriptor.properties.end());
-			entity.set<T>(T());
-
-			auto component = T();
-			auto state = component.createState(mergedProperties);
-			component.setData(state);
-
-			return entity.set<T>(component);
-		}
-
-		/// <summary>
-		/// Creates the new component from properties only. Useful for adding components to an object that isn't part of the object definition.
-		/// </summary>
-		/// <param name="properties"></param>
-		/// <returns></returns>
-		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentProperties& properties) const override
-		{
-			auto component = T();
-			auto state = component.createState(properties);
-			component.setData(state);
-			return entity.set<T>(component);
-		}
-	};
-
-	class RenderableComponentFactory : public ComponentFactory
-	{
-	private:
-		const Game& game;
-	public:
-		RenderableComponentFactory(const Game& game);
-		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
-		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentProperties& runtimeProperties) const override;
-	};
-
-	class ComponentManager
-	{
-	private: 
-		std::unordered_map<std::string, std::unique_ptr<ComponentFactory>> _componentFactories;
-		std::unordered_map<std::string, int> _componentNameToTypeId;
-		Game& game;
-	public:
-		ComponentManager(Game& game);
-		~ComponentManager();
-
-		template<typename T, typename TComponent, typename ...TRest>
-		void addComponentFactory(const std::string& componentType, TRest... args)
-		{
-			_componentFactories[componentType] = std::make_unique<T>(args...);
-			_componentNameToTypeId[componentType] = TComponent::TYPEID;
-		}
-
-		template<typename TComponent, typename ...TRest>
-		void addGenericComponentFactory(const std::string& componentType, TRest... args)
-		{
-			_componentFactories[componentType] = std::make_unique<GenericComponentFactory<TComponent>>(args...);
-			_componentNameToTypeId[componentType] = TComponent::TYPEID;
-		}
-
-		const flecs::entity& createComponent(flecs::entity& entity, const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const;
-		const flecs::entity& createComponent(flecs::entity& entity, const std::string& type, const ComponentProperties& properties) const;
-		int getTypeIdForComponentType(const std::string& componentType) const;
 	};
 }
