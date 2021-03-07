@@ -23,7 +23,7 @@ MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0)
     auto& sysFactory = getSystemsFactory();
 
     // Movement and controllers -- updates velocity
-    sysFactory.registerSystem<ControllerSystem>();
+    sysFactory.registerSystem<ControllerSystem, Game&>(game);
     sysFactory.registerSystem<CharacterControllerSystem>();
     sysFactory.registerSystem<PhysicsSystem>(800);
 

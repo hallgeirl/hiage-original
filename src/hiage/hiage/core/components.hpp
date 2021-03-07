@@ -63,13 +63,13 @@ namespace hiage
 	*/
 	struct ObjectTileCollisionData
 	{
-		int entityId;
+		uint64_t entityId;
 		CollisionResult collisionResult;
 	};
 	
 	struct ObjectObjectCollisionData
 	{
-		int entityId1, entityId2;
+		uint64_t entityId1, entityId2;
 		CollisionResult collisionResult;
 	};
 

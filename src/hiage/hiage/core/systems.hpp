@@ -52,8 +52,10 @@ namespace hiage
 
 	class ControllerSystem : public System
 	{
+	private:
+		Game& _game;
 	public:
-		ControllerSystem();
+		ControllerSystem(Game& game);
 		virtual void registerSystem(flecs::world& world) override;
 	};
 
@@ -138,7 +140,7 @@ namespace hiage
 		flecs::world& _ecs;
 		std::vector<std::unique_ptr<System>> _systems; // We need to hold on to the instances of the registered systems because they may have references to objects like e.g. Game and GameState.
 	public:
-		SystemsManager(flecs::world&);
+		SystemsManager(flecs::world& world) : _ecs(world) { }
 		
 		template<typename T, typename ...TRest>
 		void registerSystem(TRest... args)

@@ -117,55 +117,51 @@ hiage::PhysicsSystem::PhysicsSystem(double gravity) : System(), _gravity(gravity
 
 void hiage::PhysicsSystem::registerSystem(flecs::world& world)
 {
-	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicsComponent, VelocityComponent>();
-
-	for (auto& t : componentTuples)
-	{
-		auto& physics = std::get<1>(t);
-		auto& movement = std::get<2>(t);
-		auto& vel = movement->getData();
-
-		auto& physicsProps = physics->getData();
-		if (physicsProps.hasGravity)
-			vel.add(Vector2<double>(0, -1) * _gravity * frameTime);
-		
-		if (physicsProps.airResistance > 0 && vel.length() > 0)
-			vel.subtract(vel.normalized() * physicsProps.airResistance);
-	}*/
+	world.system<PhysicsComponent, VelocityComponent>()
+		.each([&](flecs::entity e, PhysicsComponent& physics, VelocityComponent& velocity)
+		{
+			if (physics.hasGravity)
+				velocity.vel.add(Vector2<double>(0, -1) * _gravity * e.delta_time());
+			
+			if (physics.airResistance > 0 && velocity.vel.length() > 0)
+				velocity.vel.subtract(velocity.vel.normalized() * physics.airResistance);
+		});
 }
 
 
-hiage::ControllerSystem::ControllerSystem() : System()
+hiage::ControllerSystem::ControllerSystem(Game& game) : System(), _game(game)
 {
 }
 
 void hiage::ControllerSystem::registerSystem(flecs::world& world)
 {
-	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<ControllerComponent, ControllerStateComponent>();
-	for (auto& t : componentTuples)
-	{
-		auto& controllerData = std::get<1>(t)->getData();
-		auto& controllerState = std::get<2>(t);
-
-		if (controllerData.controllerType == "human")
+	world.system<ControllerComponent, ControllerStateComponent>()
+		.each([&](flecs::entity e, ControllerComponent& controller, ControllerStateComponent& controllerState)
 		{
-			auto& inputManager = game.getInputManager();
-			auto actions = inputManager.getControllerActions();
-			controllerState->setData(actions);
-		}
-		else if (controllerData.controllerType == "constant")
-		{
-			std::unordered_set<std::string> actions;
-			for (auto& a : controllerData.constantActions)
-				actions.insert(a);
+			if (controller.controllerType == "human")
+			{
+				auto& inputManager = _game.getInputManager();
+				auto actions = inputManager.getControllerActions();
+				controllerState.controllerState = actions;
+			}
+			else if (controller.controllerType == "constant")
+			{
+				std::unordered_set<std::string> actions;
+				for (auto& a : controller.constantActions)
+					actions.insert(a);
 
-			controllerState->setData(actions);
-		}
-	}*/
+				controllerState.controllerState = actions;
+			}
+		});
 }
 
 void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& world)
 {
+	world.system<CollidableComponent, PositionComponent, VelocityComponent>()
+		.each([&](flecs::entity e, CollidableComponent& collidable, PositionComponent& position, VelocityComponent& velocity)
+		{
+			
+		});
 	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, PositionComponent, VelocityComponent>();
 
 	// Clear previous collisions
@@ -236,91 +232,90 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 }
 
 
-SystemsManager::SystemsManager(flecs::world& ecs) : _ecs(ecs)
-{
-}
 
 static int frameCounter = 0;
 void hiage::ObjectTileCollisionDetectionSystem::registerSystem(flecs::world& world)
 {
-	/*frameCounter++;
-	if (!tilemap.isLoaded())
-		return;
+	frameCounter++;
+	//if (!tilemap.isLoaded())
+		//return;
 
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>();
-
-	for (auto& c : componentTuples)
-	{
-		const auto entityId = get<0>(c);
-		const auto& pos = get<1>(c)->getData();
-		const auto& vel = get<2>(c)->getData();
-		auto& col = get<3>(c)->getData();
-		col.tileCollisions.clear();
-
-		Vector2<double> dvelocity = vel * frameTime;
-		Vector2<double> currentPosition = pos;
-
-		//get the collision box of the object
-		BoundingPolygon objectPolygon = get<3>(c)->getData().boundingPolygon;
-		objectPolygon.translate(currentPosition);
-
-		// Get bounding polygons for tiles within the sprite's overlap
-		vector<BoundingPolygon> tilePolygons = tilemap.getBoundingPolygonsInRect(objectPolygon.getLeft() + vel.getX() * frameTime, objectPolygon.getTop() + vel.getY() * frameTime, objectPolygon.getRight() + vel.getX() * frameTime, objectPolygon.getBottom() + vel.getY() * frameTime);
-		for (int axis = 0; axis <= 1; axis++)
+	world.system<PositionComponent, VelocityComponent, CollidableComponent>()
+		.each([&](flecs::entity e, PositionComponent& position, VelocityComponent& velocity, CollidableComponent& collidable)
 		{
-			auto result = collisionTester.testCollision(objectPolygon, vel * frameTime, tilePolygons, axis);
-			if (result.willIntersect || result.isIntersecting)
+			const auto& pos = position.pos;
+			const auto& vel = velocity.vel;
+			
+			collidable.tileCollisions.clear();
+
+			Vector2<double> dvelocity = vel * e.delta_time();
+			Vector2<double> currentPosition = pos;
+
+			//get the collision box of the object
+			BoundingPolygon objectPolygon = collidable.boundingPolygon;
+			objectPolygon.translate(currentPosition);
+
+			// Get bounding polygons for tiles within the sprite's overlap
+			vector<BoundingPolygon> tilePolygons = tilemap.getBoundingPolygonsInRect(objectPolygon.getLeft() + vel.getX() * e.delta_time(), 
+																					 objectPolygon.getTop() + vel.getY() * e.delta_time(), 
+																					 objectPolygon.getRight() + vel.getX() * e.delta_time(), 
+																					 objectPolygon.getBottom() + vel.getY() * e.delta_time());
+			for (int axis = 0; axis <= 1; axis++)
 			{
-				col.tileCollisions.push_back(ObjectTileCollisionData{
-					.entityId = entityId,
-					.collisionResult = result
-					});
+				auto result = collisionTester.testCollision(objectPolygon, vel * e.delta_time(), tilePolygons, axis);
+				if (result.willIntersect || result.isIntersecting)
+				{
+					collidable.tileCollisions.push_back(ObjectTileCollisionData{
+						.entityId = e.id(),
+						.collisionResult = result
+						});
+				}
 			}
-		}
-	}*/
+		});
 }
 
 void hiage::BlockingTileSystem::registerSystem(flecs::world& world)
 {
-	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>();
-	for (auto& c : componentTuples)
-	{
-		auto& pos = std::get<1>(c)->getData();
-		auto& vel = std::get<2>(c)->getData();
-		auto& col = std::get<3>(c)->getData();
-		
-		for (auto& tc : col.tileCollisions)
+	world.system<PositionComponent, VelocityComponent, CollidableComponent>()
+		.each([&](flecs::entity e, PositionComponent& position, VelocityComponent& velocity, CollidableComponent& collidable)
 		{
-			auto& collisionResult = tc.collisionResult;
+			
+			auto& pos = position.pos;
+			auto& vel = velocity.vel;
+			auto& col = collidable;
+			
+			for (auto& tc : col.tileCollisions)
+			{
+				auto& collisionResult = tc.collisionResult;
 
-			// collisionTimeFactor is the fraction of the velocity that should be applied to move the object to the position of the collision
-			auto collisionTimeFactor = frameTime * collisionResult.collisionTime;
-			// Calculate the per-axis velocity
-			Vec2d deltaPos(vel.getX() * collisionTimeFactor * collisionResult.axis.getX(), vel.getY() * collisionTimeFactor * collisionResult.axis.getY());
-			pos.add(deltaPos - vel * 1.0e-6);
+				// collisionTimeFactor is the fraction of the velocity that should be applied to move the object to the position of the collision
+				auto collisionTimeFactor = e.delta_time() * collisionResult.collisionTime;
+				// Calculate the per-axis velocity
+				Vec2d deltaPos(vel.getX() * collisionTimeFactor * collisionResult.axis.getX(), vel.getY() * collisionTimeFactor * collisionResult.axis.getY());
+				pos.add(deltaPos - vel * 1.0e-6);
 
-			// Adjust the velocity according to the hit normal
-			vel.set(vel - (collisionResult.hitNormal * (1.0 + 0) * vel.dot(collisionResult.hitNormal)));
-		}
-	}*/
+				// Adjust the velocity according to the hit normal
+				vel.set(vel - (collisionResult.hitNormal * (1.0 + 0) * vel.dot(collisionResult.hitNormal)));
+			}
+		});
 }
 
 void hiage::AnimationSystem::registerSystem(flecs::world& world)
 {
-	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<RenderableComponent, StateComponent>();
-
-	for (auto& t : componentTuples)
-	{
-		auto& renderable = std::get<1>(t);
-		auto& state = std::get<2>(t)->getData();
-		auto& sprite = renderable->getData();
-
-		sprite.playAnimation(state.stateName, false);
-	}*/
+	world.system<RenderableComponent, StateComponent>()
+		.each([&](flecs::entity e, RenderableComponent& renderable, StateComponent& state)
+		{
+			renderable.sprite.playAnimation(state.stateName, false);
+		});
 }
 
 void hiage::ObjectTrackingSystem::registerSystem(flecs::world& world)
 {
+	world.system<PositionComponent, VelocityComponent, TrackableComponent>()
+		.each([&](flecs::entity e, PositionComponent& position, VelocityComponent& velocity, TrackableComponent& trackable)
+		{
+			
+		});
 	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, TrackableComponent>();
 
 	if (componentTuples.size() == 0)
@@ -358,7 +353,7 @@ void hiage::ObjectTrackingSystem::registerSystem(flecs::world& world)
 void hiage::CameraSystem::registerSystem(flecs::world& world)
 {
 	world.system<PositionComponent, CameraComponent>()
-		.each([&](flecs::entity e, PositionComponent& physical, CameraComponent& camera)
+		.each([&](flecs::entity, PositionComponent& physical, CameraComponent& camera)
 		{
 			
 			auto& display = _game.getDisplay();
