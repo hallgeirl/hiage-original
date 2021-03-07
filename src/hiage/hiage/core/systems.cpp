@@ -68,6 +68,7 @@ void ObjectRenderingSystem::registerSystem(flecs::world& world)
 		{
 			Display& disp = _game.getDisplay();
 			Renderer& renderer = disp.getRenderer();
+			auto& spriteController = _game.getSpriteController();
 			double aspect = disp.getAspectRatio();
 			double zoom = disp.getZoom();
 			double camX = disp.getCamX();
@@ -101,7 +102,7 @@ void ObjectRenderingSystem::registerSystem(flecs::world& world)
 					}
 
 					// Render sprite
-					sprite.render(_game.getTextureManager(), renderer, pos, ObjectZ::MIDDLE, 0.f, hflip, vflip);
+					spriteController.render(sprite, pos, ObjectZ::MIDDLE, 0.f, hflip, vflip);
 
 					// Update animations
 					sprite.updateAnimation(e.delta_time(), velocity);

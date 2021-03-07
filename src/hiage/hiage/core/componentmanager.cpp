@@ -66,7 +66,6 @@ const flecs::entity& hiage::RenderableComponentFactory::createComponent(flecs::e
 	const auto& spriteName = get<std::string>(properties.at(std::string("sprite")));
 
 	auto sprite = game.getSpriteManager().requestResourceCopy(spriteName);
-	//auto& texture = game.getTextureManager().requestResourceRef(sprite.strData1.c_str());
 	sprite.resource.create(sprite.strData1, sprite.intData1, sprite.intData2);
 
 	return entity.set<RenderableComponent>({ sprite.resource });

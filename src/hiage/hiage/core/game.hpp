@@ -14,6 +14,7 @@
 //engine headers
 #include "../gfx/display.h"
 #include "../gfx/particles.h"
+#include "../gfx/spritecontroller.hpp"
 
 #include "inputmanager.hpp"
 #include "resourcemanager.hpp"
@@ -22,6 +23,7 @@
 #include "script_lua.h"
 #include "../util/timer.h"
 #include "gamestate.hpp"
+
 
 namespace hiage
 {
@@ -50,6 +52,7 @@ namespace hiage
 		TilesetManager	tilesetManager;	//!< Stores the loaded tilesets.
 		FontManager     fontManager;	//!< Stores all loaded fonts.
 		ObjectManager	objectManager;  //!< Stores all loaded objects.
+		SpriteController spriteController;
 		Timer           gameTimer;       //!< The elapsed time since the game class was initialized.
 		bool running;
 
@@ -149,5 +152,7 @@ namespace hiage
 		FontManager &       getFontManager();
 		//! Returns a reference to the object list.
 		const ObjectManager & getObjectManager() const;
+
+		const SpriteController& getSpriteController() const;
 	};
 }

@@ -25,6 +25,7 @@ add_library(hiage STATIC
 	"hiage/gfx/particles.cpp"
 	"hiage/gfx/renderer.cpp"
 	"hiage/gfx/sprite.cpp"
+	"hiage/gfx/spritecontroller.cpp"
 	"hiage/gfx/texture.cpp"
 	"hiage/gfx/tilemap.cpp"
 	"hiage/gfx/tileset.cpp"

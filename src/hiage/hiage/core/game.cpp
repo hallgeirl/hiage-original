@@ -28,7 +28,7 @@ using namespace std::filesystem;
 
 Game::Game(double framerateLimit, const KeyBindings& keyBindings, const std::string& dataRoot) 
 	: gameTimer(true), lastFrameTime(0.05), framerateLimit(framerateLimit), dataRoot(dataRoot),
-	scriptVM(dataRoot), input(keyBindings), audio(dataRoot), textureManager(dataRoot), spriteManager(dataRoot), objectManager(dataRoot), tilesetManager(textureManager, dataRoot), fontManager(dataRoot)
+	scriptVM(dataRoot), input(keyBindings), audio(dataRoot), textureManager(dataRoot), spriteManager(dataRoot), objectManager(dataRoot), tilesetManager(textureManager, dataRoot), fontManager(dataRoot), spriteController(*this)
 {
 	running = false;
 	timeFactor = 1;
@@ -391,6 +391,11 @@ FontManager & Game::getFontManager()
 const ObjectManager& hiage::Game::getObjectManager() const
 {
 	return objectManager;
+}
+
+const SpriteController& hiage::Game::getSpriteController() const
+{
+	return spriteController;
 }
 
 std::string hiage::Game::getResourcePath(const std::string& relativePath) const
