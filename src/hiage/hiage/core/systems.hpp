@@ -1,11 +1,13 @@
 #pragma once
 
 #include "collisions.hpp"
+#include "componentmanager.hpp"
 
 #include <flecs.h>
 #include <string>
 #include <memory>
 #include <vector>
+#include <tuple>
 
 namespace hiage
 {
@@ -110,6 +112,9 @@ namespace hiage
 	// Used for e.g. camera tracking
 	class ObjectTrackingSystem : public System
 	{
+	private:
+		std::vector<std::tuple<PositionComponent, VelocityComponent>> _trackingTargets;
+
 	public:
 		ObjectTrackingSystem() : System() {}
 		virtual void registerSystem(flecs::world& world) override;

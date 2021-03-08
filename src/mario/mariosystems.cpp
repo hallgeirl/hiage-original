@@ -95,52 +95,49 @@ CharacterControllerSystem::CharacterControllerSystem() : System()
 void CharacterControllerSystem::registerSystem(flecs::world& world)
 {
 	
-	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, ControllerStateComponent, StateComponent, SpeedLimitComponent>();
-
-	double magnitude = 800. * frameTime;
-
-	for (auto& c : componentTuples)
-	{
-		auto& vel = get<1>(c)->getData();
-		auto& controllerState = get<2>(c)->getData();
-		auto& state = get<3>(c)->getData();
-		auto& speedlimit = get<4>(c)->getData();
-
-		speedlimit.speedLimit.setX(110);
-
-		// apply slowdown
-		if (abs(vel.getX()) > 400 * frameTime && state.metadata.contains("onGround"))
+	world.system<VelocityComponent, ControllerStateComponent, StateComponent, SpeedLimitComponent>()
+		.each([](flecs::entity e, VelocityComponent& velocity, ControllerStateComponent& controllerStateComponent, StateComponent& state, SpeedLimitComponent& speedlimit)
 		{
-			if (vel.getX() > 0)
-				vel.add(Vector2<double>(-400. * frameTime, 0));
-			if (vel.getX() < 0)
-				vel.add(Vector2<double>(400. * frameTime, 0));
-		}
-		else
-		{
-			vel.setX(0);
-		}
+			double magnitude = 8000. * e.delta_time();
 
-		if (controllerState.contains("run"))
-			speedlimit.speedLimit.setX(220);
+			auto& vel = velocity.vel;
+			auto& controllerState = controllerStateComponent.controllerState;
+			speedlimit.speedLimit.setX(110);
 
-		if (controllerState.contains("goRight") && abs(vel.getX()) < speedlimit.speedLimit.getX())
-			vel.add(Vector2<double>(1, 0) * magnitude);
-		else if (controllerState.contains("goLeft") && abs(vel.getX()) < speedlimit.speedLimit.getX())
-			vel.add(Vector2<double>(-1, 0) * magnitude);
-		else if (controllerState.contains("crouch"))
-			vel.add(Vector2<double>(0, -1) * magnitude);
-		else if (controllerState.contains("lookUp"))
-			vel.add(Vector2<double>(0, 1) * magnitude);
+			// apply slowdown
+			if (abs(vel.getX()) > 400 * e.delta_time() && state.metadata.contains("onGround"))
+			{
+				if (vel.getX() > 0)
+					vel.add(Vector2<double>(-400. * e.delta_time(), 0));
+				if (vel.getX() < 0)
+					vel.add(Vector2<double>(400. * e.delta_time(), 0));
+			}
+			else
+			{
+				vel.setX(0);
+			}
 
-		if (controllerState.contains("jump") && state.metadata.contains("onGround") && get<int>(state.metadata.at("onGround")) != 0)
-		{
-			game.getAudioManager().playWav("NormalJump");
-			state.metadata["onGround"] = 0;
-			vel.setY(300);
+			if (controllerState.contains("run"))
+				speedlimit.speedLimit.setX(220);
 
-		}
-	}*/
+			if (controllerState.contains("goRight") && abs(vel.getX()) < speedlimit.speedLimit.getX())
+				vel.add(Vector2<double>(1, 0) * magnitude);
+			else if (controllerState.contains("goLeft") && abs(vel.getX()) < speedlimit.speedLimit.getX())
+				vel.add(Vector2<double>(-1, 0) * magnitude);
+			else if (controllerState.contains("crouch"))
+				vel.add(Vector2<double>(0, -1) * magnitude);
+			else if (controllerState.contains("lookUp"))
+				vel.add(Vector2<double>(0, 1) * magnitude);
+
+			if (controllerState.contains("jump") && state.metadata.contains("onGround") && get<int>(state.metadata.at("onGround")) != 0)
+			{
+				//game.getAudioManager().playWav("NormalJump");
+				state.metadata["onGround"] = 0;
+				vel.setY(300);
+
+			}
+		});
+
 }
 
 MarioCollisionResponseSystem::MarioCollisionResponseSystem() : System()

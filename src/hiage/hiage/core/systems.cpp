@@ -2,6 +2,7 @@
 #include "game.hpp"
 #include <SDL/SDL.h>
 #include <algorithm>
+#include <tuple>
 
 using namespace std;
 using namespace hiage;
@@ -311,43 +312,45 @@ void hiage::AnimationSystem::registerSystem(flecs::world& world)
 
 void hiage::ObjectTrackingSystem::registerSystem(flecs::world& world)
 {
+	world.system<>()
+		.iter([&](const flecs::iter&) {
+            _trackingTargets.clear();
+        });
+
+	// Step 1: Make a list of trackable objects
 	world.system<PositionComponent, VelocityComponent, TrackableComponent>()
 		.each([&](flecs::entity e, PositionComponent& position, VelocityComponent& velocity, TrackableComponent& trackable)
 		{
-			
+			_trackingTargets.push_back(std::make_tuple(position, velocity));
 		});
-	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, TrackableComponent>();
 
-	if (componentTuples.size() == 0)
-		return;
-
-	auto trackingTarget = componentTuples[0];
-	auto& trackingPos = get<1>(trackingTarget)->getData();
-	auto& trackingVel = get<2>(trackingTarget)->getData();
-
-	auto trackingComponentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, TrackingComponent>();
-	for (auto& c : trackingComponentTuples)
-	{
-		auto& tracking = get<3>(c)->getData();
-		string mode = "elastic";
-		if (tracking.mode.length() > 0)
-			mode = tracking.mode;
-		
-		auto& pos = get<1>(c)->getData();
-		auto& vel = get<2>(c)->getData();
-		if (mode == "fixed")
+	world.system<PositionComponent, VelocityComponent, TrackingComponent>()
+		.each([&](flecs::entity e, PositionComponent& trackingObjectPosition, VelocityComponent& trackingObjectVelocity, TrackingComponent& tracking)
 		{
-			pos.set(trackingPos);
-		} 
-		else if (mode == "elastic")
-		{
-			auto diff = (trackingPos + trackingVel) - pos;
+			if (_trackingTargets.size() == 0)
+				return;
 
-			vel.scale(0.5);
-			auto accelVector = diff * 100. + trackingVel;
-			vel.add(accelVector * frameTime);
-		}
-	}*/
+			//TODO: This is not great - only supporting a single tracking target for now. But for my use, it's fine. For now.
+			auto& trackingTargetPosition = std::get<0>(_trackingTargets[0]).pos;
+			auto& trackingTargetVelocity = std::get<1>(_trackingTargets[0]).vel;
+
+			std::string mode = "elastic";
+			if (tracking.mode.length() > 0)
+				mode = tracking.mode;
+			
+			if (mode == "fixed")
+			{
+				trackingObjectPosition.pos.set(trackingTargetPosition);
+			} 
+			else if (mode == "elastic")
+			{
+				auto diff = (trackingTargetPosition + trackingTargetVelocity) - trackingObjectPosition.pos;
+
+				trackingObjectVelocity.vel.scale(0.5);
+				auto accelVector = diff * 100. + trackingTargetVelocity;
+				trackingObjectVelocity.vel.add(accelVector * e.delta_time());
+			}
+		});
 }
 
 void hiage::CameraSystem::registerSystem(flecs::world& world)
