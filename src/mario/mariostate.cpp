@@ -24,7 +24,7 @@ MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0)
 
     // Movement and controllers -- updates velocity
     sysFactory.registerSystem<ControllerSystem, Game&>(game);
-    sysFactory.registerSystem<CharacterControllerSystem>();
+    sysFactory.registerSystem<CharacterControllerSystem, Game&>(game);
     sysFactory.registerSystem<PhysicsSystem>(800);
 
     // Collision detection -- will we collide in this frame?

@@ -5,100 +5,83 @@
 using namespace std;
 using namespace hiage;
 
-void CharacterStateMachineSystem::handleCollisions()
-{
-	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, StateComponent>();
-
-	for (auto& c : componentTuples)
-	{
-		auto& col = get<1>(c)->getData();
-		auto& state = get<2>(c)->getData();
-
-		for (auto& tc : col.tileCollisions)
-		{
-			if (tc.collisionResult.hitNormal.getY() > 0.5) {
-				auto& metadata = state.metadata;
-				metadata["onGround"] = 1;
-				metadata["ticks-since-landed"] = 0;
-			}
-		}
-	}*/
-}
-
-void CharacterStateMachineSystem::updateState()
-{
-	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, StateComponent>();
-
-	for (auto& c : componentTuples)
-	{
-		auto& vel = get<1>(c)->getData();
-		auto& state = get<2>(c)->getData();
-		auto& metadata = state.metadata;
-
-		if (vel.getX() < -1e-6)
-			metadata["x-flip"] = 1;
-		else if (vel.getX() > 1e-6)
-			metadata["x-flip"] = 0;
-
-		if (!metadata.contains("ticks-since-landed"))
-			metadata["ticks-since-landed"] = 0;
-
-		std::get<int>(metadata["ticks-since-landed"])++;
-
-		if (get<int>(metadata["ticks-since-landed"]) > 5)
-		{
-			metadata["onGround"] = 0;
-			if (vel.getY() > 0)
-			{
-				if (abs(vel.getX()) > 150)
-					state.stateName = "longjump";
-				else
-					state.stateName = "jump";
-
-			}
-			else
-				state.stateName = "fall";
-		}
-		else
-		{
-			if (abs(vel.getX()) > 150)
-			{
-				state.stateName = "run";
-			}
-			else if (abs(vel.getX()) > 10)
-			{
-				state.stateName = "walk";
-			}
-			else
-			{
-				state.stateName = "stand";
-			}
-		}
-	}*/
-}
-
 CharacterStateMachineSystem::CharacterStateMachineSystem() : System()
 {
 }
 
 void CharacterStateMachineSystem::registerSystem(flecs::world& world)
 {
-	handleCollisions();
-	updateState();
+	world.system<CollidableComponent, StateComponent>()
+		.each([](flecs::entity e, CollidableComponent& collidable, StateComponent& state) 
+		{
+			for (auto& tc : collidable.tileCollisions)
+			{
+				if (tc.collisionResult.hitNormal.getY() > 0.5) {
+					auto& metadata = state.metadata;
+					metadata["onGround"] = 1;
+					metadata["ticks-since-landed"] = 0;
+				}
+			}	
+		});
 
+	world.system<VelocityComponent, StateComponent>()
+		.each([](flecs::entity e, VelocityComponent& velocity, StateComponent& state) 
+		{
+			auto& vel = velocity.vel;
+			auto& metadata = state.metadata;
+
+			if (vel.getX() < -1e-6)
+				metadata["x-flip"] = 1;
+			else if (vel.getX() > 1e-6)
+				metadata["x-flip"] = 0;
+
+			if (!metadata.contains("ticks-since-landed"))
+				metadata["ticks-since-landed"] = 0;
+
+			std::get<int>(metadata["ticks-since-landed"])++;
+
+			if (get<int>(metadata["ticks-since-landed"]) > 5)
+			{
+				metadata["onGround"] = 0;
+				if (vel.getY() > 0)
+				{
+					if (abs(vel.getX()) > 150)
+						state.stateName = "longjump";
+					else
+						state.stateName = "jump";
+
+				}
+				else
+					state.stateName = "fall";
+			}
+			else
+			{
+				if (abs(vel.getX()) > 150)
+				{
+					state.stateName = "run";
+				}
+				else if (abs(vel.getX()) > 10)
+				{
+					state.stateName = "walk";
+				}
+				else
+				{
+					state.stateName = "stand";
+				}
+			}
+		});
 }
 
-CharacterControllerSystem::CharacterControllerSystem() : System()
+CharacterControllerSystem::CharacterControllerSystem(Game& game) : System(), _game(game)
 {
 }
 
 void CharacterControllerSystem::registerSystem(flecs::world& world)
 {
-	
 	world.system<VelocityComponent, ControllerStateComponent, StateComponent, SpeedLimitComponent>()
-		.each([](flecs::entity e, VelocityComponent& velocity, ControllerStateComponent& controllerStateComponent, StateComponent& state, SpeedLimitComponent& speedlimit)
+		.each([&](flecs::entity e, VelocityComponent& velocity, ControllerStateComponent& controllerStateComponent, StateComponent& state, SpeedLimitComponent& speedlimit)
 		{
-			double magnitude = 8000. * e.delta_time();
+			double magnitude = 800. * e.delta_time();
 
 			auto& vel = velocity.vel;
 			auto& controllerState = controllerStateComponent.controllerState;
@@ -131,7 +114,7 @@ void CharacterControllerSystem::registerSystem(flecs::world& world)
 
 			if (controllerState.contains("jump") && state.metadata.contains("onGround") && get<int>(state.metadata.at("onGround")) != 0)
 			{
-				//game.getAudioManager().playWav("NormalJump");
+				_game.getAudioManager().playWav("NormalJump");
 				state.metadata["onGround"] = 0;
 				vel.setY(300);
 
@@ -146,44 +129,44 @@ MarioCollisionResponseSystem::MarioCollisionResponseSystem() : System()
 
 void MarioCollisionResponseSystem::registerSystem(flecs::world& world)
 {
-/*	auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, PositionComponent, VelocityComponent>();
-
-	for (auto& c1 : componentTuples)
-	{
-		auto& col = get<1>(c1)->getData();
-		auto& pos = get<2>(c1)->getData();
-		auto& vel = get<3>(c1)->getData();
-
-		for (auto& oc : col.objectCollisions)
+	world.system<CollidableComponent, PositionComponent, VelocityComponent, StateComponent*>()
+		.each([](flecs::entity e, CollidableComponent& collidable, PositionComponent& position, VelocityComponent& velocity, StateComponent* state) 
 		{
-			// Handle moving object colliding with blocking object
-			auto c2 = gameState.getEntityManager().queryComponentGroup<CollidableComponent, BlockingComponent>(oc.entityId2);
+			auto& col = collidable;
+			auto& pos = position.pos;
+			auto& vel = velocity.vel;
 
-			if (get<0>(c2) != nullptr)
+			for (auto& oc : col.objectCollisions)
 			{
-				auto& collisionResult = oc.collisionResult;
+				// Handle moving object colliding with blocking object
+				//auto c2 = gameState.getEntityManager().queryComponentGroup<CollidableComponent, BlockingComponent>(oc.entityId2);
 
-				// collisionTimeFactor is the fraction of the velocity that should be applied to move the object to the position of the collision
-				auto collisionTimeFactor = frameTime * collisionResult.collisionTime;
-				// Calculate the per-axis velocity
-				Vec2d deltaPos(vel.getX() * collisionTimeFactor * collisionResult.axis.getX(), vel.getY() * collisionTimeFactor * collisionResult.axis.getY());
-				pos.add(deltaPos - vel * 1.0e-6);
+				//if (get<0>(c2) != nullptr)
+				{
+					auto& collisionResult = oc.collisionResult;
 
-				// Adjust the velocity according to the hit normal
-				vel.set(vel - (collisionResult.hitNormal * (1.0 + 0) * vel.dot(oc.collisionResult.hitNormal)));
+					// collisionTimeFactor is the fraction of the velocity that should be applied to move the object to the position of the collision
+					auto collisionTimeFactor = e.delta_time() * collisionResult.collisionTime;
+					// Calculate the per-axis velocity
+					Vec2d deltaPos(vel.getX() * collisionTimeFactor * collisionResult.axis.getX(), vel.getY() * collisionTimeFactor * collisionResult.axis.getY());
+					pos.add(deltaPos - vel * 1.0e-6);
 
-				auto state = gameState.getEntityManager().queryComponentGroup<StateComponent>(oc.entityId1);
+					// Adjust the velocity according to the hit normal
+					vel.set(vel - (collisionResult.hitNormal * (1.0 + 0) * vel.dot(oc.collisionResult.hitNormal)));
 
-				// normal vector of 30 degrees or higher => count as solid ground
-				if (oc.collisionResult.hitNormal.getY() > 0.5 && state != nullptr) {
-					auto& metadata = state->getData().metadata;
-					metadata["onGround"] = 1;
-					metadata["ticks-since-landed"] = 0;
+					//auto state = gameState.getEntityManager().queryComponentGroup<StateComponent>(oc.entityId1);
+
+
+					// normal vector of 30 degrees or higher => count as solid ground
+					if (oc.collisionResult.hitNormal.getY() > 0.5 && state != nullptr) {
+						auto& metadata = state->metadata;
+						metadata["onGround"] = 1;
+						metadata["ticks-since-landed"] = 0;
+					}
 				}
-			}
 
-		}
-	}*/
+			}
+		});
 }
 
 AISystem::AISystem() : System()

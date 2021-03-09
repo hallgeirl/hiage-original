@@ -16,8 +16,10 @@ public:
 
 class CharacterControllerSystem : public hiage::System
 {
+private:
+	hiage::Game& _game;
 public:
-	CharacterControllerSystem();
+	CharacterControllerSystem(hiage::Game& game);
 	virtual void registerSystem(flecs::world& world) override;
 };
 

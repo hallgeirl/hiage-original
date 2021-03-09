@@ -44,7 +44,7 @@ namespace hiage
 		/// </summary>
 		/// <param name="properties"></param>
 		/// <returns></returns>
-		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentProperties& properties) const override
+		virtual const flecs::entity& createComponent(flecs::entity& entity, const ComponentProperties&) const override
 		{
 			return entity.add<T>();
 		}
