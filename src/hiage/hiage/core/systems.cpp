@@ -1,5 +1,6 @@
 #include "systems.hpp"
 #include "game.hpp"
+#include "quadtree.hpp"
 #include <SDL/SDL.h>
 #include <algorithm>
 #include <tuple>
