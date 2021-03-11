@@ -347,7 +347,7 @@ void hiage::ObjectTrackingSystem::registerSystem(flecs::world& world)
 
 	// Step 1: Make a list of trackable objects
 	world.system<PositionComponent, VelocityComponent, TrackableComponent>()
-		.each([&](flecs::entity e, PositionComponent& position, VelocityComponent& velocity, TrackableComponent& trackable)
+		.each([&](flecs::entity e, PositionComponent& position, VelocityComponent& velocity, TrackableComponent&)
 		{
 			_trackingTargets.push_back(std::make_tuple(position, velocity));
 		});

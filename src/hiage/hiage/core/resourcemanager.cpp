@@ -1,3 +1,4 @@
+#include "boundingbox.hpp"
 #include "resourcemanager.hpp"
 #pragma warning(push, 0)
 #include <tinyxml.h>

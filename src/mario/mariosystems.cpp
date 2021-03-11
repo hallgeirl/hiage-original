@@ -12,7 +12,7 @@ CharacterStateMachineSystem::CharacterStateMachineSystem() : System()
 void CharacterStateMachineSystem::registerSystem(flecs::world& world)
 {
 	world.system<CollidableComponent, StateComponent>()
-		.each([](flecs::entity e, CollidableComponent& collidable, StateComponent& state) 
+		.each([](flecs::entity, CollidableComponent& collidable, StateComponent& state) 
 		{
 			for (auto& tc : collidable.tileCollisions)
 			{
@@ -25,7 +25,7 @@ void CharacterStateMachineSystem::registerSystem(flecs::world& world)
 		});
 
 	world.system<VelocityComponent, StateComponent>()
-		.each([](flecs::entity e, VelocityComponent& velocity, StateComponent& state) 
+		.each([](flecs::entity, VelocityComponent& velocity, StateComponent& state) 
 		{
 			auto& vel = velocity.vel;
 			auto& metadata = state.metadata;

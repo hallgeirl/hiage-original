@@ -5,7 +5,7 @@
 #include "renderer.h"
 #include "../core/collisions.hpp"
 
-#include "../core/typedefs.h"
+#include "../core/boundingbox.hpp"
 #include "../util/vector2.h"
 #include "../core/boundingpolygon.hpp"
 

@@ -1,9 +1,10 @@
-#include <iostream>
 
 #include "sprite.h"
 #include "../util/exceptions.h"
 #include "../util/vector2.h"
 #include "../core/resourcemanager.hpp"
+
+#include <iostream>
 
 using namespace std;
 using namespace hiage;

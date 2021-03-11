@@ -1,14 +1,13 @@
 #pragma once
 
-
-
 #include "../core/typedefs.h"
+#include "../core/boundingbox.hpp"
+
 #include "texture.h"
 #include "renderer.h"
 #include "../util/vector2.h"
 #include <string>
 #include <vector>
-
 
 namespace hiage
 {
