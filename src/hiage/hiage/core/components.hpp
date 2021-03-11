@@ -3,6 +3,7 @@
 #include "../util/vector2.h"
 #include "../gfx/sprite.h"
 #include "collisions.hpp"
+#include "resourcedescriptors.hpp"
 
 #include <flecs.h>
 
@@ -10,7 +11,6 @@
 #include <unordered_set>
 #include <memory>
 #include <variant>
-#include "resourcedescriptors.hpp"
 
 namespace hiage 
 {

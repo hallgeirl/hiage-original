@@ -1,9 +1,15 @@
+#pragma once
+
 #include <memory>
 #include <cstdint>
 #include <vector>
 
 namespace hiage
 {
+    /*
+        Inspired by: https://stackoverflow.com/questions/41946007/efficient-and-well-explained-implementation-of-a-quadtree-for-2d-collision-det
+        Alternative: Go for hierarchical grid?
+    */
     struct QuadTreeNode
     {
         int32_t firstChildIndex;
@@ -17,6 +23,13 @@ namespace hiage
         int32_t index;
     };
 
+    struct QuadTreeElement
+    {
+        int32_t next;
+        uint64_t entityId;
+        int32_t left, bottom, right, top;
+    };
+    
     class QuadTree
     {
     private:
@@ -26,7 +39,7 @@ namespace hiage
         int32_t _minWidth = 32, 
                 _minHeight = 32;
 
-        std::vector<int> _elements; // TODO - what do we need to store here though? entity IDs?
+        std::vector<QuadTreeElement> _elements; // TODO - what do we need to store here though? entity IDs?
 
     public:
         QuadTree(int left, int bottom, int right, int top, int capacity) : _left(left), _right(right), _top(top), _bottom(bottom), _capacity(capacity)
@@ -37,8 +50,9 @@ namespace hiage
             });
         }
 
-        bool insert(int32_t x, int32_t y)
+        std::vector<QuadTreeNodeData> findLeaves(int32_t boundsLeft, int32_t boundsBottom, int32_t boundsRight, int32_t boundsTop)
         {
+            std::vector<QuadTreeNodeData> leaves;
             std::vector<QuadTreeNodeData> stack;
 
             stack.push_back(QuadTreeNodeData {
@@ -59,45 +73,16 @@ namespace hiage
                 auto& node = _nodes[nodeData.index];
 
                 // Ignore objects that do not belong in this quad tree
-                if (x < nodeData.left || x > nodeData.right || y < nodeData.bottom || y > nodeData.top)
+                if (boundsRight < nodeData.left || boundsLeft > nodeData.right || boundsTop < nodeData.bottom || boundsBottom > nodeData.top)
                     continue; // Object is out of bounds - skip it
 
                 int width = _right - _left;
                 int height = _top - _bottom;
 
-                // Node is full, and node can be divided without dropping below minimum dimensions? If so, subdivide.
-                if (node.count > _capacity && (width / 2 > _minWidth) && (height / 2 > _minHeight))
-                {
-                    // Add new child leaf nodes
-                    node.firstChildIndex = _nodes.size();
-
-                    _nodes.push_back(QuadTreeNode {
-                        .firstChildIndex = -1,
-                        .count = 0
-                    });
-                    _nodes.push_back(QuadTreeNode {
-                        .firstChildIndex = -1,
-                        .count = 0
-                    });
-                    _nodes.push_back(QuadTreeNode {
-                        .firstChildIndex = -1,
-                        .count = 0
-                    });
-                    _nodes.push_back(QuadTreeNode {
-                        .firstChildIndex = -1,
-                        .count = 0
-                    });
-
-                    // Todo: Redistribute elements (Remove all elements from this node, add them to the subsequent child nodes)
-                    node.count = -1;
-                    
-                }
-
                 // Is this a leaf node (count >= 0)? If so, try to insert.
                 if (node.count >= 0)
                 {
-                    // Node is not full, or node cannot be divided? Add object to this node
-                    _elements.push_back(1);
+                    leaves.push_back(nodeData);
                 }
                 else
                 {
@@ -151,7 +136,9 @@ namespace hiage
                 }
             }
 
-            return true;
+            return leaves;
         }
+
+        bool insert(uint64_t entityId, int32_t boundsLeft, int32_t boundsBottom, int32_t boundsRight, int32_t boundsTop);
     };
 }

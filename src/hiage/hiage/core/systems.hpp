@@ -2,7 +2,7 @@
 
 #include "collisions.hpp"
 #include "componentmanager.hpp"
-
+#include "quadtree.hpp"
 #include <flecs.h>
 #include <string>
 #include <memory>
@@ -69,9 +69,11 @@ namespace hiage
 	{
 	private:
 		SATCollisionTester collisionTester;
+		QuadTree _quadTree;
+		Renderer& _renderer;
 
 	public:
-		ObjectObjectCollisionDetectionSystem() : System() {}
+		ObjectObjectCollisionDetectionSystem(Renderer& renderer) : System(), _quadTree(0,0, 1000, 1000, 3), _renderer(renderer) {}
 		virtual void registerSystem(flecs::world& world) override;
 	};
 

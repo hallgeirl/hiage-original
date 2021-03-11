@@ -28,7 +28,7 @@ MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0)
     sysFactory.registerSystem<PhysicsSystem>(800);
 
     // Collision detection -- will we collide in this frame?
-    sysFactory.registerSystem<ObjectObjectCollisionDetectionSystem>();
+    sysFactory.registerSystem<ObjectObjectCollisionDetectionSystem, Renderer&>(game.getDisplay().getRenderer());
     auto& tilemap = gamemap.getTilemap();
     sysFactory.registerSystem<ObjectTileCollisionDetectionSystem, const Tilemap&>(tilemap);
 

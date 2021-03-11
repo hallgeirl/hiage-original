@@ -47,7 +47,7 @@ Renderer::~Renderer() throw ()
 }
 
 //start the rendering process
-void Renderer::beginRender(ObjectZ zposition, const Texture* texture)
+void Renderer::beginRender(ObjectZ zposition, const Texture* texture, RenderObjectType objectType)
 {
 	if (recordingVertices)
 	{
@@ -62,7 +62,7 @@ void Renderer::beginRender(ObjectZ zposition, const Texture* texture)
 	if (renderObjects[layer].size() <= activeRenderObjects[layer])
 		renderObjects[layer].resize((size_t)activeRenderObjects[layer] + 4);
 
-	renderObjects[layer][activeRenderObjects[layer]++].init(zposition, texture);
+	renderObjects[layer][activeRenderObjects[layer]++].init(zposition, texture, objectType);
 	currentRenderObject = (int)activeRenderObjects[static_cast<size_t>(currentZ)] - 1;
 }
 
@@ -89,7 +89,8 @@ void Renderer::endRender()
 		throw Exception("ERROR: Can't end rendering: Not recording. Call Renderer::beginRender() before attempting to stop rendering.");
 	}
 
-	if (renderObjects[static_cast<int>(currentZ)][currentRenderObject].activeVertices % 4 != 0)
+	auto& renderObj = renderObjects[static_cast<int>(currentZ)][currentRenderObject];
+	if (renderObj.activeVertices % 4 != 0 && renderObj.objectType == RenderObjectType::Quads)
 	{
 		throw Exception("ERROR: Can't finish rendering: Amount of vertices not a multiple of 4.");
 	}
@@ -126,7 +127,11 @@ void Renderer::renderBuffer()
 			}
 
 			//draw vertices
-			glBegin(GL_QUADS);
+			if (renderObjects[z][o].objectType == RenderObjectType::Quads)
+				glBegin(GL_QUADS);
+			else if (renderObjects[z][o].objectType == RenderObjectType::Lines)
+				glBegin(GL_LINE_STRIP);
+
 			for (unsigned int v = 0; v < renderObjects[z][o].activeVertices; v++)
 			{
 				glTexCoord2d(renderObjects[z][o].vertices[v].texX, renderObjects[z][o].vertices[v].texY);

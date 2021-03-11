@@ -69,7 +69,6 @@ void ObjectRenderingSystem::registerSystem(flecs::world& world)
 		.each([&](flecs::entity e, PositionComponent& phyiscal, RenderableComponent& renderable, VelocityComponent* vel, StateComponent* state)
 		{
 			Display& disp = _game.getDisplay();
-			Renderer& renderer = disp.getRenderer();
 			auto& spriteController = _game.getSpriteController();
 			double aspect = disp.getAspectRatio();
 			double zoom = disp.getZoom();
@@ -159,6 +158,34 @@ void hiage::ControllerSystem::registerSystem(flecs::world& world)
 
 void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& world)
 {
+	world.system<>()
+		.iter([&](flecs::iter&) {
+			_quadTree = QuadTree(0,0, 500, 300, 1);
+		});
+
+	world.system<CollidableComponent, PositionComponent>()
+		.each([&](flecs::entity e, CollidableComponent& collidable, PositionComponent& position)
+		{
+			auto poly = collidable.boundingPolygon;
+			poly.translate(position.pos);
+			_quadTree.insert(e.id(), poly.getLeft(), poly.getBottom(), poly.getRight(), poly.getTop());
+		});
+
+	// Debugging system
+	world.system<>()
+		.iter([&](flecs::iter&) {
+			auto leaves = _quadTree.findLeaves(0, 0, 1000, 1000);
+			for (auto& l : leaves)
+			{
+				_renderer.beginRender(ObjectZ::FRONT, nullptr, RenderObjectType::Lines);
+				_renderer.addVertex(l.left, l.bottom, 0, 0);
+				_renderer.addVertex(l.left, l.top, 0, 1);
+				_renderer.addVertex(l.right, l.top, 1, 1);
+				_renderer.addVertex(l.right, l.bottom, 1, 0);
+				_renderer.endRender();
+			}
+		});
+	
 	world.system<CollidableComponent, PositionComponent, VelocityComponent>()
 		.each([&](flecs::entity e, CollidableComponent& collidable, PositionComponent& position, VelocityComponent& velocity)
 		{
@@ -314,7 +341,7 @@ void hiage::AnimationSystem::registerSystem(flecs::world& world)
 void hiage::ObjectTrackingSystem::registerSystem(flecs::world& world)
 {
 	world.system<>()
-		.iter([&](const flecs::iter&) {
+		.iter([&](const flecs::iter& it) {
             _trackingTargets.clear();
         });
 
