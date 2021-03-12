@@ -29,10 +29,22 @@ namespace hiage
 			bottom = other.bottom;
 		}
 
-        bool intersects(const BoundingBox<T>& other)
+        inline bool intersects(const BoundingBox<T>& other) const
         {
             return !(left > other.right || right < other.left || bottom > other.top || top < other.bottom);
         }
+
+		inline T width() const
+		{
+			return right - left;
+		}
+
+		inline T height() const
+		{
+			return top - bottom;
+		}
+
+
 	};
 
 	inline std::ostream & operator <<(std::ostream &stream, const BoundingBox<double> &r)

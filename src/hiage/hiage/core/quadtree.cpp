@@ -2,17 +2,34 @@
 
 using namespace hiage;
 
-std::vector<QuadTreeNodeData> QuadTree::findLeaves(int32_t boundsLeft, int32_t boundsBottom, int32_t boundsRight, int32_t boundsTop)
+QuadTree::QuadTree(const BoundingBox<int32_t>& boundingBox, int capacity) : _boundingBox(boundingBox), _capacity(capacity)
+{
+    _nodes.push_back(QuadTreeNode {
+        .firstChildIndex = -1,
+        .count = 0
+    });
+}
+
+// Creates a new bounding box with half the width and height of the original, offset by the specified amount
+inline BoundingBox<int32_t> createSubdivision(const BoundingBox<int32_t>& boundingBox, int offsetX, int offsetY)
+{
+    auto width = boundingBox.width() >> 1;
+    auto height = boundingBox.height() >> 1;
+    auto offsetXAbsolute = offsetX * width;
+    auto offsetYAbsolute = offsetY * height;
+    return BoundingBox(boundingBox.left + offsetXAbsolute, 
+                       boundingBox.right - width + offsetXAbsolute, 
+                       boundingBox.top - width / 2 + offsetY, boundingBox.bottom + offsetY);
+}
+
+std::vector<QuadTreeNodeData> QuadTree::findLeaves(const BoundingBox<int32_t>& boundingBox)
 {
     std::vector<QuadTreeNodeData> leaves;
     std::vector<QuadTreeNodeData> stack;
 
     stack.push_back(QuadTreeNodeData {
         .depth = 0,
-        .left = _left, 
-        .bottom = _bottom,
-        .right = _right, 
-        .top = _top,
+        .boundingBox = boundingBox,
         .index = 0
     });
 
@@ -25,11 +42,11 @@ std::vector<QuadTreeNodeData> QuadTree::findLeaves(int32_t boundsLeft, int32_t b
         auto& node = _nodes[nodeData.index];
 
         // Ignore objects that do not belong in this quad tree
-        if (boundsRight < nodeData.left || boundsLeft > nodeData.right || boundsTop < nodeData.bottom || boundsBottom > nodeData.top)
+        if (!boundingBox.intersects(nodeData.boundingBox))
             continue; // Object is out of bounds - skip it
 
-        int width = _right - _left;
-        int height = _top - _bottom;
+        int width = _boundingBox.width();
+        int height = _boundingBox.height();
 
         // Is this a leaf node (count >= 0)? If so, try to insert.
         if (node.count >= 0)
@@ -49,40 +66,40 @@ std::vector<QuadTreeNodeData> QuadTree::findLeaves(int32_t boundsLeft, int32_t b
             // Bottom left
             stack.push_back(QuadTreeNodeData {
                 .depth = nodeData.depth+1,
-                .left = nodeData.left, 
-                .bottom = nodeData.bottom,
-                .right = nodeData.left + width / 2, 
-                .top = nodeData.bottom + height / 2,
+                .boundingBox = BoundingBox<int32_t>(nodeData.boundingBox.left, 
+                                                    nodeData.boundingBox.left + width / 2, 
+                                                    nodeData.boundingBox.bottom + height /2, 
+                                                    nodeData.boundingBox.bottom),
                 .index = firstChild
             });
 
             // Bottom right
             stack.push_back(QuadTreeNodeData {
                 .depth = nodeData.depth+1,
-                .left = nodeData.left + width / 2, 
-                .bottom = nodeData.bottom,
-                .right = nodeData.right, 
-                .top = nodeData.bottom + height / 2,
+                .boundingBox = BoundingBox<int32_t>(nodeData.boundingBox.left + width / 2,    //left
+                                                    nodeData.boundingBox.right,               //right
+                                                    nodeData.boundingBox.bottom + height / 2, //top
+                                                    nodeData.boundingBox.bottom),             //bottom
                 .index = firstChild + 1
             });
 
             // Top left
             stack.push_back(QuadTreeNodeData {
                 .depth = nodeData.depth+1,
-                .left = nodeData.left, 
-                .bottom = nodeData.bottom + height / 2,
-                .right = nodeData.left + width / 2, 
-                .top = nodeData.top,
+                .boundingBox = BoundingBox<int32_t>(nodeData.boundingBox.left,                //left
+                                                    nodeData.boundingBox.left + width / 2,    //right
+                                                    nodeData.boundingBox.bottom + height / 2, //top
+                                                    nodeData.boundingBox.bottom),             //bottom
                 .index = firstChild + 2
             });
 
             // Top right
             stack.push_back(QuadTreeNodeData {
                 .depth = nodeData.depth+1,
-                .left = nodeData.left + width / 2, 
-                .bottom = nodeData.bottom + height / 2,
-                .right = nodeData.right, 
-                .top = nodeData.top,
+                .boundingBox = BoundingBox<int32_t>(nodeData.boundingBox.left + width / 2      //left
+                                                    nodeData.boundingBox.right,                //right
+                                                    nodeData.boundingBox.top,                  //top
+                                                    nodeData.boundingBox.bottom + height / 2), //bottom
                 .index = firstChild + 2
             });
         }
@@ -91,16 +108,13 @@ std::vector<QuadTreeNodeData> QuadTree::findLeaves(int32_t boundsLeft, int32_t b
     return leaves;
 }
 
-bool QuadTree::insert(uint64_t entityId, int32_t boundsLeft, int32_t boundsBottom, int32_t boundsRight, int32_t boundsTop)
+bool QuadTree::insert(uint64_t entityId, const BoundingBox& boundingBox)
 {
     std::vector<QuadTreeNodeData> stack;
 
     stack.push_back(QuadTreeNodeData {
         .depth = 0,
-        .left = _left, 
-        .bottom = _bottom,
-        .right = _right, 
-        .top = _top,
+        .boundingBox = boundingBox,
         .index = 0
     });
 
@@ -113,11 +127,11 @@ bool QuadTree::insert(uint64_t entityId, int32_t boundsLeft, int32_t boundsBotto
         auto& node = _nodes[nodeData.index];
 
         // Ignore objects that do not belong in this quad tree
-        if (boundsRight < nodeData.left || boundsLeft > nodeData.right || boundsTop < nodeData.bottom || boundsBottom > nodeData.top)
+        if (!boundingBox.intersects(nodeData.boundingBox))
             continue; // Object is out of bounds - skip it
 
-        int width = _right - _left;
-        int height = _top - _bottom;
+        int width = _boundingBox.width();
+        int height = _boundingBox.height();
 
         // Node is leaf, and is full, and node can be divided without dropping below minimum dimensions? If so, subdivide.
         if (node.count > _capacity && (width / 2 > _minWidth) && (height / 2 > _minHeight))
@@ -233,16 +247,14 @@ bool QuadTree::insert(uint64_t entityId, int32_t boundsLeft, int32_t boundsBotto
             // Bottom left
             stack.push_back(QuadTreeNodeData {
                 .depth = nodeData.depth+1,
-                .left = nodeData.left, 
-                .bottom = nodeData.bottom,
-                .right = nodeData.left + width / 2, 
-                .top = nodeData.bottom + height / 2,
+                .boundingBox = createSubdivision(nodeData.boundingBox, 0, 0),
                 .index = firstChild
             });
 
             // Bottom right
             stack.push_back(QuadTreeNodeData {
                 .depth = nodeData.depth+1,
+                .boundingBox = createSubdivision(nodeData.boundingBox, width / 2, 0),
                 .left = nodeData.left + width / 2, 
                 .bottom = nodeData.bottom,
                 .right = nodeData.right, 

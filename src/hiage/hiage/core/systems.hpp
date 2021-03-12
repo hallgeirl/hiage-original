@@ -73,7 +73,7 @@ namespace hiage
 		Renderer& _renderer;
 
 	public:
-		ObjectObjectCollisionDetectionSystem(Renderer& renderer) : System(), _quadTree(0,0, 1000, 1000, 3), _renderer(renderer) {}
+		ObjectObjectCollisionDetectionSystem(Renderer& renderer) : System(), _renderer(renderer) {}
 		virtual void registerSystem(flecs::world& world) override;
 	};
 

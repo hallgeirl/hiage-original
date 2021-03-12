@@ -160,7 +160,7 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 {
 	world.system<>()
 		.iter([&](flecs::iter&) {
-			_quadTree = QuadTree(0,0, 500, 300, 1);
+			_quadTree = QuadTree(BoundingBox(0, 500, 0, 500), 1);
 		});
 
 	world.system<CollidableComponent, PositionComponent>()
@@ -168,7 +168,7 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 		{
 			auto poly = collidable.boundingPolygon;
 			poly.translate(position.pos);
-			_quadTree.insert(e.id(), poly.getLeft(), poly.getBottom(), poly.getRight(), poly.getTop());
+			_quadTree.insert(e.id(), BoundingBox(poly.getLeft(), poly.getRight(), poly.getBottom(), poly.getTop()));
 		});
 
 	// Debugging system
