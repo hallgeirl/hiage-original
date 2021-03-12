@@ -160,7 +160,7 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 {
 	world.system<>()
 		.iter([&](flecs::iter&) {
-			_quadTree = QuadTree(BoundingBox(0, 500, 0, 500), 1);
+			_quadTree = QuadTree(BoundingBox(0, 0, 9600, 9600), 1);
 		});
 
 	world.system<CollidableComponent, PositionComponent>()
@@ -168,20 +168,20 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 		{
 			auto poly = collidable.boundingPolygon;
 			poly.translate(position.pos);
-			_quadTree.insert(e.id(), BoundingBox(poly.getLeft(), poly.getRight(), poly.getBottom(), poly.getTop()));
+			_quadTree.insert(e.id(), BoundingBox<int32_t>(poly.getLeft(), poly.getBottom(), poly.getRight(), poly.getTop()));
 		});
 
 	// Debugging system
 	world.system<>()
 		.iter([&](flecs::iter&) {
-			auto leaves = _quadTree.findLeaves(0, 0, 1000, 1000);
+			auto leaves = _quadTree.findLeaves(BoundingBox<int32_t>(0, 0, 9600, 480));
 			for (auto& l : leaves)
 			{
 				_renderer.beginRender(ObjectZ::FRONT, nullptr, RenderObjectType::Lines);
-				_renderer.addVertex(l.left, l.bottom, 0, 0);
-				_renderer.addVertex(l.left, l.top, 0, 1);
-				_renderer.addVertex(l.right, l.top, 1, 1);
-				_renderer.addVertex(l.right, l.bottom, 1, 0);
+				_renderer.addVertex(l.boundingBox.left, l.boundingBox.bottom, 0, 0);
+				_renderer.addVertex(l.boundingBox.left, l.boundingBox.top, 0, 1);
+				_renderer.addVertex(l.boundingBox.right, l.boundingBox.top, 1, 1);
+				_renderer.addVertex(l.boundingBox.right, l.boundingBox.bottom, 1, 0);
 				_renderer.endRender();
 			}
 		});

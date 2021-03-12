@@ -8,7 +8,7 @@ namespace hiage
 	struct BoundingBox
 	{
 		T left, right, top, bottom;
-		BoundingBox(T left, T right, T top, T bottom)
+		BoundingBox(T left, T bottom, T right, T top)
 		{
 			this->left = left;
 			this->right = right;

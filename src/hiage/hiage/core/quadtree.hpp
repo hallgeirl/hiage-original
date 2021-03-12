@@ -16,7 +16,7 @@ namespace hiage
     // This is the actual tree nodes. Bounding box is computed on the fly.
     struct QuadTreeNode
     {
-        int32_t firstChildIndex;
+        int32_t firstChildIndex = -1;
         int32_t count;
     };
 
@@ -47,6 +47,7 @@ namespace hiage
                 _minHeight = 32;
 
         std::vector<QuadTreeElement> _elements; // TODO - what do we need to store here though? entity IDs?
+        std::vector<QuadTreeNodeData> findLeaves(const BoundingBox<int32_t>& boundingBox, const QuadTreeNodeData& root);
 
     public:
         QuadTree() {}
