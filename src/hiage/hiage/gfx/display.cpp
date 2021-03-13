@@ -8,7 +8,7 @@
 using namespace hiage;
 using namespace std;
 
-Display::Display() : _zoom(200.0), _camX(0.0f), _camY(0.0f), _aspect(1), _height(768), _width(1024), _window(nullptr)
+Display::Display() : _zoom(200.0), _camX(0.0f), _camY(0.0f), _aspect(1), _height(1080), _width(1920), _window(nullptr)
 {
 	//set states
 	_displayState = 0;

@@ -19,6 +19,22 @@ System::~System()
 {
 }
 
+DebugSystem::DebugSystem(Game& game) : System(), _game(game)
+{
+}
+
+void DebugSystem::registerSystem(flecs::world& world)
+{
+	world.system<NameComponent>()
+		.each([&](flecs::entity e, NameComponent& pos)
+		{
+			stringstream ss;
+			ss << "Entity(" << pos.name << "): " << e.id();
+			_game.getDebugWriter().write(ss.str());
+
+		});
+}
+
 MovementSystem::MovementSystem() : System()
 {
 }
@@ -160,7 +176,15 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 {
 	world.system<>()
 		.iter([&](flecs::iter&) {
-			_quadTree = QuadTree(BoundingBox(0, 0, 9600, 9600), 1);
+			// Create a square quadtree by taking the largest dimension and squaring it
+			auto width = _tileMap.getWidth() * _tileMap.getTileSize();
+			auto height = _tileMap.getHeight() * _tileMap.getTileSize();
+			if (width > height)
+				height = width;
+			if (height > width)
+				width = height;
+
+			_quadTree = QuadTree(BoundingBox(0, 0, width, height), 1);
 		});
 
 	world.system<CollidableComponent, PositionComponent>()
@@ -172,17 +196,20 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 		});
 
 	// Debugging system
-	world.system<>()
-		.iter([&](flecs::iter&) {
-			auto leaves = _quadTree.findLeaves(BoundingBox<int32_t>(0, 0, 9600, 480));
-			for (auto& l : leaves)
+	world.system<DebugStateComponent>()
+		.each([&](flecs::entity, DebugStateComponent& debugState) {
+			if (debugState.drawQuadTree)
 			{
-				_renderer.beginRender(ObjectZ::FRONT, nullptr, RenderObjectType::Lines);
-				_renderer.addVertex(l.boundingBox.left, l.boundingBox.bottom, 0, 0);
-				_renderer.addVertex(l.boundingBox.left, l.boundingBox.top, 0, 1);
-				_renderer.addVertex(l.boundingBox.right, l.boundingBox.top, 1, 1);
-				_renderer.addVertex(l.boundingBox.right, l.boundingBox.bottom, 1, 0);
-				_renderer.endRender();
+				auto leaves = _quadTree.findLeaves(BoundingBox<int32_t>(0, 0, 9600, 480));
+				for (auto& l : leaves)
+				{
+					_renderer.beginRender(ObjectZ::FRONT, nullptr, RenderObjectType::Lines);
+					_renderer.addVertex(l.boundingBox.left, l.boundingBox.bottom, 0, 0);
+					_renderer.addVertex(l.boundingBox.left, l.boundingBox.top, 0, 1);
+					_renderer.addVertex(l.boundingBox.right, l.boundingBox.top, 1, 1);
+					_renderer.addVertex(l.boundingBox.right, l.boundingBox.bottom, 1, 0);
+					_renderer.endRender();
+				}
 			}
 		});
 	
@@ -401,4 +428,38 @@ void hiage::CameraSystem::registerSystem(flecs::world& world)
 
 			display.setCamPosition(std::max(pos.x, leftBoundary), std::max(pos.y, bottomBoundary));
 	});
+}
+
+hiage::DebugWriterRenderingSystem::DebugWriterRenderingSystem(Game& game, Font& font) : System(), _game(game), _font(font)
+{
+}
+
+void hiage::DebugWriterRenderingSystem::registerSystem(flecs::world& world)
+{
+	world.system<DebugStateComponent>()
+		.each([&](flecs::entity, DebugStateComponent& debugState)
+		{
+			auto& debugWriter = _game.getDebugWriter();
+			int spacingX = 100;
+			int spacingY = _font.getCharacterHeight()*0.15;
+			int yOffs = 0, xOffs = 0;
+			
+			_game.printTextFixed(_font, "DEBUG LOG", -200 + xOffs, spacingY * 2 - 50, ScreenHorizontalPosition::Right, ScreenVerticalPosition::Top, 0.2, -0.2);
+			_game.printTextFixed(_font, "=========", -200 + xOffs, spacingY - 50, ScreenHorizontalPosition::Right, ScreenVerticalPosition::Top, 0.2, -0.2);
+
+			for (auto& s : debugWriter.getBuffer())
+			{
+				_game.printTextFixed(_font, s, -200 + xOffs, -yOffs - 50, ScreenHorizontalPosition::Right, ScreenVerticalPosition::Top, 0.2, -0.2);
+				//_game.printTextFixed(_font, s, 0, -yOffs+500, ScreenHorizontalPosition::Center, ScreenVerticalPosition::Center, 0.2, -0.2);
+				yOffs += spacingY;
+
+				if (yOffs > 500)
+				{
+					yOffs = 0;
+					xOffs += spacingX;
+				}
+			}
+			
+			debugWriter.reset();
+		});
 }

@@ -3,6 +3,7 @@
 #include "collisions.hpp"
 #include "componentmanager.hpp"
 #include "quadtree.hpp"
+#include "../gfx/fonts.hpp"
 #include <flecs.h>
 #include <string>
 #include <memory>
@@ -24,6 +25,16 @@ namespace hiage
 		System();
 		virtual ~System();
 		virtual void registerSystem(flecs::world& world) = 0;
+	};
+
+	class DebugSystem : public System
+	{
+	private:
+		Game& _game;
+		
+	public:
+		DebugSystem(Game& game);
+		virtual void registerSystem(flecs::world& world) override;
 	};
 
 	class MovementSystem : public System
@@ -71,9 +82,10 @@ namespace hiage
 		SATCollisionTester collisionTester;
 		QuadTree _quadTree;
 		Renderer& _renderer;
+		const Tilemap& _tileMap; // Need a reference to the tilemap here to get the bounds
 
 	public:
-		ObjectObjectCollisionDetectionSystem(Renderer& renderer) : System(), _renderer(renderer) {}
+		ObjectObjectCollisionDetectionSystem(Renderer& renderer, const Tilemap& tilemap) : System(), _renderer(renderer), _tileMap(tilemap) {}
 		virtual void registerSystem(flecs::world& world) override;
 	};
 
@@ -132,6 +144,15 @@ namespace hiage
 		virtual void registerSystem(flecs::world& world) override;
 	};
 
+	class DebugWriterRenderingSystem : public System
+	{
+	private:
+		Game& _game;
+		Font& _font;
+	public:
+		DebugWriterRenderingSystem(Game& game, Font& font);
+		virtual void registerSystem(flecs::world& world) override;
+	};
 
 	// List of currently missing systems:
 	// - Script system??

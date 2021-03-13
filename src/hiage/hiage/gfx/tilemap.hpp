@@ -54,9 +54,9 @@ namespace hiage
 		void 			setTile(uint x, uint y, uint ulayer, uint tile);
 		const Tileset*	getTileset() const { return _tileset; }
 		int 			getTileSize() const { return _tilesize; }
-		int 			getWidth();
-		int 			getHeight();
-		int				getLayers();
+		int 			getWidth() const;
+		int 			getHeight() const;
+		int				getLayers() const;
 		bool			isLoaded() const;
 	};
 }

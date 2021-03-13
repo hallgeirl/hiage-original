@@ -9,7 +9,11 @@ using namespace hiage;
 
 GameState::GameState(Game& game) : _game(game), _systemsManager(_ecs), _entityManager(game, *this, _ecs), _componentManager(game)
 {
-
+	auto ent = _ecs.entity();
+	ent.set<DebugStateComponent>(DebugStateComponent { 
+		.dumpEntities = true,
+		.drawQuadTree = true
+	});
 }
 
 GameState::~GameState()

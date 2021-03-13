@@ -23,7 +23,7 @@ namespace hiage
         ~Font();
 
         void create(const Texture& tex, int characterWidth, int characterHeight);
-        void getIndexOfCharacter(char c, int &x, int &y);
+        void getIndexOfCharacter(char c, int &x, int &y) const;
         void setCharacterTable(char ** characterTable, int cols, int rows);
         void destroyTable();
         char ** getCharacterTable() const;
@@ -33,6 +33,6 @@ namespace hiage
 
         int getCharacterHeight() const;
 
-        void renderText(Renderer &renderer, std::string text, Vector2<double> position, double scale = 1, double spacing = 0);
+        void renderText(Renderer &renderer, std::string text, Vector2<double> position, double scale = 1, double spacing = 0) const;
     };
 }

@@ -41,7 +41,7 @@ flecs::entity& EntityManager::createEntity(std::string objectName, const std::un
 		
 		componentFactory.createComponent(e, c, runtimeProperties);
 	}
-	
+	e.set<NameComponent>({ objectName });
 	_entities.push_back(e);
 	_cacheVersion++;
 

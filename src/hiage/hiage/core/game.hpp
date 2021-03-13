@@ -16,6 +16,7 @@
 #include "../gfx/particles.h"
 #include "../gfx/spritecontroller.hpp"
 
+#include "debugwriter.hpp"
 #include "inputmanager.hpp"
 #include "resourcemanager.hpp"
 #include "typedefs.h"
@@ -53,6 +54,7 @@ namespace hiage
 		FontManager     fontManager;	//!< Stores all loaded fonts.
 		ObjectManager	objectManager;  //!< Stores all loaded objects.
 		SpriteController spriteController;
+		DebugWriter     _debugWriter;
 		Timer           gameTimer;       //!< The elapsed time since the game class was initialized.
 		bool running;
 
@@ -106,8 +108,8 @@ namespace hiage
 		void stop();
 
 		Font &createFont(std::string font);
-		void printText(Font & font, const std::string& text, double x, double y, double scale = 1, double spacing = 0);
-		void printTextFixed(Font& font, const std::string& text, double x, double y, ScreenHorizontalPosition horizontalPos, ScreenVerticalPosition verticalPos, double scale = 1, double spacing = 0);
+		void printText(const Font& font, const std::string& text, double x, double y, double scale = 1, double spacing = 0);
+		void printTextFixed(const Font& font, const std::string& text, double x, double y, ScreenHorizontalPosition horizontalPos, ScreenVerticalPosition verticalPos, double scale = 1, double spacing = 0);
 
 
         void drawTexture(std::string texname, double x, double y);
@@ -154,5 +156,8 @@ namespace hiage
 		const ObjectManager & getObjectManager() const;
 
 		const SpriteController& getSpriteController() const;
+
+		// Returns the on-screen debug writer
+		DebugWriter& getDebugWriter();
 	};
 }

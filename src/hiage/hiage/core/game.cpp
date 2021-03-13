@@ -28,7 +28,7 @@ using namespace std::filesystem;
 
 Game::Game(double framerateLimit, const KeyBindings& keyBindings, const std::string& dataRoot) 
 	: gameTimer(true), lastFrameTime(0.05), framerateLimit(framerateLimit), dataRoot(dataRoot),
-	scriptVM(dataRoot), input(keyBindings), audio(dataRoot), textureManager(dataRoot), spriteManager(dataRoot), objectManager(dataRoot), tilesetManager(textureManager, dataRoot), fontManager(dataRoot), spriteController(*this)
+	scriptVM(dataRoot), input(keyBindings), audio(dataRoot), textureManager(dataRoot), spriteManager(dataRoot), objectManager(dataRoot), tilesetManager(textureManager, dataRoot), fontManager(dataRoot), spriteController(*this), _debugWriter(display)
 {
 	running = false;
 	timeFactor = 1;
@@ -216,6 +216,7 @@ void Game::run(bool doEvents)
 		states.back()->render();
 		states.back()->cleanupFrame();
 	}
+
 	display.render();
 
 	glDisable(GL_TEXTURE_2D);
@@ -305,12 +306,12 @@ Font & Game::createFont(std::string font)
     return *f;
 }
 
-void Game::printText(Font & font, const std::string& text, double x, double y, double scale , double spacing)
+void Game::printText(const Font& font, const std::string& text, double x, double y, double scale , double spacing)
 {
     font.renderText(display.getRenderer(), text, Vector2<double>(x,y), scale, spacing);
 }
 
-void hiage::Game::printTextFixed(Font& font, const std::string& text, double x, double y, ScreenHorizontalPosition horizontalPos, ScreenVerticalPosition verticalPos, double scale, double spacing)
+void hiage::Game::printTextFixed(const Font& font, const std::string& text, double x, double y, ScreenHorizontalPosition horizontalPos, ScreenVerticalPosition verticalPos, double scale, double spacing)
 {
 	auto& disp = getDisplay();
 	double xPos = disp.getCamX() + x;// - disp.getZoom() * disp.getAspectRatio();
@@ -404,4 +405,9 @@ std::string hiage::Game::getResourcePath(const std::string& relativePath) const
 	auto fullPath = root / relativePath;
 
 	return fullPath.string();
+}
+
+DebugWriter& Game::getDebugWriter()
+{
+	return _debugWriter;
 }

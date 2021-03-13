@@ -31,7 +31,7 @@ void Font::create(const Texture& tex, int characterWidth, int characterHeight)
     clog << "OK: Font created successfully.\n" << flush;
 }
 
-void Font::getIndexOfCharacter(char c, int &x, int &y)
+void Font::getIndexOfCharacter(char c, int &x, int &y) const
 {
     x = -1;
     y = -1;
@@ -124,7 +124,7 @@ void Font::destroyTable()
     _characterTable = 0;
 }
 
-void Font::renderText(Renderer &renderer, string text, Vector2<double> position, double scale, double spacing)
+void Font::renderText(Renderer &renderer, string text, Vector2<double> position, double scale, double spacing) const
 {
     if (!_loaded)
     {

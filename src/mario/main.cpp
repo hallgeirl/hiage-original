@@ -22,7 +22,7 @@ int main(int, char*)
     keyBindings.mapKey("rshift", "run");
 
 	MarioGame game(keyBindings);
-	game.initialize(1024, 768, false);
+	game.initialize(1920, 1080, false);
 
     game.scriptVM.runFile("scripts/objects.lua");
     game.scriptVM.runFile("scripts/ui.lua");

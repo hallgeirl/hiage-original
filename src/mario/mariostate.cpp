@@ -20,7 +20,11 @@ using namespace std;
 
 MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0), _coins(0), _fps(0)
 {
+    _mainfont = game.createFont("SmallFont");
+
     auto& sysFactory = getSystemsFactory();
+
+    sysFactory.registerSystem<DebugSystem, Game&>(game);
 
     // Movement and controllers -- updates velocity
     sysFactory.registerSystem<ControllerSystem, Game&>(game);
@@ -28,8 +32,8 @@ MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0)
     sysFactory.registerSystem<PhysicsSystem>(800);
 
     // Collision detection -- will we collide in this frame?
-    sysFactory.registerSystem<ObjectObjectCollisionDetectionSystem, Renderer&>(game.getDisplay().getRenderer());
     auto& tilemap = gamemap.getTilemap();
+    sysFactory.registerSystem<ObjectObjectCollisionDetectionSystem, Renderer&, const Tilemap&>(game.getDisplay().getRenderer(), tilemap);
     sysFactory.registerSystem<ObjectTileCollisionDetectionSystem, const Tilemap&>(tilemap);
 
     // AI is dependent on collision detection - so we need to update AI after this.
@@ -50,17 +54,18 @@ MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0)
     sysFactory.registerSystem<AnimationSystem>();
     sysFactory.registerSystem<ObjectRenderingSystem, Game&>(game);
 
-
+    sysFactory.registerSystem<DebugWriterRenderingSystem, Game&, Font&>(game, _mainfont);
+    
     /*
     Component factories
     */
     _componentManager.addTagComponentFactory<BlockingComponent>("blocking");
     _componentManager.addGenericComponentFactory<GroundMonsterControllerComponent>("groundmonstercontroller");
 
-    _mainfont = game.createFont("SmallFont");
+
     game.getAudioManager().playOgg("Overworld1", true);
 
-    gamemap.loadFromJson("maps/level2.json", false);
+    gamemap.loadFromJson("maps/testmap.json", false);
 }
 
 
