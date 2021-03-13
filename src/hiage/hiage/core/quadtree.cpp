@@ -5,26 +5,52 @@
 
 using namespace hiage;
 
-QuadTree::QuadTree(const BoundingBox<int32_t>& boundingBox, int capacity, DebugRenderer* debugRenderer) : _boundingBox(boundingBox), _capacity(capacity), _debugRenderer(debugRenderer)
+void QuadTree::init(const BoundingBox<int32_t>& boundingBox, int capacity, DebugRenderer* debugRenderer)
 {
-    _nodes.push_back(QuadTreeNode {
+    _boundingBox = boundingBox;
+    _debugRenderer = debugRenderer;
+    _capacity = capacity;
+
+    _elements.clear();
+    _nodes.clear();
+    _nodes.insert(QuadTreeNode {
         .firstChildIndex = -1,
         .count = 0
     });
+
     _minWidth = 16;
     _minHeight = 16;
 }
 
-void QuadTree::renderDebugInfo(const std::vector<QuadTreeNodeData>& leaves)
+void QuadTree::renderDebugInfo()
 {
+    FreeList<QuadTreeNodeData> leaves;
+    if (_debugRenderer->getDebugFlags().quadTreeDebugFlags.drawChildCount || _debugRenderer->getDebugFlags().quadTreeDebugFlags.renderLeaves)
+        leaves = findLeaves(_boundingBox);
+
     if (_debugRenderer->getDebugFlags().quadTreeDebugFlags.drawChildCount)
     {
-        for (auto& l : leaves)
+        for (size_t i = 0; i < leaves.size(); i++)
         {
+            auto&l = leaves[i];
             auto& node = _nodes[l.index];
             std::stringstream ss;
             ss << node.count;
             _debugRenderer->renderText(ss.str(), (l.boundingBox.left + l.boundingBox.right) / 2, (l.boundingBox.bottom + l.boundingBox.top) / 2);
+        }
+    }
+
+    if (_debugRenderer->getDebugFlags().quadTreeDebugFlags.renderLeaves)
+    {
+        for (size_t i = 0; i < leaves.size(); i++)
+        {
+            auto&l = leaves[i];
+            std::vector<Vec2d> verts;
+            verts.push_back({ (double)l.boundingBox.left, (double)l.boundingBox.bottom });
+            verts.push_back({ (double)l.boundingBox.left, (double)l.boundingBox.top });
+            verts.push_back({ (double)l.boundingBox.right, (double)l.boundingBox.top });
+            verts.push_back({ (double)l.boundingBox.right, (double)l.boundingBox.bottom });
+            _debugRenderer->renderLines(verts);
         }
     }
 }
@@ -73,7 +99,7 @@ QuadTreeNodeData createChildNode(const QuadTreeNodeData& parent, int32_t index, 
 
 
 // Convenience function to add children of a node to the traversal stack
-void insertChildrenToStack(std::vector<QuadTreeNodeData>& stack, const BoundingBox<int32_t>& boundingBox, const QuadTreeNodeData& nodeData, int32_t firstChild)
+void insertChildrenToStack(FreeList<QuadTreeNodeData>& stack, const BoundingBox<int32_t>& boundingBox, const QuadTreeNodeData& nodeData, int32_t firstChild)
 {
     auto nextWidth = nodeData.boundingBox.width() >> 1;
     auto nextHeight = nodeData.boundingBox.height() >> 1;
@@ -84,13 +110,13 @@ void insertChildrenToStack(std::vector<QuadTreeNodeData>& stack, const BoundingB
         // Left column
         if (boundingBox.left <= nodeData.boundingBox.left + nextWidth)
         {
-            stack.push_back(createChildNode(nodeData, 0, firstChild, nextWidth, nextHeight));
+            stack.insert(createChildNode(nodeData, 0, firstChild, nextWidth, nextHeight));
         }
 
         // Right column
         if (boundingBox.right > nodeData.boundingBox.left + nextWidth)
         {
-            stack.push_back(createChildNode(nodeData, 1, firstChild, nextWidth, nextHeight));
+            stack.insert(createChildNode(nodeData, 1, firstChild, nextWidth, nextHeight));
         }
     }
     // Top row
@@ -99,18 +125,18 @@ void insertChildrenToStack(std::vector<QuadTreeNodeData>& stack, const BoundingB
         // Left column
         if (boundingBox.left <= nodeData.boundingBox.left + nextWidth)
         {
-            stack.push_back(createChildNode(nodeData, 2, firstChild, nextWidth, nextHeight));
+            stack.insert(createChildNode(nodeData, 2, firstChild, nextWidth, nextHeight));
         }
 
         // Right column
         if (boundingBox.right > nodeData.boundingBox.left + nextWidth)
         {
-            stack.push_back(createChildNode(nodeData, 3, firstChild, nextWidth, nextHeight));
+            stack.insert(createChildNode(nodeData, 3, firstChild, nextWidth, nextHeight));
         }
     }
 }
 
-std::vector<QuadTreeNodeData> QuadTree::findLeaves(const BoundingBox<int32_t>& boundingBox)
+FreeList<QuadTreeNodeData> QuadTree::findLeaves(const BoundingBox<int32_t>& boundingBox)
 {
     return findLeaves(boundingBox, QuadTreeNodeData {
         .depth = 0,
@@ -119,18 +145,17 @@ std::vector<QuadTreeNodeData> QuadTree::findLeaves(const BoundingBox<int32_t>& b
     });
 }
 
-std::vector<QuadTreeNodeData> QuadTree::findLeaves(const BoundingBox<int32_t>& boundingBox, const QuadTreeNodeData& rootNode)
+FreeList<QuadTreeNodeData> QuadTree::findLeaves(const BoundingBox<int32_t>& boundingBox, const QuadTreeNodeData& rootNode)
 {
-    std::vector<QuadTreeNodeData> leaves;
-    std::vector<QuadTreeNodeData> stack;
+    FreeList<QuadTreeNodeData> leaves;
+    FreeList<QuadTreeNodeData> stack;
 
-    stack.push_back(rootNode);
+    stack.insert(rootNode);
 
     // We need to traverse the tree to find an appropriate node.
     while (stack.size() > 0)
     {
-        auto nodeData = stack.back();
-        stack.pop_back();
+        auto nodeData = stack.pop_back();
 
         auto& node = _nodes[nodeData.index];
 
@@ -141,7 +166,7 @@ std::vector<QuadTreeNodeData> QuadTree::findLeaves(const BoundingBox<int32_t>& b
         // Is this a leaf node (count >= 0)? If so, try to insert.
         if (node.count >= 0)
         {
-            leaves.push_back(nodeData);
+            leaves.insert(nodeData);
         }
         else
         {
@@ -167,8 +192,7 @@ bool QuadTree::insert(uint64_t entityId, const BoundingBox<int32_t>& boundingBox
 
     while (leaves.size() > 0)
     {
-        auto nodeData = leaves.back();
-        leaves.pop_back();
+        auto nodeData = leaves.pop_back();
 
         auto node = _nodes[nodeData.index];
 
@@ -176,19 +200,19 @@ bool QuadTree::insert(uint64_t entityId, const BoundingBox<int32_t>& boundingBox
         if (node.count >= _capacity && (nodeData.boundingBox.width() >> 1 > _minWidth) && (nodeData.boundingBox.height() >> 1 > _minHeight))
         {
             // Add new child leaf nodes
-            _nodes.push_back(QuadTreeNode {
+            _nodes.insert(QuadTreeNode{
                 .firstChildIndex = -1,
                 .count = 0
             });
-            _nodes.push_back(QuadTreeNode {
+            _nodes.insert(QuadTreeNode{
                 .firstChildIndex = -1,
                 .count = 0
             });
-            _nodes.push_back(QuadTreeNode {
+            _nodes.insert(QuadTreeNode{
                 .firstChildIndex = -1,
                 .count = 0
             });
-            _nodes.push_back(QuadTreeNode {
+            _nodes.insert(QuadTreeNode{
                 .firstChildIndex = -1,
                 .count = 0
             });
@@ -237,11 +261,11 @@ bool QuadTree::insert(uint64_t entityId, const BoundingBox<int32_t>& boundingBox
         else 
         {
             // Node is not full, or node cannot be divided? Add object to this node
-            _elements.push_back(QuadTreeElement {
+            _elements.insert(QuadTreeElement {
                 .next = node.firstChildIndex,
                 .entityId = entityId,
-                .boundingBox = boundingBox,
-            });
+                .boundingBox = boundingBox
+                });
             
             _nodes[nodeData.index].firstChildIndex = (int32_t)(_elements.size() - 1);
             _nodes[nodeData.index].count++;

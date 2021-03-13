@@ -10,6 +10,15 @@
         "properties":{
           "sprite": "Coin"
         }
-     }
+     },
+     {
+      "type": "collidable",
+      "properties": {
+        "left": 1,
+        "bottom": 1,
+        "width": 10,
+        "height": 20
+      }
+    }
   ]
 }

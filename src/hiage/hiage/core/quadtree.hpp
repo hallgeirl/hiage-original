@@ -2,7 +2,7 @@
 
 #include "boundingbox.hpp"
 #include "debugrenderer.hpp"
-
+#include "../util/freelist.hpp"
 #include <memory>
 #include <cstdint>
 #include <vector>
@@ -43,23 +43,26 @@ namespace hiage
     private:
         BoundingBox<int32_t> _boundingBox;
         int32_t _capacity;
-        std::vector<QuadTreeNode> _nodes;
+        FreeList<QuadTreeNode> _nodes;
+        //FreeList<QuadTreeNodeData> _findLeavesResult;
         int32_t _minWidth = 32, 
                 _minHeight = 32;
 
-        std::vector<QuadTreeElement> _elements;
+        FreeList<QuadTreeElement> _elements;
         DebugRenderer* _debugRenderer;
 
-        std::vector<QuadTreeNodeData> findLeaves(const BoundingBox<int32_t>& boundingBox, const QuadTreeNodeData& root);
+        FreeList<QuadTreeNodeData> findLeaves(const BoundingBox<int32_t>& boundingBox, const QuadTreeNodeData& root);
+
+        int32_t insertResultLeaf();
 
     public:
         QuadTree() : _debugRenderer(nullptr) {}
-        QuadTree(const BoundingBox<int32_t>& boundingBox, int capacity, DebugRenderer* DebugRenderer);
 
-        std::vector<QuadTreeNodeData> findLeaves(const BoundingBox<int32_t>& boundingBox);
+        void init(const BoundingBox<int32_t>& boundingBox, int capacity, DebugRenderer* debugRenderer);
+        FreeList<QuadTreeNodeData> findLeaves(const BoundingBox<int32_t>& boundingBox);
         
         bool insert(uint64_t entityId, const BoundingBox<int32_t>& boundingBox);
 
-        void renderDebugInfo(const std::vector<QuadTreeNodeData>& leaves);
+        void renderDebugInfo();
     };
 }

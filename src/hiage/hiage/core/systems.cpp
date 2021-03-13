@@ -34,7 +34,6 @@ void DebugSystem::registerSystem(flecs::world& world)
 			ss << "Entity(" << name.name << "): " << e.id();
 			srand(name.name.length()*1000);
 			auto yoffs = (float) rand() / RAND_MAX;
-			clog << yoffs << endl;
 			_game.getDebugRenderer()->renderText(ss.str(), pos.pos.x, pos.pos.y - 20*yoffs);
 
 		});
@@ -189,7 +188,7 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 			if (height > width)
 				width = height;
 
-			_quadTree = QuadTree(BoundingBox(0, 0, width, height), 1, _game.getDebugRenderer());
+			_quadTree.init(BoundingBox(0, 0, width, height), 1, _game.getDebugRenderer());
 		});
 
 	world.system<CollidableComponent, PositionComponent>()
@@ -204,21 +203,7 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 	world.system<>()
 		.iter([&](flecs::iter&) {
 			auto debugWriter = _game.getDebugRenderer();
-			if (debugWriter != nullptr && debugWriter->getDebugFlags().quadTreeDebugFlags.renderLeaves)
-			{
-				auto& renderer = _game.getDisplay().getRenderer();
-				auto leaves = _quadTree.findLeaves(BoundingBox<int32_t>(0, 0, 9600, 480));
-				_quadTree.renderDebugInfo(leaves);
-				for (auto& l : leaves)
-				{
-					renderer.beginRender(ObjectZ::FRONT, nullptr, RenderObjectType::Lines);
-					renderer.addVertex(l.boundingBox.left, l.boundingBox.bottom, 0, 0);
-					renderer.addVertex(l.boundingBox.left, l.boundingBox.top, 0, 1);
-					renderer.addVertex(l.boundingBox.right, l.boundingBox.top, 1, 1);
-					renderer.addVertex(l.boundingBox.right, l.boundingBox.bottom, 1, 0);
-					renderer.endRender();
-				}
-			}
+			_quadTree.renderDebugInfo();
 		});
 	
 	world.system<CollidableComponent, PositionComponent, VelocityComponent>()

@@ -1,9 +1,11 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include "../gfx/display.h"
 #include "../gfx/fonts.hpp"
+#include "../util/vector2.h"
+
+#include <vector>
+#include <string>
 
 namespace hiage 
 {
@@ -49,7 +51,22 @@ namespace hiage
 
         const void renderText(const std::string& text, double x, double y)
         {   
-            _font.renderText(_display.getRenderer(), text, Vector2<double>(x,y), 0.2);
+            if (_enabled)
+                _font.renderText(_display.getRenderer(), text, Vector2<double>(x,y), 0.2);
+        }
+
+        const void renderLines(const std::vector<Vec2d>& vertices)
+        {
+            if (_enabled)
+            {
+                auto& renderer = _display.getRenderer();
+                renderer.beginRender(ObjectZ::FRONT, nullptr, RenderObjectType::Lines);
+                for (auto& v : vertices)
+                {
+                    renderer.addVertex(v.x, v.y, 0, 0);
+                }
+                renderer.endRender();
+            }
         }
 
         DebugFlags& getDebugFlags()
