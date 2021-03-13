@@ -63,9 +63,9 @@ MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0)
     _componentManager.addGenericComponentFactory<GroundMonsterControllerComponent>("groundmonstercontroller");
 
 
-    game.getAudioManager().playOgg("Overworld1", true);
+    //game.getAudioManager().playOgg("Overworld1", true);
 
-    gamemap.loadFromJson("maps/testmap.json", false);
+    gamemap.loadFromJson("maps/level2.json", false);
 }
 
 

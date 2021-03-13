@@ -208,6 +208,7 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 			{
 				auto& renderer = _game.getDisplay().getRenderer();
 				auto leaves = _quadTree.findLeaves(BoundingBox<int32_t>(0, 0, 9600, 480));
+				_quadTree.renderDebugInfo(leaves);
 				for (auto& l : leaves)
 				{
 					renderer.beginRender(ObjectZ::FRONT, nullptr, RenderObjectType::Lines);

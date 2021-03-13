@@ -51,7 +51,6 @@ namespace hiage
         DebugRenderer* _debugRenderer;
 
         std::vector<QuadTreeNodeData> findLeaves(const BoundingBox<int32_t>& boundingBox, const QuadTreeNodeData& root);
-        void renderDebugInfo(const std::vector<QuadTreeNodeData>& leaves);
 
     public:
         QuadTree() : _debugRenderer(nullptr) {}
@@ -60,5 +59,7 @@ namespace hiage
         std::vector<QuadTreeNodeData> findLeaves(const BoundingBox<int32_t>& boundingBox);
         
         bool insert(uint64_t entityId, const BoundingBox<int32_t>& boundingBox);
+
+        void renderDebugInfo(const std::vector<QuadTreeNodeData>& leaves);
     };
 }

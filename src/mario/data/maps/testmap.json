@@ -11,7 +11,7 @@
         {
           "type": "physical",
           "properties": {
-            "x": 320.0,
+            "x": 270.0,
             "y": 48.0
           }
         },
@@ -46,18 +46,6 @@
           "type": "physical",
           "properties": {
             "x": 300,
-            "y": 48
-          }
-        }
-      ],
-      "name": "Goomba"
-    },
-    {
-      "components": [
-        {
-          "type": "physical",
-          "properties": {
-            "x": 400,
             "y": 48
           }
         }

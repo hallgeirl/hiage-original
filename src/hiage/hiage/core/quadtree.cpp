@@ -157,8 +157,6 @@ std::vector<QuadTreeNodeData> QuadTree::findLeaves(const BoundingBox<int32_t>& b
         }
     }
 
-    renderDebugInfo(leaves);
-
     return leaves;
 }
 
@@ -222,13 +220,12 @@ bool QuadTree::insert(uint64_t entityId, const BoundingBox<int32_t>& boundingBox
                         if (_elements[next].boundingBox.intersects(childNodeData.boundingBox))
                         {
                             // Node is not full, or node cannot be divided? Add object to this node
+
+                            // Change the next pointer to point to the child node's first child element. 
                             _elements[next].next = childNode.firstChildIndex;
-                            /*_elements.push_back(QuadTreeElement {
-                                .next = childNode.firstChildIndex,
-                                .entityId = entityId,
-                                .boundingBox = boundingBox,
-                            });*/
-                            childNode.firstChildIndex = (int32_t)(_elements.size() - 1);
+
+                            // We then change the child node's child pointer to point to THIS element, creating a linked list.
+                            childNode.firstChildIndex = next;
                             childNode.count++;
                         }
                     }
