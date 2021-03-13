@@ -31,7 +31,7 @@ namespace hiage
 	{
 	private:
 		Game& _game;
-		
+
 	public:
 		DebugSystem(Game& game);
 		virtual void registerSystem(flecs::world& world) override;
@@ -81,11 +81,11 @@ namespace hiage
 	private:
 		SATCollisionTester collisionTester;
 		QuadTree _quadTree;
-		Renderer& _renderer;
+		Game& _game;
 		const Tilemap& _tileMap; // Need a reference to the tilemap here to get the bounds
 
 	public:
-		ObjectObjectCollisionDetectionSystem(Renderer& renderer, const Tilemap& tilemap) : System(), _renderer(renderer), _tileMap(tilemap) {}
+		ObjectObjectCollisionDetectionSystem(Game& game, const Tilemap& tilemap) : System(), _game(game), _tileMap(tilemap) {}
 		virtual void registerSystem(flecs::world& world) override;
 	};
 

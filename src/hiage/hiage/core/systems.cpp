@@ -4,6 +4,7 @@
 #include <SDL/SDL.h>
 #include <algorithm>
 #include <tuple>
+#include <cstdlib>
 
 using namespace std;
 using namespace hiage;
@@ -25,12 +26,16 @@ DebugSystem::DebugSystem(Game& game) : System(), _game(game)
 
 void DebugSystem::registerSystem(flecs::world& world)
 {
-	world.system<NameComponent>()
-		.each([&](flecs::entity e, NameComponent& pos)
+	world.system<PositionComponent, NameComponent>()
+		.each([&](flecs::entity e, PositionComponent& pos, NameComponent& name)
 		{
+
 			stringstream ss;
-			ss << "Entity(" << pos.name << "): " << e.id();
-			_game.getDebugWriter().write(ss.str());
+			ss << "Entity(" << name.name << "): " << e.id();
+			srand(name.name.length()*1000);
+			auto yoffs = (float) rand() / RAND_MAX;
+			clog << yoffs << endl;
+			_game.getDebugRenderer()->renderText(ss.str(), pos.pos.x, pos.pos.y - 20*yoffs);
 
 		});
 }
@@ -184,7 +189,7 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 			if (height > width)
 				width = height;
 
-			_quadTree = QuadTree(BoundingBox(0, 0, width, height), 1);
+			_quadTree = QuadTree(BoundingBox(0, 0, width, height), 1, _game.getDebugRenderer());
 		});
 
 	world.system<CollidableComponent, PositionComponent>()
@@ -196,19 +201,21 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 		});
 
 	// Debugging system
-	world.system<DebugStateComponent>()
-		.each([&](flecs::entity, DebugStateComponent& debugState) {
-			if (debugState.drawQuadTree)
+	world.system<>()
+		.iter([&](flecs::iter&) {
+			auto debugWriter = _game.getDebugRenderer();
+			if (debugWriter != nullptr && debugWriter->getDebugFlags().quadTreeDebugFlags.renderLeaves)
 			{
+				auto& renderer = _game.getDisplay().getRenderer();
 				auto leaves = _quadTree.findLeaves(BoundingBox<int32_t>(0, 0, 9600, 480));
 				for (auto& l : leaves)
 				{
-					_renderer.beginRender(ObjectZ::FRONT, nullptr, RenderObjectType::Lines);
-					_renderer.addVertex(l.boundingBox.left, l.boundingBox.bottom, 0, 0);
-					_renderer.addVertex(l.boundingBox.left, l.boundingBox.top, 0, 1);
-					_renderer.addVertex(l.boundingBox.right, l.boundingBox.top, 1, 1);
-					_renderer.addVertex(l.boundingBox.right, l.boundingBox.bottom, 1, 0);
-					_renderer.endRender();
+					renderer.beginRender(ObjectZ::FRONT, nullptr, RenderObjectType::Lines);
+					renderer.addVertex(l.boundingBox.left, l.boundingBox.bottom, 0, 0);
+					renderer.addVertex(l.boundingBox.left, l.boundingBox.top, 0, 1);
+					renderer.addVertex(l.boundingBox.right, l.boundingBox.top, 1, 1);
+					renderer.addVertex(l.boundingBox.right, l.boundingBox.bottom, 1, 0);
+					renderer.endRender();
 				}
 			}
 		});
@@ -436,10 +443,10 @@ hiage::DebugWriterRenderingSystem::DebugWriterRenderingSystem(Game& game, Font& 
 
 void hiage::DebugWriterRenderingSystem::registerSystem(flecs::world& world)
 {
-	world.system<DebugStateComponent>()
-		.each([&](flecs::entity, DebugStateComponent& debugState)
+	world.system<>()
+		.iter([&](flecs::iter&)
 		{
-			auto& debugWriter = _game.getDebugWriter();
+			auto debugWriter = _game.getDebugRenderer();
 			int spacingX = 100;
 			int spacingY = _font.getCharacterHeight()*0.15;
 			int yOffs = 0, xOffs = 0;
@@ -447,7 +454,7 @@ void hiage::DebugWriterRenderingSystem::registerSystem(flecs::world& world)
 			_game.printTextFixed(_font, "DEBUG LOG", -200 + xOffs, spacingY * 2 - 50, ScreenHorizontalPosition::Right, ScreenVerticalPosition::Top, 0.2, -0.2);
 			_game.printTextFixed(_font, "=========", -200 + xOffs, spacingY - 50, ScreenHorizontalPosition::Right, ScreenVerticalPosition::Top, 0.2, -0.2);
 
-			for (auto& s : debugWriter.getBuffer())
+			/*for (auto& s : debugWriter.getBuffer())
 			{
 				_game.printTextFixed(_font, s, -200 + xOffs, -yOffs - 50, ScreenHorizontalPosition::Right, ScreenVerticalPosition::Top, 0.2, -0.2);
 				//_game.printTextFixed(_font, s, 0, -yOffs+500, ScreenHorizontalPosition::Center, ScreenVerticalPosition::Center, 0.2, -0.2);
@@ -460,6 +467,6 @@ void hiage::DebugWriterRenderingSystem::registerSystem(flecs::world& world)
 				}
 			}
 			
-			debugWriter.reset();
+			debugWriter.reset();*/
 		});
 }

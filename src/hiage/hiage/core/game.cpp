@@ -28,7 +28,7 @@ using namespace std::filesystem;
 
 Game::Game(double framerateLimit, const KeyBindings& keyBindings, const std::string& dataRoot) 
 	: gameTimer(true), lastFrameTime(0.05), framerateLimit(framerateLimit), dataRoot(dataRoot),
-	scriptVM(dataRoot), input(keyBindings), audio(dataRoot), textureManager(dataRoot), spriteManager(dataRoot), objectManager(dataRoot), tilesetManager(textureManager, dataRoot), fontManager(dataRoot), spriteController(*this), _debugWriter(display)
+	scriptVM(dataRoot), input(keyBindings), audio(dataRoot), textureManager(dataRoot), spriteManager(dataRoot), objectManager(dataRoot), tilesetManager(textureManager, dataRoot), fontManager(dataRoot), spriteController(*this), _debugRenderer(nullptr)
 {
 	running = false;
 	timeFactor = 1;
@@ -43,6 +43,9 @@ Game::~Game()
 	}
 
 	states.clear();
+
+	if (_debugRenderer != nullptr)
+		delete _debugRenderer;
 }
 
 //traverse a specified directory and load the resources in it
@@ -115,11 +118,11 @@ void Game::loadResourcesRecursive(std::string dir, ResourceTypeEnum resType)
 	clog << "OK: Finished loading resources from directory " << dir << endl << flush;
 }
 
-void Game::initialize(int width, int height, bool fullscreen)
+void Game::initialize(const GameConfig& gameConfig)
 {
 	clog << "Initializing game engine...\n" << flush;
 	//initialize display
-	display.initialize(width, height, fullscreen);
+	display.initialize(gameConfig.displayWidth, gameConfig.displayHeight, gameConfig.fullscreen);
 
 	display.setZoom(200.0);
 	display.setState(DisplayState::DS_STRETCH_SCENE, false);
@@ -138,8 +141,18 @@ void Game::initialize(int width, int height, bool fullscreen)
 
 	clog << "OK: Game engine initialized properly.\n" << flush;
 
-	running = true;
 	onInit();
+
+	_consoleFont = createFont(gameConfig.consoleFontName);
+	_debugRenderer = new DebugRenderer(display, _consoleFont);
+	_debugRenderer->setDebugFlags(gameConfig.debug.debugFlags);
+
+	if (gameConfig.debug.enabled)
+	{
+		_debugRenderer->enable();
+	}
+
+	running = true;
 }
 
 void Game::pushState(GameState * state)
@@ -407,7 +420,7 @@ std::string hiage::Game::getResourcePath(const std::string& relativePath) const
 	return fullPath.string();
 }
 
-DebugWriter& Game::getDebugWriter()
+DebugRenderer* Game::getDebugRenderer()
 {
-	return _debugWriter;
+	return _debugRenderer;
 }

@@ -33,7 +33,7 @@ MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0)
 
     // Collision detection -- will we collide in this frame?
     auto& tilemap = gamemap.getTilemap();
-    sysFactory.registerSystem<ObjectObjectCollisionDetectionSystem, Renderer&, const Tilemap&>(game.getDisplay().getRenderer(), tilemap);
+    sysFactory.registerSystem<ObjectObjectCollisionDetectionSystem, Game&, const Tilemap&>(game, tilemap);
     sysFactory.registerSystem<ObjectTileCollisionDetectionSystem, const Tilemap&>(tilemap);
 
     // AI is dependent on collision detection - so we need to update AI after this.

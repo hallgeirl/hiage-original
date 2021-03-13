@@ -1,9 +1,11 @@
 #include "quadtree.hpp"
+
 #include <stdexcept>
+#include <sstream>
 
 using namespace hiage;
 
-QuadTree::QuadTree(const BoundingBox<int32_t>& boundingBox, int capacity) : _boundingBox(boundingBox), _capacity(capacity)
+QuadTree::QuadTree(const BoundingBox<int32_t>& boundingBox, int capacity, DebugRenderer* debugRenderer) : _boundingBox(boundingBox), _capacity(capacity), _debugRenderer(debugRenderer)
 {
     _nodes.push_back(QuadTreeNode {
         .firstChildIndex = -1,
@@ -11,6 +13,20 @@ QuadTree::QuadTree(const BoundingBox<int32_t>& boundingBox, int capacity) : _bou
     });
     _minWidth = 16;
     _minHeight = 16;
+}
+
+void QuadTree::renderDebugInfo(const std::vector<QuadTreeNodeData>& leaves)
+{
+    if (_debugRenderer->getDebugFlags().quadTreeDebugFlags.drawChildCount)
+    {
+        for (auto& l : leaves)
+        {
+            auto& node = _nodes[l.index];
+            std::stringstream ss;
+            ss << node.count;
+            _debugRenderer->renderText(ss.str(), (l.boundingBox.left + l.boundingBox.right) / 2, (l.boundingBox.bottom + l.boundingBox.top) / 2);
+        }
+    }
 }
 
 QuadTreeNodeData createChildNode(const QuadTreeNodeData& parent, int32_t index, int32_t firstChild, int32_t nextWidth, int32_t nextHeight)
@@ -140,6 +156,8 @@ std::vector<QuadTreeNodeData> QuadTree::findLeaves(const BoundingBox<int32_t>& b
             insertChildrenToStack(stack, boundingBox, nodeData, firstChild);
         }
     }
+
+    renderDebugInfo(leaves);
 
     return leaves;
 }

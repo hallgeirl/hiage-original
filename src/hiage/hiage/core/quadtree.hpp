@@ -1,6 +1,7 @@
 #pragma once
 
 #include "boundingbox.hpp"
+#include "debugrenderer.hpp"
 
 #include <memory>
 #include <cstdint>
@@ -46,12 +47,15 @@ namespace hiage
         int32_t _minWidth = 32, 
                 _minHeight = 32;
 
-        std::vector<QuadTreeElement> _elements; // TODO - what do we need to store here though? entity IDs?
+        std::vector<QuadTreeElement> _elements;
+        DebugRenderer* _debugRenderer;
+
         std::vector<QuadTreeNodeData> findLeaves(const BoundingBox<int32_t>& boundingBox, const QuadTreeNodeData& root);
+        void renderDebugInfo(const std::vector<QuadTreeNodeData>& leaves);
 
     public:
-        QuadTree() {}
-        QuadTree(const BoundingBox<int32_t>& boundingBox, int capacity);
+        QuadTree() : _debugRenderer(nullptr) {}
+        QuadTree(const BoundingBox<int32_t>& boundingBox, int capacity, DebugRenderer* DebugRenderer);
 
         std::vector<QuadTreeNodeData> findLeaves(const BoundingBox<int32_t>& boundingBox);
         

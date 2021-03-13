@@ -19,13 +19,6 @@ namespace hiage
 		All component types must have a registered factory using ComponentManager::addGenericComponentFactory.
 	*/
 
-	struct DebugStateComponent
-	{
-		bool dumpEntities = false;
-
-		bool drawQuadTree = true;
-	};
-
 	struct NameComponent
 	{
 		std::string name;
