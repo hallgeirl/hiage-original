@@ -44,7 +44,7 @@ namespace hiage
         BoundingBox<int32_t> _boundingBox;
         int32_t _capacity;
         FreeList<QuadTreeNode> _nodes;
-        //FreeList<QuadTreeNodeData> _findLeavesResult;
+        
         int32_t _minWidth = 32, 
                 _minHeight = 32;
 
