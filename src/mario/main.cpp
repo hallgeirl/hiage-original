@@ -27,11 +27,20 @@ int main(int, char*)
     config.displayWidth = 1920;
     config.fullscreen = false;
     config.consoleFontName = "SmallFont";
-    config.debug.enabled = true;
-    config.debug.debugFlags.drawEntityInfo = true;
-    config.debug.debugFlags.quadTreeDebugFlags.renderLeaves = true;
-    config.debug.debugFlags.quadTreeDebugFlags.drawChildCount = true;
-
+    config.debug = DebugConfig {
+        .enabled = true,
+        .debugFlags = {
+            .drawEntityInfo = true,
+            .quadTreeDebugFlags = QuadTreeDebugFlags {
+                .renderLeaves = true, 
+                .drawChildCount = true
+            },
+            .uniformGrid = UniformGridDebugFlags {
+                .renderGrid = true,
+                .drawChildCount = true
+            }
+        }
+    };
 	game.initialize(config);
 
     game.scriptVM.runFile("scripts/objects.lua");

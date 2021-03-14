@@ -1,5 +1,7 @@
 #pragma once
 
+#include "gameconfig.hpp"
+
 #include "../gfx/display.h"
 #include "../gfx/fonts.hpp"
 #include "../util/vector2.h"
@@ -9,17 +11,6 @@
 
 namespace hiage 
 {
-    struct QuadTreeDebugFlags
-    {
-        bool renderLeaves = false;
-        bool drawChildCount = false;
-    };
-    struct DebugFlags
-    {
-        QuadTreeDebugFlags quadTreeDebugFlags;
-        bool drawEntityInfo = false;
-    };
-
     // Class for writing to text on-screen for debugging purposes
     class DebugRenderer
     {
@@ -42,6 +33,11 @@ namespace hiage
         void disable()
         {
             _enabled = false;
+        }
+
+        bool enabled()
+        {
+            return _enabled;
         }
 
         void setDebugFlags(const DebugFlags& debugFlags)
@@ -72,6 +68,11 @@ namespace hiage
         DebugFlags& getDebugFlags()
         {
             return _debugFlags;
+        }
+
+        BoundingBox<double> getViewPort()
+        {
+            return _display.getViewBounds();
         }
     };
 }

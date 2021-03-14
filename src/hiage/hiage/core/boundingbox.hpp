@@ -29,6 +29,16 @@ namespace hiage
 			bottom = other.bottom;
 		}
 
+
+		// From int->double/float/whatever is fine. Make this an explicitly allowed conversion.
+		BoundingBox(const BoundingBox<double>& other)
+		{
+			left = (T)other.left;
+			right = (T)other.right;
+			top = (T)other.top;
+			bottom = (T)other.bottom;
+		}
+
         inline bool intersects(const BoundingBox<T>& other) const
         {
             return !(left > other.right || right < other.left || bottom > other.top || top < other.bottom);

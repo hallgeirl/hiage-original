@@ -192,6 +192,27 @@ double Display::getViewHeight()
 	return (_zoom * 2);
 }
 
+BoundingBox<double> Display::getViewBounds()
+{
+	BoundingBox<double> bb;
+
+	if (_aspect > 1.0f)
+	{
+		bb.left = _camX - _zoom * _aspect;
+		bb.right = _camX + _zoom * 2 * _aspect;
+		bb.bottom = _camY - _zoom;
+		bb.top = _camY + _zoom * 2;
+	}
+	else
+	{
+		bb.left = _camX - _zoom;
+		bb.right = _camX + _zoom * 2;
+		bb.bottom = _camY - _zoom * _aspect;
+		bb.top = _camY + _zoom * 2 * _aspect;
+	}
+	return bb;
+}
+
 //converts window coordinates to viewport coodinates (moves the origin to the center, and inverts the y-axis)
 Vector2<double> Display::windowToViewport(Vector2<double> coord)
 {

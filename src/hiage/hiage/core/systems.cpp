@@ -176,38 +176,42 @@ void hiage::ControllerSystem::registerSystem(flecs::world& world)
 		});
 }
 
+static bool addedEnts = false;
+
 void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& world)
 {
 	world.system<>()
 		.iter([&](flecs::iter&) {
 			// Create a square quadtree by taking the largest dimension and squaring it
+			const int gridSize = 32;
 			auto width = _tileMap.getWidth() * _tileMap.getTileSize();
 			auto height = _tileMap.getHeight() * _tileMap.getTileSize();
-			if (width > height)
-				height = width;
-			if (height > width)
-				width = height;
 
-			_quadTree.init(BoundingBox(0, 0, width, height), 1, _game.getDebugRenderer());
+			if (!_grid.initialized())
+				_grid.init(BoundingBox(0, 0, width, height), 32, _game.getDebugRenderer());
 		});
 
 	world.system<CollidableComponent, PositionComponent>()
 		.each([&](flecs::entity e, CollidableComponent& collidable, PositionComponent& position)
 		{
-			auto poly = collidable.boundingPolygon;
-			poly.translate(position.pos);
-			_quadTree.insert(e.id(), BoundingBox<int32_t>(poly.getLeft(), poly.getBottom(), poly.getRight(), poly.getTop()));
+			if (!addedEnts)
+			{
+				auto poly = collidable.boundingPolygon;
+				poly.translate(position.pos);
+				_grid.insert(e.id(), BoundingBox<int32_t>(poly.getLeft(), poly.getBottom(), poly.getRight(), poly.getTop()));
+			}
 		});
 
 	// Debugging system
 	world.system<>()
 		.iter([&](flecs::iter&) {
+			addedEnts = true;
 			auto debugWriter = _game.getDebugRenderer();
-			_quadTree.renderDebugInfo();
+			_grid.renderDebugInfo();
 		});
 	
 	world.system<CollidableComponent, PositionComponent, VelocityComponent>()
-		.each([&](flecs::entity e, CollidableComponent& collidable, PositionComponent& position, VelocityComponent& velocity)
+		.each([&](flecs::entity, CollidableComponent& collidable, PositionComponent& position, VelocityComponent& velocity)
 		{
 			
 		});
@@ -352,7 +356,7 @@ void hiage::BlockingTileSystem::registerSystem(flecs::world& world)
 void hiage::AnimationSystem::registerSystem(flecs::world& world)
 {
 	world.system<RenderableComponent, StateComponent>()
-		.each([&](flecs::entity e, RenderableComponent& renderable, StateComponent& state)
+		.each([&](flecs::entity, RenderableComponent& renderable, StateComponent& state)
 		{
 			renderable.sprite.playAnimation(state.stateName, false);
 		});
@@ -361,7 +365,7 @@ void hiage::AnimationSystem::registerSystem(flecs::world& world)
 void hiage::ObjectTrackingSystem::registerSystem(flecs::world& world)
 {
 	world.system<>()
-		.iter([&](const flecs::iter& it) {
+		.iter([&](const flecs::iter&) {
             _trackingTargets.clear();
         });
 
@@ -432,14 +436,14 @@ void hiage::DebugWriterRenderingSystem::registerSystem(flecs::world& world)
 	world.system<>()
 		.iter([&](flecs::iter&)
 		{
-			auto debugWriter = _game.getDebugRenderer();
+			/*auto debugWriter = _game.getDebugRenderer();
 			int spacingX = 100;
 			int spacingY = _font.getCharacterHeight()*0.15;
 			int yOffs = 0, xOffs = 0;
 			
 			_game.printTextFixed(_font, "DEBUG LOG", -200 + xOffs, spacingY * 2 - 50, ScreenHorizontalPosition::Right, ScreenVerticalPosition::Top, 0.2, -0.2);
 			_game.printTextFixed(_font, "=========", -200 + xOffs, spacingY - 50, ScreenHorizontalPosition::Right, ScreenVerticalPosition::Top, 0.2, -0.2);
-
+			*/
 			/*for (auto& s : debugWriter.getBuffer())
 			{
 				_game.printTextFixed(_font, s, -200 + xOffs, -yOffs - 50, ScreenHorizontalPosition::Right, ScreenVerticalPosition::Top, 0.2, -0.2);

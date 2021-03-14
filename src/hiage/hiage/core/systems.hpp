@@ -2,7 +2,7 @@
 
 #include "collisions.hpp"
 #include "componentmanager.hpp"
-#include "quadtree.hpp"
+#include "uniformgrid.hpp"
 #include "../gfx/fonts.hpp"
 #include <flecs.h>
 #include <string>
@@ -80,7 +80,7 @@ namespace hiage
 	{
 	private:
 		SATCollisionTester collisionTester;
-		QuadTree _quadTree;
+		UniformGrid _grid;
 		Game& _game;
 		const Tilemap& _tileMap; // Need a reference to the tilemap here to get the bounds
 

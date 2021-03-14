@@ -11,7 +11,6 @@ namespace hiage
 {
     /*
         Inspired by: https://stackoverflow.com/questions/41946007/efficient-and-well-explained-implementation-of-a-quadtree-for-2d-collision-det
-        Alternative: Go for hierarchical grid?
     */
 
     // This is the actual tree nodes. Bounding box is computed on the fly.
@@ -43,23 +42,21 @@ namespace hiage
     private:
         BoundingBox<int32_t> _boundingBox;
         int32_t _capacity;
-        FreeList<QuadTreeNode> _nodes;
+        std::vector<QuadTreeNode> _nodes;
         
         int32_t _minWidth = 32, 
                 _minHeight = 32;
 
-        FreeList<QuadTreeElement> _elements;
+        std::vector<QuadTreeElement> _elements;
         DebugRenderer* _debugRenderer;
 
-        FreeList<QuadTreeNodeData> findLeaves(const BoundingBox<int32_t>& boundingBox, const QuadTreeNodeData& root);
-
-        int32_t insertResultLeaf();
+        std::vector<QuadTreeNodeData> findLeaves(const BoundingBox<int32_t>& boundingBox, const QuadTreeNodeData& root);
 
     public:
         QuadTree() : _debugRenderer(nullptr) {}
 
         void init(const BoundingBox<int32_t>& boundingBox, int capacity, DebugRenderer* debugRenderer);
-        FreeList<QuadTreeNodeData> findLeaves(const BoundingBox<int32_t>& boundingBox);
+        std::vector<QuadTreeNodeData> findLeaves(const BoundingBox<int32_t>& boundingBox);
         
         bool insert(uint64_t entityId, const BoundingBox<int32_t>& boundingBox);
 

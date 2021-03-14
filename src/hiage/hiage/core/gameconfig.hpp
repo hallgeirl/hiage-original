@@ -1,10 +1,36 @@
 #pragma once
 
-#include "debugrenderer.hpp"
-
-
 namespace hiage
 {
+    struct QuadTreeDebugFlags
+    {
+        bool renderLeaves = false;
+        bool drawChildCount = false;
+
+        bool any()
+        {
+            return renderLeaves || drawChildCount;
+        }
+    };
+
+    struct UniformGridDebugFlags
+    {
+        bool renderGrid = false;
+        bool drawChildCount = false;
+
+        bool any()
+        {
+            return renderGrid || drawChildCount;
+        }
+    };
+
+    struct DebugFlags
+    {
+        bool drawEntityInfo = false;
+        QuadTreeDebugFlags quadTreeDebugFlags;
+        UniformGridDebugFlags uniformGrid;
+    };
+
     struct DebugConfig
     {
         bool enabled;
