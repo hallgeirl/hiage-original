@@ -163,7 +163,7 @@ void UniformGrid::remove(uint64_t entityId)
 		{
 			auto& node = _nodes[(int32_t)(y * _width + x)];
 
-			auto currentElementNodeIndex = _elementNodes[node.index].next;
+			auto currentElementNodeIndex = node.index;
 			int32_t prevElementNodeIndex = -1;
 			do
 			{
@@ -232,10 +232,10 @@ void UniformGrid::renderDebugInfo()
 				int count = 0;
 				if (node.index >= 0)
 				{
-					auto next = _elementNodes[node.index].next;
+					auto next = node.index;
 					do
 					{
-						auto elNode = _elementNodes[node.index];
+						auto elNode = _elementNodes[next];
 						const auto& el = _elements[elNode.index];
 						count++;
 						next = elNode.next;

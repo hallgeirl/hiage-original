@@ -176,8 +176,6 @@ void hiage::ControllerSystem::registerSystem(flecs::world& world)
 		});
 }
 
-static bool addedEnts = false;
-
 void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& world)
 {
 	world.system<>()
@@ -194,18 +192,14 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 	world.system<CollidableComponent, PositionComponent>()
 		.each([&](flecs::entity e, CollidableComponent& collidable, PositionComponent& position)
 		{
-			if (!addedEnts)
-			{
-				auto poly = collidable.boundingPolygon;
-				poly.translate(position.pos);
-				_grid.insert(e.id(), BoundingBox<int32_t>(poly.getLeft(), poly.getBottom(), poly.getRight(), poly.getTop()));
-			}
+			auto poly = collidable.boundingPolygon;
+			poly.translate(position.pos);
+			_grid.insert(e.id(), BoundingBox<int32_t>(poly.getLeft(), poly.getBottom(), poly.getRight(), poly.getTop()));
 		});
 
 	// Debugging system
 	world.system<>()
 		.iter([&](flecs::iter&) {
-			addedEnts = true;
 			auto debugWriter = _game.getDebugRenderer();
 			_grid.renderDebugInfo();
 		});
