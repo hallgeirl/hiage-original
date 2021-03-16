@@ -139,9 +139,10 @@ void MarioCollisionResponseSystem::registerSystem(flecs::world& world)
 			for (auto& oc : col.objectCollisions)
 			{
 				// Handle moving object colliding with blocking object
-				//auto c2 = gameState.getEntityManager().queryComponentGroup<CollidableComponent, BlockingComponent>(oc.entityId2);
+				auto e2 = flecs::entity(e.world(), oc.entityId2);
+				auto blocking = e2.get<BlockingComponent>();
 
-				//if (get<0>(c2) != nullptr)
+				if (blocking != nullptr)
 				{
 					auto& collisionResult = oc.collisionResult;
 
@@ -153,9 +154,6 @@ void MarioCollisionResponseSystem::registerSystem(flecs::world& world)
 
 					// Adjust the velocity according to the hit normal
 					vel.set(vel - (collisionResult.hitNormal * (1.0 + 0) * vel.dot(oc.collisionResult.hitNormal)));
-
-					//auto state = gameState.getEntityManager().queryComponentGroup<StateComponent>(oc.entityId1);
-
 
 					// normal vector of 30 degrees or higher => count as solid ground
 					if (oc.collisionResult.hitNormal.getY() > 0.5 && state != nullptr) {
