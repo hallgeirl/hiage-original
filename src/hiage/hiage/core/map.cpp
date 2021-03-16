@@ -75,8 +75,8 @@ void hiage::Map::loadFromJson(std::string path, bool runScripts)
     auto& visual = j.at("visual");
     string tilesetName = visual.at("tilesetName");
     string backgroundName = visual.at("backgroundName");
-
-    _tilemap.setTileset(_game.getTilesetManager().requestResourcePtr(tilesetName)->resource);
+    const auto& tileset = _game.getTilesetManager().requestResourceRef(tilesetName).resource;
+    _tilemap.setTileset(&tileset);
     setBackground(backgroundName);
 
     // Load scripts
@@ -135,15 +135,17 @@ void hiage::Map::loadFromJson(std::string path, bool runScripts)
             }
         }
         auto& entity = em.createEntity(objName, componentProps);
-
+        /*
+        * TODO - flecs
         if (o.contains("removeComponents"))
         {
             auto& componentsToRemove = o.at("removeComponents");
             for (auto& c : componentsToRemove)
             {
+
                 em.removeComponentFromEntity(entity->getEntityId(), c);
             }
-        }
+        }*/
         if (o.contains("additionalComponents"))
         {
             auto& componentsToAdd = o.at("additionalComponents");
@@ -154,7 +156,7 @@ void hiage::Map::loadFromJson(std::string path, bool runScripts)
                 {
                     p = componentProps[c];
                 }
-                em.addComponentToEntity(entity->getEntityId(), c, p);
+                em.addComponentToEntity(entity, c, p);
             }
         }
     }
@@ -212,6 +214,8 @@ void Map::saveAsJson(string path)
     auto& em = _gameState.getEntityManager();
 
     vector<json> objectsToSave;
+    /*
+    TODO flecs
     for (auto& e : em.getEntities())
     {
         auto comp = em.queryComponentGroup<PositionComponent>(e->getEntityId());
@@ -237,7 +241,7 @@ void Map::saveAsJson(string path)
         };
 
         objectsToSave.push_back(obj);
-    }
+    }*/
 
     json j = {
         { "version", MAPVERSION },
@@ -669,7 +673,8 @@ void Map::setBackground(std::string textureName)
     {
         try
         {
-            _background = _game.getTextureManager().requestResourcePtr(textureName.c_str())->resource;
+            const auto& bgTexture = _game.getTextureManager().requestResourceRef(textureName.c_str()).resource;
+            _background = &bgTexture;
         }
         catch (Exception &e)
         {
@@ -685,13 +690,14 @@ void Map::setBackground(std::string textureName)
 }
 
 //set a new tileset
-void Map::setTileset(string ts)
+void Map::setTileset(std::string ts)
 {
     if (ts.length() > 0)
     {
         try
         {
-            _tilemap.setTileset(_game.getTilesetManager().requestResourcePtr(ts.c_str())->resource);
+            const auto& tileset = _game.getTilesetManager().requestResourceRef(ts.c_str()).resource;
+            _tilemap.setTileset(&tileset);
             _tilesetName = ts;
         }
         catch (Exception &e)

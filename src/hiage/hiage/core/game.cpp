@@ -28,7 +28,7 @@ using namespace std::filesystem;
 
 Game::Game(double framerateLimit, const KeyBindings& keyBindings, const std::string& dataRoot) 
 	: gameTimer(true), lastFrameTime(0.05), framerateLimit(framerateLimit), dataRoot(dataRoot),
-	scriptVM(dataRoot), input(keyBindings), audio(dataRoot), textureManager(dataRoot), spriteManager(dataRoot), objectManager(dataRoot), tilesetManager(dataRoot), fontManager(dataRoot)
+	scriptVM(dataRoot), input(keyBindings), audio(dataRoot), textureManager(dataRoot), spriteManager(dataRoot), objectManager(dataRoot), tilesetManager(textureManager, dataRoot), fontManager(dataRoot), spriteController(*this), _debugRenderer(nullptr)
 {
 	running = false;
 	timeFactor = 1;
@@ -43,6 +43,9 @@ Game::~Game()
 	}
 
 	states.clear();
+
+	if (_debugRenderer != nullptr)
+		delete _debugRenderer;
 }
 
 //traverse a specified directory and load the resources in it
@@ -115,11 +118,11 @@ void Game::loadResourcesRecursive(std::string dir, ResourceTypeEnum resType)
 	clog << "OK: Finished loading resources from directory " << dir << endl << flush;
 }
 
-void Game::initialize(int width, int height, bool fullscreen)
+void Game::initialize(const GameConfig& gameConfig)
 {
 	clog << "Initializing game engine...\n" << flush;
 	//initialize display
-	display.initialize(width, height, fullscreen);
+	display.initialize(gameConfig.display.displayWidth, gameConfig.display.displayHeight, gameConfig.display.fullscreen, gameConfig.display.vsync);
 
 	display.setZoom(200.0);
 	display.setState(DisplayState::DS_STRETCH_SCENE, false);
@@ -138,8 +141,18 @@ void Game::initialize(int width, int height, bool fullscreen)
 
 	clog << "OK: Game engine initialized properly.\n" << flush;
 
-	running = true;
 	onInit();
+
+	_consoleFont = createFont(gameConfig.consoleFontName);
+	_debugRenderer = new DebugRenderer(display, _consoleFont);
+	_debugRenderer->setDebugFlags(gameConfig.debug.debugFlags);
+
+	if (gameConfig.debug.enabled)
+	{
+		_debugRenderer->enable();
+	}
+
+	running = true;
 }
 
 void Game::pushState(GameState * state)
@@ -216,6 +229,7 @@ void Game::run(bool doEvents)
 		states.back()->render();
 		states.back()->cleanupFrame();
 	}
+
 	display.render();
 
 	glDisable(GL_TEXTURE_2D);
@@ -248,9 +262,15 @@ void Game::run(bool doEvents)
 		}
 	}
 
-	static int fc = 0;
-	if (fc++ % 10 == 0)
+	static double accumulatedTime = 0;
+	accumulatedTime += frameTimer.getTime();
+
+	if (accumulatedTime >= 1)
+	{
 		cout << "FPS: " << (1 / frameTimer.getTime()) << " frametime " << frameTimer.getTime() << endl;
+		accumulatedTime = 0;
+	}
+
 	lastFrameTime = std::min(frameTimer.getTime(), 0.02) * timeFactor;
 	scriptVM.executeLine(string("frametime=") + lastFrameTime);
 }
@@ -305,12 +325,12 @@ Font & Game::createFont(std::string font)
     return *f;
 }
 
-void Game::printText(Font & font, const std::string& text, double x, double y, double scale , double spacing)
+void Game::printText(const Font& font, const std::string& text, double x, double y, double scale , double spacing)
 {
     font.renderText(display.getRenderer(), text, Vector2<double>(x,y), scale, spacing);
 }
 
-void hiage::Game::printTextFixed(Font& font, const std::string& text, double x, double y, ScreenHorizontalPosition horizontalPos, ScreenVerticalPosition verticalPos, double scale, double spacing)
+void hiage::Game::printTextFixed(const Font& font, const std::string& text, double x, double y, ScreenHorizontalPosition horizontalPos, ScreenVerticalPosition verticalPos, double scale, double spacing)
 {
 	auto& disp = getDisplay();
 	double xPos = disp.getCamX() + x;// - disp.getZoom() * disp.getAspectRatio();
@@ -342,14 +362,14 @@ void hiage::Game::printTextFixed(Font& font, const std::string& text, double x, 
 void Game::drawTexture(std::string texname, double x, double y)
 {
     Renderer & renderer = display.getRenderer();
-    Texture * tex = textureManager.requestResourcePtr(texname.c_str())->resource;
+    const Texture& tex = textureManager.requestResourceRef(texname.c_str()).resource;
 
-    renderer.beginRender(ObjectZ::CLOSEST, tex);
+    renderer.beginRender(ObjectZ::CLOSEST, &tex);
 
     renderer.addVertex(x, y, 0, 1);
-    renderer.addVertex(x + tex->getWidth(), y, 1, 1);
-    renderer.addVertex(x + tex->getWidth(), y + tex->getHeight(), 1, 0);
-    renderer.addVertex(x, y + tex->getHeight(), 0, 0);
+    renderer.addVertex(x + tex.getWidth(), y, 1, 1);
+    renderer.addVertex(x + tex.getWidth(), y + tex.getHeight(), 1, 0);
+    renderer.addVertex(x, y + tex.getHeight(), 0, 0);
 
     renderer.endRender();
 }
@@ -393,10 +413,20 @@ const ObjectManager& hiage::Game::getObjectManager() const
 	return objectManager;
 }
 
+const SpriteController& hiage::Game::getSpriteController() const
+{
+	return spriteController;
+}
+
 std::string hiage::Game::getResourcePath(const std::string& relativePath) const
 {
 	std::filesystem::path root = dataRoot;
 	auto fullPath = root / relativePath;
 
 	return fullPath.string();
+}
+
+DebugRenderer* Game::getDebugRenderer()
+{
+	return _debugRenderer;
 }

@@ -22,7 +22,32 @@ int main(int, char*)
     keyBindings.mapKey("rshift", "run");
 
 	MarioGame game(keyBindings);
-	game.initialize(1024, 768, false);
+    GameConfig config;
+    config.display.displayHeight = 1080;
+    config.display.displayWidth = 1920;
+    config.display.fullscreen = false;
+    config.display.vsync = true;
+    config.consoleFontName = "SmallFont";
+    config.debug = DebugConfig {
+        .enabled = false,
+        .debugFlags = {
+            .drawEntityInfo = true,
+            .quadTreeDebugFlags = QuadTreeDebugFlags {
+                .renderLeaves = true, 
+                .drawChildCount = true
+            },
+            .uniformGrid = UniformGridDebugFlags {
+                .renderGrid = false,
+                .drawChildCount = false
+            },
+            .collisionDetection = CollisionDetectionDebugFlags {
+                .showObjectCollisions = true,
+                .showTileCollisions = true,
+                .drawBoundingPolygon = true
+            }
+        }
+    };
+	game.initialize(config);
 
     game.scriptVM.runFile("scripts/objects.lua");
     game.scriptVM.runFile("scripts/ui.lua");

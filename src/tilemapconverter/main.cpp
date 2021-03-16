@@ -67,7 +67,12 @@ int main(int, char*)
     KeyBindings dummyKeyBindings;
 
     DummyGame g(dummyKeyBindings);
-    g.initialize(1024, 768, false);
+    GameConfig config;
+    config.display.displayHeight = 768;
+    config.display.displayWidth = 1024;
+    config.display.fullscreen = false;
+
+    g.initialize(config);
     DummyGamestate gs(g);
     Map m(g, gs);
 

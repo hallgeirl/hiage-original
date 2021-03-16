@@ -17,11 +17,9 @@ namespace hiage
 	/*!
 		Template class for a vector class with two dimensions.
 	*/
-	template <typename T> class __IMPORTEXPORT Vector2
+	template <typename T> struct __IMPORTEXPORT Vector2
 	{
-	private:
 		T x, y;
-	public:
 		/*!
 			Initializes the vector to (0, 0).
 		*/

@@ -3,8 +3,8 @@
   <texture name="BlockQuestion" />
 
   <animation name="active">
-    <frame x="0" y="0" delay="0.5" nextframe="1" colbox="0 0 16 16" />
-    <frame x="16" y="0" delay="0.5" nextframe="2" colbox="0 0 16 16" />
-    <frame x="32" y="0" delay="0.5" nextframe="0" colbox="0 0 16 16" />
+    <frame x="0" y="0" delay="0.5" nextframe="1" />
+    <frame x="16" y="0" delay="0.5" nextframe="2" />
+    <frame x="32" y="0" delay="0.5" nextframe="0" />
   </animation>
 </sprite>

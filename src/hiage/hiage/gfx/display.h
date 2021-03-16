@@ -7,6 +7,7 @@
 #include "renderer.h"
 #include "../core/typedefs.h"
 #include "../util/vector2.h"
+#include "../core/boundingbox.hpp"
 
 typedef struct SDL_Window SDL_Window;
 
@@ -53,7 +54,7 @@ namespace hiage
 		Display();	//constructor
 
 		//initialize opengl and set up a window
-		void initialize(int width, int height, bool fullscreen);
+		void initialize(int width, int height, bool fullscreen, bool vsync);
 		//resize scene
 		void resize(int width, int height);
 		//render everything
@@ -75,6 +76,8 @@ namespace hiage
 		int getHeight() { return _height; }
 		double getViewWidth();
 		double getViewHeight();
+
+		BoundingBox<double> getViewBounds();
 
 		Renderer& getRenderer() { return _renderer; }
 

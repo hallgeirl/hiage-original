@@ -7,6 +7,7 @@ add_library(hiage STATIC
 	"hiage/core/audio.cpp"
 	"hiage/core/boundingpolygon.cpp" 
 	"hiage/core/collisions.cpp" 
+	"hiage/core/componentmanager.cpp" 
 	"hiage/core/components.cpp" 
 	"hiage/core/entity.cpp"
 	"hiage/core/entitymanager.cpp"
@@ -15,6 +16,7 @@ add_library(hiage STATIC
 	"hiage/core/gamestate.cpp" 
 	"hiage/core/inputmanager.cpp"
 	"hiage/core/map.cpp"
+	"hiage/core/quadtree.cpp"
 	"hiage/core/resourcemanager.cpp"
 	"hiage/core/script_lua.cpp"
 	"hiage/core/systems.cpp" 
@@ -24,6 +26,7 @@ add_library(hiage STATIC
 	"hiage/gfx/particles.cpp"
 	"hiage/gfx/renderer.cpp"
 	"hiage/gfx/sprite.cpp"
+	"hiage/gfx/spritecontroller.cpp"
 	"hiage/gfx/texture.cpp"
 	"hiage/gfx/tilemap.cpp"
 	"hiage/gfx/tileset.cpp"
@@ -32,7 +35,8 @@ add_library(hiage STATIC
 	"hiage/ui/windows.cpp"
 	"hiage/util/exceptions.cpp"
 	"hiage/util/timer.cpp"
- )
+    "hiage/core/uniformgrid.cpp"
+)
 
 target_include_directories(hiage PUBLIC ${PROJECT_SOURCE_DIR}/third_party/include ${PROJECT_SOURCE_DIR}/third_party/src/tinyxml ${PROJECT_SOURCE_DIR}/third_party/src/flecs)
 

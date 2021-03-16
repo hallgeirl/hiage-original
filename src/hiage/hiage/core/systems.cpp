@@ -1,13 +1,18 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     #include "systems.hpp"
+#include "systems.hpp"
 #include "game.hpp"
+#include "quadtree.hpp"
 #include <SDL/SDL.h>
 #include <algorithm>
+#include <tuple>
+#include <cstdlib>
 
 using namespace std;
 using namespace hiage;
 
 
-System::System(Game& game, GameState& gameState) : game(game), gameState(gameState)
+// TODO flecs
+
+System::System()
 {
 }
 
@@ -15,373 +20,420 @@ System::~System()
 {
 }
 
-MovementSystem::MovementSystem(Game& game, GameState& gameState) : System(game, gameState)
+DebugSystem::DebugSystem(Game& game) : System(), _game(game)
 {
 }
 
-void MovementSystem::update(double frametime)
+void DebugSystem::registerSystem(flecs::world& world)
 {
-	{
-		auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent>();
-		for (auto& t : componentTuples)
+	world.system<PositionComponent, NameComponent>()
+		.each([&](flecs::entity e, PositionComponent& pos, NameComponent& name)
 		{
-			auto& physical = std::get<1>(t);
-			auto& movement = std::get<2>(t);
-		
-			auto vel = movement->getData();
-			auto pos = physical->getData();
-			physical->getData().set(pos + vel * frametime);
-		}
-	}
-
-	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, SpeedLimitComponent>();
-	for (auto& t : componentTuples)
-	{
-		auto& movement = std::get<1>(t)->getData();
-		auto& limit = std::get<2>(t)->getData();
-
-		auto limitX = limit.speedLimit.getX();
-		auto limitY = limit.speedLimit.getY();
-		if (limitX >= 0 && abs(movement.getX()) > limitX)
-		{
-			if (movement.getX() > 0)
-				movement.setX(limitX);
-			else
-				movement.setX(-limitX);
-		}
-		if (limitY >= 0 && abs(movement.getY()) > limitY)
-		{
-			if (movement.getY() > 0)
-				movement.setY(limitY);
-			else
-				movement.setY(-limitY);
-		}
-	}*/
+			const double margin = 100.;
+			auto viewPort = _game.getDebugRenderer()->getViewPort();
+			if (pos.pos.x > viewPort.left - margin && pos.pos.x < viewPort.right + margin && pos.pos.y > viewPort.bottom - margin && pos.pos.y < viewPort.top + margin)
+			{ 
+				stringstream ss;
+				ss << "Entity(" << name.name << ", " << e.id() << "): " << pos.pos.x << "," << pos.pos.y;
+				srand(name.name.length()*1000);
+				auto yoffs = (float) rand() / RAND_MAX;
+				_game.getDebugRenderer()->renderText(ss.str(), pos.pos.x, pos.pos.y - 20*yoffs);
+			}
+		});
 }
 
-ObjectRenderingSystem::ObjectRenderingSystem(Game& game, GameState& gameState) : System(game, gameState)
+MovementSystem::MovementSystem() : System()
 {
 }
 
-void ObjectRenderingSystem::update(double frameTime)
+void MovementSystem::registerSystem(flecs::world& world)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, RenderableComponent>();
-
-	Display& disp = game.getDisplay();
-	Renderer& renderer = disp.getRenderer();
-	double aspect = disp.getAspectRatio();
-	double zoom = disp.getZoom();
-	double camX = disp.getCamX();
-	double camY = disp.getCamY();
-
-	double viewLeft = camX - (zoom * aspect);
-	double viewRight = camX + (zoom * aspect);
-	double viewTop = camY + zoom;
-	double viewBottom = camY - zoom;
-
-	for (auto& t : componentTuples)
-	{
-		auto entityId = std::get<0>(t);
-		auto& phyiscal = std::get<1>(t);
-		auto& renderable = std::get<2>(t);
-
-		auto& pos = phyiscal->getData();
-		auto& sprite = renderable->getData();
-		
-		//check if the object is inside the viewport
-		if ((pos.getX() + sprite.getWidth() >= viewLeft) && (pos.getX() <= viewRight))
+	world.system<PositionComponent, VelocityComponent>()
+		.each([](flecs::entity e, PositionComponent& position, VelocityComponent& velocity)
 		{
-			if ((pos.getY() + sprite.getHeight() >= viewBottom) && (pos.getY() <= viewTop))
+			auto vel = velocity.vel;
+			
+			position.pos.set(position.pos + vel * e.delta_time());
+		});
+	
+
+	world.system<SpeedLimitComponent, VelocityComponent>()
+		.each([](flecs::entity e, SpeedLimitComponent& limit, VelocityComponent& velocity)
 			{
-				auto vel = gameState.getEntityManager().queryComponentGroup<VelocityComponent>(entityId);
-				double velocity = 0;
-				if (vel != nullptr)
-					velocity = vel->getData().getX();
+				auto& movement = velocity.vel;
 
-				auto state = gameState.getEntityManager().queryComponentGroup<StateComponent>(entityId);
+				auto limitX = limit.speedLimit.getX();
+				auto limitY = limit.speedLimit.getY();
+				if (limitX >= 0 && abs(movement.getX()) > limitX)
+				{
+					if (movement.getX() > 0)
+						movement.setX(limitX);
+					else
+						movement.setX(-limitX);
+				}
+				if (limitY >= 0 && abs(movement.getY()) > limitY)
+				{
+					if (movement.getY() > 0)
+						movement.setY(limitY);
+					else
+						movement.setY(-limitY);
+				}
+			});
+}
+
+ObjectRenderingSystem::ObjectRenderingSystem(Game& game) : System(), _game(game)
+{
+}
+
+void ObjectRenderingSystem::registerSystem(flecs::world& world)
+{
+	world.system<PositionComponent, RenderableComponent, VelocityComponent*, StateComponent*>()
+		.each([&](flecs::entity e, PositionComponent& phyiscal, RenderableComponent& renderable, VelocityComponent* vel, StateComponent* state)
+		{
+			Display& disp = _game.getDisplay();
+			auto& spriteController = _game.getSpriteController();
+			double aspect = disp.getAspectRatio();
+			double zoom = disp.getZoom();
+			double camX = disp.getCamX();
+			double camY = disp.getCamY();
+
+			double viewLeft = camX - (zoom * aspect);
+			double viewRight = camX + (zoom * aspect);
+			double viewTop = camY + zoom;
+			double viewBottom = camY - zoom;
+
+			auto& pos = phyiscal.pos;
+			auto& sprite = renderable.sprite;
+			
+			//check if the object is inside the viewport
+			if ((pos.getX() + sprite.getWidth() >= viewLeft) && (pos.getX() <= viewRight))
+			{
+				if ((pos.getY() + sprite.getHeight() >= viewBottom) && (pos.getY() <= viewTop))
+				{
+					double velocity = 0;
+					if (vel != nullptr)
+						velocity = vel->vel.x;
+
+					bool hflip = false, vflip = false;
+					if (state != nullptr)
+					{
+						auto& metadata = state->metadata;
+						if (metadata.contains("x-flip") && get<int>(metadata.at("x-flip")) != 0)
+							hflip = true;
+						if (metadata.contains("y-flip") && get<int>(metadata.at("y-flip")) != 0)
+							vflip = true;
+					}
+
+					// Render sprite
+					spriteController.render(sprite, pos, ObjectZ::MIDDLE, 0.f, hflip, vflip);
+
+					// Update animations
+					sprite.updateAnimation(e.delta_time(), velocity);
+				}
+			}
+		});
+}
+
+hiage::PhysicsSystem::PhysicsSystem(double gravity) : System(), _gravity(gravity)
+{
+}
+
+void hiage::PhysicsSystem::registerSystem(flecs::world& world)
+{
+	world.system<PhysicsComponent, VelocityComponent>()
+		.each([&](flecs::entity e, PhysicsComponent& physics, VelocityComponent& velocity)
+		{
+			if (physics.hasGravity)
+				velocity.vel.add(Vector2<double>(0, -1) * _gravity * e.delta_time());
+			
+			if (physics.airResistance > 0 && velocity.vel.length() > 0)
+				velocity.vel.subtract(velocity.vel.normalized() * physics.airResistance);
+		});
+}
+
+
+hiage::ControllerSystem::ControllerSystem(Game& game) : System(), _game(game)
+{
+}
+
+void hiage::ControllerSystem::registerSystem(flecs::world& world)
+{
+	world.system<ControllerComponent, ControllerStateComponent>()
+		.each([&](flecs::entity e, ControllerComponent& controller, ControllerStateComponent& controllerState)
+		{
+			if (controller.controllerType == "human")
+			{
+				auto& inputManager = _game.getInputManager();
+				auto actions = inputManager.getControllerActions();
+				controllerState.controllerState = actions;
+			}
+			else if (controller.controllerType == "constant")
+			{
+				std::unordered_set<std::string> actions;
+				for (auto& a : controller.constantActions)
+					actions.insert(a);
+
+				controllerState.controllerState = actions;
+			}
+		});
+}
+
+void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& world)
+{
+	world.system<>()
+		.iter([&](flecs::iter&) {
+			// Create a square quadtree by taking the largest dimension and squaring it
+			const int gridSize = 32;
+			auto width = _tileMap.getWidth() * _tileMap.getTileSize();
+			auto height = _tileMap.getHeight() * _tileMap.getTileSize();
+
+			if (!_grid.initialized())
+				_grid.init(BoundingBox(0, 0, width, height), 32, _game.getDebugRenderer());
+		});
+
+	world.system<CollidableComponent, PositionComponent, VelocityComponent*>()
+		.each([&](flecs::entity e, CollidableComponent& collidable, PositionComponent& position, VelocityComponent* velocity)
+		{
+			auto poly = collidable.boundingPolygon;
+			poly.translate(position.pos);
+			auto bb = BoundingBox<int32_t>(poly.getLeft(), poly.getBottom(), poly.getRight(), poly.getTop());
+			if (velocity != nullptr)
+			{
+				if (velocity->vel.x > 0)
+					bb.right += velocity->vel.x * e.delta_time();
+				else
+					bb.left += velocity->vel.x * e.delta_time();
+
+				if (velocity->vel.y > 0)
+					bb.top += velocity->vel.y * e.delta_time();
+				else
+					bb.bottom += velocity->vel.y * e.delta_time();
+			}
+			_grid.insert(e.id(), bb);
+		});
+
+	world.system<CollidableComponent, PositionComponent, VelocityComponent>()
+		.each([&](flecs::entity e, CollidableComponent& collidable, PositionComponent& position, VelocityComponent& velocity)
+		{
+			collidable.objectCollisions.clear();
+
+			vector<BoundingPolygon> tempVecPolygon2;
+			tempVecPolygon2.resize(1);
+			// Check for collisions
+			auto entityId1 = e.id();
+			auto& col1 = collidable;
+			const auto& pos1 = position.pos;
+			const auto& vel1 = velocity.vel;
+
+			BoundingPolygon polygon1 = col1.boundingPolygon;
+			polygon1.translate(pos1);
+
+			auto candidates = _grid.getElementsNear(entityId1);
+
+			for (auto entityId2 : candidates)
+			{
+				if (entityId2 == entityId1)
+					continue;
+
+				flecs::entity c2(e.world(), entityId2);
 				
-				bool hflip = false, vflip = false;
-				if (state != nullptr)
+				auto col2 = c2.get<CollidableComponent>();
+				const auto pos2 = c2.get<PositionComponent>()->pos;
+				auto vel2Comp = c2.get<VelocityComponent>();
+				Vec2d vel2(0,0);
+				if (vel2Comp != nullptr)
+					vel2 = vel2Comp->vel;
+
+				auto relativeFrameVelocity = (vel1 - vel2) * e.delta_time();
+				tempVecPolygon2[0] = col2->boundingPolygon;
+
+				tempVecPolygon2[0].translate(pos2);
+
+				for (int axis = 0; axis <= 1; axis++)
 				{
-					auto& metadata = state->getData().metadata;
-					if (metadata.contains("x-flip") && get<int>(metadata.at("x-flip")) != 0)
-						hflip = true;
-					if (metadata.contains("y-flip") && get<int>(metadata.at("y-flip")) != 0)
-						vflip = true;
-				}
+					auto result = collisionTester.testCollision(polygon1, relativeFrameVelocity, tempVecPolygon2, axis);
 
-				// Render sprite
-				sprite.render(renderer, pos, ObjectZ::MIDDLE, 0.f, hflip, vflip);
-
-				// Update animations
-				sprite.updateAnimation(frameTime, velocity);
-			}
-		}
-	}
-}
-
-hiage::PhysicsSystem::PhysicsSystem(Game& game, GameState& gameState, double gravity) : System(game, gameState), _gravity(gravity)
-{
-}
-
-void hiage::PhysicsSystem::update(double frameTime)
-{
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PhysicsComponent, VelocityComponent>();
-
-	for (auto& t : componentTuples)
-	{
-		auto& physics = std::get<1>(t);
-		auto& movement = std::get<2>(t);
-		auto& vel = movement->getData();
-
-		auto& physicsProps = physics->getData();
-		if (physicsProps.hasGravity)
-			vel.add(Vector2<double>(0, -1) * _gravity * frameTime);
-		
-		if (physicsProps.airResistance > 0 && vel.length() > 0)
-			vel.subtract(vel.normalized() * physicsProps.airResistance);
-	}
-}
-
-
-hiage::ControllerSystem::ControllerSystem(Game& game, GameState& gameState) : System(game, gameState)
-{
-}
-
-void hiage::ControllerSystem::update(double)
-{
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<ControllerComponent, ControllerStateComponent>();
-	for (auto& t : componentTuples)
-	{
-		auto& controllerData = std::get<1>(t)->getData();
-		auto& controllerState = std::get<2>(t);
-
-		if (controllerData.controllerType == "human")
-		{
-			auto& inputManager = game.getInputManager();
-			auto actions = inputManager.getControllerActions();
-			controllerState->setData(actions);
-		}
-		else if (controllerData.controllerType == "constant")
-		{
-			std::unordered_set<std::string> actions;
-			for (auto& a : controllerData.constantActions)
-				actions.insert(a);
-
-			controllerState->setData(actions);
-		}
-	}
-}
-
-void hiage::ObjectObjectCollisionDetectionSystem::update(double frameTime)
-{
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, PositionComponent, VelocityComponent>();
-
-	// Clear previous collisions
-	for (auto& c : componentTuples)
-		get<1>(c)->getData().objectCollisions.clear();
-
-	// Sort by x coordinate
-	gameState.getEntityManager().sortEntitiesByPosition();
-
-	BoundingPolygon polygon1;
-
-	vector<BoundingPolygon> tempVecPolygon2;
-	tempVecPolygon2.resize(1);
-	// Check for collisions
-	for (int i = 0; i < componentTuples.size(); i++)
-	{
-		auto& c1 = componentTuples[i];
-		auto entityId1 = get<0>(c1);
-		auto& col1 = get<1>(c1)->getData();
-		const auto& pos1 = get<2>(c1)->getData();
-		const auto& vel1 = get<3>(c1)->getData();
-
-		polygon1 = col1.boundingPolygon;
-
-		polygon1.translate(pos1);
-
-		for (int j = i + 1; j < componentTuples.size(); j++)
-		{
-			auto& c2 = componentTuples[j];
-			auto entityId2 = get<0>(c2);
-			auto& col2 = get<1>(c2)->getData();
-			const auto& pos2 = get<2>(c2)->getData();
-			auto relativeFrameVelocity = (vel1 - get<3>(c2)->getData()) * frameTime;
-			tempVecPolygon2[0] = get<1>(c2)->getData().boundingPolygon;
-
-			tempVecPolygon2[0].translate(pos2);
-
-			// Distance check: If object 2 is further to the right than it's possible to move in one frame, we can skip this check.
-			// For subsequent objects, they will be even more to the right, so we can break out early here.
-			auto xDistance = tempVecPolygon2[0].getLeft() - polygon1.getRight();
-			if (xDistance > relativeFrameVelocity.getX())
-				break;
-
-			for (int axis = 0; axis <= 1; axis++)
-			{
-				auto result = collisionTester.testCollision(polygon1, relativeFrameVelocity, tempVecPolygon2, axis);
-
-				if (result.willIntersect || result.isIntersecting)
-				{
-					// Add two collision events - object 1 colliding with object 2, and the other way around.
-					col1.objectCollisions.push_back(ObjectObjectCollisionData{
-						.entityId1 = entityId1,
-						.entityId2 = entityId2,
-						.collisionResult = result
-						});
-
-					auto result2 = result;
-					result2.hitNormal *= -1;
-					col2.objectCollisions.push_back(ObjectObjectCollisionData{
-						.entityId1 = entityId2,
-						.entityId2 = entityId1,
-						.collisionResult = result2
-						});
+					if (result.willIntersect || result.isIntersecting)
+					{
+						// Add two collision events - object 1 colliding with object 2, and the other way around.
+						col1.objectCollisions.push_back(ObjectObjectCollisionData{
+								.entityId1 = entityId1,
+								.entityId2 = entityId2,
+								.collisionResult = result
+							});
+					}
 				}
 			}
-		}
-	}
+		});
+
+	// Debugging system
+	world.system<>()
+		.iter([&](flecs::iter&) {
+		auto debugWriter = _game.getDebugRenderer();
+		_grid.renderDebugInfo();
+	});
+
+	world.system<CollidableComponent, PositionComponent>()
+		.each([&](flecs::entity, CollidableComponent& col, PositionComponent& pos) {
+			DebugRenderer* debugWriter = _game.getDebugRenderer();
+			if (debugWriter->enabled())
+			{ 
+				if (debugWriter->getDebugFlags().collisionDetection.showObjectCollisions && col.objectCollisions.size() > 0)
+				{
+					debugWriter->renderText("Collided!", pos.pos.x, pos.pos.y);
+				}
+
+				if (debugWriter->getDebugFlags().collisionDetection.drawBoundingPolygon)
+				{
+					BoundingPolygon polygon = col.boundingPolygon;
+					polygon.translate(pos.pos);
+					auto vertices = polygon.getVertices();
+					vertices.push_back(vertices[0]); // wrap around to the first vertex
+					debugWriter->renderLines(vertices);
+				}
+			}
+		});
 }
 
 
-SystemsFactory::SystemsFactory(Game& game, GameState& gameState) : game(game), gameState(gameState)
-{
-}
 
 static int frameCounter = 0;
-void hiage::ObjectTileCollisionDetectionSystem::update(double frameTime)
+void hiage::ObjectTileCollisionDetectionSystem::registerSystem(flecs::world& world)
 {
 	frameCounter++;
-	if (!tilemap.isLoaded())
-		return;
+	//if (!tilemap.isLoaded())
+		//return;
 
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>();
-
-	for (auto& c : componentTuples)
-	{
-		const auto entityId = get<0>(c);
-		const auto& pos = get<1>(c)->getData();
-		const auto& vel = get<2>(c)->getData();
-		auto& col = get<3>(c)->getData();
-		col.tileCollisions.clear();
-
-		Vector2<double> dvelocity = vel * frameTime;
-		Vector2<double> currentPosition = pos;
-
-		//get the collision box of the object
-		BoundingPolygon objectPolygon = get<3>(c)->getData().boundingPolygon;
-		objectPolygon.translate(currentPosition);
-
-		// Get bounding polygons for tiles within the sprite's overlap
-		vector<BoundingPolygon> tilePolygons = tilemap.getBoundingPolygonsInRect(objectPolygon.getLeft() + vel.getX() * frameTime, objectPolygon.getTop() + vel.getY() * frameTime, objectPolygon.getRight() + vel.getX() * frameTime, objectPolygon.getBottom() + vel.getY() * frameTime);
-		for (int axis = 0; axis <= 1; axis++)
+	world.system<PositionComponent, VelocityComponent, CollidableComponent>()
+		.each([&](flecs::entity e, PositionComponent& position, VelocityComponent& velocity, CollidableComponent& collidable)
 		{
-			auto result = collisionTester.testCollision(objectPolygon, vel * frameTime, tilePolygons, axis);
-			if (result.willIntersect || result.isIntersecting)
+			const auto& pos = position.pos;
+			const auto& vel = velocity.vel;
+			
+			collidable.tileCollisions.clear();
+
+			Vector2<double> dvelocity = vel * e.delta_time();
+			Vector2<double> currentPosition = pos;
+
+			//get the collision box of the object
+			BoundingPolygon objectPolygon = collidable.boundingPolygon;
+			objectPolygon.translate(currentPosition);
+
+			// Get bounding polygons for tiles within the sprite's overlap
+			vector<BoundingPolygon> tilePolygons = tilemap.getBoundingPolygonsInRect(objectPolygon.getLeft() + vel.getX() * e.delta_time(), 
+																					 objectPolygon.getTop() + vel.getY() * e.delta_time(), 
+																					 objectPolygon.getRight() + vel.getX() * e.delta_time(), 
+																					 objectPolygon.getBottom() + vel.getY() * e.delta_time());
+			for (int axis = 0; axis <= 1; axis++)
 			{
-				col.tileCollisions.push_back(ObjectTileCollisionData{
-					.entityId = entityId,
-					.collisionResult = result
+				auto result = collisionTester.testCollision(objectPolygon, vel * e.delta_time(), tilePolygons, axis);
+				if (result.willIntersect || result.isIntersecting)
+				{
+					collidable.tileCollisions.push_back(ObjectTileCollisionData{
+						.entityId = e.id(),
+						.collisionResult = result
 					});
+				}
 			}
-		}
-	}
+		});
 }
 
-void hiage::BlockingTileSystem::update(double frameTime)
+void hiage::BlockingTileSystem::registerSystem(flecs::world& world)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, CollidableComponent>();
-	for (auto& c : componentTuples)
-	{
-		auto& pos = std::get<1>(c)->getData();
-		auto& vel = std::get<2>(c)->getData();
-		auto& col = std::get<3>(c)->getData();
-		
-		for (auto& tc : col.tileCollisions)
+	world.system<PositionComponent, VelocityComponent, CollidableComponent>()
+		.each([&](flecs::entity e, PositionComponent& position, VelocityComponent& velocity, CollidableComponent& collidable)
 		{
-			auto& collisionResult = tc.collisionResult;
+			
+			auto& pos = position.pos;
+			auto& vel = velocity.vel;
+			auto& col = collidable;
+			
+			for (auto& tc : col.tileCollisions)
+			{
+				auto& collisionResult = tc.collisionResult;
 
-			// collisionTimeFactor is the fraction of the velocity that should be applied to move the object to the position of the collision
-			auto collisionTimeFactor = frameTime * collisionResult.collisionTime;
-			// Calculate the per-axis velocity
-			Vec2d deltaPos(vel.getX() * collisionTimeFactor * collisionResult.axis.getX(), vel.getY() * collisionTimeFactor * collisionResult.axis.getY());
-			pos.add(deltaPos - vel * 1.0e-6);
+				// collisionTimeFactor is the fraction of the velocity that should be applied to move the object to the position of the collision
+				auto collisionTimeFactor = e.delta_time() * collisionResult.collisionTime;
+				// Calculate the per-axis velocity
+				Vec2d deltaPos(vel.getX() * collisionTimeFactor * collisionResult.axis.getX(), vel.getY() * collisionTimeFactor * collisionResult.axis.getY());
+				pos.add(deltaPos - vel * 1.0e-6);
 
-			// Adjust the velocity according to the hit normal
-			vel.set(vel - (collisionResult.hitNormal * (1.0 + 0) * vel.dot(collisionResult.hitNormal)));
-		}
-	}
+				// Adjust the velocity according to the hit normal
+				vel.set(vel - (collisionResult.hitNormal * (1.0 + 0) * vel.dot(collisionResult.hitNormal)));
+			}
+		});
 }
 
-void hiage::AnimationSystem::update(double)
+void hiage::AnimationSystem::registerSystem(flecs::world& world)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<RenderableComponent, StateComponent>();
-
-	for (auto& t : componentTuples)
-	{
-		auto& renderable = std::get<1>(t);
-		auto& state = std::get<2>(t)->getData();
-		auto& sprite = renderable->getData();
-
-		sprite.playAnimation(state.stateName, false);
-	}
-}
-
-void hiage::ObjectTrackingSystem::update(double frameTime)
-{
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, TrackableComponent>();
-
-	if (componentTuples.size() == 0)
-		return;
-
-	auto trackingTarget = componentTuples[0];
-	auto& trackingPos = get<1>(trackingTarget)->getData();
-	auto& trackingVel = get<2>(trackingTarget)->getData();
-
-	auto trackingComponentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, VelocityComponent, TrackingComponent>();
-	for (auto& c : trackingComponentTuples)
-	{
-		auto& tracking = get<3>(c)->getData();
-		string mode = "elastic";
-		if (tracking.mode.length() > 0)
-			mode = tracking.mode;
-		
-		auto& pos = get<1>(c)->getData();
-		auto& vel = get<2>(c)->getData();
-		if (mode == "fixed")
+	world.system<RenderableComponent, StateComponent>()
+		.each([&](flecs::entity, RenderableComponent& renderable, StateComponent& state)
 		{
-			pos.set(trackingPos);
-		} 
-		else if (mode == "elastic")
-		{
-			auto diff = (trackingPos + trackingVel) - pos;
-
-			vel.scale(0.5);
-			auto accelVector = diff * 100. + trackingVel;
-			vel.add(accelVector * frameTime);
-		}
-	}
+			renderable.sprite.playAnimation(state.stateName, false);
+		});
 }
 
-void hiage::CameraSystem::update(double)
+void hiage::ObjectTrackingSystem::registerSystem(flecs::world& world)
 {
-	auto componentTuples = gameState.getEntityManager().queryComponentGroup<PositionComponent, CameraComponent>();
+	world.system<>()
+		.iter([&](const flecs::iter&) {
+            _trackingTargets.clear();
+        });
 
-	for (auto& c : componentTuples)
-	{
-		auto& pos = get<1>(c)->getData();
-		auto& camProps = get<2>(c)->getData();
+	// Step 1: Make a list of trackable objects
+	world.system<PositionComponent, VelocityComponent, TrackableComponent>()
+		.each([&](flecs::entity e, PositionComponent& position, VelocityComponent& velocity, TrackableComponent&)
+		{
+			_trackingTargets.push_back(std::make_tuple(position, velocity));
+		});
 
-		// TODO - Make boundaries configurable.
-		game.getDisplay().setZoom(camProps.zoom);
+	world.system<PositionComponent, VelocityComponent, TrackingComponent>()
+		.each([&](flecs::entity e, PositionComponent& trackingObjectPosition, VelocityComponent& trackingObjectVelocity, TrackingComponent& tracking)
+		{
+			if (_trackingTargets.size() == 0)
+				return;
 
-		auto zoom = game.getDisplay().getZoom();
-		auto aspect = game.getDisplay().getAspectRatio();
-		auto leftBoundary = zoom * aspect;
-		auto bottomBoundary = zoom;
+			//TODO: This is not great - only supporting a single tracking target for now. But for my use, it's fine. For now.
+			auto& trackingTargetPosition = std::get<0>(_trackingTargets[0]).pos;
+			auto& trackingTargetVelocity = std::get<1>(_trackingTargets[0]).vel;
+
+			std::string mode = "elastic";
+			if (tracking.mode.length() > 0)
+				mode = tracking.mode;
+			
+			if (mode == "fixed")
+			{
+				trackingObjectPosition.pos.set(trackingTargetPosition);
+			} 
+			else if (mode == "elastic")
+			{
+				auto diff = (trackingTargetPosition + trackingTargetVelocity) - trackingObjectPosition.pos;
+
+				trackingObjectVelocity.vel.scale(0.5);
+				auto accelVector = diff * 100. + trackingTargetVelocity;
+				trackingObjectVelocity.vel.add(accelVector * e.delta_time());
+			}
+		});
+}
+
+void hiage::CameraSystem::registerSystem(flecs::world& world)
+{
+	world.system<PositionComponent, CameraComponent>()
+		.each([&](flecs::entity, PositionComponent& physical, CameraComponent& camera)
+		{
+			
+			auto& display = _game.getDisplay();
+			auto& pos = physical.pos;
+
+			// TODO - Make boundaries configurable.
+			display.setZoom(camera.zoom);
+
+			auto zoom = display.getZoom();
+			auto aspect = display.getAspectRatio();
+			auto leftBoundary = zoom * aspect;
+			auto bottomBoundary = zoom;
 
 
-		game.getDisplay().setCamPosition(std::max(pos.getX(), leftBoundary), std::max(pos.getY(), bottomBoundary));
-	}
+			display.setCamPosition(std::max(pos.x, leftBoundary), std::max(pos.y, bottomBoundary));
+	});
 }

@@ -8,14 +8,15 @@
 using namespace hiage;
 using namespace std;
 
-Display::Display() : _zoom(200.0), _camX(0.0f), _camY(0.0f), _aspect(1), _height(768), _width(1024), _window(nullptr)
+Display::Display() : _zoom(200.0), _camX(0.0f), _camY(0.0f), _aspect(1), _height(1080), _width(1920), _window(nullptr)
 {
 	//set states
 	_displayState = 0;
 }
 
+
 //initialize opengl
-void Display::initialize(int width, int height, bool fullscreen)
+void Display::initialize(int width, int height, bool fullscreen, bool vsync)
 {
 	clog << "Initializing display. Width: " << width << " Height: " << height << endl << flush;
 	SDL_Init(SDL_INIT_VIDEO);
@@ -26,7 +27,7 @@ void Display::initialize(int width, int height, bool fullscreen)
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-
+	
 	//enable double buffering
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	if (fullscreen)
@@ -49,6 +50,11 @@ void Display::initialize(int width, int height, bool fullscreen)
 	}
 
 	SDL_GL_CreateContext(this->_window);
+
+	if (vsync)
+		SDL_GL_SetSwapInterval(1);
+	else
+		SDL_GL_SetSwapInterval(0);
 
 	_aspect = (double)width / (double)height;
 	clog << "- Aspect ratio: " << _aspect << endl << flush;
@@ -189,6 +195,27 @@ double Display::getViewHeight()
 	}
 
 	return (_zoom * 2);
+}
+
+BoundingBox<double> Display::getViewBounds()
+{
+	BoundingBox<double> bb;
+
+	if (_aspect > 1.0f)
+	{
+		bb.left = _camX - _zoom * _aspect;
+		bb.right = _camX + _zoom * 2 * _aspect;
+		bb.bottom = _camY - _zoom;
+		bb.top = _camY + _zoom * 2;
+	}
+	else
+	{
+		bb.left = _camX - _zoom;
+		bb.right = _camX + _zoom * 2;
+		bb.bottom = _camY - _zoom * _aspect;
+		bb.top = _camY + _zoom * 2 * _aspect;
+	}
+	return bb;
 }
 
 //converts window coordinates to viewport coodinates (moves the origin to the center, and inverts the y-axis)

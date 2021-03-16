@@ -22,11 +22,13 @@ namespace hiage
 	class Resource
 	{
 	public:
+		Resource<T>() {};
+
 		//name of the resource
 		std::string name;
 
 		//the resource itself (texture, sprite etc.)
-		T* resource;
+		T resource;
 
 		//in case some information needs to be handled outside the resource manager
 		int intData1, intData2, intData3;
@@ -38,29 +40,13 @@ namespace hiage
 	class ResourceManager
 	{
 	private:
-		std::vector<std::unique_ptr<Resource<T>>> resources;
+		std::unordered_map<std::string, Resource<T>> resources;
 		std::string dataRoot;
 
-	private:
-		int findResourceIndex(const std::string& name) const
-		{
-			if (name.length() == 0)
-			{
-				return -1;
-			}
-			for (unsigned int i = 0; i < resources.size(); i++)
-			{
-				if (!resources[i]->name.compare(name))
-				{
-					return i;
-				}
-			}
-
-			return -1;
-		}
-
 	protected:
-		std::string getResourcePath(const std::string& relativePath)
+		virtual std::string getResourceTypeName() const = 0;
+		
+		std::string getResourcePath(const std::string& relativePath) const
 		{
 			std::filesystem::path root = dataRoot;
 			auto fullPath = root / relativePath;
@@ -68,8 +54,19 @@ namespace hiage
 			return fullPath.string();
 		}
 
-		virtual std::unique_ptr<Resource<T>> loadResource(const std::string& file) = 0;
+		// This function should load the data file with the resource (e.g. the JSON or XML file), and add the resource to the resources collection by calling initResource.
+		virtual void loadResource(const std::string& file) = 0;
 
+		Resource<T>& initResource(const std::string& name)
+		{
+			if (resources.find(name) != resources.end())
+				throw Exception(std::string("ERROR: Resource already exist: ") + name + std::string(" of type ") + getResourceTypeName());
+
+			resources[name] = Resource<T>();
+			resources[name].name = name;
+			return resources[name];
+		}
+		
 	public:
 		ResourceManager(const std::string& dataRoot) : dataRoot(dataRoot)
 		{
@@ -82,66 +79,37 @@ namespace hiage
 		int load(const std::string& file, const std::string& name)
 		{
 			//check if the name already exists
-			if (findResourceIndex(name) >= 0)
-			{
-				return -1;
-			}
+			/*if (resources.find(name) != resources.end())
+				return -1;*/
+			
+			// Load resource from file
+			loadResource(file);
 
-			auto resource = loadResource(file);
-
-			if (resource == nullptr)
-			{
-				return -1;
-			}
+			// And get the reference
+			auto& resource = resources[name];
 			
 			//if a name for the resource was passed to the function, override whatever name that was set from LoadResource.
 			if (name.length() > 0)
 			{
-				resource->name = name;
+				resource.name = name;
 			}
 
-			resources.push_back(std::move(resource));
-			
 			return (int)(resources.size() - 1);
 		}
 
 
-		const std::unique_ptr<Resource<T>>& requestResourcePtr(const std::string& name) const
+		const Resource<T>& requestResourceRef(const std::string& name) const
 		{
-			int index = findResourceIndex(name);
-			if (index >= 0)
-			{
-				return resources[index];
-			}
+			if (resources.find(name) == resources.end())
+				throw Exception(std::string("ERROR: Could not find resource ") + name + std::string(" of type ") + getResourceTypeName());
 
-			throw Exception(std::string("ERROR: Could not find resource ") + name);
-		}
-
-		const std::unique_ptr<Resource<T>>& requestResourcePtr(unsigned int index) const
-		{
-			if (index < resources.size() && index >= 0)
-			{
-				return resources[index];
-			}
-
-			throw Exception(std::string("ERROR: Could not find resource with index ") + index);
+			return resources.at(name);
 		}
 
 		//returns a copy of a resource object
-		std::unique_ptr<Resource<T>> requestResourceCopy(std::string name) const
+		Resource<T> requestResourceCopy(const std::string& name) const
 		{
-			int index = findResourceIndex(name);
-			if (index >= 0)
-			{
-				Resource<T> * copy = new Resource<T>;
-				*copy = *resources[index];
-				copy->resource = new T;
-				*copy->resource = *resources[index]->resource;
-
-				return std::unique_ptr<Resource<T>>(copy);
-			}
-
-			throw Exception(std::string("ERROR: Could not find resource ") + name);
+			return requestResourceRef(name);
 		}
 		
 		int getResourceCount()
@@ -156,31 +124,39 @@ namespace hiage
 	class __IMPORTEXPORT TextureManager : public ResourceManager<Texture>
 	{
 	protected:
-		virtual std::unique_ptr<Resource<Texture>> loadResource(const std::string& path) override;
+		virtual void loadResource(const std::string& path) override;
+		virtual std::string getResourceTypeName() const override { return "Texture"; }
 	public:
 		TextureManager(const std::string& dataRoot) : ResourceManager(dataRoot) { }
+
+		void loadTextureResource(const std::string& path, const std::string& name);
 	};
 
 	class __IMPORTEXPORT SpriteManager : public ResourceManager<Sprite>
 	{
 	protected:
-		virtual std::unique_ptr<Resource<Sprite>> loadResource(const std::string& path) override;
+		virtual void loadResource(const std::string& path) override;
+		virtual std::string getResourceTypeName() const override { return "Sprite"; }
 	public:
 		SpriteManager(const std::string& dataRoot) : ResourceManager(dataRoot) { }
 	};
 
 	class __IMPORTEXPORT TilesetManager : public ResourceManager<Tileset>
 	{
+	private:
+		TextureManager& _textureManager;
 	protected:
-		virtual std::unique_ptr<Resource<Tileset>> loadResource(const std::string& path) override;
+		virtual void loadResource(const std::string& path) override;
+		virtual std::string getResourceTypeName() const override { return "Tileset"; }
 	public:
-		TilesetManager(const std::string& dataRoot) : ResourceManager(dataRoot) { }
+		TilesetManager(TextureManager& textureManager, const std::string& dataRoot) : ResourceManager(dataRoot), _textureManager(textureManager) { }
 	};
 
 	class __IMPORTEXPORT FontManager : public ResourceManager<Font>
 	{
     protected:
-        virtual std::unique_ptr<Resource<Font>> loadResource(const std::string& path) override;
+        virtual void loadResource(const std::string& path) override;
+		virtual std::string getResourceTypeName() const override { return "Font"; }
 	public:
 		FontManager(const std::string& dataRoot) : ResourceManager(dataRoot) { }
 	};
@@ -188,7 +164,8 @@ namespace hiage
 	class __IMPORTEXPORT ObjectManager : public ResourceManager<ObjectDescriptor>
 	{
 	protected:
-		virtual std::unique_ptr<Resource<ObjectDescriptor>> loadResource(const std::string& path) override;
+		virtual void loadResource(const std::string& path) override;
+		virtual std::string getResourceTypeName() const override { return "Object"; }
 	public:
 		ObjectManager(const std::string& dataRoot) : ResourceManager(dataRoot) { }
 	};

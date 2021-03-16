@@ -1,8 +1,8 @@
 #pragma once
 
-
-
 #include "../core/typedefs.h"
+#include "../core/boundingbox.hpp"
+
 #include "texture.h"
 #include "renderer.h"
 #include "../util/vector2.h"
@@ -11,87 +11,80 @@
 
 namespace hiage
 {
-	//class to handle animations (keeping track of all frames, when to go to next frame etc.)
-	class __IMPORTEXPORT SpriteAnimation
+	class TextureManager;
+
+	// Metadata for a frame in the animation
+	struct AnimationFrame
 	{
-		//TODO: Solve this so friend class isn't needed
-		friend class Sprite;	//give the sprite class full access to the animation
+		int x,y;
+		double delay;
+		int nextFrame;
+		BoundingBox<double> collisionBox;
+	};
 
-		//frame structure - simple enough
-		struct Frame
-		{
-			int x,y;
-			double delay;
-			int nextFrame;
-			BoundingBox<double> collisionBox;
-		};
+	//class to handle animations (keeping track of all frames, when to go to next frame etc.)
+	struct __IMPORTEXPORT SpriteAnimation
+	{
+		int	currentFrame;	//current frame that is showing
+		double frameTimer;	//keeps track of when to go to the next frame
+		double velocitySpeedupFactor;
 
-	private:
-		int	_currentFrame;	//current frame that is showing
-		double _frameTimer;	//keeps track of when to go to the next frame
-		double _velocitySpeedupFactor;
-
-		std::vector<Frame*> _frames;
-		std::string _animationName;
+		std::vector<AnimationFrame> frames;
+		std::string animationName;
 
 	public:
 		SpriteAnimation();
 		~SpriteAnimation();
 
-		void setName(const std::string& animName) {_animationName = animName;}
-		void setVelocitySpeedupFactor(double factor) { _velocitySpeedupFactor = factor; }
-		const std::string& getName() const { return _animationName; }
-		void addFrame(int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox);
+		void setName(const std::string& animName) {animationName = animName;}
+		void setVelocitySpeedupFactor(double factor) { velocitySpeedupFactor = factor; }
+		const std::string& getName() const { return animationName; }
+		void addFrame(int x, int y, double delay, uint nextFrame);
 
 		void runAnimation(double timeFactor, double velocity);
-		void reset() { _frameTimer = 0; _currentFrame = 0; }
+		void reset() { frameTimer = 0; currentFrame = 0; }
 
-		Frame * getCurrentFrame() { return _frames[_currentFrame]; }
+		const AnimationFrame& getCurrentFrame() { return frames[currentFrame]; }
 
 		//check if the animation is playing. if the next frame is the same as this one, it's not.
 		bool isPlaying()
 		{
-			return (_frameTimer > 0);
+			return (frameTimer > 0);
 		}
 	};
 
 	//class to handle sprites
-	class __IMPORTEXPORT Sprite
+	struct __IMPORTEXPORT Sprite
 	{
-	private:
 		//pointer to the texture that is used
-		Texture * _texture;
+		std::string textureName;
 
 		//frame dimensions
-		int _frameWidth;
-		int _frameHeight;
+		int frameWidth;
+		int frameHeight;
 
 		//animation
-		double _animationSpeed;
-		uint _currentAnimation;
-		std::vector<SpriteAnimation *> _animations;
+		double animationSpeed;
+		uint currentAnimation;
+		std::vector<SpriteAnimation> animations;
 
 	public:
 		Sprite();
 		~Sprite();
 
-		void create(Texture * texture, int frameWidth, int frameHeight);
-
-		void render(Renderer &renderer, const Vector2<double>& position, ObjectZ z, float rotation = 0, bool hFlip = false, bool vFlip = false, float maxSize = 0);
+		void create(const std::string& textureName, int frameWidth, int frameHeight);
 
 		uint addAnimation(const std::string&, double velocitySpeedupFactor);
-		void addFrame(uint animID, int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox);
+		void addFrame(uint animID, int x, int y, double delay, uint nextFrame);
 		const std::string& getCurrentAnimationName() const;
 		void updateAnimation(double timefactor, double velocity);
-		void playAnimation(int anim, double speed = 1) { _currentAnimation = anim; _animationSpeed = speed; }
+		void playAnimation(int anim, double speed = 1) { currentAnimation = anim; animationSpeed = speed; }
 		bool playAnimation(const std::string& anim, bool resetIfRunning = true, double speed = 1);
 
 
-		bool animationIsPlaying() { return (_animations[_currentAnimation]->isPlaying()); }
+		bool animationIsPlaying() { return (animations[currentAnimation].isPlaying()); }
 
-		int getWidth() const { return _frameWidth; }
-		int getHeight() const { return _frameHeight; }
-
-		Sprite & operator=(Sprite);
+		int getWidth() const { return frameWidth; }
+		int getHeight() const { return frameHeight; }
 	};
 }

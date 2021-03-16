@@ -47,7 +47,7 @@ Renderer::~Renderer() throw ()
 }
 
 //start the rendering process
-void Renderer::beginRender(ObjectZ zposition, Texture *texture)
+void Renderer::beginRender(ObjectZ zposition, const Texture* texture, RenderObjectType objectType)
 {
 	if (recordingVertices)
 	{
@@ -62,7 +62,7 @@ void Renderer::beginRender(ObjectZ zposition, Texture *texture)
 	if (renderObjects[layer].size() <= activeRenderObjects[layer])
 		renderObjects[layer].resize((size_t)activeRenderObjects[layer] + 4);
 
-	renderObjects[layer][activeRenderObjects[layer]++].init(zposition, texture);
+	renderObjects[layer][activeRenderObjects[layer]++].init(zposition, texture, objectType);
 	currentRenderObject = (int)activeRenderObjects[static_cast<size_t>(currentZ)] - 1;
 }
 
@@ -89,7 +89,8 @@ void Renderer::endRender()
 		throw Exception("ERROR: Can't end rendering: Not recording. Call Renderer::beginRender() before attempting to stop rendering.");
 	}
 
-	if (renderObjects[static_cast<int>(currentZ)][currentRenderObject].activeVertices % 4 != 0)
+	auto& renderObj = renderObjects[static_cast<int>(currentZ)][currentRenderObject];
+	if (renderObj.activeVertices % 4 != 0 && renderObj.objectType == RenderObjectType::Quads)
 	{
 		throw Exception("ERROR: Can't finish rendering: Amount of vertices not a multiple of 4.");
 	}
@@ -113,11 +114,11 @@ void Renderer::renderBuffer()
 		for (unsigned int o = 0; o < activeRenderObjects[z]; o++)
 		{
 			//select the texture if the pointer is not null. otherwise, disable texturing.
-			if (renderObjects[z][o].texture)
+			if (renderObjects[z].at(o).texture)
 			{
-				if (o == 0 || renderObjects[z][o-1].texture && renderObjects[z][o].texture->getTextureID() != renderObjects[z][o-1].texture->getTextureID())
+				if (o == 0 || renderObjects[z].at(o-1).texture && renderObjects[z].at(o).texture->getTextureID() != renderObjects[z].at(o-1).texture->getTextureID())
 				{
-					renderObjects[z][o].texture->select();
+					renderObjects[z].at(o).texture->select();
 				}
 			}
 			else
@@ -126,16 +127,20 @@ void Renderer::renderBuffer()
 			}
 
 			//draw vertices
-			glBegin(GL_QUADS);
+			if (renderObjects[z].at(o).objectType == RenderObjectType::Quads)
+				glBegin(GL_QUADS);
+			else if (renderObjects[z].at(o).objectType == RenderObjectType::Lines)
+				glBegin(GL_LINE_STRIP);
+
 			for (unsigned int v = 0; v < renderObjects[z][o].activeVertices; v++)
 			{
-				glTexCoord2d(renderObjects[z][o].vertices[v].texX, renderObjects[z][o].vertices[v].texY);
-				glVertex2d(renderObjects[z][o].vertices[v].x, renderObjects[z][o].vertices[v].y);
+				glTexCoord2d(renderObjects[z].at(o).vertices.at(v).texX, renderObjects[z].at(o).vertices.at(v).texY);
+				glVertex2d(renderObjects[z].at(o).vertices.at(v).x, renderObjects[z].at(o).vertices.at(v).y);
 			}
 			glEnd();
 
 			//restore the texturing if the texture pointer was null.
-			if (!renderObjects[z][o].texture)
+			if (!renderObjects[z].at(o).texture)
 			{
 				glEnable(GL_TEXTURE_2D);
 			}

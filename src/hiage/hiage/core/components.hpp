@@ -3,114 +3,64 @@
 #include "../util/vector2.h"
 #include "../gfx/sprite.h"
 #include "collisions.hpp"
+#include "resourcedescriptors.hpp"
+
+#include <flecs.h>
 
 #include <unordered_map>
 #include <unordered_set>
 #include <memory>
 #include <variant>
-#include "resourcedescriptors.hpp"
 
 namespace hiage 
 {
-	class Game;
-
 	/*
-	Components
+		Components.
+		All component types must have a registered factory using ComponentManager::addGenericComponentFactory.
 	*/
 
-	class Component
+	struct NameComponent
 	{
-	private:
-		int typeId; // Component type
-	protected:
-		Component(int typeId) : typeId(typeId) { }
-	public:
-		virtual ~Component() { }
-		int getTypeId() { return typeId; }
+		std::string name;
 	};
 
-	/*
-	* A simple component containing a set of data. 
-	*/
-	template<typename T, int TypeID>
-	class GenericComponent : public Component
+	struct PositionComponent
 	{
-	private:
-		T data;
-	public:
-		GenericComponent() : Component(TypeID), data() { }
-		GenericComponent(const GenericComponent<T, TypeID>& c) : Component(TypeID) { *this = c; }
-		GenericComponent(const T& data) : Component(TypeID), data(data) { }
-		
-		T& getData() { return data; }
-		void setData(const T& newValue) { data = newValue; }
+		Vec2d pos;
 
-		// Override this to define how the component's state is created from properties.
-		virtual T createState(const ComponentProperties&) 
-		{ 
-			return T();
-		}
-
-		static const int TYPEID = TypeID;
+		PositionComponent() : pos(0, 0) { }
+		PositionComponent(const ComponentProperties& properties);
 	};
 
-	/*
-	* A templated component that can be used for defining components that doesn't own any data, i.e. "tag" type components.
-	*/
-	template<int TypeID>
-	class DatalessComponent : public GenericComponent<int, TypeID>
+	struct VelocityComponent
 	{
-	public:
-		DatalessComponent() : GenericComponent<int, TypeID>() { }
-		DatalessComponent(const DatalessComponent<TypeID>& c) : GenericComponent() { *this = c; }
+		Vec2d vel;
+
+		VelocityComponent() : vel(0, 0) { }
+		VelocityComponent(const ComponentProperties& properties);
 	};
 
-	/*
-	* Concrete component definitions
-	*/
-	class PositionComponent : public GenericComponent<Vector2<double>, 1>
+	struct RenderableComponent
 	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual Vector2<double> createState(const ComponentProperties& properties) override;
+		Sprite sprite;
 	};
 
-	class VelocityComponent : public GenericComponent<Vector2<double>, 2>
-	{
-		using GenericComponent::GenericComponent;
-	};
-
-	class RenderableComponent : public GenericComponent<Sprite, 3>
-	{
-		using GenericComponent::GenericComponent;
-	};
-
-
-	struct PhysicsProperties
+	struct PhysicsComponent
 	{
 		double airResistance, groundFriction;
-		
 		bool hasGravity;
+
+		PhysicsComponent() : airResistance(0), groundFriction(0), hasGravity(false) {}
+		PhysicsComponent(const ComponentProperties& properties);
 	};
 
-	class PhysicsComponent : public GenericComponent<PhysicsProperties, 4>
-	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual PhysicsProperties createState(const ComponentProperties& properties) override;
-	};
-
-	struct ControllerProperties
+	struct ControllerComponent
 	{
 		std::string controllerType;
 		std::vector<std::string> constantActions;
-
-	};
-	class ControllerComponent : public GenericComponent<ControllerProperties, 5>
-	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual ControllerProperties createState(const ComponentProperties& properties) override;
+		
+		ControllerComponent() {}
+		ControllerComponent(const ComponentProperties& properties);
 	};
 
 	/*
@@ -118,173 +68,69 @@ namespace hiage
 	*/
 	struct ObjectTileCollisionData
 	{
-		int entityId;
+		uint64_t entityId;
 		CollisionResult collisionResult;
 	};
 	
 	struct ObjectObjectCollisionData
 	{
-		int entityId1, entityId2;
+		uint64_t entityId1, entityId2;
 		CollisionResult collisionResult;
 	};
 
-	struct CollidableProperties
+	struct CollidableComponent
 	{
 		BoundingPolygon boundingPolygon;
 		std::vector<ObjectObjectCollisionData> objectCollisions;
 		std::vector<ObjectTileCollisionData> tileCollisions;
+
+		CollidableComponent() {}
+		CollidableComponent(const ComponentProperties& properties);
 	};
 
-	class CollidableComponent : public GenericComponent<CollidableProperties, 7>
+	struct TrackingComponent
 	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual CollidableProperties createState(const ComponentProperties& properties) override;
+		std::string mode = "fixed";
+
+		TrackingComponent() {}
+		TrackingComponent(const ComponentProperties& properties);
 	};
 
-	struct TrackingComponentProperties
+	struct CameraComponent
 	{
-		std::string mode;
-	};
-	class TrackingComponent : public GenericComponent<TrackingComponentProperties, 8>
-	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual TrackingComponentProperties createState(const ComponentProperties& properties) override;
-	};
-
-	class TrackableComponent : public DatalessComponent<9>
-	{
-		using DatalessComponent::DatalessComponent;
-	};
-
-	struct CameraProperties
-	{
-		double zoom;
-	};
-	class CameraComponent : public GenericComponent<CameraProperties, 10>
-	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual CameraProperties createState(const ComponentProperties& properties) override;
+		double zoom = 400;
+		CameraComponent() : zoom(400) {}
+		CameraComponent(const ComponentProperties& properties);
 	};
 
 	// Used for "object state" when it comes to animations (e.g. "on ground", "standing", "walking", "jumping", "falling") and allowed actions (e.g. jumping is allowed when standing, etc.)
 	// The actual rules are defined by the system that handles this component. This is just the container of the state name and metadata attached to the state.
-	struct State
+	struct StateComponent
 	{
 		std::string stateName;
 		std::unordered_map<std::string, std::variant<std::string, int, double>> metadata;
-	};
-	class StateComponent : public GenericComponent<State, 11>
-	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual State createState(const ComponentProperties& properties) override;
+
+		StateComponent() {}
+		StateComponent(const ComponentProperties& properties);
 	};
 
-	class ControllerStateComponent : public GenericComponent<std::unordered_set<std::string>, 12>
+	struct ControllerStateComponent
 	{
-	public:
-		using GenericComponent::GenericComponent;
+		std::unordered_set<std::string> controllerState;
 	};
 
-	struct SpeedLimitState
+	struct SpeedLimitComponent
 	{
 		Vec2d speedLimit;
+
+		SpeedLimitComponent() {}
+		SpeedLimitComponent(const ComponentProperties& properties);
 	};
-	class SpeedLimitComponent : public GenericComponent<SpeedLimitState, 13>
-	{
-	public:
-		using GenericComponent::GenericComponent;
-		virtual SpeedLimitState createState(const ComponentProperties& properties) override;
-	};
+
 	/*
-	ComponentManager
+		Tags. These are basically components without any data. 
 	*/
-
-	class ComponentFactory
+	struct TrackableComponent
 	{
-	public:
-		virtual ~ComponentFactory() {};
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const = 0;
-		virtual std::unique_ptr<Component> createComponent(const ComponentProperties& properties) const = 0;
-	};
-
-	template<typename T>
-	class GenericComponentFactory : public ComponentFactory
-	{
-	public:
-		/// <summary>
-		/// Creates the component using a component descriptor (basically a "blueprint" from the object definition), 
-		/// as well as runtime properties, that are typically set at runtime when creating the object, like position etc.
-		/// </summary>
-		/// <param name="componentDescriptor"></param>
-		/// <param name="runtimeProperties"></param>
-		/// <returns></returns>
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override
-		{
-			ComponentProperties mergedProperties;
-			mergedProperties.insert(runtimeProperties.begin(), runtimeProperties.end());
-			mergedProperties.insert(componentDescriptor.properties.begin(), componentDescriptor.properties.end());
-			auto component = std::make_unique<T>();
-			auto state = component->createState(mergedProperties);
-			component->setData(state);
-
-			return std::move(component);
-		}
-
-		/// <summary>
-		/// Creates the new component from properties only. Useful for adding components to an object that isn't part of the object definition.
-		/// </summary>
-		/// <param name="properties"></param>
-		/// <returns></returns>
-		virtual std::unique_ptr<Component> createComponent(const ComponentProperties& properties) const override
-		{
-			auto component = std::make_unique<T>();
-			auto state = component->createState(properties);
-			component->setData(state);
-
-			return std::move(component);
-		}
-	};
-
-	class RenderableComponentFactory : public ComponentFactory
-	{
-	private:
-		const Game& game;
-	public:
-		RenderableComponentFactory(const Game& game);
-		virtual std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const override;
-		virtual std::unique_ptr<Component> createComponent(const ComponentProperties& runtimeProperties) const override;
-	};
-
-	class ComponentManager
-	{
-	private: 
-		std::unordered_map<std::string, std::unique_ptr<ComponentFactory>> _componentFactories;
-		std::unordered_map<std::string, int> _componentNameToTypeId;
-		Game& game;
-	public:
-		ComponentManager(Game& game);
-		~ComponentManager();
-
-		template<typename T, typename TComponent, typename ...TRest>
-		void addComponentFactory(const std::string& componentType, TRest... args)
-		{
-			_componentFactories[componentType] = std::make_unique<T>(args...);
-			_componentNameToTypeId[componentType] = TComponent::TYPEID;
-		}
-
-		template<typename TComponent, typename ...TRest>
-		void addGenericComponentFactory(const std::string& componentType, TRest... args)
-		{
-			_componentFactories[componentType] = std::make_unique<GenericComponentFactory<TComponent>>(args...);
-			_componentNameToTypeId[componentType] = TComponent::TYPEID;
-		}
-
-		std::unique_ptr<Component> createComponent(const ComponentDescriptor& componentDescriptor, const ComponentProperties& runtimeProperties) const;
-		std::unique_ptr<Component> createComponent(const std::string& type, const ComponentProperties& properties) const;
-		int getTypeIdForComponentType(const std::string& componentType) const;
 	};
 }

@@ -18,7 +18,7 @@ namespace hiage
 	{
 		friend class CTilemap;
 	public:
-		Texture() : _textureID(0), _loaded(false), _height(0), _width(0), _bits(0), _filename(nullptr) {}
+		Texture() : _textureID(0), _loaded(false), _height(0), _width(0), _bits(0) {}
 		~Texture();
 
 		//create a texture out of pre-loaded image data, width and height, to add support for other filetypes
@@ -27,18 +27,17 @@ namespace hiage
 		//load a Targa (.TGA) bitmap and use it as a texture
 		void loadTexture(const char * path);
 
-		int getTextureID();
-		void select();
+		int getTextureID() const;
+		void select() const;
 
-		short getWidth() { return _width; }
-		short getHeight() { return _height; }
+		short getWidth() const { return _width; }
+		short getHeight() const { return _height; }
 
 	private:
 		unsigned int _textureID;
 		short _width;
 		short _height;
 		char _bits;
-		char * _filename;	//for checking for double textures
 		bool _loaded;
 		//unsigned char * imageData;	//image data (stored in case it is needed for stuff like collision detection)
 	};

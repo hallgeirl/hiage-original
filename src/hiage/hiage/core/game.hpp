@@ -14,7 +14,9 @@
 //engine headers
 #include "../gfx/display.h"
 #include "../gfx/particles.h"
+#include "../gfx/spritecontroller.hpp"
 
+#include "debugrenderer.hpp"
 #include "inputmanager.hpp"
 #include "resourcemanager.hpp"
 #include "typedefs.h"
@@ -22,6 +24,8 @@
 #include "script_lua.h"
 #include "../util/timer.h"
 #include "gamestate.hpp"
+#include "gameconfig.hpp"
+
 
 namespace hiage
 {
@@ -44,23 +48,27 @@ namespace hiage
         double          timeFactor;
 		double			framerateLimit;
 		double			lastFrameTime;
+
 		//resources
 		TextureManager	textureManager;	//!< Stores the loaded textures.
 		SpriteManager	spriteManager;	//!< Stores the loaded sprites.
 		TilesetManager	tilesetManager;	//!< Stores the loaded tilesets.
 		FontManager     fontManager;	//!< Stores all loaded fonts.
 		ObjectManager	objectManager;  //!< Stores all loaded objects.
+		SpriteController spriteController;
+		DebugRenderer*  _debugRenderer; // For rendering e.g. texts and visual artifacts meant for debugging.
 		Timer           gameTimer;       //!< The elapsed time since the game class was initialized.
 		bool running;
 
 		std::string		dataRoot;		// Path to the data directory for the game's assets
 		std::vector<GameState *> states;	//!< The game states. The game state can be changed with setGameState, pushState and popState.
 
+		Font 			_consoleFont;
 		void loadResourcesRecursive(std::string dir, ResourceTypeEnum resType);
 	protected:
 		/*!
 			onInit is called after the game object has been initialized.
-			This particular function MUST be inherited and implemented by the user of this engine.
+			This particular function MUST be inherited and implemented by the user of this engine, and this is where you should do all resource loading.
 		*/
 		virtual void onInit() = 0;
 
@@ -88,7 +96,7 @@ namespace hiage
 
 			\throw FatalException If initialization of any of the subsystems fails, the program probably can't continue and a FatalException is thrown.
 		*/
-		void initialize(int width, int height, bool fullscreen);
+		void initialize(const GameConfig& gameConfig);
 
 		/*!
 			Runs the game. This should be called every time the main game loop loops.
@@ -103,9 +111,10 @@ namespace hiage
 		void stop();
 
 		Font &createFont(std::string font);
-		void printText(Font & font, const std::string& text, double x, double y, double scale = 1, double spacing = 0);
-		void printTextFixed(Font& font, const std::string& text, double x, double y, ScreenHorizontalPosition horizontalPos, ScreenVerticalPosition verticalPos, double scale = 1, double spacing = 0);
+		void printText(const Font& font, const std::string& text, double x, double y, double scale = 1, double spacing = 0);
+		void printTextFixed(const Font& font, const std::string& text, double x, double y, ScreenHorizontalPosition horizontalPos, ScreenVerticalPosition verticalPos, double scale = 1, double spacing = 0);
 
+		void enableDebugRendering(DebugRenderer* debugRenderer);
 
         void drawTexture(std::string texname, double x, double y);
 
@@ -149,5 +158,10 @@ namespace hiage
 		FontManager &       getFontManager();
 		//! Returns a reference to the object list.
 		const ObjectManager & getObjectManager() const;
+
+		const SpriteController& getSpriteController() const;
+
+		// Returns the on-screen debug writer
+		DebugRenderer* getDebugRenderer();
 	};
 }

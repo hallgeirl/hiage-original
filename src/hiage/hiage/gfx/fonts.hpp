@@ -13,7 +13,7 @@ namespace hiage
     {
     private:
         int _characterWidth, _characterHeight;
-        Texture *_texture;
+        Texture _texture;
         char ** _characterTable;
         int _tableRows, _tableCols;
         bool _loaded;
@@ -22,17 +22,17 @@ namespace hiage
         Font();
         ~Font();
 
-        void create(Texture * tex, int characterWidth, int characterHeight);
-        void getIndexOfCharacter(char c, int &x, int &y);
+        void create(const Texture& tex, int characterWidth, int characterHeight);
+        void getIndexOfCharacter(char c, int &x, int &y) const;
         void setCharacterTable(char ** characterTable, int cols, int rows);
         void destroyTable();
-        char ** getCharacterTable();
+        char ** getCharacterTable() const;
 
-        int getTableRows();
-        int getTableCols();
+        int getTableRows() const;
+        int getTableCols() const;
 
-        int getCharacterHeight();
+        int getCharacterHeight() const;
 
-        void renderText(Renderer &renderer, std::string text, Vector2<double> position, double scale = 1, double spacing = 0);
+        void renderText(Renderer &renderer, std::string text, Vector2<double> position, double scale = 1, double spacing = 0) const;
     };
 }

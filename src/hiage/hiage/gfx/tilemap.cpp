@@ -281,7 +281,7 @@ void Tilemap::render(Renderer &renderer, double camx, double camy, double zoom, 
 //	tileset->updateTiles();
 }
 
-void Tilemap::setTileset(Tileset * tileset)
+void Tilemap::setTileset(const Tileset* tileset)
 {
 	if (!tileset)
 	{
@@ -307,17 +307,17 @@ void Tilemap::setTile(uint x, uint y, uint z, uint tile)
 	}
 }
 
-int Tilemap::getWidth()
+int Tilemap::getWidth() const
 {
 	return _width;
 }
 
-int Tilemap::getHeight()
+int Tilemap::getHeight() const
 {
 	return _height;
 }
 
-int Tilemap::getLayers()
+int Tilemap::getLayers() const
 {
 	return _layers;
 }

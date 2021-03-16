@@ -6,3 +6,5 @@ cmake_minimum_required (VERSION 3.15)
 add_library(flecs STATIC
 	flecs.c
 )
+
+target_compile_features(flecs PUBLIC cxx_std_11)

@@ -28,38 +28,6 @@
 */
 namespace hiage
 {
-	template<typename T>
-	struct BoundingBox
-	{
-		T left, right, top, bottom;
-		BoundingBox(T left, T right, T top, T bottom)
-		{
-			this->left = left;
-			this->right = right;
-			this->top = top;
-			this->bottom = bottom;
-		}
-		BoundingBox()
-		{
-			left = right = top = bottom = 0;
-		}
-
-		// From int->double/float/whatever is fine. Make this an explicitly allowed conversion.
-		BoundingBox(const BoundingBox<int>& other)
-		{
-			left = other.left;
-			right = other.right;
-			top = other.top;
-			bottom = other.bottom;
-		}
-	};
-
-	inline std::ostream & operator <<(std::ostream &stream, const BoundingBox<double> &r)
-	{
-		stream << "Left: " << r.left << " Top: " << r.top << " Right: " << r.right << " Bottom: " << r.bottom;
-		return stream;
-	}
-
 	/*typedef struct _Coordinate
 	{
 		double x, y;
