@@ -34,7 +34,7 @@ void DebugSystem::registerSystem(flecs::world& world)
 			if (pos.pos.x > viewPort.left - margin && pos.pos.x < viewPort.right + margin && pos.pos.y > viewPort.bottom - margin && pos.pos.y < viewPort.top + margin)
 			{ 
 				stringstream ss;
-				ss << "Entity(" << name.name << "): " << e.id();
+				ss << "Entity(" << name.name << ", " << e.id() << "): " << pos.pos.x << "," << pos.pos.y;
 				srand(name.name.length()*1000);
 				auto yoffs = (float) rand() / RAND_MAX;
 				_game.getDebugRenderer()->renderText(ss.str(), pos.pos.x, pos.pos.y - 20*yoffs);
@@ -246,7 +246,7 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 					vel2 = vel2Comp->vel;
 
 				auto relativeFrameVelocity = (vel1 - vel2) * e.delta_time();
-				tempVecPolygon2[0] = col1.boundingPolygon;
+				tempVecPolygon2[0] = col2->boundingPolygon;
 
 				tempVecPolygon2[0].translate(pos2);
 
@@ -258,9 +258,9 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 					{
 						// Add two collision events - object 1 colliding with object 2, and the other way around.
 						col1.objectCollisions.push_back(ObjectObjectCollisionData{
-							.entityId1 = entityId1,
-							.entityId2 = entityId2,
-							.collisionResult = result
+								.entityId1 = entityId1,
+								.entityId2 = entityId2,
+								.collisionResult = result
 							});
 					}
 				}
