@@ -174,44 +174,41 @@ AISystem::AISystem() : System()
 
 void AISystem::registerSystem(flecs::world& world)
 {
-	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, GroundMonsterControllerComponent, ControllerStateComponent, VelocityComponent>();
-
-	for (auto& c : componentTuples)
-	{
-		auto& col = get<1>(c)->getData();
-		auto& gmc = get<2>(c)->getData();
-		auto& controllerState = get<3>(c);
-		auto& vel = get<4>(c)->getData();
-
-		for (auto& tc : col.tileCollisions)
-		{
-			if (tc.collisionResult.hitNormal.getX() > 0.7)
-				gmc.direction = "right";
-			else if (tc.collisionResult.hitNormal.getX() < -0.7)
-				gmc.direction = "left";
-		}
-
-		for (auto& oc : col.objectCollisions)
-		{
-			if (oc.collisionResult.hitNormal.getX() > 0.7)
+	world.system<CollidableComponent, GroundMonsterControllerComponent, ControllerStateComponent, VelocityComponent>()
+		.each([](flecs::entity e, CollidableComponent& col, GroundMonsterControllerComponent& gmc, ControllerStateComponent& controllerState, VelocityComponent& velocity)
 			{
-				gmc.direction = "right";
-				vel.setX(vel.getX() * -1);
-			}
-			else if (oc.collisionResult.hitNormal.getX() < -0.7)
-			{
-				gmc.direction = "left";
-				vel.setX(vel.getX() * -1);
-			}
-		}
+				auto& vel = velocity.vel;
 
-		unordered_set<string> actions;
+				for (auto& tc : col.tileCollisions)
+				{
+					if (tc.collisionResult.hitNormal.getX() > 0.7)
+						gmc.direction = "right";
+					else if (tc.collisionResult.hitNormal.getX() < -0.7)
+						gmc.direction = "left";
+				}
 
-		if (gmc.direction == "left")
-			actions.insert("goLeft");
-		else if (gmc.direction == "right")
-			actions.insert("goRight");
+				for (auto& oc : col.objectCollisions)
+				{
+					if (oc.collisionResult.hitNormal.getX() > 0.7)
+					{
+						gmc.direction = "right";
+						vel.setX(vel.getX() * -1);
+					}
+					else if (oc.collisionResult.hitNormal.getX() < -0.7)
+					{
+						gmc.direction = "left";
+						vel.setX(vel.getX() * -1);
+					}
+				}
 
-		controllerState->setData(actions);
-	}*/
+				unordered_set<string> actions;
+
+				if (gmc.direction == "left")
+					actions.insert("goLeft");
+				else if (gmc.direction == "right")
+					actions.insert("goRight");
+
+				controllerState.controllerState = actions;
+
+			});
 }
