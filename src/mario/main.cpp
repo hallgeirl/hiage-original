@@ -29,7 +29,7 @@ int main(int, char*)
     config.display.vsync = true;
     config.consoleFontName = "SmallFont";
     config.debug = DebugConfig {
-        .enabled = true,
+        .enabled = false,
         .debugFlags = {
             .drawEntityInfo = true,
             .quadTreeDebugFlags = QuadTreeDebugFlags {

@@ -57,29 +57,28 @@ void MovementSystem::registerSystem(flecs::world& world)
 		});
 	
 
-	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<VelocityComponent, SpeedLimitComponent>();
-	for (auto& t : componentTuples)
-	{
-		auto& movement = std::get<1>(t)->getData();
-		auto& limit = std::get<2>(t)->getData();
+	world.system<SpeedLimitComponent, VelocityComponent>()
+		.each([](flecs::entity e, SpeedLimitComponent& limit, VelocityComponent& velocity)
+			{
+				auto& movement = velocity.vel;
 
-		auto limitX = limit.speedLimit.getX();
-		auto limitY = limit.speedLimit.getY();
-		if (limitX >= 0 && abs(movement.getX()) > limitX)
-		{
-			if (movement.getX() > 0)
-				movement.setX(limitX);
-			else
-				movement.setX(-limitX);
-		}
-		if (limitY >= 0 && abs(movement.getY()) > limitY)
-		{
-			if (movement.getY() > 0)
-				movement.setY(limitY);
-			else
-				movement.setY(-limitY);
-		}
-	}*/
+				auto limitX = limit.speedLimit.getX();
+				auto limitY = limit.speedLimit.getY();
+				if (limitX >= 0 && abs(movement.getX()) > limitX)
+				{
+					if (movement.getX() > 0)
+						movement.setX(limitX);
+					else
+						movement.setX(-limitX);
+				}
+				if (limitY >= 0 && abs(movement.getY()) > limitY)
+				{
+					if (movement.getY() > 0)
+						movement.setY(limitY);
+					else
+						movement.setY(-limitY);
+				}
+			});
 }
 
 ObjectRenderingSystem::ObjectRenderingSystem(Game& game) : System(), _game(game)
@@ -437,38 +436,4 @@ void hiage::CameraSystem::registerSystem(flecs::world& world)
 
 			display.setCamPosition(std::max(pos.x, leftBoundary), std::max(pos.y, bottomBoundary));
 	});
-}
-
-hiage::DebugWriterRenderingSystem::DebugWriterRenderingSystem(Game& game, Font& font) : System(), _game(game), _font(font)
-{
-}
-
-void hiage::DebugWriterRenderingSystem::registerSystem(flecs::world& world)
-{
-	world.system<>()
-		.iter([&](flecs::iter&)
-		{
-			/*auto debugWriter = _game.getDebugRenderer();
-			int spacingX = 100;
-			int spacingY = _font.getCharacterHeight()*0.15;
-			int yOffs = 0, xOffs = 0;
-			
-			_game.printTextFixed(_font, "DEBUG LOG", -200 + xOffs, spacingY * 2 - 50, ScreenHorizontalPosition::Right, ScreenVerticalPosition::Top, 0.2, -0.2);
-			_game.printTextFixed(_font, "=========", -200 + xOffs, spacingY - 50, ScreenHorizontalPosition::Right, ScreenVerticalPosition::Top, 0.2, -0.2);
-			*/
-			/*for (auto& s : debugWriter.getBuffer())
-			{
-				_game.printTextFixed(_font, s, -200 + xOffs, -yOffs - 50, ScreenHorizontalPosition::Right, ScreenVerticalPosition::Top, 0.2, -0.2);
-				//_game.printTextFixed(_font, s, 0, -yOffs+500, ScreenHorizontalPosition::Center, ScreenVerticalPosition::Center, 0.2, -0.2);
-				yOffs += spacingY;
-
-				if (yOffs > 500)
-				{
-					yOffs = 0;
-					xOffs += spacingX;
-				}
-			}
-			
-			debugWriter.reset();*/
-		});
 }

@@ -144,16 +144,6 @@ namespace hiage
 		virtual void registerSystem(flecs::world& world) override;
 	};
 
-	class DebugWriterRenderingSystem : public System
-	{
-	private:
-		Game& _game;
-		Font& _font;
-	public:
-		DebugWriterRenderingSystem(Game& game, Font& font);
-		virtual void registerSystem(flecs::world& world) override;
-	};
-
 	// List of currently missing systems:
 	// - Script system??
 	// - Collision

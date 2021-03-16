@@ -54,8 +54,6 @@ MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0)
     sysFactory.registerSystem<AnimationSystem>();
     sysFactory.registerSystem<ObjectRenderingSystem, Game&>(game);
 
-    sysFactory.registerSystem<DebugWriterRenderingSystem, Game&, Font&>(game, _mainfont);
-    
     /*
     Component factories
     */
