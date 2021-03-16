@@ -3,30 +3,30 @@
   <texture name="Goomba" />
 
   <animation name="stand">
-    <frame x="0" y="0" delay="0.2" nextframe="1" colbox="5 1 20 20" />
-    <frame x="26" y="0" delay="0.2" nextframe="2" colbox="5 1 20 20" />
-    <frame x="52" y="0" delay="0.2" nextframe="3" colbox="5 1 20 20" />
-    <frame x="78" y="0" delay="0.2" nextframe="0" colbox="5 1 20 20" />
+    <frame x="0" y="0" delay="0.2" nextframe="1" />
+    <frame x="26" y="0" delay="0.2" nextframe="2" />
+    <frame x="52" y="0" delay="0.2" nextframe="3" />
+    <frame x="78" y="0" delay="0.2" nextframe="0" />
   </animation>
 
   <animation name="walk" velocitySpeedupFactor="0.1">
-    <frame x="130" y="0" delay="0.5" nextframe="1" colbox="5 1 20 20" />
-    <frame x="156" y="0" delay="0.5" nextframe="2" colbox="5 1 20 20" />
-    <frame x="182" y="0" delay="0.5" nextframe="3" colbox="5 1 20 20" />
-    <frame x="208" y="0" delay="0.5" nextframe="4" colbox="5 1 20 20" />
-    <frame x="234" y="0" delay="0.5" nextframe="0" colbox="5 1 20 20" />
+    <frame x="130" y="0" delay="0.5" nextframe="1" />
+    <frame x="156" y="0" delay="0.5" nextframe="2" />
+    <frame x="182" y="0" delay="0.5" nextframe="3" />
+    <frame x="208" y="0" delay="0.5" nextframe="4" />
+    <frame x="234" y="0" delay="0.5" nextframe="0" />
   </animation>
 
   <animation name="jump">
-    <frame x="104" y="0" delay="1" nextframe="0" colbox="5 1 20 23" />
+    <frame x="104" y="0" delay="1" nextframe="0" />
   </animation>
 
   <animation name="fall">
-    <frame x="104" y="0" delay="1" nextframe="0" colbox="5 1 20 23" />
+    <frame x="104" y="0" delay="1" nextframe="0" />
   </animation>
 
   <animation name="die">
-    <frame x="0" y="24" delay="1" nextframe="1" colbox="5 1 20 20" />
-    <frame x="104" y="24" delay="1" nextframe="1" colbox="5 1 20 20" />
+    <frame x="0" y="24" delay="1" nextframe="1" />
+    <frame x="104" y="24" delay="1" nextframe="1" />
   </animation>
 </sprite>

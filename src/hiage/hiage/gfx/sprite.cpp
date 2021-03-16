@@ -14,7 +14,7 @@ SpriteAnimation::SpriteAnimation() : currentFrame(0), frameTimer(0), velocitySpe
 }
 
 //add a new frame to the animation
-void SpriteAnimation::addFrame(int x, int y, double delay, uint nextFrame, const BoundingBox<double>& colBox)
+void SpriteAnimation::addFrame(int x, int y, double delay, uint nextFrame)
 {
 	frames.push_back(AnimationFrame());
 	auto& frame = frames.back();
@@ -27,15 +27,6 @@ void SpriteAnimation::addFrame(int x, int y, double delay, uint nextFrame, const
 	if (frames.size() == 0)
 	{
 		frameTimer = delay;
-	}
-
-	if (((colBox.right - colBox.left) > 0) && ((colBox.top - colBox.bottom) > 0))
-	{
-		frame.collisionBox = colBox;
-	}
-	else
-	{
-		frame.collisionBox = {0,0,0,0};
 	}
 }
 
@@ -97,13 +88,13 @@ unsigned int Sprite::addAnimation(const std::string& name, double velocitySpeedu
 }
 
 //add a frame to the animation
-void Sprite::addFrame(uint animID, int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox)
+void Sprite::addFrame(uint animID, int x, int y, double delay, uint nextFrame)
 {
 	//check for boundaries
 	if (animID <= animations.size()-1)
 	{
 		//add the frame
-		animations[animID].addFrame(x,y, delay, nextFrame, colBox);
+		animations[animID].addFrame(x,y, delay, nextFrame);
 	}
 }
 

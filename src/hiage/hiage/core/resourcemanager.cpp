@@ -148,7 +148,6 @@ void SpriteManager::loadResource(const std::string& path)
 		{
 			int x, y, nextFrame;
 			double delay;
-			BoundingBox<double> colBox;
 			std::string p_sTemp = "";
 
 			frameElement->Attribute("x",&x);
@@ -157,30 +156,9 @@ void SpriteManager::loadResource(const std::string& path)
 			frameElement->Attribute("delay",&delay);
 			clog << "- Frame information:\n" << "  - x: " << x << " y: " << y << endl << "  - Next frame #: " << nextFrame << endl << "  - Frame delay: " << delay << endl << flush;
 
-			//get collision box
-			if (frameElement->Attribute("colbox"))
-			{
-				p_sTemp = frameElement->Attribute("colbox");
-			}
-
-			if (p_sTemp.length())
-			{
-				std::istringstream stream(p_sTemp);
-
-				stream >> colBox.left >> colBox.bottom >> colBox.right >> colBox.top;
-			}
-			else
-			{
-				colBox.left = 0;
-				colBox.bottom = 0;
-				colBox.right = resource.intData1;
-				colBox.top = resource.intData2;
-			}
-			clog << "  - Collision box: " << colBox << endl << flush;
-
 			if ((x >= 0) && (y >= 0) && (nextFrame >= 0) && (delay > 0))
 			{
-				sprite.addFrame(i, x, y, delay, nextFrame, colBox);
+				sprite.addFrame(i, x, y, delay, nextFrame);
 				clog << "OK: Added frame to animation.\n" << flush;
 			}
 			else

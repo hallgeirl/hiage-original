@@ -39,7 +39,7 @@ namespace hiage
 		void setName(const std::string& animName) {animationName = animName;}
 		void setVelocitySpeedupFactor(double factor) { velocitySpeedupFactor = factor; }
 		const std::string& getName() const { return animationName; }
-		void addFrame(int x, int y, double delay, uint nextFrame, const BoundingBox<double>& colBox);
+		void addFrame(int x, int y, double delay, uint nextFrame);
 
 		void runAnimation(double timeFactor, double velocity);
 		void reset() { frameTimer = 0; currentFrame = 0; }
@@ -75,7 +75,7 @@ namespace hiage
 		void create(const std::string& textureName, int frameWidth, int frameHeight);
 
 		uint addAnimation(const std::string&, double velocitySpeedupFactor);
-		void addFrame(uint animID, int x, int y, double delay, uint nextFrame, BoundingBox<double> colBox);
+		void addFrame(uint animID, int x, int y, double delay, uint nextFrame);
 		const std::string& getCurrentAnimationName() const;
 		void updateAnimation(double timefactor, double velocity);
 		void playAnimation(int anim, double speed = 1) { currentAnimation = anim; animationSpeed = speed; }

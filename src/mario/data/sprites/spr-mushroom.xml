@@ -3,6 +3,6 @@
   <texture name="Mushroom" />
 	
   <animation name="stand">
-    <frame x="0" y="0" delay="1" nextframe="0" colbox="0 0 16 16" />
+    <frame x="0" y="0" delay="1" nextframe="0" />
   </animation>
 </sprite>

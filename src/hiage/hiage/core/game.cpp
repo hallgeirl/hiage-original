@@ -262,9 +262,15 @@ void Game::run(bool doEvents)
 		}
 	}
 
-	static int fc = 0;
-	if (fc++ % 10 == 0)
+	static double accumulatedTime = 0;
+	accumulatedTime += frameTimer.getTime();
+
+	if (accumulatedTime >= 1)
+	{
 		cout << "FPS: " << (1 / frameTimer.getTime()) << " frametime " << frameTimer.getTime() << endl;
+		accumulatedTime = 0;
+	}
+
 	lastFrameTime = std::min(frameTimer.getTime(), 0.02) * timeFactor;
 	scriptVM.executeLine(string("frametime=") + lastFrameTime);
 }

@@ -26,7 +26,7 @@ int main(int, char*)
     config.display.displayHeight = 1080;
     config.display.displayWidth = 1920;
     config.display.fullscreen = false;
-    config.display.vsync = false;
+    config.display.vsync = true;
     config.consoleFontName = "SmallFont";
     config.debug = DebugConfig {
         .enabled = true,
