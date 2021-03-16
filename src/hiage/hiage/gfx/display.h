@@ -54,7 +54,7 @@ namespace hiage
 		Display();	//constructor
 
 		//initialize opengl and set up a window
-		void initialize(int width, int height, bool fullscreen);
+		void initialize(int width, int height, bool fullscreen, bool vsync);
 		//resize scene
 		void resize(int width, int height);
 		//render everything

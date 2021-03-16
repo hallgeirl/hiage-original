@@ -68,9 +68,9 @@ int main(int, char*)
 
     DummyGame g(dummyKeyBindings);
     GameConfig config;
-    config.displayHeight = 768;
-    config.displayWidth = 1024;
-    config.fullscreen = false;
+    config.display.displayHeight = 768;
+    config.display.displayWidth = 1024;
+    config.display.fullscreen = false;
 
     g.initialize(config);
     DummyGamestate gs(g);

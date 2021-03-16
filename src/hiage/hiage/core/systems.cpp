@@ -29,13 +29,16 @@ void DebugSystem::registerSystem(flecs::world& world)
 	world.system<PositionComponent, NameComponent>()
 		.each([&](flecs::entity e, PositionComponent& pos, NameComponent& name)
 		{
-
-			stringstream ss;
-			ss << "Entity(" << name.name << "): " << e.id();
-			srand(name.name.length()*1000);
-			auto yoffs = (float) rand() / RAND_MAX;
-			_game.getDebugRenderer()->renderText(ss.str(), pos.pos.x, pos.pos.y - 20*yoffs);
-
+			const double margin = 100.;
+			auto viewPort = _game.getDebugRenderer()->getViewPort();
+			if (pos.pos.x > viewPort.left - margin && pos.pos.x < viewPort.right + margin && pos.pos.y > viewPort.bottom - margin && pos.pos.y < viewPort.top + margin)
+			{ 
+				stringstream ss;
+				ss << "Entity(" << name.name << "): " << e.id();
+				srand(name.name.length()*1000);
+				auto yoffs = (float) rand() / RAND_MAX;
+				_game.getDebugRenderer()->renderText(ss.str(), pos.pos.x, pos.pos.y - 20*yoffs);
+			}
 		});
 }
 
@@ -189,12 +192,25 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 				_grid.init(BoundingBox(0, 0, width, height), 32, _game.getDebugRenderer());
 		});
 
-	world.system<CollidableComponent, PositionComponent>()
-		.each([&](flecs::entity e, CollidableComponent& collidable, PositionComponent& position)
+	world.system<CollidableComponent, PositionComponent, VelocityComponent*>()
+		.each([&](flecs::entity e, CollidableComponent& collidable, PositionComponent& position, VelocityComponent* velocity)
 		{
 			auto poly = collidable.boundingPolygon;
 			poly.translate(position.pos);
-			_grid.insert(e.id(), BoundingBox<int32_t>(poly.getLeft(), poly.getBottom(), poly.getRight(), poly.getTop()));
+			auto bb = BoundingBox<int32_t>(poly.getLeft(), poly.getBottom(), poly.getRight(), poly.getTop());
+			if (velocity != nullptr)
+			{
+				if (velocity->vel.x > 0)
+					bb.right += velocity->vel.x * e.delta_time();
+				else
+					bb.left += velocity->vel.x * e.delta_time();
+
+				if (velocity->vel.y > 0)
+					bb.top += velocity->vel.y * e.delta_time();
+				else
+					bb.bottom += velocity->vel.y * e.delta_time();
+			}
+			_grid.insert(e.id(), bb);
 		});
 
 	// Debugging system
@@ -315,7 +331,7 @@ void hiage::ObjectTileCollisionDetectionSystem::registerSystem(flecs::world& wor
 					collidable.tileCollisions.push_back(ObjectTileCollisionData{
 						.entityId = e.id(),
 						.collisionResult = result
-						});
+					});
 				}
 			}
 		});

@@ -16,7 +16,7 @@ Display::Display() : _zoom(200.0), _camX(0.0f), _camY(0.0f), _aspect(1), _height
 
 
 //initialize opengl
-void Display::initialize(int width, int height, bool fullscreen)
+void Display::initialize(int width, int height, bool fullscreen, bool vsync)
 {
 	clog << "Initializing display. Width: " << width << " Height: " << height << endl << flush;
 	SDL_Init(SDL_INIT_VIDEO);
@@ -27,7 +27,7 @@ void Display::initialize(int width, int height, bool fullscreen)
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-
+	
 	//enable double buffering
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	if (fullscreen)
@@ -50,6 +50,11 @@ void Display::initialize(int width, int height, bool fullscreen)
 	}
 
 	SDL_GL_CreateContext(this->_window);
+
+	if (vsync)
+		SDL_GL_SetSwapInterval(1);
+	else
+		SDL_GL_SetSwapInterval(0);
 
 	_aspect = (double)width / (double)height;
 	clog << "- Aspect ratio: " << _aspect << endl << flush;

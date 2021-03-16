@@ -128,7 +128,7 @@ std::unordered_set<uint64_t> UniformGrid::getElements(const BoundingBox<int32_t>
 			auto& node = _nodes[static_cast<size_t>(y * _width + x)];
 			if (node.index >= -1)
 			{
-				auto next = _elementNodes[node.index].next;
+				auto next = node.index;
 				do
 				{
 					auto elNode = _elementNodes[node.index];
@@ -167,7 +167,7 @@ void UniformGrid::remove(uint64_t entityId)
 			int32_t prevElementNodeIndex = -1;
 			do
 			{
-				auto elNode = _elementNodes[node.index];
+				auto elNode = _elementNodes[currentElementNodeIndex];
 				auto el = _elements[elNode.index];
 				if (el.entityId == entityId)
 				{
@@ -178,7 +178,7 @@ void UniformGrid::remove(uint64_t entityId)
 					if (prevElementNodeIndex == -1)
 					{
 						// Erasing the first node, so need to update the node's index
-						node.index = currentElementNodeIndex;
+						node.index = elNode.next;
 					}
 					else
 					{
@@ -215,20 +215,26 @@ void UniformGrid::renderDebugInfo()
 
 		auto& bb = boundingBoxResult.boundingBox;
 
+		std::vector<Vec2d> vertices;
+		vertices.resize(4);
 		for (int32_t x = bb.left; x <= bb.right; x++)
 		{
 			for (int32_t y = bb.bottom; y <= bb.top; y++)
 			{
 				// Draw grid lines
-				std::vector<Vec2d> vertices;
-				vertices.push_back({ (double) x * _gridSize, (double) y * _gridSize }); // bottom left
-				vertices.push_back({ (double)x * _gridSize, (double) (y + 1) * _gridSize }); // top left
-				vertices.push_back({ (double)(x + 1) * _gridSize, (double) (y + 1) * _gridSize }); // top right
-				vertices.push_back({ (double) (x + 1) * _gridSize, (double) y * _gridSize }); // bottom right
+			
+				// bottom left
+				vertices[0].x = (double)x * _gridSize; vertices[0].y = (double)y * _gridSize;
+				// top left
+				vertices[1].x = (double)x * _gridSize; vertices[1].y = (double)((double)y + 1) * _gridSize;
+				// top right
+				vertices[2].x = (double)((double)x + 1) * _gridSize; vertices[2].y = (double)((double)y + 1) * _gridSize;
+				// bottom right
+				vertices[3].x = (double)((double)x + 1) * _gridSize; vertices[3].y = (double)y * _gridSize;
 				_debugRenderer->renderLines(vertices);
 				
 				// Count nodes and render it
-				auto& node = _nodes[static_cast<size_t>(y * _width + x)];
+				auto& node = _nodes[static_cast<size_t>((double)y * _width + x)];
 				int count = 0;
 				if (node.index >= 0)
 				{

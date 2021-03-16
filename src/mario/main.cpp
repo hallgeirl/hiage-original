@@ -23,12 +23,13 @@ int main(int, char*)
 
 	MarioGame game(keyBindings);
     GameConfig config;
-    config.displayHeight = 1080;
-    config.displayWidth = 1920;
-    config.fullscreen = false;
+    config.display.displayHeight = 1080;
+    config.display.displayWidth = 1920;
+    config.display.fullscreen = false;
+    config.display.vsync = true;
     config.consoleFontName = "SmallFont";
     config.debug = DebugConfig {
-        .enabled = true,
+        .enabled = false,
         .debugFlags = {
             .drawEntityInfo = true,
             .quadTreeDebugFlags = QuadTreeDebugFlags {

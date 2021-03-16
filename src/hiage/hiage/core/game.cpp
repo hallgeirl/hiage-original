@@ -122,7 +122,7 @@ void Game::initialize(const GameConfig& gameConfig)
 {
 	clog << "Initializing game engine...\n" << flush;
 	//initialize display
-	display.initialize(gameConfig.displayWidth, gameConfig.displayHeight, gameConfig.fullscreen);
+	display.initialize(gameConfig.display.displayWidth, gameConfig.display.displayHeight, gameConfig.display.fullscreen, gameConfig.display.vsync);
 
 	display.setZoom(200.0);
 	display.setState(DisplayState::DS_STRETCH_SCENE, false);
