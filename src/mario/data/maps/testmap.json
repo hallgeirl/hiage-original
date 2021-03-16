@@ -39,18 +39,6 @@
         }
       ],
       "name": "Goomba"
-    },
-    {
-      "components": [
-        {
-          "type": "physical",
-          "properties": {
-            "x": 300,
-            "y": 48
-          }
-        }
-      ],
-      "name": "Goomba"
     }
   ],
   "scripts": {

@@ -24,11 +24,19 @@ namespace hiage
         }
     };
 
+    struct CollisionDetectionDebugFlags
+    {
+        bool showObjectCollisions = false;
+        bool showTileCollisions = false;
+        bool drawBoundingPolygon = false;
+    };
+
     struct DebugFlags
     {
         bool drawEntityInfo = false;
         QuadTreeDebugFlags quadTreeDebugFlags;
         UniformGridDebugFlags uniformGrid;
+        CollisionDetectionDebugFlags collisionDetection;
     };
 
     struct DebugConfig

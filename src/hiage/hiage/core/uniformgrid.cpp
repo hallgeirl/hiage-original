@@ -131,7 +131,7 @@ std::unordered_set<uint64_t> UniformGrid::getElements(const BoundingBox<int32_t>
 				auto next = node.index;
 				do
 				{
-					auto elNode = _elementNodes[node.index];
+					auto elNode = _elementNodes[next];
 					const auto& el = _elements[elNode.index];
 					result.insert(el.entityId);
 					next = elNode.next;
@@ -141,6 +141,21 @@ std::unordered_set<uint64_t> UniformGrid::getElements(const BoundingBox<int32_t>
 	}
 
 	return result;
+}
+
+
+std::unordered_set<uint64_t> UniformGrid::getElementsNear(uint64_t entityId)
+{
+	std::unordered_set<uint64_t> result;
+
+	if (!_elementLookup.contains(entityId))
+		return result;
+
+
+	//Figure out the grid cells we need to insert into
+	auto element = _elements[_elementLookup.at(entityId)];
+
+	return getElements(element.boundingBox);
 }
 
 void UniformGrid::remove(uint64_t entityId)

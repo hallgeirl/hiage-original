@@ -213,85 +213,87 @@ void hiage::ObjectObjectCollisionDetectionSystem::registerSystem(flecs::world& w
 			_grid.insert(e.id(), bb);
 		});
 
+	world.system<CollidableComponent, PositionComponent, VelocityComponent>()
+		.each([&](flecs::entity e, CollidableComponent& collidable, PositionComponent& position, VelocityComponent& velocity)
+		{
+			collidable.objectCollisions.clear();
+
+			vector<BoundingPolygon> tempVecPolygon2;
+			tempVecPolygon2.resize(1);
+			// Check for collisions
+			auto entityId1 = e.id();
+			auto& col1 = collidable;
+			const auto& pos1 = position.pos;
+			const auto& vel1 = velocity.vel;
+
+			BoundingPolygon polygon1 = col1.boundingPolygon;
+			polygon1.translate(pos1);
+
+			auto candidates = _grid.getElementsNear(entityId1);
+
+			for (auto entityId2 : candidates)
+			{
+				if (entityId2 == entityId1)
+					continue;
+
+				flecs::entity c2(e.world(), entityId2);
+				
+				auto col2 = c2.get<CollidableComponent>();
+				const auto pos2 = c2.get<PositionComponent>()->pos;
+				auto vel2Comp = c2.get<VelocityComponent>();
+				Vec2d vel2(0,0);
+				if (vel2Comp != nullptr)
+					vel2 = vel2Comp->vel;
+
+				auto relativeFrameVelocity = (vel1 - vel2) * e.delta_time();
+				tempVecPolygon2[0] = col1.boundingPolygon;
+
+				tempVecPolygon2[0].translate(pos2);
+
+				for (int axis = 0; axis <= 1; axis++)
+				{
+					auto result = collisionTester.testCollision(polygon1, relativeFrameVelocity, tempVecPolygon2, axis);
+
+					if (result.willIntersect || result.isIntersecting)
+					{
+						// Add two collision events - object 1 colliding with object 2, and the other way around.
+						col1.objectCollisions.push_back(ObjectObjectCollisionData{
+							.entityId1 = entityId1,
+							.entityId2 = entityId2,
+							.collisionResult = result
+							});
+					}
+				}
+			}
+		});
+
 	// Debugging system
 	world.system<>()
 		.iter([&](flecs::iter&) {
-			auto debugWriter = _game.getDebugRenderer();
-			_grid.renderDebugInfo();
-		});
-	
-	world.system<CollidableComponent, PositionComponent, VelocityComponent>()
-		.each([&](flecs::entity, CollidableComponent& collidable, PositionComponent& position, VelocityComponent& velocity)
-		{
-			
-		});
-	/*auto componentTuples = gameState.getEntityManager().queryComponentGroup<CollidableComponent, PositionComponent, VelocityComponent>();
+		auto debugWriter = _game.getDebugRenderer();
+		_grid.renderDebugInfo();
+	});
 
-	// Clear previous collisions
-	for (auto& c : componentTuples)
-		get<1>(c)->getData().objectCollisions.clear();
-
-	// Sort by x coordinate
-	gameState.getEntityManager().sortEntitiesByPosition();
-
-	BoundingPolygon polygon1;
-
-	vector<BoundingPolygon> tempVecPolygon2;
-	tempVecPolygon2.resize(1);
-	// Check for collisions
-	for (int i = 0; i < componentTuples.size(); i++)
-	{
-		auto& c1 = componentTuples[i];
-		auto entityId1 = get<0>(c1);
-		auto& col1 = get<1>(c1)->getData();
-		const auto& pos1 = get<2>(c1)->getData();
-		const auto& vel1 = get<3>(c1)->getData();
-
-		polygon1 = col1.boundingPolygon;
-
-		polygon1.translate(pos1);
-
-		for (int j = i + 1; j < componentTuples.size(); j++)
-		{
-			auto& c2 = componentTuples[j];
-			auto entityId2 = get<0>(c2);
-			auto& col2 = get<1>(c2)->getData();
-			const auto& pos2 = get<2>(c2)->getData();
-			auto relativeFrameVelocity = (vel1 - get<3>(c2)->getData()) * frameTime;
-			tempVecPolygon2[0] = get<1>(c2)->getData().boundingPolygon;
-
-			tempVecPolygon2[0].translate(pos2);
-
-			// Distance check: If object 2 is further to the right than it's possible to move in one frame, we can skip this check.
-			// For subsequent objects, they will be even more to the right, so we can break out early here.
-			auto xDistance = tempVecPolygon2[0].getLeft() - polygon1.getRight();
-			if (xDistance > relativeFrameVelocity.getX())
-				break;
-
-			for (int axis = 0; axis <= 1; axis++)
-			{
-				auto result = collisionTester.testCollision(polygon1, relativeFrameVelocity, tempVecPolygon2, axis);
-
-				if (result.willIntersect || result.isIntersecting)
+	world.system<CollidableComponent, PositionComponent>()
+		.each([&](flecs::entity, CollidableComponent& col, PositionComponent& pos) {
+			DebugRenderer* debugWriter = _game.getDebugRenderer();
+			if (debugWriter->enabled())
+			{ 
+				if (debugWriter->getDebugFlags().collisionDetection.showObjectCollisions && col.objectCollisions.size() > 0)
 				{
-					// Add two collision events - object 1 colliding with object 2, and the other way around.
-					col1.objectCollisions.push_back(ObjectObjectCollisionData{
-						.entityId1 = entityId1,
-						.entityId2 = entityId2,
-						.collisionResult = result
-						});
+					debugWriter->renderText("Collided!", pos.pos.x, pos.pos.y);
+				}
 
-					auto result2 = result;
-					result2.hitNormal *= -1;
-					col2.objectCollisions.push_back(ObjectObjectCollisionData{
-						.entityId1 = entityId2,
-						.entityId2 = entityId1,
-						.collisionResult = result2
-						});
+				if (debugWriter->getDebugFlags().collisionDetection.drawBoundingPolygon)
+				{
+					BoundingPolygon polygon = col.boundingPolygon;
+					polygon.translate(pos.pos);
+					auto vertices = polygon.getVertices();
+					vertices.push_back(vertices[0]); // wrap around to the first vertex
+					debugWriter->renderLines(vertices);
 				}
 			}
-		}
-	}*/
+		});
 }
 
 

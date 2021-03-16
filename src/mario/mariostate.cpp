@@ -65,6 +65,7 @@ MarioState::MarioState(hiage::Game &game) : MapState(game), _lives(5), _score(0)
 
     //game.getAudioManager().playOgg("Overworld1", true);
 
+    //gamemap.loadFromJson("maps/testmap.json", false);
     gamemap.loadFromJson("maps/level2.json", false);
 }
 

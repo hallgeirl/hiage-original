@@ -26,10 +26,10 @@ int main(int, char*)
     config.display.displayHeight = 1080;
     config.display.displayWidth = 1920;
     config.display.fullscreen = false;
-    config.display.vsync = true;
+    config.display.vsync = false;
     config.consoleFontName = "SmallFont";
     config.debug = DebugConfig {
-        .enabled = false,
+        .enabled = true,
         .debugFlags = {
             .drawEntityInfo = true,
             .quadTreeDebugFlags = QuadTreeDebugFlags {
@@ -37,8 +37,13 @@ int main(int, char*)
                 .drawChildCount = true
             },
             .uniformGrid = UniformGridDebugFlags {
-                .renderGrid = true,
-                .drawChildCount = true
+                .renderGrid = false,
+                .drawChildCount = false
+            },
+            .collisionDetection = CollisionDetectionDebugFlags {
+                .showObjectCollisions = true,
+                .showTileCollisions = true,
+                .drawBoundingPolygon = true
             }
         }
     };

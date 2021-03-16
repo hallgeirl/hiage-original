@@ -70,6 +70,7 @@ namespace hiage
 		void remove(uint64_t entityId);
 
 		std::unordered_set<uint64_t> getElements(const BoundingBox<int32_t>& boundingBox);
+		std::unordered_set<uint64_t> getElementsNear(uint64_t entityId);
 
 		void renderDebugInfo();
 		bool initialized() { return _initialized;  }
